@@ -1,0 +1,435 @@
+html,
+body {
+  background: #fff;
+}
+
+/* === Header === */
+
+#primary-header {
+  $background: #fff;
+  $height: 5rem;
+  $logo_width: 190px;
+
+  section {
+    display: flex;
+    height: $height;
+
+    #logo {
+      background: $background;
+      color: rgba(0, 0, 0, 0.87);
+      font-weight: 700;
+      height: $height;
+      line-height: $height;
+      padding: 0 0 0 2rem;
+      width: $logo_width;
+    }
+
+    #primary-navigation {
+      background: $background;
+      height: $height;
+      flex-grow: 0;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      text-align: center;
+
+      & > ul {
+        background: $background;
+        height: $height;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      & > ul > li {
+        display: inline-block;
+        float: left;
+      }
+
+      & > ul > li > a {
+        border-bottom: 2px solid #fff;
+        color: #333;
+        display: block;
+        height: $height;
+        padding: 0 0.475rem 0 1.5rem;
+        line-height: $height;
+        text-decoration: none;
+
+        i {
+          font-size: 0.875rem;
+          opacity: 0.2;
+        }
+      }
+
+      & > ul > li:hover > a {
+        border-bottom-color: #333;
+      }
+
+      & > ul > li:hover > .dropdown {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      & > ul > li > .dropdown {
+        background: #fff;
+        border-bottom: 1px solid #e2e2e2;
+        border-top: 1px solid #e2e2e2;
+        display: none;
+        justify-content: space-between;
+        left: -$logo_width;
+        min-width: 100%;
+        padding: 2rem;
+        position: absolute;
+        text-align: left;
+        top: $height;
+        width: 100vw;
+
+        header {
+          border-radius: 4px;
+          display: flex;
+          flex-direction: column;
+          padding: 0 0 1rem 0;
+          margin-right: 0rem;
+          text-align: center;
+          width: 260px;
+
+          border-right: 1px solid #eee;
+          padding-right: 2rem;
+
+          i {
+            display: none;
+            font-size: 1.5rem;
+            opacity: 0.3;
+          }
+
+          h3 {
+            font-size: 1.75rem;
+            margin: 0 0 0.75rem 0;
+          }
+
+          p {
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.7);
+          }
+        }
+
+        article {
+          padding: 0 2rem;
+
+          h5 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 1rem 0 0.5rem 0;
+
+            &:first-child {
+              margin-top: 0;
+            }
+          }
+
+          ul {
+            margin: 0 0 0 20px !important;
+            padding: 0;
+
+            li {
+              padding: 0 0 0.25rem 0;
+            }
+          }
+        }
+      }
+    }
+
+    #quick-search {
+      align-self: center;
+      background: $background;
+      display: flex;
+      flex-grow: 1;
+      height: $height;
+      justify-content: flex-end;
+      line-height: $height;
+      padding: 0 1rem 0 2rem;
+
+      form {
+        width: 100%;
+
+        div.input {
+          width: 100%;
+
+          input {
+            background: $background;
+            border-color: $background;
+            transition: all 0.2s;
+            width: 100%;
+
+            &:active,
+            &:focus {
+              background: #f0f0f4;
+            }
+          }
+
+          i {
+            opacity: 1;
+          }
+        }
+      }
+
+      &:hover input {
+        background: #f0f0f4 !important;
+      }
+    }
+
+    #icon-navigation {
+
+      ul {
+        background: $background;
+        height: $height;
+        line-height: $height;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          display: inline-block;
+          line-height: $height;
+
+          a {
+            color: #333;
+            display: flex;
+            height: $height;
+            line-height: $height;
+            padding: 0 0.25rem;
+
+            i {
+              align-items: center;
+              align-self: center;
+              background: inherit;
+              border-radius: 50%;
+              cursor: pointer;
+              display: flex;
+              justify-content: center;
+              transition: all 0.2s;
+              padding: 1.25rem;
+            }
+
+            &:hover > i {
+              background: #111;
+            }
+          }
+
+          &:hover > a {
+            color: #fff;
+            height: $height;
+            line-height: $height;
+          }
+        }
+      }
+    }
+
+    #user-navigation {
+      background: $background;
+      font-size: 0.875rem;
+      padding: 0 0.75rem 0 0;
+
+      ul {
+        background: $background;
+        height: $height;
+        line-height: $height;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          display: inline-block;
+          line-height: $height;
+
+          a {
+            color: #333;
+            display: flex;
+            height: $height;
+            line-height: $height;
+
+            span {
+              align-self: center;
+              border-radius: 1.25rem;
+              display: block;
+              height: 1rem;
+              line-height: 0;
+              padding: 1.25rem;
+              height: 1rem !important;
+
+              i {
+                margin-right: 1rem;
+              }
+            }
+
+            &:hover span {
+              background: #333;
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  footer {
+    background: linear-gradient(90deg, #e14eca, #2f87ff, #e14eca);
+    background-size: 200% 200%;
+    height: 3px;
+    width: 100%;
+
+    // -webkit-animation: GradientAnimation 20s linear infinite;
+    // -moz-animation: GradientAnimation 20s linear infinite;
+    // animation: GradientAnimation 20s linear infinite;
+  }
+}
+
+body.error-page {
+
+  #primary-header {
+
+    footer {
+      background: linear-gradient(90deg, #f00, #b00, #f00);
+      background-size: 200% 200%;
+    }
+  }
+}
+
+/* === Content === */
+
+#content-header {
+  background: #222529;
+  padding: 2rem;
+  width: 100%;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+
+    h1 {
+      color: #fff;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+
+      a,
+      button {
+        align-self: center;
+        margin: 0 0 0 0.5rem;
+
+        &.basic {
+          background: rgba(255, 255, 255, 0.15) !important;
+          box-shadow: none !important;
+          color: #fff !important;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+#content-navigation {
+  $height: 3.5rem;
+
+  background: #fff;
+  border-bottom: 1px solid #e2e2e2;
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 2rem;
+
+  nav {
+    background: #fff;
+    border-left: 1px solid #e2e2e2;
+    height: $height;
+    padding-left: 2rem;
+    width: 100%;
+
+    ul {
+      display: flex;
+      font-size: 13px;
+      font-weight: 600;
+      height: $height;
+      list-style: none;
+      line-height: $height;
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin: 0 2rem 0 0;
+      }
+
+      a {
+        border-bottom: 2px solid #fff;
+        color: #333;
+
+        &:hover {
+          color: $blue;
+        }
+
+        &.active {
+          border-bottom-color: $purple;
+
+          &:hover {
+            color: #333;
+            border-bottom-color: $blue;
+          }
+        }
+      }
+    }
+  }
+
+  .breadcrumbs {
+    font-size: 0.875rem;
+    font-size: 13px;
+    display: flex;
+    height: $height;
+    list-style: none;
+    margin: 0;
+    padding: 0 2rem 0 0;
+
+    li {
+      display: flex;
+      align-self: center;
+      color: #706f79;
+      font-weight: 400;
+      height: $height;
+      line-height: $height;
+
+      &:last-child::after {
+        content: "";
+        margin: 0;
+      }
+
+      &::after {
+        align-self: center;
+        color: #dedeea;
+        content: " / ";
+        display: inline-block;
+        margin: 0 8px;
+      }
+
+      a {
+        align-self: center;
+        color: #333;
+        display: inline-block;
+        font-weight: 600;
+
+        &:hover {
+          color: $blue;
+        }
+      }
+    }
+  }
+}
+
+#content {
+  background: #fff;
+  margin: 0;
+  padding: 1.5rem 2rem 2rem 2rem;
+}
