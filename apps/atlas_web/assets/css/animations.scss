@@ -1,0 +1,35 @@
+/* === Background Color Gradient Animation === */
+
+@-webkit-keyframes GradientAnimation {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+@-moz-keyframes GradientAnimation {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+@keyframes GradientAnimation {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+/* Code Examples */
+
+// background: linear-gradient(90deg, #8f75da 0, #727cf5 100%);
+// background: linear-gradient(-18deg, #101018 0, #38383D 100%);
+
+// background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+// background-size: 400% 400%;
+
+// background: linear-gradient(270deg, #ba54f5, #727cf5, #ba54f5);
+// background: linear-gradient(270deg, #ba54f5, #727cf5, #54a5f5);
+// background-size: 600% 600%;
+
+// -webkit-animation: GradientAnimation 15s ease infinite;
+// -moz-animation: GradientAnimation 15s ease infinite;
+// animation: GradientAnimation 15s ease infinite;

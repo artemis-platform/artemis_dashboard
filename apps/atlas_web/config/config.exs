@@ -19,6 +19,6 @@ config :atlas_web, AtlasWeb.Guardian,
 
 config :scrivener_html,
   routes_helper: AtlasWeb.Router.Helpers,
-  view_style: :bootstrap
+  view_style: :semantic
 
 import_config "#{Mix.env()}.exs"
