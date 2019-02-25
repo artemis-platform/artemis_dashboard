@@ -4,6 +4,8 @@
 
 Atlas Dashboard is built on top of [Atlas Platform](https://github.com/chrislaskey/atlas_platform), a collection of production-ready design patterns for Elixir and Phoenix.
 
+[![Build Status](https://travis-ci.com/chrislaskey/atlas_dashboard.svg?branch=master)](https://travis-ci.com/chrislaskey/atlas_dashboard)
+
 ## Demo
 
 A container-based demo environment is available. Assuming [docker](https://www.docker.com/) and [docker compose](https://docs.docker.com/compose/) is installed:
