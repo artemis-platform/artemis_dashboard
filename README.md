@@ -51,11 +51,11 @@ bin/demo/stop # Stop the demo environment
 bin/demo/remove # Remove the demo environment
 ```
 
-## Looking for a UI Design?
+## Looking for a Generic Platform?
 
-> ### [Atlas Dashboard](https://github.com/chrislaskey/atlas_dashboard)
+> ### [Atlas Platform](https://github.com/chrislaskey/atlas_platform)
 
-Atlas Dashboard is an example of a complete application (including UI and design) built on top of Atlas Platform.
+Atlas Platform is a generic platform ready to be the foundation of your next web application.
 
 ## Development
 
