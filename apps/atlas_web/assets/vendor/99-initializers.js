@@ -25,6 +25,22 @@ function initializeSelect2() {
     // Initialize
     item.select2(options)
   })
+
+  // Semantic UI supports inline icons for inputs. For search forms, make the
+  // inline search icon double as a submit button.
+  $('form.ui').each(function() {
+    var form = $(this)
+    var containers = form.find('.ui.icon.input')
+
+    containers.each(function() {
+      var container = $(this)
+      var icon = container.find('i.search')
+
+      icon.click(function(event) {
+        form.submit()
+      })
+    })
+  })
 }
 
 $(document).ready(function() {

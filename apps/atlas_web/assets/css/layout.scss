@@ -170,6 +170,10 @@ body {
             opacity: 1;
           }
         }
+
+        &.active div.input input {
+          border-color: #e2e2e2 !important;
+        }
       }
 
       &:hover input {

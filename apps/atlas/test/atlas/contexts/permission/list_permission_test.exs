@@ -14,7 +14,6 @@ defmodule Atlas.ListPermissionsTest do
   end
 
   describe "call" do
-
     test "returns empty list when no permissions exist" do
       assert ListPermissions.call() == []
     end
@@ -66,17 +65,57 @@ defmodule Atlas.ListPermissionsTest do
       permissions = ListPermissions.call()
       permission = hd(permissions)
 
-      assert !is_list(permission.permission_roles)
-      assert permission.permission_roles.__struct__ == Ecto.Association.NotLoaded
+      assert !is_list(permission.roles)
+      assert permission.roles.__struct__ == Ecto.Association.NotLoaded
 
-      options = [
-        preload: [:permission_roles]
-      ]
+      params = %{
+        preload: [:roles]
+      }
 
-      permissions = ListPermissions.call(options)
+      permissions = ListPermissions.call(params)
       permission = hd(permissions)
 
-      assert is_list(permission.permission_roles)
+      assert is_list(permission.roles)
+    end
+
+    test "query - search" do
+      insert(:permission, name: "John Smith", slug: "john-smith")
+      insert(:permission, name: "Jill Smith", slug: "jill-smith")
+      insert(:permission, name: "John Doe", slug: "john-doe")
+
+      permissions = ListPermissions.call()
+
+      assert length(permissions) == 4
+
+      # Succeeds when given a word part of a larger phrase
+
+      params = %{
+        query: "smit"
+      }
+
+      permissions = ListPermissions.call(params)
+
+      assert length(permissions) == 2
+
+      # Succeeds with partial value when it is start of a word
+
+      params = %{
+        query: "john-"
+      }
+
+      permissions = ListPermissions.call(params)
+
+      assert length(permissions) == 2
+
+      # Fails with partial value when it is not the start of a word
+
+      params = %{
+        query: "mith"
+      }
+
+      permissions = ListPermissions.call(params)
+
+      assert length(permissions) == 0
     end
   end
 end

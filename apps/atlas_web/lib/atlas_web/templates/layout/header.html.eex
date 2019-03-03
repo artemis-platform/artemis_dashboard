@@ -101,6 +101,21 @@
                 </li>
               </ul>
             </article>
+            <article>
+              <h5>Permissions</h5>
+              <ul>
+                <li>
+                  <a href="<%= Routes.permission_path(@conn, :index) %>">
+                    List Permissions
+                  </a>
+                </li>
+                <li>
+                  <a href="<%= Routes.permission_path(@conn, :new) %>">
+                    Create Permission
+                  </a>
+                </li>
+              </ul>
+            </article>
           </div>
         </li>
         <li>
@@ -145,10 +160,10 @@
 
     <div id="quick-search">
       <%= if current_user?(@conn) do %>
-        <form>
+        <form class="<%= search_class(@conn) %>" action="<%= Routes.search_path(@conn, :index) %>" method="get">
           <div class="ui icon input">
             <i class="search link icon"></i>
-            <input type="text" placeholder="">
+            <input name="query" type="text" value="<%= Map.get(@conn.query_params, "query") %>" />
           </div>
         </form>
       <% end %>
