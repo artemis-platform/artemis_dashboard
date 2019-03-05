@@ -18,8 +18,8 @@ addons:
 
 cache:
   directories:
-    - _build
     - deps
+    # - _build
 
 env:
   global:
