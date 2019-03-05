@@ -40,6 +40,8 @@ defmodule ArtemisWeb.EventLogPageTest do
         query: event_log.action
       })
 
+      IO.inspect(page_source(), limit: :infinity, printable_limit: :infinity)
+
       submit_search(".search-resource")
 
       assert visible?(event_log.action)
