@@ -28,7 +28,7 @@ defmodule ArtemisWeb.BrowserHelpers do
 
   def submit_form(identifier), do: click({:css, "#{identifier} button[type='submit']"})
 
-  def submit_search(identifier), do: click({:css, "#{identifier} i.search"})
+  def submit_search(identifier), do: submit_element({:css, identifier})
 
   # Assertions
 
