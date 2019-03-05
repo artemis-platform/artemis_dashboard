@@ -62,7 +62,7 @@ defmodule Artemis.ListPermissionsTest do
     end
 
     test "preload" do
-      permissions = ListPermissions.call()
+      permissions = ListPermissions.call(Mock.system_user())
       permission = hd(permissions)
 
       assert !is_list(permission.roles)
@@ -72,16 +72,16 @@ defmodule Artemis.ListPermissionsTest do
         preload: [:roles]
       }
 
-      permissions = ListPermissions.call(params)
+      permissions = ListPermissions.call(params, Mock.system_user())
       permission = hd(permissions)
 
       assert is_list(permission.roles)
     end
 
     test "query - search" do
-      insert(:permission, name: "John Smith", slug: "john-smith")
+      insert(:permission, name: "John Smith", slug: "johnn-smith")
       insert(:permission, name: "Jill Smith", slug: "jill-smith")
-      insert(:permission, name: "John Doe", slug: "john-doe")
+      insert(:permission, name: "John Doe", slug: "johnn-doe")
 
       user = Mock.system_user()
       permissions = ListPermissions.call(user)
@@ -101,7 +101,7 @@ defmodule Artemis.ListPermissionsTest do
       # Succeeds with partial value when it is start of a word
 
       params = %{
-        query: "john-"
+        query: "johnn-"
       }
 
       permissions = ListPermissions.call(params, user)
