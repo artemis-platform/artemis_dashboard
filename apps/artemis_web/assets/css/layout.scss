@@ -298,6 +298,12 @@ body.error-page {
   }
 }
 
+/* === Sidebar === */
+
+.ui.sidebar {
+  transition-duration: 250ms !important;
+}
+
 /* === Content === */
 
 #content-header {

@@ -1,0 +1,29 @@
+<%= unless is_nil(@user) do %>
+  <div class="ui sidebar right vertical menu" id="sidebar-current-user">
+    <header>
+      <h3>Profile</h3>
+      <button href="#close-sidebar-current-user" class="ui icon tiny button close-sidebar-current-user">
+        <i class="close icon"></i>
+      </button>
+    </header>
+    <div class="about">
+      <div class="user-image">
+        <i class="image outline icon"></i>
+      </div>
+      <div class="user-info">
+        <h4 class="full-name">
+          <%= @user.name %>
+        </h4>
+        <div class="email">
+          <%= @user.email %>
+        </div>
+        <%= if has?(@conn, "users:update") do %>
+          <%= action "Edit", to: Routes.user_path(@conn, :edit, @user)  %>
+        <% end %>
+      </div>
+    </div>
+    <h4>Actions</h4>
+    <%= action "View Profile", to: Routes.user_path(@conn, :show, @user) %>
+    <%= action "Log Out", method: "delete", to: Routes.session_path(@conn, :delete, @user), color: "blue", data: [confirm: "Log Out?"] %>
+  </div>
+<% end %>

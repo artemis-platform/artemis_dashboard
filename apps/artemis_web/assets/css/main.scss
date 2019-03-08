@@ -1,3 +1,5 @@
+/* === General Classes === */
+
 .label-with-errors {
 
   i {
@@ -125,7 +127,7 @@
   animation-delay: 0.4s;
 }
 
-// Components
+/* === Components === */
 
 .search-summary {
 
@@ -137,6 +139,66 @@
 
     &::after {
       display: none;
+    }
+  }
+}
+
+/* === Components - Sidebars === */
+
+#sidebar-current-user {
+  padding: 1.5rem;
+  width: 420px;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 1.5rem 0;
+
+    h3 {
+      align-self: center;
+      margin: 0;
+    }
+  }
+
+  .about {
+    display: flex;
+    margin: 1rem 0;
+    justify-content: space-between;
+
+    .user-image {
+      background: #e1e2e3;
+      border-radius: 0.5rem;
+      display: flex;
+      height: 120px;
+      justify-content: center;
+      width: 120px;
+      flex-grow: 0;
+
+      .image {
+        align-self: center;
+        color: #f4f5f5;
+        display: flex;
+        font-size: 5rem;
+        margin: 0 0 0 1rem;
+
+        &:before {
+          align-self: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .user-info {
+      flex-grow: 1;
+      margin: 0 0 0 1rem;
+
+      .full-name {
+        margin-bottom: 0;
+      }
+
+      .email {
+        margin: 0 0 1rem 0;
+      }
     }
   }
 }

@@ -190,7 +190,7 @@
       <ul>
         <li>
           <%= if current_user?(@conn) do %>
-            <a href="<%= Routes.user_path(@conn, :show, current_user(@conn)) %>">
+            <a href="#open-sidebar-current-user" class="open-sidebar-current-user">
               <span>
                 <i class="user icon"></i>
                 <%= current_user(@conn).name %>

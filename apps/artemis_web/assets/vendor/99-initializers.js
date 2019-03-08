@@ -41,6 +41,25 @@ function initializeSelect2() {
       })
     })
   })
+
+  $('.open-sidebar-current-user').click(function(event) {
+    if (event) {
+      event.preventDefault()
+    }
+
+    $('#sidebar-current-user')
+      .sidebar('setting', 'dimPage', false)
+      .sidebar('setting', 'transition', 'overlay')
+      .sidebar('toggle')
+  })
+
+  $('.close-sidebar-current-user').click(function(event) {
+    if (event) {
+      event.preventDefault()
+    }
+
+    $('#sidebar-current-user').sidebar('hide')
+  })
 }
 
 $(document).ready(function() {
