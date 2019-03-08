@@ -38,5 +38,13 @@ defmodule ArtemisWeb.HomePageTest do
       assert page_title() == "Artemis"
       assert visible?("Artemis Dashboard")
     end
+
+    test "current user sidebar" do
+      click({:css, ".open-sidebar-current-user"})
+
+      assert visible?("Profile")
+      assert visible?("View Profile")
+      assert visible?("Log Out")
+    end
   end
 end

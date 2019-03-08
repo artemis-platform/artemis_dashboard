@@ -43,4 +43,15 @@ defmodule ArtemisWeb.BrowserHelpers do
   end
   def visible?(value) when is_integer(value), do: visible?(Integer.to_string(value))
   def visible?(value), do: visible_in_page?(value)
+
+  # Helpers
+
+  def print_page_source() do
+    options = [
+      limit: :infinity,
+      printable_limit: :infinity
+    ]
+
+    IO.inspect(page_source(), options)
+  end
 end
