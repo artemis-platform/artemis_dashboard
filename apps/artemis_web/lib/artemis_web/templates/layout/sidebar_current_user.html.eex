@@ -18,7 +18,7 @@
           <%= @user.email %>
         </div>
         <%= if has?(@conn, "users:update") do %>
-          <%= action "Edit", to: Routes.user_path(@conn, :edit, @user)  %>
+          <%= action "Edit Profile", to: Routes.user_path(@conn, :edit, @user)  %>
         <% end %>
       </div>
     </div>

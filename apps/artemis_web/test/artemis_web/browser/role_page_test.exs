@@ -108,8 +108,6 @@ defmodule ArtemisWeb.RolePageTest do
       click_link(role.name)
       click_link("Edit")
 
-      print_page_source()
-
       fill_inputs("#role-form", %{
         "role[name]": "Updated Name",
         "role[slug]": "updated-slug"
