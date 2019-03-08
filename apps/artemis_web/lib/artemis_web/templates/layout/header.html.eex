@@ -173,12 +173,12 @@
       <nav id="icon-navigation">
         <ul>
           <li>
-            <a href="#">
+            <a title="Help" href="<%= Routes.help_path(@conn, :index) %>">
               <i class="wizard icon"></i>
             </a>
           </li>
           <li>
-            <a href="#">
+            <a title="Alerts" href="#">
               <i class="bell icon"></i>
             </a>
           </li>

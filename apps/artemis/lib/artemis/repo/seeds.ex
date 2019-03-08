@@ -40,6 +40,8 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "features:show", name: "Features - Show"},
       %{slug: "features:update", name: "Features - Update"},
 
+      %{slug: "help:list", name: "Help - List"},
+
       %{slug: "permissions:create", name: "Permissions - Create"},
       %{slug: "permissions:delete", name: "Permissions - Delete"},
       %{slug: "permissions:list", name: "Permissions - List"},
