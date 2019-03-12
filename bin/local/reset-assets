@@ -6,4 +6,5 @@ rm -rf ./node_modules && \
 npm install && \
 npm rebuild node-sass && \
 cd ../ && \
+mkdir -p ./apps/artemis_web/priv/static && \
 mix phx.digest

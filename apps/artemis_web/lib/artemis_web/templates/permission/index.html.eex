@@ -28,6 +28,7 @@
       </tr>
     </thead>
     <tbody>
+      <%= render_table_row_if_empty(@permissions.entries) %>
       <%= for permission <- @permissions.entries do %>
         <tr>
           <td>
@@ -54,5 +55,5 @@
     </tbody>
   </table>
 
-  <%= pagination_links @permissions %>
+  <%= render_pagination @conn, @permissions %>
 </div>

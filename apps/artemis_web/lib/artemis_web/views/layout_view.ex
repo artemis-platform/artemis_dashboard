@@ -1,6 +1,8 @@
 defmodule ArtemisWeb.LayoutView do
   use ArtemisWeb, :view
 
+  import Scrivener.HTML
+
   def search_class(conn) do
     query = Map.get(conn.query_params, "query")
 
