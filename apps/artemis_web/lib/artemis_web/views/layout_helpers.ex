@@ -47,6 +47,33 @@ defmodule ArtemisWeb.LayoutHelpers do
   end
 
   @doc """
+  Generates pagination using scrivener_html
+  """
+  def render_pagination(conn, data, options \\ [])
+  def render_pagination(_, %{total_pages: total_pages}, _) when total_pages == 1, do: nil
+  def render_pagination(conn, data, options) do
+    args = Keyword.get(options, :args, [])
+    params = options
+      |> Keyword.get(:params, conn.query_params)
+      |> Artemis.Helpers.keys_to_atoms()
+      |> Map.delete(:page)
+      |> Enum.into([])
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "pagination.html", args: args, conn: conn, data: data, params: params)
+  end
+
+  @doc """
+  Generates empty table row if no records match
+  """
+  def render_table_row_if_empty(records, options \\ [])
+  def render_table_row_if_empty(records, options) when length(records) == 0 do
+    message = Keyword.get(options, :message, "No records found")
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "table_row_if_empty.html", message: message)
+  end
+  def render_table_row_if_empty(_records, _options), do: nil
+
+  @doc """
   Generates search form
   """
   def render_search(conn) do
