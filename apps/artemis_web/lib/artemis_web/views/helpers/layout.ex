@@ -1,9 +1,11 @@
-defmodule ArtemisWeb.LayoutHelpers do
+defmodule ArtemisWeb.ViewHelper.Layout do
+  use Phoenix.HTML
+
+  import ArtemisWeb.ViewData.Layout
+
   @moduledoc """
   Convenience functions for common layout elements
   """
-
-  use Phoenix.HTML
 
   @doc """
   Returns existing query params as a Keyword list
@@ -29,7 +31,7 @@ defmodule ArtemisWeb.LayoutHelpers do
 
   All other options are passed directly to the `Phoenix.HTML` function.
   """
-  def action(title, options \\ []) do
+  def action(label, options \\ []) do
     color = Keyword.get(options, :color, "basic")
     size = Keyword.get(options, :size, "small")
     method = Keyword.get(options, :method, "get")
@@ -40,10 +42,97 @@ defmodule ArtemisWeb.LayoutHelpers do
       |> Enum.into([])
 
     if method == "get" do
-      link(title, tag_options)
+      link(label, tag_options)
     else
-      button(title, tag_options)
+      button(label, tag_options)
     end
+  end
+
+  @doc """
+  Generates export link with specified format
+  """
+  def export_path(conn, format) do
+    query_params = conn
+      |> Map.get(:query_params, %{})
+      |> Map.put("_format", format)
+    query_string = URI.encode_query(query_params)
+
+    "#{conn.request_path}?#{query_string}"
+  end
+
+  @doc """
+  Generates primary nav from nav items
+  """
+  def render_primary_nav(conn, user) do
+    nav_items = nav_items_for_current_user(user)
+    links = Enum.map(nav_items, fn ({section, items}) ->
+      label = section
+      path = items
+        |> hd
+        |> Keyword.get(:path)
+
+      content_tag(:li) do
+        link(label, to: path.(conn))
+      end
+    end)
+
+    content_tag(:ul, links)
+  end
+
+  @doc """
+  Generates footer nav from nav items
+  """
+  def render_footer_nav(conn, user) do
+    nav_items = nav_items_for_current_user(user)
+    sections = Enum.map(nav_items, fn ({section, items}) ->
+      links = Enum.map(items, fn (item) ->
+        label = Keyword.get(item, :label)
+        path = Keyword.get(item, :path)
+
+        content_tag(:li) do
+          link(label, to: path.(conn))
+        end
+      end)
+
+      content_tag(:div, class: "section") do
+        [
+          content_tag(:h5, section),
+          content_tag(:ul, links)
+        ]
+      end
+    end)
+
+    case sections == [] do
+      true ->
+        nil
+      false ->
+        per_column = length(sections) / 3
+          |> Float.ceil()
+          |> trunc()
+        chunked = Enum.chunk_every(sections, per_column)
+
+        Enum.map(chunked, fn (sections) ->
+          content_tag(:div, sections, class: "column")
+        end)
+    end
+  end
+
+  @doc """
+  Filter nav items by current users permissions
+  """
+  def nav_items_for_current_user(user) do
+    Enum.reduce(nav_items(), [], fn ({section, potential_items}, acc) ->
+      verified_items = Enum.filter(potential_items, fn (item) ->
+        verify = Keyword.get(item, :verify)
+
+        verify.(user)
+      end)
+
+      case verified_items == [] do
+        true -> acc
+        false -> [{section, verified_items}|acc]
+      end
+    end)
   end
 
   @doc """
@@ -102,7 +191,8 @@ defmodule ArtemisWeb.LayoutHelpers do
     Enum.map(range, fn (index) ->
       title = sections
         |> Enum.at(index)
-        |> String.capitalize
+        |> String.replace("-", " ")
+        |> Artemis.Helpers.titlecase()
 
       path = sections
         |> Enum.take(index + 1)

@@ -36,7 +36,7 @@ defmodule ArtemisWeb.HomePageTest do
 
     test "page content" do
       assert page_title() == "Artemis"
-      assert visible?("Artemis Dashboard")
+      assert visible?("Artemis Platform")
     end
 
     test "current user sidebar" do
