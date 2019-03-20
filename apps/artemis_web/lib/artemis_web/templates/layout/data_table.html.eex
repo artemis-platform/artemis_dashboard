@@ -1,5 +1,3 @@
-<%= link("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
-
 <table class="ui table selectable data-table">
   <thead>
     <tr>

@@ -9,11 +9,9 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   def sortable_table_header(conn, value, label, delimiter \\ @default_delimiter) do
     path = order_path(conn, value, delimiter)
     text = content_tag(:span, label)
-    icon = tag(:i, class: icon_class(conn, value, delimiter))
+    icon = content_tag(:i, "", class: icon_class(conn, value, delimiter))
 
-    content_tag(:a, href: path) do
-      [text, icon]
-    end
+    content_tag(:a, [text, icon], href: path)
   end
 
   defp order_path(conn, value, delimiter) do
@@ -226,5 +224,18 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     render = Keyword.get(column, key, default)
 
     render.(conn, row)
+  end
+
+  @doc """
+  Generates export link with specified format
+  """
+  def export_path(conn, format) do
+    query_params = conn
+      |> Map.get(:query_params, %{})
+      |> Map.put("_format", format)
+      |> Map.put("page_size", 50000)
+    query_string = URI.encode_query(query_params)
+
+    "#{conn.request_path}?#{query_string}"
   end
 end

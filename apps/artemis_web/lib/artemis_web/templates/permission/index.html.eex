@@ -19,6 +19,8 @@
 
   <%= render_search @conn %>
 
+  <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
+
   <%=
     render_data_table(
       @conn,

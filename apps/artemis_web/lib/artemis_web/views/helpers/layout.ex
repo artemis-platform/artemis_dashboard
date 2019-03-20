@@ -49,15 +49,15 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   end
 
   @doc """
-  Generates export link with specified format
+  Generates class for search form
   """
-  def export_path(conn, format) do
-    query_params = conn
-      |> Map.get(:query_params, %{})
-      |> Map.put("_format", format)
-    query_string = URI.encode_query(query_params)
+  def search_class(conn) do
+    query = Map.get(conn.query_params, "query")
 
-    "#{conn.request_path}?#{query_string}"
+    case Artemis.Helpers.present?(query) do
+      true -> "ui search active"
+      false -> "ui search"
+    end
   end
 
   @doc """
