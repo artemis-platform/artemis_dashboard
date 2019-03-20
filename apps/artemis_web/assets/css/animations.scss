@@ -33,3 +33,62 @@
 // -webkit-animation: GradientAnimation 15s ease infinite;
 // -moz-animation: GradientAnimation 15s ease infinite;
 // animation: GradientAnimation 15s ease infinite;
+
+/* === Bouncing Loader in Pure CSS === */
+
+@keyframes bouncing-loader {
+  to {
+    opacity: 0.1;
+    transform: translate3d(0, -1rem, 0);
+  }
+}
+
+.bouncing-loader {
+  display: flex;
+  justify-content: center;
+}
+
+.bouncing-loader > div {
+  width: 1rem;
+  height: 1rem;
+  margin: 3rem 0.2rem;
+  background: #8385aa;
+  border-radius: 50%;
+  animation: bouncing-loader 0.6s infinite alternate;
+}
+
+.bouncing-loader > div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.bouncing-loader > div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* === Underline Animation on Links === */
+
+#primary-footer a,
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+}
+
+#primary-footer a::after,
+.hover-underline-animation::after {
+  background-color: $blue_muted;
+  bottom: 0;
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  transform-origin: bottom right;
+  transform: scaleX(0);
+  transition: transform 150ms ease-out;
+  width: 100%;
+}
+
+#primary-footer a:hover::after,
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}

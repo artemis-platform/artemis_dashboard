@@ -79,63 +79,6 @@ table th a {
   }
 }
 
-// Underline Animation on Links
-
-.hover-underline-animation {
-  display: inline-block;
-  position: relative;
-  color: $blue;
-}
-
-.hover-underline-animation::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  transform: scaleX(0);
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: $blue;
-  transform-origin: bottom right;
-  transition: transform 0.25s ease-out;
-}
-
-.hover-underline-animation:hover::after {
-  transform: scaleX(1);
-  transform-origin: bottom left;
-}
-
-// Bouncing Loader in Pure CSS
-
-@keyframes bouncing-loader {
-  to {
-    opacity: 0.1;
-    transform: translate3d(0, -1rem, 0);
-  }
-}
-
-.bouncing-loader {
-  display: flex;
-  justify-content: center;
-}
-
-.bouncing-loader > div {
-  width: 1rem;
-  height: 1rem;
-  margin: 3rem 0.2rem;
-  background: #8385aa;
-  border-radius: 50%;
-  animation: bouncing-loader 0.6s infinite alternate;
-}
-
-.bouncing-loader > div:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.bouncing-loader > div:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
 /* === Components === */
 
 .search-summary {
@@ -149,6 +92,28 @@ table th a {
     &::after {
       display: none;
     }
+  }
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+
+  .page-summary {
+    align-self: center;
+  }
+
+  .pagination {
+    font-size: 0.92857143rem;
+  }
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+
+  .table-actions {
+    align-self: center;
   }
 }
 

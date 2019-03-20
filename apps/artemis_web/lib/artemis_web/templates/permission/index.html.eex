@@ -17,9 +17,12 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
-
-  <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
+  <div class="table-header">
+    <%= render_search @conn %>
+    <div class="table-actions">
+      <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
+    </div>
+  </div>
 
   <%=
     render_data_table(
