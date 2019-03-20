@@ -5,156 +5,38 @@
       Artemis Dashboard
     </a>
     <nav id="primary-navigation" role="navigation">
+      <% nav_items = nav_items_for_current_user(@user) %>
       <ul>
-        <li>
-          <a href="#">
-            Customers
-            <i class="angle down icon"></i>
-          </a>
-          <div class="dropdown">
-            <header>
-              <h3>Customers</h3>
-              <p>One sentence overview of what is found in the Customer section.</p>
-            </header>
-            <article>
-              <h5>Customers</h5>
-              <ul>
-                <li><a href="#">List Customers</a></li>
-                <li><a href="#">Create Customer</a></li>
-              </ul>
-            </article>
-          </div>
-        </li>
-        <li>
-          <a href="#">
-            Clouds
-            <i class="angle down icon"></i>
-          </a>
-          <div class="dropdown">
-            <header>
-              <h3>Clouds</h3>
-              <p>One sentence overview of what is found in the Clouds section.</p>
-            </header>
-            <article>
-              <h5>Clouds</h5>
-              <ul>
-                <li><a href="#">List Clouds</a></li>
-              </ul>
-            </article>
-          </div>
-        </li>
-        <li>
-          <a href="#">
-            Sales
-            <i class="angle down icon"></i>
-          </a>
-          <div class="dropdown">
-            <header>
-              <h3>Sales</h3>
-              <p>One sentence overview of what is found in the Sales section.</p>
-            </header>
-            <article>
-              <h5>Sales</h5>
-              <ul>
-                <li><a href="#">List Sales</a></li>
-              </ul>
-            </article>
-          </div>
-        </li>
-        <li>
-          <a href="<%= Routes.user_path(@conn, :index) %>">
-            Users
-            <i class="angle down icon"></i>
-          </a>
-          <div class="dropdown">
-            <header>
-              <h3>Users</h3>
-              <p>One sentence overview of what is found in the Sales section.</p>
-            </header>
-            <article>
-              <h5>Users</h5>
-              <ul>
-                <li>
-                  <a href="<%= Routes.user_path(@conn, :index) %>">
-                    List Users
-                  </a>
-                </li>
-                <li>
-                  <a href="<%= Routes.user_path(@conn, :new) %>">
-                    Create User
-                  </a>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <h5>Roles</h5>
-              <ul>
-                <li>
-                  <a href="<%= Routes.role_path(@conn, :index) %>">
-                    List Roles
-                  </a>
-                </li>
-                <li>
-                  <a href="<%= Routes.role_path(@conn, :new) %>">
-                    Create Role
-                  </a>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <h5>Permissions</h5>
-              <ul>
-                <li>
-                  <a href="<%= Routes.permission_path(@conn, :index) %>">
-                    List Permissions
-                  </a>
-                </li>
-                <li>
-                  <a href="<%= Routes.permission_path(@conn, :new) %>">
-                    Create Permission
-                  </a>
-                </li>
-              </ul>
-            </article>
-          </div>
-        </li>
-        <li>
-          <a href="<%= Routes.user_path(@conn, :index) %>">
-            Site
-            <i class="angle down icon"></i>
-          </a>
-          <div class="dropdown">
-            <header>
-              <h3>Site</h3>
-              <p>One sentence overview of what is found in the System section.</p>
-            </header>
-            <article>
-              <h5>Event Logs</h5>
-              <ul>
-                <li>
-                  <a href="<%= Routes.event_log_path(@conn, :index) %>">
-                    List Event Logs
-                  </a>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <h5>Features</h5>
-              <ul>
-                <li>
-                  <a href="<%= Routes.feature_path(@conn, :index) %>">
-                    List Features
-                  </a>
-                </li>
-                <li>
-                  <a href="<%= Routes.feature_path(@conn, :new) %>">
-                    Create Feature
-                  </a>
-                </li>
-              </ul>
-            </article>
-          </div>
-        </li>
+        <%= if render_primary_nav_section?(nav_items, ["Users", "Roles", "Permissions"]) do %>
+          <li>
+            <a href="<%= Routes.user_path(@conn, :index) %>">
+              Users
+              <i class="angle down icon"></i>
+            </a>
+            <div class="dropdown">
+              <header>
+                <h3>Users</h3>
+                <p>Tools to manage site users and user access.</p>
+              </header>
+              <%= render_primary_nav_section(@conn, nav_items, ["Users", "Roles", "Permissions"]) %>
+            </div>
+          </li>
+        <% end %>
+        <%= if render_primary_nav_section?(nav_items, ["Event Log", "Features"]) do %>
+          <li>
+            <a href="<%= Routes.user_path(@conn, :index) %>">
+              Site
+              <i class="angle down icon"></i>
+            </a>
+            <div class="dropdown">
+              <header>
+                <h3>Site</h3>
+                <p>Administrative tools to manage the site.</p>
+              </header>
+              <%= render_primary_nav_section(@conn, nav_items, ["Event Log", "Features"]) %>
+            </div>
+          </li>
+        <% end %>
       </ul>
     </nav>
 

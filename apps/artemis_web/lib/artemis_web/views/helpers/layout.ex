@@ -80,6 +80,42 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   end
 
   @doc """
+
+  """
+  def render_primary_nav_section?(nav_items, keys) do
+    allowed_keys = Keyword.keys(nav_items)
+
+    Enum.any?(keys, fn (key) ->
+      Enum.member?(allowed_keys, String.to_atom(key))
+    end)
+  end
+
+  def render_primary_nav_section(conn, nav_items, keys) do
+    requested_keys = Enum.map(keys, &String.to_atom/1)
+    allowed_keys = Keyword.keys(nav_items)
+    section_keys = Enum.filter(requested_keys, &Enum.member?(allowed_keys, &1))
+
+    Enum.map(section_keys, fn (section) ->
+      entries = Keyword.get(nav_items, section)
+      links = Enum.map(entries, fn (item) ->
+        label = Keyword.get(item, :label)
+        path = Keyword.get(item, :path)
+
+        content_tag(:li) do
+          link(label, to: path.(conn))
+        end
+      end)
+
+      content_tag(:article) do
+        [
+          content_tag(:h5, section),
+          content_tag(:ul, links)
+        ]
+      end
+    end)
+  end
+
+  @doc """
   Generates footer nav from nav items
   """
   def render_footer_nav(conn, user) do
@@ -120,6 +156,7 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   @doc """
   Filter nav items by current users permissions
   """
+  def nav_items_for_current_user(nil), do: []
   def nav_items_for_current_user(user) do
     Enum.reduce(nav_items(), [], fn ({section, potential_items}, acc) ->
       verified_items = Enum.filter(potential_items, fn (item) ->
