@@ -8,7 +8,8 @@ defmodule Artemis.Search do
     "features" => [function: &Artemis.ListFeatures.call/2, permissions: "features:list"],
     "permissions" => [function: &Artemis.ListPermissions.call/2, permissions: "permissions:list"],
     "roles" => [function: &Artemis.ListRoles.call/2, permissions: "roles:list"],
-    "users" => [function: &Artemis.ListUsers.call/2, permissions: "users:list"]
+    "users" => [function: &Artemis.ListUsers.call/2, permissions: "users:list"],
+    "wiki_pages" => [function: &Artemis.ListWikiPages.call/2, permissions: "wiki-pages:list"]
   }
 
   def call(params, user) do

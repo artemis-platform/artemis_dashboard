@@ -16,6 +16,13 @@ defmodule ArtemisWeb.ViewData.Layout do
   """
   def nav_items do
     Enum.reverse([
+      "Documentation": [
+        [
+          label: "View Documentation",
+          path: &Routes.wiki_page_path(&1, :index),
+          verify: &has?(&1, "wiki-pages:list")
+        ]
+      ],
       "Event Log": [
         [
           label: "View Event Log",

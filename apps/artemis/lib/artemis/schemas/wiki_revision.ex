@@ -3,6 +3,7 @@ defmodule Artemis.WikiRevision do
 
   schema "wiki_revisions" do
     field :body, :string
+    field :body_html, :string
     field :slug, :string
     field :title, :string
 
@@ -16,6 +17,7 @@ defmodule Artemis.WikiRevision do
 
   def updatable_fields, do: [
     :body,
+    :body_html,
     :slug,
     :title,
     :user_id,

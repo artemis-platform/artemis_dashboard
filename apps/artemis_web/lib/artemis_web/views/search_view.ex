@@ -4,10 +4,26 @@ defmodule ArtemisWeb.SearchView do
   alias ArtemisWeb.Router.Helpers, as: Routes
 
   @search_links %{
-    "features" => &Routes.feature_path/3,
-    "permissions" => &Routes.permission_path/3,
-    "roles" => &Routes.role_path/3,
-    "users" => &Routes.user_path/3
+    "wiki_pages" => [
+      label: "Documentation",
+      path: &Routes.wiki_page_path/3
+    ],
+    "features" => [
+      label: "Features",
+      path: &Routes.feature_path/3
+    ],
+    "permissions" => [
+      label: "Permissions",
+      path: &Routes.permission_path/3
+    ],
+    "roles" => [
+      label: "Roles",
+      path: &Routes.role_path/3
+    ],
+    "users" => [
+      label: "Users",
+      path: &Routes.user_path/3
+    ]
   }
 
   def search_results?(%{total_entries: total_entries}), do: total_entries > 0
@@ -19,17 +35,22 @@ defmodule ArtemisWeb.SearchView do
 
   def search_anchor(key), do: "anchor-#{key}"
 
-  def search_title(data) do
-    Artemis.Helpers.titlecase(data)
+  def search_label(key) do
+    @search_links
+    |> Map.get(key, [])
+    |> Keyword.get(:label)
   end
 
   def search_total(data) do
     Map.get(data, :total_entries)
   end
 
-  def search_link(conn, key, data) do
+  def search_link(conn, data, key) do
     label = "View " <> search_matches_text(data)
-    to = Map.get(@search_links, key).(conn, :index, current_query_params(conn))
+    path = @search_links
+      |> Map.get(key, [])
+      |> Keyword.get(:path)
+    to = path.(conn, :index, current_query_params(conn))
 
     action(label, to: to)
   end
@@ -72,6 +93,13 @@ defmodule ArtemisWeb.SearchView do
       title: data.name,
       permission: "users:show",
       link: fn (conn) -> Routes.user_path(conn, :show, data) end
+    }
+  end
+  defp search_entry(%Artemis.WikiPage{} = data) do
+    %{
+      title: data.title,
+      permission: "wiki-pages:show",
+      link: fn (conn) -> Routes.wiki_page_path(conn, :show, data) end
     }
   end
 

@@ -176,3 +176,23 @@ table th a {
     }
   }
 }
+
+/* === Components - Documentation Page === */
+
+#wiki-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  article {
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.75rem;
+    max-width: 60rem;
+    padding-right: 2rem;
+  }
+
+  aside {
+    min-width: 300px;
+  }
+}

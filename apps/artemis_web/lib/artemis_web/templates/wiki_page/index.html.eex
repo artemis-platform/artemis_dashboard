@@ -1,0 +1,59 @@
+<div id="content-header">
+  <header>
+    <h1>Documentation</h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "wiki-pages:create") do %>
+        <%= action "New", to: Routes.wiki_page_path(@conn, :new), color: "blue" %>
+      <% end %>
+    </div>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <%= render_search @conn %>
+
+  <table class="ui table selectable">
+    <thead>
+      <tr>
+        <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
+        <th><%= sortable_table_header(@conn, "title", "Title") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render_table_row_if_empty(@wiki_pages.entries) %>
+      <%= for wiki_page <- @wiki_pages.entries do %>
+        <tr>
+          <td>
+            <%= if has?(@conn, "wiki-pages:show") do %>
+              <%= link wiki_page.slug, to: Routes.wiki_page_path(@conn, :show, wiki_page) %>
+            <% else %>
+              <%= wiki_page.slug %>
+            <% end %>
+          </td>
+          <td><%= wiki_page.title %></td>
+          <td>
+            <%= if has?(@conn, "wiki-pages:show") do %>
+              <%= link "Show", to: Routes.wiki_page_path(@conn, :show, wiki_page, wiki_page.slug) %>
+            <% end %>
+            <%= if has?(@conn, "wiki-pages:update") do %>
+              <%= link "Edit", to: Routes.wiki_page_path(@conn, :edit, wiki_page) %>
+            <% end %>
+            <%= if has?(@conn, "wiki-pages:delete") do %>
+              <%= link "Delete", to: Routes.wiki_page_path(@conn, :delete, wiki_page), method: :delete, data: [confirm: "Are you sure?"] %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= render_pagination @conn, @wiki_pages %>
+</div>

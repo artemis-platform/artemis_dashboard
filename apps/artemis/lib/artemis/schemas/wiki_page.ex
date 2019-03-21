@@ -3,6 +3,7 @@ defmodule Artemis.WikiPage do
 
   schema "wiki_pages" do
     field :body, :string
+    field :body_html, :string
     field :slug, :string
     field :title, :string
 
@@ -15,6 +16,7 @@ defmodule Artemis.WikiPage do
 
   def updatable_fields, do: [
     :body,
+    :body_html,
     :slug,
     :title,
     :user_id

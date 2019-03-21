@@ -11,4 +11,7 @@ config :artemis,
     email: System.get_env("ARTEMIS_SYSTEM_EMAIL")
   }
 
+config :slugger, separator_char: ?-
+config :slugger, replacement_file: "lib/replacements.exs"
+
 import_config "#{Mix.env()}.exs"

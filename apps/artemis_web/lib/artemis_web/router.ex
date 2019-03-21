@@ -36,6 +36,10 @@ defmodule ArtemisWeb.Router do
     scope "/" do
       pipe_through :require_auth
 
+      resources "/docs", WikiPageController do
+        resources "/revisions", WikiRevisionController, only: [:index, :show, :delete]
+      end
+      get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]
       resources "/features", FeatureController
       resources "/permissions", PermissionController
