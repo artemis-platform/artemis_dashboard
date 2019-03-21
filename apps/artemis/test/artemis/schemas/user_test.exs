@@ -8,8 +8,10 @@ defmodule Artemis.UserTest do
   alias Artemis.Repo
   alias Artemis.User
   alias Artemis.UserRole
+  alias Artemis.WikiPage
+  alias Artemis.WikiRevision
 
-  @preload [:roles, :user_roles]
+  @preload [:roles, :user_roles, :wiki_pages, :wiki_revisions]
 
   describe "attributes - constraints" do
     test "email must be unique" do
@@ -70,6 +72,124 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.user_roles, fn (user_role) ->
         assert Repo.get(UserRole, user_role.id) == nil
+      end)
+    end
+  end
+
+  describe "associations - wiki pages" do
+    setup do
+      user = :user
+        |> insert
+        |> with_wiki_pages
+
+      {:ok, user: Repo.preload(user, @preload)}
+    end
+
+    test "cannot update associations through parent", %{user: user} do
+      new_wiki_page = insert(:wiki_page, user: user)
+
+      user = User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert length(user.wiki_pages) == 4
+
+      {:ok, updated} = user
+        |> User.associations_changeset(%{wiki_pages: [new_wiki_page]})
+        |> Repo.update
+
+      updated = Repo.preload(updated, @preload)
+
+      assert length(updated.wiki_pages) == 4
+    end
+
+    test "deleting association does not remove record", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.wiki_pages) == 3
+
+      Enum.map(user.wiki_pages, &Repo.delete(&1))
+
+      user = User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert Repo.get(User, user.id) != nil
+      assert length(user.wiki_pages) == 0
+    end
+
+    test "deleting record nilifies associations", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.wiki_pages) == 3
+
+      Enum.map(user.wiki_pages, fn (wiki_page) ->
+        assert Repo.get(WikiPage, wiki_page.id).user_id == user.id
+      end)
+
+      Repo.delete(user)
+
+      assert Repo.get(User, user.id) == nil
+
+      Enum.map(user.wiki_pages, fn (wiki_page) ->
+        assert Repo.get(WikiPage, wiki_page.id).user_id == nil
+      end)
+    end
+  end
+
+  describe "associations - wiki revisions" do
+    setup do
+      user = :user
+        |> insert
+        |> with_wiki_revisions
+
+      {:ok, user: Repo.preload(user, @preload)}
+    end
+
+    test "cannot update associations through parent", %{user: user} do
+      new_wiki_revision = insert(:wiki_revision, user: user)
+
+      user = User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert length(user.wiki_revisions) == 4
+
+      {:ok, updated} = user
+        |> User.associations_changeset(%{wiki_revisions: [new_wiki_revision]})
+        |> Repo.update
+
+      updated = Repo.preload(updated, @preload)
+
+      assert length(updated.wiki_revisions) == 4
+    end
+
+    test "deleting association does not remove record", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.wiki_revisions) == 3
+
+      Enum.map(user.wiki_revisions, &Repo.delete(&1))
+
+      user = User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert Repo.get(User, user.id) != nil
+      assert length(user.wiki_revisions) == 0
+    end
+
+    test "deleting record nilifies associations", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.wiki_revisions) == 3
+
+      Enum.map(user.wiki_revisions, fn (wiki_revision) ->
+        assert Repo.get(WikiRevision, wiki_revision.id).user_id == user.id
+      end)
+
+      Repo.delete(user)
+
+      assert Repo.get(User, user.id) == nil
+
+      Enum.map(user.wiki_revisions, fn (wiki_revision) ->
+        assert Repo.get(WikiRevision, wiki_revision.id).user_id == nil
       end)
     end
   end
