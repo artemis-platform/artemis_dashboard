@@ -1,7 +1,7 @@
 <div id="content-header">
   <header>
     <h1>
-      <%= @wiki_page.title %>
+      Documentation
     </h1>
 
     <div class="actions">
@@ -27,7 +27,10 @@
 
   <section id="wiki-page">
     <article>
-      <%= raw(@wiki_page.body_html) %>
+      <h1><%= @wiki_page.title %></h1>
+      <content>
+        <%= raw(@wiki_page.body_html) %>
+      </content>
     </article>
     <aside>
       Hello World

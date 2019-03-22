@@ -4,10 +4,13 @@ defmodule Artemis.WikiPage do
   schema "wiki_pages" do
     field :body, :string
     field :body_html, :string
+    field :section, :string
     field :slug, :string
     field :title, :string
+    field :weight, :integer
 
     belongs_to :user, Artemis.User
+    has_many :wiki_revisions, Artemis.WikiRevision, on_delete: :delete_all
 
     timestamps()
   end
@@ -17,12 +20,15 @@ defmodule Artemis.WikiPage do
   def updatable_fields, do: [
     :body,
     :body_html,
+    :section,
     :slug,
     :title,
+    :weight,
     :user_id
   ]
 
   def required_fields, do: [
+    :section,
     :slug,
     :title
   ]

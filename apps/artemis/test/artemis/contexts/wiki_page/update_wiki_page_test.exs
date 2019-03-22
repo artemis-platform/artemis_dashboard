@@ -4,6 +4,7 @@ defmodule Artemis.UpdateWikiPageTest do
   import Artemis.Factories
 
   alias Artemis.UpdateWikiPage
+  alias Artemis.WikiPage
 
   describe "call!" do
     test "raises an exception when id not found" do
@@ -76,6 +77,39 @@ defmodule Artemis.UpdateWikiPageTest do
       {:ok, updated} = UpdateWikiPage.call(wiki_page.id, params, Mock.system_user())
 
       assert updated.title == params.title
+    end
+  end
+
+  describe "associations - wiki revisions" do
+    test "creates an associated wiki revision" do
+      params = params_for(:wiki_page)
+      wiki_page = :wiki_page
+        |> insert()
+        |> Repo.preload([:wiki_revisions])
+
+      assert wiki_page.wiki_revisions == []
+
+      {:ok, wiki_page} = UpdateWikiPage.call(wiki_page, params, Mock.system_user())
+
+      wiki_page = WikiPage
+        |> preload([:wiki_revisions])
+        |> Repo.get(wiki_page.id)
+
+      assert length(wiki_page.wiki_revisions) == 1
+
+      assert hd(wiki_page.wiki_revisions).title == wiki_page.title
+      assert hd(wiki_page.wiki_revisions).wiki_page_id == wiki_page.id
+
+      # Second Update
+
+      {:ok, wiki_page} = UpdateWikiPage.call(wiki_page, params, Mock.system_user())
+
+      wiki_page = WikiPage
+        |> preload([:wiki_revisions])
+        |> Repo.get(wiki_page.id)
+
+      assert wiki_page.wiki_revisions != []
+      assert length(wiki_page.wiki_revisions) == 2
     end
   end
 

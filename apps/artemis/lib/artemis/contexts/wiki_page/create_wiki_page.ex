@@ -31,12 +31,14 @@ defmodule Artemis.CreateWikiPage do
 
   defp create_params(params) do
     params = Artemis.Helpers.keys_to_strings(params)
-    html = params
-      |> Map.get("body", "")
-      |> Earmark.as_html!()
-    slug = params
-      |> Map.get("title", "")
-      |> Artemis.Helpers.generate_slug()
+    html = case Map.get(params, "body") do
+      nil -> nil
+      body -> Earmark.as_html!(body)
+    end
+    slug = case Map.get(params, "title") do
+      nil -> nil
+      title -> Artemis.Helpers.generate_slug(title)
+    end
 
     params
     |> Map.put("body_html", html)

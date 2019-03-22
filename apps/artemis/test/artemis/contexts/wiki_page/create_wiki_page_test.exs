@@ -37,6 +37,21 @@ defmodule Artemis.CreateWikiPageTest do
     end
   end
 
+  describe "associations - wiki revisions" do
+    test "creates an associated wiki revision" do
+      params = params_for(:wiki_page)
+
+      {:ok, wiki_page} = CreateWikiPage.call(params, Mock.system_user())
+
+      wiki_page = Repo.preload(wiki_page, [:wiki_revisions])
+
+      assert wiki_page.wiki_revisions != []
+
+      assert hd(wiki_page.wiki_revisions).title == wiki_page.title
+      assert hd(wiki_page.wiki_revisions).wiki_page_id == wiki_page.id
+    end
+  end
+
   describe "broadcasts" do
     test "publishes event and record" do
       ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())

@@ -5,6 +5,16 @@
   </div>
 
   <div class="field">
+    <%= label_with_errors f, :section %>
+    <%= text_input f, :section, placeholder: "Section" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :weight %>
+    <%= text_input f, :weight, placeholder: "Weight" %>
+  </div>
+
+  <div class="field">
     <%= label_with_errors f, :body %>
     <%= textarea f, :body %>
   </div>

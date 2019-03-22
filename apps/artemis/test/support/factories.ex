@@ -45,18 +45,22 @@ defmodule Artemis.Factories do
   def wiki_page_factory do
     %Artemis.WikiPage{
       body: Faker.Lorem.paragraph(),
+      section: Faker.Name.name(),
       slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
-      user: insert(:user)
+      user: insert(:user),
+      weight: :rand.uniform(100)
     }
   end
 
   def wiki_revision_factory do
     %Artemis.WikiRevision{
       body: Faker.Lorem.paragraph(),
+      section: Faker.Name.name(),
       slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
       user: insert(:user),
+      weight: :rand.uniform(100),
       wiki_page: insert(:wiki_page)
     }
   end

@@ -4,8 +4,10 @@ defmodule Artemis.WikiRevision do
   schema "wiki_revisions" do
     field :body, :string
     field :body_html, :string
+    field :section, :string
     field :slug, :string
     field :title, :string
+    field :weight, :integer
 
     belongs_to :user, Artemis.User
     belongs_to :wiki_page, Artemis.WikiPage
@@ -18,13 +20,16 @@ defmodule Artemis.WikiRevision do
   def updatable_fields, do: [
     :body,
     :body_html,
+    :section,
     :slug,
     :title,
+    :weight,
     :user_id,
     :wiki_page_id
   ]
 
   def required_fields, do: [
+    :section,
     :slug,
     :title
   ]
