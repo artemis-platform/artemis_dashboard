@@ -24,7 +24,7 @@
       <%= raw(@wiki_revision.body_html) %>
     </article>
     <aside>
-      Hello World
+
     </aside>
   </section>
 </div>

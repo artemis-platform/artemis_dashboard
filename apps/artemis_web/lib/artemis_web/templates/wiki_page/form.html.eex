@@ -6,7 +6,7 @@
 
   <div class="field">
     <%= label_with_errors f, :section %>
-    <%= text_input f, :section, placeholder: "Section" %>
+    <%= select f, :section, @sections, class: "enhanced search creatable", placeholder: "Section" %>
   </div>
 
   <div class="field">

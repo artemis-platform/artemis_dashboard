@@ -19,41 +19,21 @@
 
   <%= render_search @conn %>
 
-  <table class="ui table selectable">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
-        <th><%= sortable_table_header(@conn, "title", "Title") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@wiki_pages.entries) %>
-      <%= for wiki_page <- @wiki_pages.entries do %>
-        <tr>
-          <td>
-            <%= if has?(@conn, "wiki-pages:show") do %>
-              <%= link wiki_page.slug, to: Routes.wiki_page_path(@conn, :show, wiki_page) %>
-            <% else %>
-              <%= wiki_page.slug %>
-            <% end %>
-          </td>
-          <td><%= wiki_page.title %></td>
-          <td>
-            <%= if has?(@conn, "wiki-pages:show") do %>
-              <%= link "Show", to: Routes.wiki_page_path(@conn, :show, wiki_page, wiki_page.slug) %>
-            <% end %>
-            <%= if has?(@conn, "wiki-pages:update") do %>
-              <%= link "Edit", to: Routes.wiki_page_path(@conn, :edit, wiki_page) %>
-            <% end %>
-            <%= if has?(@conn, "wiki-pages:delete") do %>
-              <%= link "Delete", to: Routes.wiki_page_path(@conn, :delete, wiki_page), method: :delete, data: [confirm: "Are you sure?"] %>
-            <% end %>
-          </td>
-        </tr>
+  <h2>Topics</h2>
+
+  <% sections = Enum.group_by(@wiki_pages.entries, &(&1.section)) %>
+  <%= Enum.map sections, fn ({section, entries}) -> %>
+    <h3><%= section %></h3>
+
+    <ul>
+      <% sorted = Enum.sort_by(entries, &(&1.weight)) %>
+      <%= Enum.map sorted, fn (entry) -> %>
+        <li>
+          <%= link entry.title, to: Routes.wiki_page_path(@conn, :show, entry, entry.slug) %>
+        </li>
       <% end %>
-    </tbody>
-  </table>
+    </ul>
+  <% end %>
 
   <%= render_pagination @conn, @wiki_pages %>
 </div>

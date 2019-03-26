@@ -8,6 +8,7 @@ defmodule ArtemisWeb.WikiPageController do
   alias Artemis.UpdateWikiPage
   alias Artemis.WikiPage
 
+  @default_section "General"
   @preload []
 
   def index(conn, params) do
@@ -23,8 +24,9 @@ defmodule ArtemisWeb.WikiPageController do
     authorize(conn, "wiki-pages:create", fn () ->
       wiki_page = %WikiPage{}
       changeset = WikiPage.changeset(wiki_page)
+      sections = get_sections()
 
-      render(conn, "new.html", changeset: changeset, wiki_page: wiki_page)
+      render(conn, "new.html", changeset: changeset, sections: sections, wiki_page: wiki_page)
     end)
   end
 
@@ -38,8 +40,9 @@ defmodule ArtemisWeb.WikiPageController do
 
         {:error, %Ecto.Changeset{} = changeset} ->
           wiki_page = %WikiPage{}
+          sections = get_sections()
 
-          render(conn, "new.html", changeset: changeset, wiki_page: wiki_page)
+          render(conn, "new.html", changeset: changeset, sections: sections, wiki_page: wiki_page)
       end
     end)
   end
@@ -56,8 +59,9 @@ defmodule ArtemisWeb.WikiPageController do
     authorize(conn, "wiki-pages:update", fn () ->
       wiki_page = GetWikiPage.call(id, current_user(conn), preload: @preload)
       changeset = WikiPage.changeset(wiki_page)
+      sections = get_sections()
 
-      render(conn, "edit.html", changeset: changeset, wiki_page: wiki_page)
+      render(conn, "edit.html", changeset: changeset, sections: sections, wiki_page: wiki_page)
     end)
   end
 
@@ -71,8 +75,9 @@ defmodule ArtemisWeb.WikiPageController do
 
         {:error, %Ecto.Changeset{} = changeset} ->
           wiki_page = GetWikiPage.call(id, current_user(conn), preload: @preload)
+          sections = get_sections()
 
-          render(conn, "edit.html", changeset: changeset, wiki_page: wiki_page)
+          render(conn, "edit.html", changeset: changeset, sections: sections, wiki_page: wiki_page)
       end
     end)
   end
@@ -85,5 +90,20 @@ defmodule ArtemisWeb.WikiPageController do
       |> put_flash(:info, "Page deleted successfully.")
       |> redirect(to: Routes.wiki_page_path(conn, :index))
     end)
+  end
+
+  # Helpers
+
+  defp get_sections do
+    sections = WikiPage.unique_values_for(:section)
+
+    case Enum.member?(sections, @default_section) do
+      true ->
+        omitted = List.delete(sections, @default_section)
+
+        [@default_section|omitted]
+      false ->
+        [@default_section|sections]
+    end
   end
 end

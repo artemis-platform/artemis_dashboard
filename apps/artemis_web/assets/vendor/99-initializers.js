@@ -8,8 +8,8 @@
 //
 // For example, to add a search bar add the `search` class:
 //
-//   <%= select f, :example, [1, 2], class: "enhanced search" %> 
-// 
+//   <%= select f, :example, [1, 2], class: "enhanced search" %>
+//
 function initializeSelect2() {
 
   $('select.enhanced').each(function() {
@@ -17,10 +17,12 @@ function initializeSelect2() {
     var classes = item.attr('class').split(' ')
     var options = {}
 
-    // Options - Search
+    // Options
+    var hasCreate = classes.includes('creatable') || classes.includes('tags')
     var hasSearch = classes.includes('search')
 
     options.minimumResultsForSearch = hasSearch ? 0 : Infinity
+    options.tags = hasCreate
 
     // Initialize
     item.select2(options)

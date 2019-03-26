@@ -185,11 +185,32 @@ table th a {
   justify-content: space-between;
 
   article {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 300;
-    line-height: 1.75rem;
-    max-width: 60rem;
+    line-height: 1.5rem;
     padding-right: 2rem;
+    width: 100%;
+
+    * {
+      max-width: 42em;
+    }
+
+    p {
+      margin: 0 0 1.75rem 0;
+    }
+
+    pre {
+      border-radius: 4px;
+      max-width: 100% !important;
+      max-width: 60em !important;
+
+      code {
+        border-radius: 4px;
+        font-size: 0.875rem;
+        max-width: 100% !important;
+        padding: 1rem;
+      }
+    }
   }
 
   aside {
