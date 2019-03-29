@@ -16,8 +16,8 @@
   <table class="ui table selectable">
     <thead>
       <tr>
-        <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
         <th><%= sortable_table_header(@conn, "title", "Title") %></th>
+        <th><%= sortable_table_header(@conn, "inserted_at", "Created On") %></th>
         <th></th>
       </tr>
     </thead>
@@ -27,12 +27,12 @@
         <tr>
           <td>
             <%= if has?(@conn, "wiki-revisions:show") do %>
-              <%= link wiki_revision.slug, to: Routes.wiki_page_wiki_revision_path(@conn, :show, @wiki_page, wiki_revision) %>
+              <%= link wiki_revision.title, to: Routes.wiki_page_wiki_revision_path(@conn, :show, @wiki_page, wiki_revision) %>
             <% else %>
-              <%= wiki_revision.slug %>
+              <%= wiki_revision.title %>
             <% end %>
           </td>
-          <td><%= wiki_revision.title %></td>
+          <td><%= render_date_time(wiki_revision.inserted_at) %></td>
           <td>
             <%= if has?(@conn, "wiki-revisions:show") do %>
               <%= link "Show", to: Routes.wiki_page_wiki_revision_path(@conn, :show, @wiki_page, wiki_revision) %>

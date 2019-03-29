@@ -35,7 +35,7 @@ defmodule Artemis.ListWikiRevisions do
   end
   defp filter_query(query, _params, _user), do: query
 
-  defp filter(query, "wiki_page", value), do: where(query, [wr], wr.wiki_page_id == ^value)
+  defp filter(query, "wiki_page_id", value), do: where(query, [wr], wr.wiki_page_id == ^value)
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)

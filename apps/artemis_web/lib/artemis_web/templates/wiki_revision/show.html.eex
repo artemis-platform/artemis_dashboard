@@ -1,7 +1,7 @@
 <div id="content-header">
   <header>
     <h1>
-      <%= @wiki_revision.title %>
+      Documentation Revision
     </h1>
 
     <div class="actions">
@@ -19,6 +19,8 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
+  <%= render_wiki_revision_notice(@conn, @wiki_page, @wiki_revision) %>
+
   <section id="wiki-page">
     <aside>
       <div class="ui sticky">
@@ -35,7 +37,7 @@
       </div>
     </aside>
     <article>
-      <h1><%= @wiki_page.title %></h1>
+      <h1><%= @wiki_revision.title %></h1>
       <content>
         <%= raw(@wiki_revision.body_html) %>
       </content>

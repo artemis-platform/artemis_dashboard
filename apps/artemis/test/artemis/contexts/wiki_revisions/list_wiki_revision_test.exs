@@ -56,7 +56,7 @@ defmodule Artemis.ListWikiRevisionsTest do
 
       params = %{
         filters: %{
-          wiki_page: wiki_page.id
+          wiki_page_id: wiki_page.id
         }
       }
       results = ListWikiRevisions.call(params, Mock.system_user())

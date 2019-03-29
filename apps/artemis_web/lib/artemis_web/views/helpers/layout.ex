@@ -80,12 +80,17 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   end
 
   @doc """
-  Safely print date in human readable format
+  Print date in human readable format
   """
   def render_date(value, format \\ "{Mfull} {D}, {YYYY}") do
     Timex.format!(value, format)
-  rescue
-    _ -> nil
+  end
+
+  @doc """
+  Print date in human readable format
+  """
+  def render_date_time(value, format \\ "{Mfull} {D}, {YYYY} at {h12}:{m}{am}") do
+    Timex.format!(value, format)
   end
 
   @doc """
