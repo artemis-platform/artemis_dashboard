@@ -81,6 +81,14 @@ table th a {
 
 /* === Components === */
 
+.search-resource {
+
+
+  &.full-width > div {
+    width: 100%;
+  }
+}
+
 .search-summary {
 
   .link.step {
@@ -189,6 +197,7 @@ table th a {
     font-weight: 300;
     line-height: 1.5rem;
     padding-right: 2rem;
+    width: 100%;
 
     * {
       max-width: 42rem;
@@ -200,12 +209,12 @@ table th a {
 
     pre {
       border-radius: 4px;
-      max-width: 100% !important;
+      max-width: 60rem !important;
 
       code {
         border-radius: 4px;
         font-size: 0.875rem;
-        max-width: 100% !important;
+        max-width: 60rem !important;
         padding: 1rem;
       }
     }
@@ -214,24 +223,30 @@ table th a {
   aside {
     padding: 0 4rem 0 0;
     position: relative;
-    width: 300px;
+    width: 320px;
 
     .actions {
+      border-top: 1px solid #e2e2e2;
       color: rgba(0, 0, 0, 0.70);
       font-size: 0.875rem;
       font-weight: 600;
-      margin: 0.5rem 0 0 0;
+      margin: 0 0 0 0;
+      padding: 1rem 0 0 0;
     }
 
     nav.page-sections ul {
-      border-bottom: 1px solid #e2e2e2;
       font-size: 13px;
       list-style: none;
-      margin: 0 0 1rem 0;
+      margin: 0 0 0 -2rem;
       padding: 0 0 1rem 0;
 
       li {
-        padding: 0 0.5rem 0 0;
+        border-left: 4px solid #fff;
+        padding: 0 0.5rem 0 calc(2rem - 4px);
+
+        &:last-child {
+          padding-bottom: 0;
+        }
       }
 
       li a {
@@ -271,7 +286,7 @@ table th a {
       }
 
       li.highlight {
-        border-right: 2px solid $purple;
+        border-left: 4px solid $purple;
 
         a {
           font-weight: 700;

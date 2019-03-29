@@ -17,7 +17,7 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <%= render_search @conn, placeholder: "Search Documentation", size: "full-width" %>
 
   <h2>Topics</h2>
 

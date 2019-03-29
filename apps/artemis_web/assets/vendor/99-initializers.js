@@ -103,7 +103,7 @@ function initializeWikiSidenav() {
     offsets.push(offset)
   })
 
-  var nav = links.length > 1 ? $('<ul></ul>').append(links) : null
+  var nav = links.length > 0 ? $('<ul></ul>').append(links) : null
 
   $('#wiki-page aside nav.page-sections').append(nav)
 
