@@ -32,7 +32,10 @@ defmodule ArtemisWeb.WikiPageController do
 
   def create(conn, %{"wiki_page" => params}) do
     authorize(conn, "wiki-pages:create", fn () ->
-      case CreateWikiPage.call(params, current_user(conn)) do
+      user = current_user(conn)
+      params = Map.put(params, "user_id", user.id)
+
+      case CreateWikiPage.call(params, user) do
         {:ok, wiki_page} ->
           conn
           |> put_flash(:info, "Page created successfully.")
@@ -67,7 +70,10 @@ defmodule ArtemisWeb.WikiPageController do
 
   def update(conn, %{"id" => id, "wiki_page" => params}) do
     authorize(conn, "wiki-pages:update", fn () ->
-      case UpdateWikiPage.call(id, params, current_user(conn)) do
+      user = current_user(conn)
+      params = Map.put(params, "user_id", user.id)
+
+      case UpdateWikiPage.call(id, params, user) do
         {:ok, wiki_page} ->
           conn
           |> put_flash(:info, "Page updated successfully.")

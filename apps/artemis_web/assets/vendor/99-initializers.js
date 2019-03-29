@@ -27,7 +27,9 @@ function initializeSelect2() {
     // Initialize
     item.select2(options)
   })
+}
 
+function initializeSearchSubmit() {
   // Semantic UI supports inline icons for inputs. For search forms, make the
   // inline search icon double as a submit button.
   $('form.ui').each(function() {
@@ -43,7 +45,9 @@ function initializeSelect2() {
       })
     })
   })
+}
 
+function initializeSidebars() {
   $('.open-sidebar-current-user').click(function(event) {
     if (event) {
       event.preventDefault()
@@ -64,6 +68,42 @@ function initializeSelect2() {
   })
 }
 
+function initializeWikiSidenav() {
+  var links = []
+  var sidenav = $('.sidenav')
+  var headings = $('#wiki-page h1, #wiki-page h2, #wiki-page h3, #wiki-page h4, #wiki-page h5')
+
+  headings.each(function() {
+    var label = $(this).html()
+    var tag = 'tag-' + this.nodeName
+    var position = $(this).offset().top
+    var link = $('<li class="' + tag + '"><a href="#sidebar-link">' + label + '</a></li>')
+
+    link.click(function(event) {
+      event.preventDefault()
+
+      $([document.documentElement, document.body]).animate({
+        scrollTop: position - 14
+      }, 200);
+    })
+
+    links.push(link)
+  })
+
+  var nav = links.length > 0 ? $('<ul></ul>').append(links) : null
+
+  $('#wiki-page aside nav.page-sections').append(nav)
+
+	$('#wiki-page .ui.sticky').sticky({
+	  offset: 28,
+	  bottomOffset: 0,
+    context: '#wiki-page'
+  })
+}
+
 $(document).ready(function() {
   initializeSelect2()
+  initializeSidebars()
+  initializeSearchSubmit()
+  initializeWikiSidenav()
 })

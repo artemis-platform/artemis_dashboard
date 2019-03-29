@@ -51,6 +51,7 @@ defmodule ArtemisWeb.MixProject do
       {:oauth2, "~> 0.9"},
       {:nimble_csv, "~> 0.5"},
       {:scrivener_html, "~> 1.8"},
+      {:timex, "~> 3.0"},
       {:artemis, in_umbrella: true},
       {:artemis_pubsub, in_umbrella: true},
       {:artemis_log, in_umbrella: true, only: :test}

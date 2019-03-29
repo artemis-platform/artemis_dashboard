@@ -6,7 +6,7 @@ defmodule Artemis.ListWikiRevisions do
   alias Artemis.Repo
   alias Artemis.WikiRevision
 
-  @default_order "slug"
+  @default_order "-updated_at"
   @default_page_size 25
   @default_preload [:user]
 
