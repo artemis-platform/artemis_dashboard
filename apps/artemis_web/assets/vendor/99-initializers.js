@@ -1,3 +1,14 @@
+function initializeMarkdownTextarea() {
+  $('textarea.markdown').each(function() {
+    var easyMDE = new EasyMDE({
+      element: this,
+      spellChecker: false,
+      showIcons: ['strikethrough', 'code', 'table', 'redo', 'heading', 'undo', 'heading-1', 'heading-2', 'heading-3', 'heading-4', 'heading-5', 'clean-block', 'horizontal-rule'],
+      status: false
+    });
+  })
+}
+
 // Select2
 //
 // The Select2 library adds enhanced functionality to the default `select` tags.
@@ -90,7 +101,7 @@ function initializeWikiSidenav() {
     links.push(link)
   })
 
-  var nav = links.length > 0 ? $('<ul></ul>').append(links) : null
+  var nav = links.length > 1 ? $('<ul></ul>').append(links) : null
 
   $('#wiki-page aside nav.page-sections').append(nav)
 
@@ -102,6 +113,7 @@ function initializeWikiSidenav() {
 }
 
 $(document).ready(function() {
+  initializeMarkdownTextarea()
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()

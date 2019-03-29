@@ -16,7 +16,7 @@
 
   <div class="field">
     <%= label_with_errors f, :body %>
-    <%= textarea f, :body %>
+    <%= textarea f, :body, class: "markdown" %>
   </div>
 
   <div>
