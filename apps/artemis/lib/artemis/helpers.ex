@@ -301,4 +301,23 @@ defmodule Artemis.Helpers do
 
     Map.merge(simple, nested)
   end
+
+  @doc """
+  Generate a slug value from bitstring
+  """
+  def generate_slug(value, limit \\ 80) do
+    slug = Slugger.slugify_downcase(value)
+
+    case is_number(limit) do
+      true -> Slugger.truncate_slug(slug, limit)
+      false -> slug
+    end
+  end
+
+  @doc """
+  Print entire value without truncation
+  """
+  def print(value) do
+    IO.inspect(value, limit: :ifinity, printable_limit: :infinity)
+  end
 end

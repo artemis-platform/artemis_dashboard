@@ -80,7 +80,21 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   end
 
   @doc """
+  Print date in human readable format
+  """
+  def render_date(value, format \\ "{Mfull} {D}, {YYYY}") do
+    Timex.format!(value, format)
+  end
 
+  @doc """
+  Print date in human readable format
+  """
+  def render_date_time(value, format \\ "{Mfull} {D}, {YYYY} at {h12}:{m}{am}") do
+    Timex.format!(value, format)
+  end
+
+  @doc """
+  Determine if the current user's permissions result in at least one primary nav entry
   """
   def render_primary_nav_section?(nav_items, keys) do
     allowed_keys = Keyword.keys(nav_items)
@@ -90,6 +104,9 @@ defmodule ArtemisWeb.ViewHelper.Layout do
     end)
   end
 
+  @doc """
+  Render the primary nav based on current users permissions
+  """
   def render_primary_nav_section(conn, nav_items, keys) do
     requested_keys = Enum.map(keys, &String.to_atom/1)
     allowed_keys = Keyword.keys(nav_items)
@@ -202,8 +219,8 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   @doc """
   Generates search form
   """
-  def render_search(conn) do
-    Phoenix.View.render(ArtemisWeb.LayoutView, "search.html", conn: conn)
+  def render_search(conn, options \\ []) do
+    Phoenix.View.render(ArtemisWeb.LayoutView, "search.html", conn: conn, options: options)
   end
 
   @doc """

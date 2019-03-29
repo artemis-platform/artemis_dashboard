@@ -1,0 +1,29 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "wiki-page-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :title %>
+    <%= text_input f, :title, placeholder: "Title" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :section %>
+    <%= select f, :section, @sections, class: "enhanced search creatable", placeholder: "Section" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :weight %>
+    <%= text_input f, :weight, placeholder: "Weight" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :body %>
+    <%= textarea f, :body, class: "markdown" %>
+  </div>
+
+  <div>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save", class: "ui button primary" %>
+  </div>
+<% end %>

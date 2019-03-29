@@ -62,7 +62,17 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "users:delete", name: "Users - Delete"},
       %{slug: "users:list", name: "Users - List"},
       %{slug: "users:show", name: "Users - Show"},
-      %{slug: "users:update", name: "Users - Update"}
+      %{slug: "users:update", name: "Users - Update"},
+
+      %{slug: "wiki-pages:create", name: "Docs - Create"},
+      %{slug: "wiki-pages:delete", name: "Docs - Delete"},
+      %{slug: "wiki-pages:list", name: "Docs - List"},
+      %{slug: "wiki-pages:show", name: "Docs - Show"},
+      %{slug: "wiki-pages:update", name: "Docs - Update"},
+
+      %{slug: "wiki-revisions:delete", name: "Doc Revisions - Delete"},
+      %{slug: "wiki-revisions:list", name: "Doc Revisions - List"},
+      %{slug: "wiki-revisions:show", name: "Doc Revisions - Show"}
     ]
 
     Enum.map(permissions, fn (params) ->

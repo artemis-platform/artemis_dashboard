@@ -1,3 +1,14 @@
+function initializeMarkdownTextarea() {
+  $('textarea.markdown').each(function() {
+    var easyMDE = new EasyMDE({
+      element: this,
+      spellChecker: false,
+      showIcons: ['strikethrough', 'code', 'table', 'redo', 'heading', 'undo', 'heading-1', 'heading-2', 'heading-3', 'heading-4', 'heading-5', 'clean-block', 'horizontal-rule'],
+      status: false
+    });
+  })
+}
+
 // Select2
 //
 // The Select2 library adds enhanced functionality to the default `select` tags.
@@ -8,8 +19,8 @@
 //
 // For example, to add a search bar add the `search` class:
 //
-//   <%= select f, :example, [1, 2], class: "enhanced search" %> 
-// 
+//   <%= select f, :example, [1, 2], class: "enhanced search" %>
+//
 function initializeSelect2() {
 
   $('select.enhanced').each(function() {
@@ -17,15 +28,19 @@ function initializeSelect2() {
     var classes = item.attr('class').split(' ')
     var options = {}
 
-    // Options - Search
+    // Options
+    var hasCreate = classes.includes('creatable') || classes.includes('tags')
     var hasSearch = classes.includes('search')
 
     options.minimumResultsForSearch = hasSearch ? 0 : Infinity
+    options.tags = hasCreate
 
     // Initialize
     item.select2(options)
   })
+}
 
+function initializeSearchSubmit() {
   // Semantic UI supports inline icons for inputs. For search forms, make the
   // inline search icon double as a submit button.
   $('form.ui').each(function() {
@@ -41,7 +56,9 @@ function initializeSelect2() {
       })
     })
   })
+}
 
+function initializeSidebars() {
   $('.open-sidebar-current-user').click(function(event) {
     if (event) {
       event.preventDefault()
@@ -62,6 +79,80 @@ function initializeSelect2() {
   })
 }
 
+function initializeWikiSidenav() {
+  var links = []
+  var offsets = []
+  var sidenav = $('.sidenav')
+  var headings = $('#wiki-page h1, #wiki-page h2, #wiki-page h3, #wiki-page h4, #wiki-page h5')
+
+  headings.each(function(i) {
+    var label = $(this).html()
+    var tag = 'tag-' + this.nodeName
+    var offset = $(this).offset().top
+    var link = $('<li class="' + tag + '"><a href="#sidebar-link">' + label + '</a></li>')
+
+    link.click(function(event) {
+      event.preventDefault()
+
+      $([document.documentElement, document.body]).animate({
+        scrollTop: offset - 14
+      }, 200);
+    })
+
+    links.push(link)
+    offsets.push(offset)
+  })
+
+  var nav = links.length > 0 ? $('<ul></ul>').append(links) : null
+
+  $('#wiki-page aside nav.page-sections').append(nav)
+
+	$('#wiki-page .ui.sticky').sticky({
+	  offset: 28,
+	  bottomOffset: 0,
+    context: '#wiki-page'
+  })
+
+  var highlightCurrent
+  var highlightReadAheadBuffer = 16
+  var highlightSections = $('#wiki-page aside nav.page-sections ul li')
+
+  var updateHighlight = function () { 
+    var windowPosition = window.pageYOffset + highlightReadAheadBuffer
+    var windowIsAtBottom = (window.innerHeight + window.pageYOffset) >= document.body.scrollHeight
+    var highlightNext = 0
+
+    if (windowIsAtBottom) {
+      highlightNext = offsets.length - 1
+    } else {
+      for (var i = 0; i < offsets.length; i++) {
+        var isBefore = windowPosition <= offsets[i]
+
+        if (isBefore) {
+          break
+        }
+
+        highlightNext = i
+      }
+    }
+
+    if (highlightCurrent !== highlightNext) {
+      $(highlightSections).removeClass('highlight')
+      $(highlightSections[highlightNext]).addClass('highlight')
+    }
+  }
+
+  $(window).scroll(function() {
+    updateHighlight()
+  })
+
+  updateHighlight()
+}
+
 $(document).ready(function() {
+  initializeMarkdownTextarea()
   initializeSelect2()
+  initializeSidebars()
+  initializeSearchSubmit()
+  initializeWikiSidenav()
 })

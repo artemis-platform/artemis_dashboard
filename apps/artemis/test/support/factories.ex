@@ -42,6 +42,29 @@ defmodule Artemis.Factories do
     }
   end
 
+  def wiki_page_factory do
+    %Artemis.WikiPage{
+      body: Faker.Lorem.paragraph(),
+      section: Faker.Name.name(),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
+      title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
+      user: insert(:user),
+      weight: :rand.uniform(100)
+    }
+  end
+
+  def wiki_revision_factory do
+    %Artemis.WikiRevision{
+      body: Faker.Lorem.paragraph(),
+      section: Faker.Name.name(),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
+      title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
+      user: insert(:user),
+      weight: :rand.uniform(100),
+      wiki_page: insert(:wiki_page)
+    }
+  end
+
   # Traits
 
   def with_permission(%Artemis.User{} = user, slug) do
@@ -68,6 +91,16 @@ defmodule Artemis.Factories do
   end
   def with_user_roles(%Artemis.User{} = user, number) do
     insert_list(number, :user_role, user: user)
+    user
+  end
+
+  def with_wiki_pages(%Artemis.User{} = user, number \\ 3) do
+    insert_list(number, :wiki_page, user: user)
+    user
+  end
+
+  def with_wiki_revisions(%Artemis.User{} = user, number \\ 3) do
+    insert_list(number, :wiki_revision, user: user)
     user
   end
 end

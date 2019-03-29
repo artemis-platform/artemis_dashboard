@@ -8,7 +8,7 @@
       <% nav_items = nav_items_for_current_user(@user) %>
       <ul>
         <%= if render_primary_nav_section?(nav_items, ["Users", "Roles", "Permissions"]) do %>
-          <li>
+          <li class="with-dropdown">
             <a href="<%= Routes.user_path(@conn, :index) %>">
               Users
               <i class="angle down icon"></i>
@@ -23,7 +23,7 @@
           </li>
         <% end %>
         <%= if render_primary_nav_section?(nav_items, ["Event Log", "Features"]) do %>
-          <li>
+          <li class="with-dropdown">
             <a href="<%= Routes.user_path(@conn, :index) %>">
               Site
               <i class="angle down icon"></i>
@@ -35,6 +35,13 @@
               </header>
               <%= render_primary_nav_section(@conn, nav_items, ["Event Log", "Features"]) %>
             </div>
+          </li>
+        <% end %>
+        <%= if render_primary_nav_section?(nav_items, ["Documentation"]) do %>
+          <li>
+            <a href="<%= Routes.wiki_page_path(@conn, :index) %>">
+              Docs
+            </a>
           </li>
         <% end %>
       </ul>

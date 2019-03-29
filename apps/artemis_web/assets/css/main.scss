@@ -81,6 +81,14 @@ table th a {
 
 /* === Components === */
 
+.search-resource {
+
+
+  &.full-width > div {
+    width: 100%;
+  }
+}
+
 .search-summary {
 
   .link.step {
@@ -173,6 +181,118 @@ table th a {
       .email {
         margin: 0 0 1rem 0;
       }
+    }
+  }
+}
+
+/* === Components - Documentation Page === */
+
+#wiki-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  article {
+    font-size: 1.125rem;
+    font-weight: 300;
+    line-height: 1.5rem;
+    padding-right: 2rem;
+    width: 100%;
+
+    * {
+      max-width: 42rem;
+    }
+
+    p {
+      margin: 0 0 1.75rem 0;
+    }
+
+    pre {
+      border-radius: 4px;
+      max-width: 60rem !important;
+
+      code {
+        border-radius: 4px;
+        font-size: 0.875rem;
+        max-width: 60rem !important;
+        padding: 1rem;
+      }
+    }
+  }
+
+  aside {
+    padding: 0 4rem 0 0;
+    position: relative;
+    width: 320px;
+
+    nav.page-sections ul {
+      font-size: 13px;
+      list-style: none;
+      margin: 0 0 0 -2rem;
+      padding: 0 0 1rem 0;
+
+      li {
+        border-left: 4px solid #fff;
+        padding: 0 0.5rem 0 calc(2rem - 4px);
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
+
+      li a {
+        display: block;
+        line-height: 1.25em;
+        padding: 4px 0;
+      }
+
+      li.tag-H1 a {
+        color: rgba(0, 0, 0, 0.70);
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      li.tag-H2 a {
+        color: rgba(0, 0, 0, 0.70);
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      li.tag-H3 a {
+        color: rgba(0, 0, 0, 0.70);
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+
+      li.tag-H4 a {
+        color: rgba(0, 0, 0, 0.70);
+        font-weight: 500;
+        margin-left: 0.5rem;
+      }
+
+      li.tag-H5 a {
+        color: rgba(0, 0, 0, 0.50);
+        font-weight: 500;
+        margin-left: 0.5rem;
+      }
+
+      li.highlight {
+        border-left: 4px solid $purple;
+
+        a {
+          font-weight: 700;
+          color: rgba(0, 0, 0, 0.95);
+        }
+      }
+    }
+
+    .actions {
+      border-top: 1px solid #e2e2e2;
+      color: rgba(0, 0, 0, 0.70);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin: 0;
+      padding: 1rem 0 0 0;
     }
   }
 }

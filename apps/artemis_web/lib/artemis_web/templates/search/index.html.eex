@@ -28,7 +28,7 @@
         <%= for {key, data} <- @results do %>
           <%= if search_results?(data) do %>
             <a class="link step" href="#<%= search_anchor(key) %>">
-              <span class="title"><%= search_title(key) %></span>
+              <span class="title"><%= search_label(key) %></span>
               <span class="description"><%= search_matches_text(data) %></span>
             </a>
           <% end %>
@@ -41,7 +41,7 @@
         <%= if search_results?(data) do %>
 
           <h3 id="<%= search_anchor(key) %>">
-            <%= search_title(key) %> - <%= search_matches_text(data) %>
+            <%= search_label(key) %> - <%= search_matches_text(data) %>
           </h3>
 
           <table class="ui table selectable">
@@ -72,7 +72,7 @@
           </table>
 
           <p>
-            <%= search_link(@conn, key, data) %>
+            <%= search_link(@conn, data, key) %>
             Previewing <%= search_entries_total(data) %> of <%= search_total(data) %>
           </p>
 

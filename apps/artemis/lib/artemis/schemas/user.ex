@@ -15,6 +15,8 @@ defmodule Artemis.User do
     has_many :user_roles, Artemis.UserRole, on_delete: :delete_all, on_replace: :delete
     has_many :roles, through: [:user_roles, :role]
     has_many :permissions, through: [:roles, :permissions]
+    has_many :wiki_pages, Artemis.WikiPage, on_delete: :nilify_all
+    has_many :wiki_revisions, Artemis.WikiRevision, on_delete: :nilify_all
 
     timestamps()
   end
