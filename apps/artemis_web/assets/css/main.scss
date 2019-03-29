@@ -182,14 +182,13 @@ table th a {
 #wiki-page {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
 
   article {
     font-size: 1.125rem;
     font-weight: 300;
     line-height: 1.5rem;
     padding-right: 2rem;
-    width: 100%;
 
     * {
       max-width: 42rem;
@@ -214,7 +213,8 @@ table th a {
 
   aside {
     padding: 0 4rem 0 0;
-    width: 320px;
+    position: relative;
+    width: 300px;
 
     .actions {
       color: rgba(0, 0, 0, 0.70);
@@ -230,6 +230,10 @@ table th a {
       margin: 0 0 1rem 0;
       padding: 0 0 1rem 0;
 
+      li {
+        padding: 0 0.5rem 0 0;
+      }
+
       li a {
         display: block;
         line-height: 1.25em;
@@ -237,19 +241,19 @@ table th a {
       }
 
       li.tag-H1 a {
-        color: rgba(0, 0, 0, 0.95);
+        color: rgba(0, 0, 0, 0.70);
         font-size: 1rem;
         font-weight: 600;
       }
 
       li.tag-H2 a {
-        color: rgba(0, 0, 0, 0.95);
+        color: rgba(0, 0, 0, 0.70);
         font-size: 1rem;
         font-weight: 600;
       }
 
       li.tag-H3 a {
-        color: rgba(0, 0, 0, 0.95);
+        color: rgba(0, 0, 0, 0.70);
         font-weight: 600;
         margin-left: 0.5rem;
       }
@@ -264,6 +268,15 @@ table th a {
         color: rgba(0, 0, 0, 0.50);
         font-weight: 500;
         margin-left: 0.5rem;
+      }
+
+      li.highlight {
+        border-right: 2px solid $purple;
+
+        a {
+          font-weight: 700;
+          color: rgba(0, 0, 0, 0.95);
+        }
       }
     }
   }
