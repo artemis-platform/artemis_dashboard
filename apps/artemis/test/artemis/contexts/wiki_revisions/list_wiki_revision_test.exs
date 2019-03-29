@@ -43,6 +43,27 @@ defmodule Artemis.ListWikiRevisionsTest do
       {:ok, wiki_revision: wiki_revision}
     end
 
+    test "filters" do
+      wiki_page = insert(:wiki_page)
+
+      insert_list(2, :wiki_revision, wiki_page: wiki_page)
+      insert_list(3, :wiki_revision)
+
+      params = %{}
+      results = ListWikiRevisions.call(params, Mock.system_user())
+
+      assert length(results) > 2
+
+      params = %{
+        filters: %{
+          wiki_page: wiki_page.id
+        }
+      }
+      results = ListWikiRevisions.call(params, Mock.system_user())
+
+      assert length(results) == 2
+    end
+
     test "order" do
       insert_list(3, :wiki_revision)
 

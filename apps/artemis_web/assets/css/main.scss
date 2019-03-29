@@ -225,15 +225,6 @@ table th a {
     position: relative;
     width: 320px;
 
-    .actions {
-      border-top: 1px solid #e2e2e2;
-      color: rgba(0, 0, 0, 0.70);
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin: 0 0 0 0;
-      padding: 1rem 0 0 0;
-    }
-
     nav.page-sections ul {
       font-size: 13px;
       list-style: none;
@@ -293,6 +284,15 @@ table th a {
           color: rgba(0, 0, 0, 0.95);
         }
       }
+    }
+
+    .actions {
+      border-top: 1px solid #e2e2e2;
+      color: rgba(0, 0, 0, 0.70);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin: 0;
+      padding: 1rem 0 0 0;
     }
   }
 }

@@ -8,8 +8,11 @@ defmodule ArtemisWeb.WikiRevisionController do
 
   def index(conn, params) do
     authorize(conn, "wiki-revisions:list", fn () ->
-      params = Map.put(params, :paginate, true)
       wiki_page = get_wiki_page(conn, params)
+      filters = %{wiki_page: wiki_page.id}
+      params = params
+        |> Map.put(:filters, filters)
+        |> Map.put(:paginate, true)
       wiki_revisions = ListWikiRevisions.call(params, current_user(conn))
 
       render(conn, "index.html", wiki_page: wiki_page, wiki_revisions: wiki_revisions)
