@@ -23,6 +23,7 @@ defmodule ArtemisWeb.Router do
 
   pipeline :require_auth do
     plug ArtemisWeb.Plug.ClientCredentials
+    plug ArtemisWeb.Plug.BroadcastRequest
     plug Guardian.Plug.EnsureAuthenticated
   end
 

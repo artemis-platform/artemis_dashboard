@@ -1,11 +1,11 @@
-defmodule ArtemisLog.Worker do
+defmodule ArtemisLog.Worker.HttpRequest do
   use GenServer
 
   import ArtemisPubSub
   
-  alias ArtemisLog.CreateEventLog
+  alias ArtemisLog.CreateHttpRequestLog
 
-  @topic "private:artemis"
+  @topic "private:artemis:http-requests"
 
   def start_link() do
     initial_state = %{}
@@ -22,8 +22,8 @@ defmodule ArtemisLog.Worker do
     {:ok, state}
   end
 
-  def handle_info(%{event: event, payload: payload}, state) do
-    {:ok, _} = CreateEventLog.call(event, payload)
+  def handle_info(%{event: _event, payload: payload}, state) do
+    {:ok, _} = CreateHttpRequestLog.call(payload)
 
     {:noreply, state}
   end

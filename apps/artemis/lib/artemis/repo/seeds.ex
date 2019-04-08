@@ -42,6 +42,11 @@ defmodule Artemis.Repo.Seeds do
 
       %{slug: "help:list", name: "Help - List"},
 
+      %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All"},
+      %{slug: "http-request-logs:access:self", name: "HTTP Request Logs - Access Self"},
+      %{slug: "http-request-logs:list", name: "HTTP Request Logs - List"},
+      %{slug: "http-request-logs:show", name: "HTTP Request Logs - Show"},
+
       %{slug: "permissions:create", name: "Permissions - Create"},
       %{slug: "permissions:delete", name: "Permissions - Delete"},
       %{slug: "permissions:list", name: "Permissions - List"},
