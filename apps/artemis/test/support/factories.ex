@@ -3,6 +3,18 @@ defmodule Artemis.Factories do
 
   # Factories
 
+  def comment_factory do
+    body = Faker.Lorem.paragraph()
+
+    %Artemis.Comment{
+      body: body,
+      body_html: body,
+      topic: Faker.Name.name(),
+      title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
+      user: insert(:user)
+    }
+  end
+
   def feature_factory do
     %Artemis.Feature{
       active: false,
@@ -66,6 +78,11 @@ defmodule Artemis.Factories do
   end
 
   # Traits
+
+  def with_comments(%Artemis.User{} = user, number \\ 3) do
+    insert_list(number, :comment, user: user)
+    user
+  end
 
   def with_permission(%Artemis.User{} = user, slug) do
     permission = Artemis.Repo.get_by(Artemis.Permission, slug: slug) || insert(:permission, slug: slug)
