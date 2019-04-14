@@ -8,6 +8,7 @@ defmodule Artemis.Comment do
     field :topic, :string
 
     belongs_to :user, Artemis.User
+    many_to_many :wiki_pages, Artemis.WikiPage, join_through: "comments_wiki_pages", on_delete: :delete_all, on_replace: :delete
 
     timestamps()
   end
