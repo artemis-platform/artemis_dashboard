@@ -1,5 +1,6 @@
 defmodule Artemis.Comment do
   use Artemis.Schema
+  use Assoc.Schema, repo: Artemis.Repo
 
   schema "comments" do
     field :body, :string
@@ -27,6 +28,10 @@ defmodule Artemis.Comment do
     :body_html,
     :title,
     :topic
+  ]
+
+  def updatable_associations, do: [
+    wiki_pages: Artemis.WikiPage
   ]
 
   def event_log_fields, do: [

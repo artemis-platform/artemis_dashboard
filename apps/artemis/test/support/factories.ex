@@ -111,6 +111,11 @@ defmodule Artemis.Factories do
     user
   end
 
+  def with_wiki_page(%Artemis.Comment{} = comment) do
+    insert(:wiki_page, comments: [comment])
+    comment
+  end
+
   def with_wiki_pages(%Artemis.User{} = user, number \\ 3) do
     insert_list(number, :wiki_page, user: user)
     user

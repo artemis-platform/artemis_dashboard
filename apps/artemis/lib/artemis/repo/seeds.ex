@@ -29,6 +29,9 @@ defmodule Artemis.Repo.Seeds do
     # Permissions
 
     permissions = [
+      %{slug: "comments:access:all", name: "Comments - Access All"},
+      %{slug: "comments:access:self", name: "Comments - Access Self"},
+
       %{slug: "event-logs:access:all", name: "Event Logs - Access All"},
       %{slug: "event-logs:access:self", name: "Event Logs - Access Self"},
       %{slug: "event-logs:list", name: "Event Logs - List"},
