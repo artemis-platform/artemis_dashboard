@@ -36,6 +36,15 @@ defmodule Artemis.CreateCommentTest do
       assert comment.title == params.title
     end
 
+    test "supports markdown" do
+      params = params_for(:comment, body: "# Test")
+
+      {:ok, comment} = CreateComment.call(params, Mock.system_user())
+
+      assert comment.body == params.body
+      assert comment.body_html == "<h1>Test</h1>\n"
+    end
+
     test "creates a comment with associations" do
       wiki_page = insert(:wiki_page)
       params = :comment

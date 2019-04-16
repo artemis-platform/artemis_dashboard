@@ -29,10 +29,10 @@ defmodule Artemis.Repo.Seeds do
     # Permissions
 
     permissions = [
-      %{slug: "comments:access:all", name: "Comments - Access All"},
+      %{slug: "comments:access:all", name: "Comments - Access All", description: "Should be restricted to administrators"},
       %{slug: "comments:access:self", name: "Comments - Access Self"},
 
-      %{slug: "event-logs:access:all", name: "Event Logs - Access All"},
+      %{slug: "event-logs:access:all", name: "Event Logs - Access All", description: "Should be restricted to administrators"},
       %{slug: "event-logs:access:self", name: "Event Logs - Access Self"},
       %{slug: "event-logs:list", name: "Event Logs - List"},
       %{slug: "event-logs:show", name: "Event Logs - Show"},
@@ -45,7 +45,7 @@ defmodule Artemis.Repo.Seeds do
 
       %{slug: "help:list", name: "Help - List"},
 
-      %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All"},
+      %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All", description: "Should be restricted to administrators"},
       %{slug: "http-request-logs:access:self", name: "HTTP Request Logs - Access Self"},
       %{slug: "http-request-logs:list", name: "HTTP Request Logs - List"},
       %{slug: "http-request-logs:show", name: "HTTP Request Logs - Show"},
@@ -64,7 +64,7 @@ defmodule Artemis.Repo.Seeds do
 
       %{slug: "user-impersonations:create", name: "User Impersonations - Create"},
 
-      %{slug: "users:access:all", name: "Users - Access All"},
+      %{slug: "users:access:all", name: "Users - Access All", description: "Should be restricted to administrators"},
       %{slug: "users:access:self", name: "Users - Access Self"},
       %{slug: "users:create", name: "Users - Create"},
       %{slug: "users:delete", name: "Users - Delete"},
@@ -77,6 +77,10 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "wiki-pages:list", name: "Docs - List"},
       %{slug: "wiki-pages:show", name: "Docs - Show"},
       %{slug: "wiki-pages:update", name: "Docs - Update"},
+      %{slug: "wiki-pages:create:comments", name: "Docs - Create Comments"},
+      %{slug: "wiki-pages:delete:comments", name: "Docs - Delete Comments"},
+      %{slug: "wiki-pages:list:comments", name: "Docs - List Comments"},
+      %{slug: "wiki-pages:update:comments", name: "Docs - Update Comments"},
 
       %{slug: "wiki-revisions:delete", name: "Doc Revisions - Delete"},
       %{slug: "wiki-revisions:list", name: "Doc Revisions - List"},

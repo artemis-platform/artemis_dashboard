@@ -20,14 +20,16 @@ defmodule Artemis.Comment do
     :body,
     :body_html,
     :title,
-    :topic
+    :topic,
+    :user_id
   ]
 
   def required_fields, do: [
     :body,
     :body_html,
     :title,
-    :topic
+    :topic,
+    :user_id
   ]
 
   def updatable_associations, do: [

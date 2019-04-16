@@ -22,8 +22,20 @@ defmodule Artemis.CreateComment do
   end
 
   defp insert_record(params) do
+    params = create_params(params)
+
     %Comment{}
     |> Comment.changeset(params)
     |> Repo.insert
+  end
+
+  defp create_params(params) do
+    params = Artemis.Helpers.keys_to_strings(params)
+    html = case Map.get(params, "body") do
+      nil -> nil
+      body -> Earmark.as_html!(body)
+    end
+
+    Map.put(params, "body_html", html)
   end
 end

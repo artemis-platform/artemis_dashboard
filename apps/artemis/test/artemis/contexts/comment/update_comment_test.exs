@@ -77,6 +77,16 @@ defmodule Artemis.UpdateCommentTest do
 
       assert updated.title == params.title
     end
+
+    test "supports markdown" do
+      comment = insert(:comment)
+      params = params_for(:comment, body: "# Test")
+
+      {:ok, updated} = UpdateComment.call(comment.id, params, Mock.system_user())
+
+      assert updated.body == params.body
+      assert updated.body_html == "<h1>Test</h1>\n"
+    end
   end
 
   describe "call - associations" do

@@ -8,7 +8,7 @@ defmodule Artemis.Repo.Migrations.CreateComments do
       add :title, :string
       add :topic, :string
       add :user_id, references(:users, on_delete: :nilify_all)
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:comments, [:topic])

@@ -35,6 +35,15 @@ defmodule Artemis.CreateWikiPageTest do
 
       assert wiki_page.title == params.title
     end
+
+    test "supports markdown" do
+      params = params_for(:wiki_page, body: "# Test")
+
+      {:ok, wiki_page} = CreateWikiPage.call(params, Mock.system_user())
+
+      assert wiki_page.body == params.body
+      assert wiki_page.body_html == "<h1>Test</h1>\n"
+    end
   end
 
   describe "associations - wiki revisions" do
