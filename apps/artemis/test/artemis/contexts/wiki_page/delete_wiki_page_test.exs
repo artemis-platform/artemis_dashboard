@@ -16,7 +16,7 @@ defmodule Artemis.DeleteWikiPageTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:wiki_page)
 
       %WikiPage{} = DeleteWikiPage.call!(record, Mock.system_user())
@@ -24,7 +24,7 @@ defmodule Artemis.DeleteWikiPageTest do
       assert Repo.get(WikiPage, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:wiki_page)
 
       %WikiPage{} = DeleteWikiPage.call!(record.id, Mock.system_user())

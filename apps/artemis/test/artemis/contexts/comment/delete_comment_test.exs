@@ -15,7 +15,7 @@ defmodule Artemis.DeleteCommentTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:comment)
 
       %Comment{} = DeleteComment.call!(record, Mock.system_user())
@@ -23,7 +23,7 @@ defmodule Artemis.DeleteCommentTest do
       assert Repo.get(Comment, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:comment)
 
       %Comment{} = DeleteComment.call!(record.id, Mock.system_user())
@@ -39,7 +39,7 @@ defmodule Artemis.DeleteCommentTest do
       {:error, _} = DeleteComment.call(invalid_id, Mock.system_user())
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:comment)
 
       {:ok, _} = DeleteComment.call(record, Mock.system_user())
@@ -47,7 +47,7 @@ defmodule Artemis.DeleteCommentTest do
       assert Repo.get(Comment, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:comment)
 
       {:ok, _} = DeleteComment.call(record.id, Mock.system_user())

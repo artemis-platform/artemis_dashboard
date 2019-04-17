@@ -15,7 +15,7 @@ defmodule Artemis.DeletePermissionTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:permission)
 
       %Permission{} = DeletePermission.call!(record, Mock.system_user())
@@ -23,7 +23,7 @@ defmodule Artemis.DeletePermissionTest do
       assert Repo.get(Permission, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:permission)
 
       %Permission{} = DeletePermission.call!(record.id, Mock.system_user())
@@ -39,7 +39,7 @@ defmodule Artemis.DeletePermissionTest do
       {:error, _} = DeletePermission.call(invalid_id, Mock.system_user())
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:permission)
 
       {:ok, _} = DeletePermission.call(record, Mock.system_user())
@@ -47,7 +47,7 @@ defmodule Artemis.DeletePermissionTest do
       assert Repo.get(Permission, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:permission)
 
       {:ok, _} = DeletePermission.call(record.id, Mock.system_user())

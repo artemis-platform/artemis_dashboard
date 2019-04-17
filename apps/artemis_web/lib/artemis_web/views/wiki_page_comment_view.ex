@@ -2,11 +2,11 @@ defmodule ArtemisWeb.WikiPageCommentView do
   use ArtemisWeb, :view
 
   def list_comments?(conn) do
-    has?(current_user(conn), "wiki-pages:list:comments") 
+    has?(current_user(conn), "wiki-pages:list:comments")
   end
 
   def create_comments?(conn) do
-    has?(current_user(conn), "wiki-pages:create:comments") 
+    has?(current_user(conn), "wiki-pages:create:comments")
   end
 
   def update_comments?(record, user) do
