@@ -11,7 +11,7 @@ defmodule ArtemisWeb.WikiRevisionControllerTest do
     setup [:create_record]
 
     test "lists all wiki revisions", %{conn: conn, parent: parent} do
-      conn = get(conn, Routes.wiki_page_wiki_revision_path(conn, :index, parent))
+      conn = get(conn, Routes.wiki_page_revision_path(conn, :index, parent))
       assert html_response(conn, 200) =~ "Documentation Revisions"
     end
   end
@@ -20,7 +20,7 @@ defmodule ArtemisWeb.WikiRevisionControllerTest do
     setup [:create_record]
 
     test "shows wiki revision", %{conn: conn, parent: parent, record: record} do
-      conn = get(conn, Routes.wiki_page_wiki_revision_path(conn, :show, parent, record))
+      conn = get(conn, Routes.wiki_page_revision_path(conn, :show, parent, record))
       assert html_response(conn, 200) =~ record.title
     end
   end
@@ -29,10 +29,10 @@ defmodule ArtemisWeb.WikiRevisionControllerTest do
     setup [:create_record]
 
     test "deletes chosen wiki revision", %{conn: conn, parent: parent, record: record} do
-      conn = delete(conn, Routes.wiki_page_wiki_revision_path(conn, :delete, parent, record))
-      assert redirected_to(conn) == Routes.wiki_page_wiki_revision_path(conn, :index, parent)
+      conn = delete(conn, Routes.wiki_page_revision_path(conn, :delete, parent, record))
+      assert redirected_to(conn) == Routes.wiki_page_revision_path(conn, :index, parent)
       assert_error_sent 404, fn ->
-        get(conn, Routes.wiki_page_wiki_revision_path(conn, :show, parent, record))
+        get(conn, Routes.wiki_page_revision_path(conn, :show, parent, record))
       end
     end
   end

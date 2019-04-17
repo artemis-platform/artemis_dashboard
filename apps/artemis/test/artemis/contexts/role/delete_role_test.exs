@@ -15,7 +15,7 @@ defmodule Artemis.DeleteRoleTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:role)
 
       %Role{} = DeleteRole.call!(record, Mock.system_user())
@@ -23,7 +23,7 @@ defmodule Artemis.DeleteRoleTest do
       assert Repo.get(Role, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:role)
 
       %Role{} = DeleteRole.call!(record.id, Mock.system_user())
@@ -39,7 +39,7 @@ defmodule Artemis.DeleteRoleTest do
       {:error, _} = DeleteRole.call(invalid_id, Mock.system_user())
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:role)
 
       {:ok, _} = DeleteRole.call(record, Mock.system_user())
@@ -47,7 +47,7 @@ defmodule Artemis.DeleteRoleTest do
       assert Repo.get(Role, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:role)
 
       {:ok, _} = DeleteRole.call(record.id, Mock.system_user())

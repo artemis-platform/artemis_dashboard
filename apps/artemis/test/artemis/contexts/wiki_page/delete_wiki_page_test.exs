@@ -3,6 +3,7 @@ defmodule Artemis.DeleteWikiPageTest do
 
   import Artemis.Factories
 
+  alias Artemis.Comment
   alias Artemis.WikiPage
   alias Artemis.DeleteWikiPage
 
@@ -15,7 +16,7 @@ defmodule Artemis.DeleteWikiPageTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:wiki_page)
 
       %WikiPage{} = DeleteWikiPage.call!(record, Mock.system_user())
@@ -23,7 +24,7 @@ defmodule Artemis.DeleteWikiPageTest do
       assert Repo.get(WikiPage, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:wiki_page)
 
       %WikiPage{} = DeleteWikiPage.call!(record.id, Mock.system_user())
@@ -39,7 +40,7 @@ defmodule Artemis.DeleteWikiPageTest do
       {:error, _} = DeleteWikiPage.call(invalid_id, Mock.system_user())
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:wiki_page)
 
       {:ok, _} = DeleteWikiPage.call(record, Mock.system_user())
@@ -47,12 +48,25 @@ defmodule Artemis.DeleteWikiPageTest do
       assert Repo.get(WikiPage, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes associated many to many associations" do
       record = insert(:wiki_page)
+      comments = insert_list(3, :comment, wiki_pages: [record])
+      _other = insert_list(2, :comment)
+
+      total_before = Comment
+        |> Repo.all()
+        |> length()
 
       {:ok, _} = DeleteWikiPage.call(record.id, Mock.system_user())
 
       assert Repo.get(WikiPage, record.id) == nil
+
+      total_after = Comment
+        |> Repo.all()
+        |> length()
+
+      assert total_after == total_before - 3
+      assert Repo.get(Comment, hd(comments).id) == nil
     end
   end
 

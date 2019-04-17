@@ -1,0 +1,20 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "comment-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :title %>
+    <%= text_input f, :title, placeholder: "Title" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :body %>
+    <%= textarea f, :body %>
+  </div>
+
+  <div>
+    <%= hidden_input f, :topic, value: "General" %>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save Comment", class: "ui button primary" %>
+  </div>
+<% end %>

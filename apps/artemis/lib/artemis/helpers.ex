@@ -268,6 +268,34 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
+  Recursive version of `Map.get/2`. Adds support for nested values:
+
+  Example:
+
+    map = %{
+      simple: "simple",
+      nested: %{example: "value", other: "value"}
+    }
+
+    deep_get(map, [:nested, :example])
+
+  Returns:
+
+    "value"
+
+  """
+  def deep_get(data, keys, default \\ nil)
+  def deep_get(data, [current_key|remaining_keys], default) when is_map(data) do
+    value = Map.get(data, current_key)
+
+    case remaining_keys do
+      [] -> value
+      _ -> deep_get(value, remaining_keys, default)
+    end
+  end
+  def deep_get(_data, _, default), do: default
+
+  @doc """
   Recursive version of `Map.take/2`. Adds support for nested values:
 
   Example:

@@ -78,6 +78,16 @@ defmodule Artemis.UpdateWikiPageTest do
 
       assert updated.title == params.title
     end
+
+    test "supports markdown" do
+      wiki_page = insert(:wiki_page)
+      params = params_for(:wiki_page, body: "# Test")
+
+      {:ok, updated} = UpdateWikiPage.call(wiki_page.id, params, Mock.system_user())
+
+      assert updated.body == params.body
+      assert updated.body_html == "<h1>Test</h1>\n"
+    end
   end
 
   describe "associations - wiki revisions" do

@@ -1,6 +1,7 @@
 defmodule Artemis.DeleteWikiPage do
   use Artemis.Context
 
+  alias Artemis.DeleteManyAssociatedComments
   alias Artemis.Repo
   alias Artemis.WikiPage
 
@@ -12,10 +13,13 @@ defmodule Artemis.DeleteWikiPage do
   end
 
   def call(id, user) do
-    id
-    |> get_record
-    |> delete_record
-    |> Event.broadcast("wiki-page:deleted", user)
+    with_transaction(fn () ->
+      id
+      |> get_record
+      |> DeleteManyAssociatedComments.call(user)
+      |> delete_record
+      |> Event.broadcast("wiki-page:deleted", user)
+    end)
   end
 
   def get_record(record) when is_map(record), do: record

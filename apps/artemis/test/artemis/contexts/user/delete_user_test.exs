@@ -15,7 +15,7 @@ defmodule Artemis.DeleteUserTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:user)
 
       %User{} = DeleteUser.call!(record, Mock.system_user())
@@ -23,7 +23,7 @@ defmodule Artemis.DeleteUserTest do
       assert Repo.get(User, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:user)
 
       %User{} = DeleteUser.call!(record.id, Mock.system_user())
@@ -39,7 +39,7 @@ defmodule Artemis.DeleteUserTest do
       {:error, _} = DeleteUser.call(invalid_id, Mock.system_user())
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:user)
 
       {:ok, _} = DeleteUser.call(record, Mock.system_user())
@@ -47,7 +47,7 @@ defmodule Artemis.DeleteUserTest do
       assert Repo.get(User, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:user)
 
       {:ok, _} = DeleteUser.call(record.id, Mock.system_user())

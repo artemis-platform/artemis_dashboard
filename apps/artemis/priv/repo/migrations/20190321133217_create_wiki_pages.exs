@@ -10,7 +10,7 @@ defmodule Artemis.Repo.Migrations.CreateWikiPages do
       add :title, :string
       add :weight, :integer
       add :user_id, references(:users, on_delete: :nilify_all)
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:wiki_pages, [:section])

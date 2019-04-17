@@ -11,7 +11,7 @@ defmodule Artemis.Repo.Migrations.CreateUsers do
       add :last_name, :string
       add :provider_uid, :string
       add :provider_data, :map
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:users, [:client_key])

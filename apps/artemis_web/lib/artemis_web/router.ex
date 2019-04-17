@@ -38,7 +38,8 @@ defmodule ArtemisWeb.Router do
       pipe_through :require_auth
 
       resources "/docs", WikiPageController do
-        resources "/revisions", WikiRevisionController, only: [:index, :show, :delete]
+        resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
       end
       get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]

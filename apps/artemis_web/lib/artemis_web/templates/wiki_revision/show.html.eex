@@ -6,7 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "wiki-revisions:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.wiki_page_wiki_revision_path(@conn, :delete, @wiki_page, @wiki_revision), data: [confirm: "Confirm Delete"] %>
+        <%= action "Delete", method: "delete", to: Routes.wiki_page_revision_path(@conn, :delete, @wiki_page, @wiki_revision), data: [confirm: "Confirm Delete"] %>
       <% end %>
     </div>
   </header>
@@ -31,7 +31,7 @@
           Updated <%= render_date(@wiki_revision.updated_at) %><br/>
           By <%= Map.get(@wiki_revision.user, :name) %><br/>
           <%= if has?(@conn, "wiki-revisions:list") do %>
-            <%= link "View Revisions", to: Routes.wiki_page_wiki_revision_path(@conn, :index, @wiki_page) %>
+            <%= link "View Revisions", to: Routes.wiki_page_revision_path(@conn, :index, @wiki_page) %>
           <% end %>
         </div>
       </div>

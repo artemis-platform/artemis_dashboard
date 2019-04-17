@@ -83,14 +83,18 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   Print date in human readable format
   """
   def render_date(value, format \\ "{Mfull} {D}, {YYYY}") do
-    Timex.format!(value, format)
+    value
+    |> Timex.Timezone.convert("America/New_York")
+    |> Timex.format!(format)
   end
 
   @doc """
   Print date in human readable format
   """
-  def render_date_time(value, format \\ "{Mfull} {D}, {YYYY} at {h12}:{m}{am}") do
-    Timex.format!(value, format)
+  def render_date_time(value, format \\ "{Mfull} {D}, {YYYY} at {h12}:{m}{am} {Zabbr}") do
+    value
+    |> Timex.Timezone.convert("America/New_York")
+    |> Timex.format!(format)
   end
 
   @doc """

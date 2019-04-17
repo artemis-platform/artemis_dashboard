@@ -38,7 +38,7 @@ defmodule ArtemisWeb.WikiRevisionController do
 
       conn
       |> put_flash(:info, "Revision deleted successfully.")
-      |> redirect(to: Routes.wiki_page_wiki_revision_path(conn, :index, wiki_page))
+      |> redirect(to: Routes.wiki_page_revision_path(conn, :index, wiki_page))
     end)
   end
 

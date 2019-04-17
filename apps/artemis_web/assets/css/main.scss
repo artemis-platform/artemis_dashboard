@@ -185,6 +185,48 @@ table th a {
   }
 }
 
+/* === Components - Comments === */
+
+.comment {
+  margin: 2rem 0 0 0;
+
+  header {
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    margin: 0 0 1rem 0;
+  }
+
+  content *:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  footer {
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 1rem;
+
+    .meta {
+
+      .timestamp-relative {
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .actions {
+
+      span::after {
+        content: " | "
+      }
+
+      span:last-child::after {
+        content: ""
+      }
+    }
+  }
+}
+
 /* === Components - Documentation Page === */
 
 #wiki-page {

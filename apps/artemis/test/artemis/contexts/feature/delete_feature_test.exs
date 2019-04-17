@@ -15,7 +15,7 @@ defmodule Artemis.DeleteFeatureTest do
       end
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:feature)
 
       %Feature{} = DeleteFeature.call!(record, Mock.system_user())
@@ -23,7 +23,7 @@ defmodule Artemis.DeleteFeatureTest do
       assert Repo.get(Feature, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:feature)
 
       %Feature{} = DeleteFeature.call!(record.id, Mock.system_user())
@@ -39,7 +39,7 @@ defmodule Artemis.DeleteFeatureTest do
       {:error, _} = DeleteFeature.call(invalid_id, Mock.system_user())
     end
 
-    test "updates a record when passed valid params" do
+    test "deletes a record when passed valid params" do
       record = insert(:feature)
 
       {:ok, _} = DeleteFeature.call(record, Mock.system_user())
@@ -47,7 +47,7 @@ defmodule Artemis.DeleteFeatureTest do
       assert Repo.get(Feature, record.id) == nil
     end
 
-    test "updates a record when passed an id and valid params" do
+    test "deletes a record when passed an id and valid params" do
       record = insert(:feature)
 
       {:ok, _} = DeleteFeature.call(record.id, Mock.system_user())
