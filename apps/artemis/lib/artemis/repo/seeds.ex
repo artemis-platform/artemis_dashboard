@@ -114,26 +114,9 @@ defmodule Artemis.Repo.Seeds do
     # Role Permissions - Default Role
 
     permission_slugs = [
-      "comments:access:self",
-
       "event-logs:access:self",
-
-      "help:list",
-
-      "http-request-logs:access:self",
-
       "users:access:self",
-      "users:show",
-
-      "wiki-pages:list",
-      "wiki-pages:show",
-      "wiki-pages:create:comments",
-      "wiki-pages:delete:comments",
-      "wiki-pages:list:comments",
-      "wiki-pages:update:comments",
-
-      "wiki-revisions:list",
-      "wiki-revisions:show"
+      "users:show"
     ]
 
     permissions = Permission
