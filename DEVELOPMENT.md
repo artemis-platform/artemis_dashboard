@@ -40,8 +40,8 @@ echo $ARTEMIS_PORT > ~/.puma-dev/artemis
 A container-based development environment is available using [docker](https://www.docker.com/) and [docker compose](https://docs.docker.com/compose/). Once the docker platform is installed, build and run the containers:
 
 ```bash
-bin/docker/build dev
-bin/docker/up
+bin/docker-dev/build dev
+bin/docker-dev/up
 ```
 
 ## Local Environment
@@ -61,8 +61,6 @@ A Node version manager like [`nvm`](https://github.com/creationix/nvm) can make 
 ### PostgreSQL
 
 Artemis requires PostgreSQL >= 9.6.
-
-For an example of running it through a Docker image see the [Bluebox Box](https://github.ibm.com/bluebox/box) repository.
 
 Alternatively, it can be installed locally on the command-line using `brew install postgresql` or with a standalone application like [Postico](https://eggerapps.at/postico/).
 
@@ -85,13 +83,13 @@ Before running the application the first time, execute `bin/local/reset-all`.
 If not running already, start an instance of the development environment:
 
 ```bash
-bin/docker/up
+bin/docker-dev/up
 ```
 
 Then execute the tests using:
 
 ```bash
-bin/docker/test
+bin/docker-dev/test
 ```
 
 ### Local Development
