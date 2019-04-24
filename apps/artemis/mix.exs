@@ -41,6 +41,7 @@ defmodule Artemis.MixProject do
       {:scrivener_ecto, "~> 2.0"},
       {:jason, "~> 1.0"},
       {:assoc, "~> 0.1"},
+      {:config_tuples, "~> 0.2.0"},
       {:slugger, "~> 0.3"},
       {:earmark, "~> 1.3"},
       {:artemis_pubsub, in_umbrella: true},
