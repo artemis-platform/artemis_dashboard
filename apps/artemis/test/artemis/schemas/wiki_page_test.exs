@@ -8,10 +8,11 @@ defmodule Artemis.WikiPageTest do
 
   alias Artemis.Comment
   alias Artemis.Repo
+  alias Artemis.Tag
   alias Artemis.User
   alias Artemis.WikiPage
 
-  @preload [:comments, :user]
+  @preload [:comments, :tags, :user]
 
   describe "associations - comments" do
     setup do
@@ -78,6 +79,74 @@ defmodule Artemis.WikiPageTest do
 
       assert !is_nil(comment)
       assert length(comment.wiki_pages) == 0
+    end
+  end
+
+  describe "associations - tags" do
+    setup do
+      tags = insert_list(3, :tag)
+      wiki_page = insert(:wiki_page, tags: tags)
+
+      {:ok, tags: tags, wiki_page: Repo.preload(wiki_page, @preload)}
+    end
+
+    test "updating association does not change record", %{wiki_page: wiki_page} do
+      assert length(wiki_page.tags) == 3
+
+      tag = Repo.get(Tag, hd(wiki_page.tags).id)
+
+      assert tag != nil
+      assert tag.title != "Updated Title"
+
+      params = %{title: "Updated Title"}
+
+      {:ok, tag} = tag
+        |> Tag.changeset(params)
+        |> Repo.update()
+
+      assert tag != nil
+      assert tag.title == "Updated Title"
+
+      wiki_page = WikiPage
+        |> preload(^@preload)
+        |> Repo.get(wiki_page.id)
+
+      assert length(wiki_page.tags) == 3
+    end
+
+    test "deleting association does not change record", %{wiki_page: wiki_page} do
+      assert length(wiki_page.tags) == 3
+
+      tag = Repo.get(Tag, hd(wiki_page.tags).id)
+
+      Repo.delete!(tag)
+
+      wiki_page = WikiPage
+        |> preload(^@preload)
+        |> Repo.get(wiki_page.id)
+
+      assert length(wiki_page.tags) == 2
+    end
+
+    test "deleting record only removes the join table, not the associated records", %{wiki_page: wiki_page} do
+      # Only the join table records are removed. This is a limitation of Ecto many_to_many:
+      # https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
+      #
+      tag = Tag
+        |> preload([:wiki_pages])
+        |> Repo.get(hd(wiki_page.tags).id)
+
+      assert !is_nil(tag)
+      assert length(tag.wiki_pages) == 1
+
+      Repo.delete!(wiki_page)
+
+      tag = Tag
+        |> preload([:wiki_pages])
+        |> Repo.get(hd(wiki_page.tags).id)
+
+      assert !is_nil(tag)
+      assert length(tag.wiki_pages) == 0
     end
   end
 

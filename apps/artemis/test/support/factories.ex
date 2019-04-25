@@ -37,6 +37,15 @@ defmodule Artemis.Factories do
     }
   end
 
+  def tag_factory do
+    %Artemis.Tag{
+      description: Faker.Lorem.paragraph(),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
+      title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
+      type: sequence(:type, &"#{Faker.Internet.slug()}-#{&1}")
+    }
+  end
+
   def user_factory do
     %Artemis.User{
       email: sequence(:slug, &"#{Faker.Internet.email()}-#{&1}"),
