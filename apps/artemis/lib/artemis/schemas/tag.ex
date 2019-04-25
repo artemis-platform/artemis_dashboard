@@ -4,8 +4,8 @@ defmodule Artemis.Tag do
 
   schema "tags" do
     field :description, :string
+    field :name, :string
     field :slug, :string
-    field :title, :string
     field :type, :string
 
     many_to_many :wiki_pages, Artemis.WikiPage, join_through: "tags_wiki_pages", on_delete: :delete_all, on_replace: :delete
@@ -16,13 +16,13 @@ defmodule Artemis.Tag do
   def updatable_fields, do: [
     :description,
     :slug,
-    :title,
+    :name,
     :type
   ]
 
   def required_fields, do: [
+    :name,
     :slug,
-    :title,
     :type
   ]
 
@@ -32,8 +32,8 @@ defmodule Artemis.Tag do
 
   def event_log_fields, do: [
     :id,
+    :name,
     :slug,
-    :title,
     :type
   ]
 

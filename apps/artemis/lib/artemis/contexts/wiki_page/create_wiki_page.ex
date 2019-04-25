@@ -1,5 +1,6 @@
 defmodule Artemis.CreateWikiPage do
   use Artemis.Context
+  use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.CreateWikiRevision
   alias Artemis.Repo
@@ -16,6 +17,7 @@ defmodule Artemis.CreateWikiPage do
     with_transaction(fn () ->
       params
       |> insert_record()
+      |> update_associations(params)
       |> create_wiki_revision(user)
       |> Event.broadcast("wiki-page:created", user)
     end)

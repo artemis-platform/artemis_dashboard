@@ -1,5 +1,6 @@
 defmodule Artemis.WikiPage do
   use Artemis.Schema
+  use Assoc.Schema, repo: Artemis.Repo
 
   schema "wiki_pages" do
     field :body, :string
@@ -33,6 +34,10 @@ defmodule Artemis.WikiPage do
     :section,
     :slug,
     :title
+  ]
+
+  def updatable_associations, do: [
+    tags: Artemis.Tag
   ]
 
   def event_log_fields, do: [

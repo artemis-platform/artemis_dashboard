@@ -90,6 +90,33 @@ defmodule Artemis.UpdateWikiPageTest do
     end
   end
 
+  describe "associations - tags" do
+    test "updates tags" do
+      wiki_page = :wiki_page
+        |> insert()
+        |> Repo.preload([:tags])
+
+      assert wiki_page.tags == []
+
+      tag1 = insert(:tag)
+      tag2 = params_for(:tag)
+      params = wiki_page
+        |> Map.from_struct
+        |> Map.put(:tags, [%{id: tag1.id}, tag2])
+
+      {:ok, wiki_page} = UpdateWikiPage.call(wiki_page, params, Mock.system_user())
+
+      wiki_page = WikiPage
+        |> preload([:tags])
+        |> Repo.get(wiki_page.id)
+
+      assert length(wiki_page.tags) == 2
+
+      assert hd(wiki_page.tags).name == tag1.name
+      assert hd(wiki_page.tags).slug == tag1.slug
+    end
+  end
+
   describe "associations - wiki revisions" do
     test "creates an associated wiki revision" do
       params = params_for(:wiki_page)

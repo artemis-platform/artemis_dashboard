@@ -96,16 +96,16 @@ defmodule Artemis.WikiPageTest do
       tag = Repo.get(Tag, hd(wiki_page.tags).id)
 
       assert tag != nil
-      assert tag.title != "Updated Title"
+      assert tag.name != "Updated Name"
 
-      params = %{title: "Updated Title"}
+      params = %{name: "Updated Name"}
 
       {:ok, tag} = tag
         |> Tag.changeset(params)
         |> Repo.update()
 
       assert tag != nil
-      assert tag.title == "Updated Title"
+      assert tag.name == "Updated Name"
 
       wiki_page = WikiPage
         |> preload(^@preload)

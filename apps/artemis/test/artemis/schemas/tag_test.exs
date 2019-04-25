@@ -18,14 +18,14 @@ defmodule Artemis.TagTest do
       %Tag{} = insert(:tag, type: "other-type", slug: existing.slug)
     end
 
-    test "compound type and title must be unique" do
+    test "compound type and name must be unique" do
       existing = insert(:tag)
 
       assert_raise Ecto.ConstraintError, fn () ->
-        insert(:tag, type: existing.type, title: existing.title)
+        insert(:tag, type: existing.type, name: existing.name)
       end
 
-      %Tag{} = insert(:tag, type: "other-type", title: existing.title)
+      %Tag{} = insert(:tag, type: "other-type", name: existing.name)
     end
   end
 end

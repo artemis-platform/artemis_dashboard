@@ -37,4 +37,24 @@ select {
   .select2-selection__arrow {
     margin: 4px 4px 0 0;
   }
+
+  .select2-selection--multiple {
+
+    .select2-selection__choice {
+      background: #fff;
+      border: none;
+      margin: 0.5rem 0.5rem 0 0;
+      padding: 0;
+    }
+
+    .select2-selection__rendered {
+      padding: 0 1rem;
+    }
+
+    .select2-search__field {
+      border: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
 }

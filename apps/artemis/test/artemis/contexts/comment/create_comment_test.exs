@@ -53,6 +53,8 @@ defmodule Artemis.CreateCommentTest do
 
       {:ok, comment} = CreateComment.call(params, Mock.system_user())
 
+      comment = Repo.preload(comment, [:wiki_pages])
+
       assert comment.title == params.title
       assert hd(comment.wiki_pages).id == wiki_page.id
     end

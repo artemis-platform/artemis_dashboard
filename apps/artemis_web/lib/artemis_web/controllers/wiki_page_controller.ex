@@ -6,6 +6,7 @@ defmodule ArtemisWeb.WikiPageController do
   alias Artemis.DeleteWikiPage
   alias Artemis.GetWikiPage
   alias Artemis.ListComments
+  alias Artemis.ListTags
   alias Artemis.ListWikiPages
   alias Artemis.UpdateWikiPage
   alias Artemis.WikiPage

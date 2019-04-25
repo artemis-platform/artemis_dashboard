@@ -32,7 +32,7 @@ defmodule Artemis.Repo.Migrations.CreateTagsSearch do
         new.tsv_search :=
           to_tsvector(
             'pg_catalog.english',
-            coalesce(new.title, ' ') || ' ' ||
+            coalesce(new.name, ' ') || ' ' ||
             coalesce(new.slug, ' ') || ' ' ||
             coalesce(new.type, ' ') || ' ' ||
             coalesce(new.description, ' ')
