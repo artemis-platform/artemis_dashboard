@@ -49,6 +49,7 @@ defmodule ArtemisWeb.Router do
       resources "/roles", RoleController
       resources "/help", HelpController, only: [:index]
       resources "/search", SearchController, only: [:index]
+      resources "/tags", TagController
       resources "/users", UserController do
         resources "/impersonation", UserImpersonationController, as: "impersonation", only: [:create]
       end

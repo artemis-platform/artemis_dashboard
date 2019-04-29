@@ -7,7 +7,9 @@ defmodule ArtemisWeb.WikiPageCommentController do
   alias Artemis.GetWikiPage
   alias Artemis.DeleteComment
   alias Artemis.ListComments
+  alias Artemis.ListTags
   alias Artemis.UpdateComment
+  alias Artemis.WikiPage
 
   @preload []
 
@@ -27,10 +29,12 @@ defmodule ArtemisWeb.WikiPageCommentController do
 
         {:error, %Ecto.Changeset{} = comment_changeset} ->
           comments = ListComments.call(%{filters: %{wiki_page_id: wiki_page.id}}, current_user(conn))
+          tags = ListTags.call(%{filters: %{type: "wiki-pages"}}, user)
+          tags_changeset = WikiPage.changeset(wiki_page)
 
           conn
           |> put_view(ArtemisWeb.WikiPageView)
-          |> render(:show, comment_changeset: comment_changeset, comments: comments, wiki_page: wiki_page)
+          |> render(:show, comment_changeset: comment_changeset, comments: comments, tags: tags, tags_changeset: tags_changeset, wiki_page: wiki_page)
       end
     end)
   end

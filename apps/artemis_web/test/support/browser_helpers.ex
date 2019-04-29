@@ -26,6 +26,15 @@ defmodule ArtemisWeb.BrowserHelpers do
 
   def fill_input(element, value), do: fill_field(element, value)
 
+  def fill_enhanced_select(element, value) when is_bitstring(value), do: fill_enhanced_select(element, [value])
+  def fill_enhanced_select(element, values) when is_list(values) do
+    click({:css, "#{element} .select2-container"})
+    Enum.map(values, fn (value) ->
+      fill_field({:css, "#{element} .select2-search__field"}, value)
+      send_keys :enter
+    end)
+  end
+
   def submit_form(identifier), do: click({:css, "#{identifier} button[type='submit']"})
 
   def submit_search(identifier), do: submit_element({:css, identifier})

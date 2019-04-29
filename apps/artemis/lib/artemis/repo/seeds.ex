@@ -63,6 +63,12 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "roles:show", name: "Roles - Show"},
       %{slug: "roles:update", name: "Roles - Update"},
 
+      %{slug: "tags:create", name: "Tags - Global Create", description: "Should be restricted to administrators"},
+      %{slug: "tags:delete", name: "Tags - Global Delete", description: "Should be restricted to administrators"},
+      %{slug: "tags:list", name: "Tags - Global List", description: "Should be restricted to administrators"},
+      %{slug: "tags:show", name: "Tags - Global Show", description: "Should be restricted to administrators"},
+      %{slug: "tags:update", name: "Tags - Global Update", description: "Should be restricted to administrators"},
+
       %{slug: "user-impersonations:create", name: "User Impersonations - Create"},
 
       %{slug: "users:access:all", name: "Users - Access All", description: "Should be restricted to administrators"},

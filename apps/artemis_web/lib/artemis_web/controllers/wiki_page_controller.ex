@@ -59,10 +59,10 @@ defmodule ArtemisWeb.WikiPageController do
       wiki_page = GetWikiPage.call!(id, user)
       comments = ListComments.call(%{filters: %{wiki_page_id: id}}, user)
       comment_changeset = Comment.changeset(%Comment{})
-      changeset = WikiPage.changeset(wiki_page)
       tags = ListTags.call(%{filters: %{type: "wiki-pages"}}, user)
+      tags_changeset = WikiPage.changeset(wiki_page)
 
-      render(conn, "show.html", changeset: changeset, comment_changeset: comment_changeset, comments: comments, tags: tags, wiki_page: wiki_page)
+      render(conn, "show.html", comment_changeset: comment_changeset, comments: comments, tags: tags, tags_changeset: tags_changeset, wiki_page: wiki_page)
     end)
   end
 
