@@ -53,6 +53,7 @@
         <%= raw @wiki_page.body_html %>
       </content>
       <footer>
+        <%= render ArtemisWeb.WikiPageTagView, "edit.html", assigns %>
         <%= render ArtemisWeb.WikiPageCommentView, "index.html", assigns %>
       </footer>
     </article>

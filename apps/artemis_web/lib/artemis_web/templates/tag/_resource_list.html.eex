@@ -1,0 +1,18 @@
+<div class="resource-tags">
+  <div class="list">
+    <%= if @current_tags && length(@current_tags) > 0 do %>
+      <ul>
+        <%= Enum.map Enum.sort_by(@current_tags, &(&1.name)), fn (tag) -> %>
+          <li>
+            <%= link tag.name, to: @tag_link.(tag.slug) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <a href="#show-edit-tags" class="show-edit-tags">Edit Tags</a>
+  </div>
+  <div class="form">
+    <%= render ArtemisWeb.TagView, "_resource_form.html", assigns %>
+    <a href="#show-list-tags" class="show-list-tags">Close</a>
+  </div>
+</div>

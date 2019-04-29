@@ -55,11 +55,14 @@ defmodule ArtemisWeb.WikiPageController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "wiki-pages:show", fn () ->
-      comments = ListComments.call(%{filters: %{wiki_page_id: id}}, current_user(conn))
+      user = current_user(conn)
+      wiki_page = GetWikiPage.call!(id, user)
+      comments = ListComments.call(%{filters: %{wiki_page_id: id}}, user)
       comment_changeset = Comment.changeset(%Comment{})
-      wiki_page = GetWikiPage.call!(id, current_user(conn))
+      changeset = WikiPage.changeset(wiki_page)
+      tags = ListTags.call(%{filters: %{type: "wiki-pages"}}, user)
 
-      render(conn, "show.html", comment_changeset: comment_changeset, comments: comments, wiki_page: wiki_page)
+      render(conn, "show.html", changeset: changeset, comment_changeset: comment_changeset, comments: comments, tags: tags, wiki_page: wiki_page)
     end)
   end
 

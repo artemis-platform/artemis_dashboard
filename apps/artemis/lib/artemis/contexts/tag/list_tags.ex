@@ -7,7 +7,7 @@ defmodule Artemis.ListTags do
   alias Artemis.Tag
   alias Artemis.Repo
 
-  @default_order "-name"
+  @default_order ["type", "name"]
   @default_page_size 25
   @default_preload []
 

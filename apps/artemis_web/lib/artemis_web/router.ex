@@ -40,6 +40,7 @@ defmodule ArtemisWeb.Router do
       resources "/docs", WikiPageController do
         resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
         resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
+        put "/tags", WikiPageTagController, :update, as: :tag
       end
       get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]
