@@ -1,6 +1,5 @@
 <%= form_for @changeset, @action, [class: "ui form", id: "tag-form"], fn f -> %>
   <div class="field">
-    <%= label_with_errors f, :tags %>
     <%= multiple_select f, :tags, Enum.map(@available_tags, &(&1.name)), selected: Enum.map(@current_tags, &(&1.name)), class: "enhanced search creatable", placeholder: "Tags" %>
   </div>
 
@@ -10,6 +9,6 @@
       <%= render_notification :error, body: "Error Submitting Form" %>
     <% end %>
 
-    <%= submit "Save Tags", class: "ui button primary" %>
+    <%= submit "Save", class: "ui button primary" %>
   </div>
 <% end %>

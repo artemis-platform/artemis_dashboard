@@ -19,7 +19,7 @@ h5 {
 /* Select 2 */
 
 select {
-  height: 38px !important;
+  min-height: 38px !important;
 }
 
 .select2 {
@@ -27,7 +27,8 @@ select {
 
   .select2-selection {
     border: 1px solid rgba(34, 36, 38, 0.15) !important;
-    height: 38px;
+    min-height: 38px;
+    min-width: 120px;
   }
 
   .select2-selection__rendered {
@@ -53,8 +54,7 @@ select {
 
     .select2-search__field {
       border: none !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
+      padding: 9px 0 0 0 !important;
     }
   }
 }
