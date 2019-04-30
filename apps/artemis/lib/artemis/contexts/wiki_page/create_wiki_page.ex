@@ -3,6 +3,7 @@ defmodule Artemis.CreateWikiPage do
   use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.CreateWikiRevision
+  alias Artemis.Helpers.Markdown
   alias Artemis.Repo
   alias Artemis.WikiPage
 
@@ -35,7 +36,7 @@ defmodule Artemis.CreateWikiPage do
     params = Artemis.Helpers.keys_to_strings(params)
     html = case Map.get(params, "body") do
       nil -> nil
-      body -> Earmark.as_html!(body)
+      body -> Markdown.to_html!(body)
     end
     slug = case Map.get(params, "title") do
       nil -> nil

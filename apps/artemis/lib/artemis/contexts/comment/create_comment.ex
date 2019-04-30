@@ -3,6 +3,7 @@ defmodule Artemis.CreateComment do
   use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.Comment
+  alias Artemis.Helpers.Markdown
   alias Artemis.Repo
 
   def call!(params, user) do
@@ -33,7 +34,7 @@ defmodule Artemis.CreateComment do
     params = Artemis.Helpers.keys_to_strings(params)
     html = case Map.get(params, "body") do
       nil -> nil
-      body -> Earmark.as_html!(body)
+      body -> Markdown.to_html!(body)
     end
 
     Map.put(params, "body_html", html)
