@@ -1,9 +1,9 @@
 defmodule Artemis.Helpers.Markdown do
-  @checked_box "<input type=\"checkbox\" checked=\"checked\" disabled>"
-  @unchecked_box "<input type=\"checkbox\" disabled>"
-  @regex_checked ~r/\r\n[-,*,+] \[[X,x]\]|^[-,*,+] \[[X,x]\]/
+  @checked_box "- <input type=\"checkbox\" checked=\"checked\">"
+  @unchecked_box "- <input type=\"checkbox\">"
+  @regex_checked ~r/[-,*,+] \[[X,x]\]/
   @regex_checked_with_text ~r/\r\n[-,*,+] \[[X,x]\] \S+|^[-,*,+] \[[X,x]\] \S+/
-  @regex_unchecked ~r/^[-,*,+] \[\s\]|\r\n[-,*,+] \[\s\]/
+  @regex_unchecked ~r/[-,*,+] \[\s\]/
   @regex_unchecked_with_text ~r/^[-,*,+]\s\[\s\]\s\S+|\r\n[-,*,+]\s\[\s\]\s\S+/
 
   @doc """
@@ -13,7 +13,7 @@ defmodule Artemis.Helpers.Markdown do
     value
     |> HtmlSanitizeEx.basic_html()
     |> convert_checkboxes()
-    |> Earmark.as_html!(%Earmark.Options{breaks: true})
+    |> Earmark.as_html!()
   end
 
   defp convert_checkboxes(value) do
@@ -22,16 +22,16 @@ defmodule Artemis.Helpers.Markdown do
     |> replace_unchecked
   end
 
-  def replace_checked(value) do
+  defp replace_checked(value) do
     case String.match?(value, @regex_checked_with_text) do
-      true -> String.replace(value, @regex_checked, "\r\n " <> @checked_box)
+      true -> String.replace(value, @regex_checked, @checked_box)
       false -> value
     end
   end
 
-  def replace_unchecked(value) do
+  defp replace_unchecked(value) do
     case String.match?(value, @regex_unchecked_with_text) do
-      true -> String.replace(value, @regex_unchecked, "\r\n " <> @unchecked_box)
+      true -> String.replace(value, @regex_unchecked, @unchecked_box)
       false -> value
     end
   end

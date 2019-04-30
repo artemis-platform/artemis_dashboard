@@ -33,7 +33,7 @@ defmodule Artemis.Helpers.MarkdownTest do
 
       result = Markdown.to_html!(value)
 
-      assert result == "<p> <input type=\"checkbox\" disabled> Hello World</p>\n"
+      assert result == "<ul>\n<li><input type=\"checkbox\"> Hello World\n</li>\n</ul>\n"
     end
 
     test "supports checklists - checked" do
@@ -41,7 +41,7 @@ defmodule Artemis.Helpers.MarkdownTest do
 
       result = Markdown.to_html!(value)
 
-      assert result == "<p> <input type=\"checkbox\" checked=\"checked\" disabled> Hello World</p>\n"
+      assert result == "<ul>\n<li><input type=\"checkbox\" checked=\"checked\"> Hello World\n</li>\n</ul>\n"
 
       # With uppercase X
 
@@ -49,7 +49,7 @@ defmodule Artemis.Helpers.MarkdownTest do
 
       result = Markdown.to_html!(value)
 
-      assert result == "<p> <input type=\"checkbox\" checked=\"checked\" disabled> Hello World</p>\n"
+      assert result == "<ul>\n<li><input type=\"checkbox\" checked=\"checked\"> Hello World\n</li>\n</ul>\n"
     end
   end
 end

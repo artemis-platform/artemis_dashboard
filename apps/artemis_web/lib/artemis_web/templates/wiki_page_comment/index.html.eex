@@ -16,7 +16,7 @@
       <header>
         <span class="title"><%= comment.title %></span>
       </header>
-      <content>
+      <content class="markdown">
         <%= raw comment.body_html %>
       </content>
       <footer>
