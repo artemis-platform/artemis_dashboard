@@ -79,6 +79,20 @@ function initializeSidebars() {
   })
 }
 
+function initializeTagForm() {
+  $('.resource-tags .show-list-tags').click(function(event) {
+    event.preventDefault()
+    $('.resource-tags>div').hide()
+    $('.resource-tags .list').show()
+  })
+
+  $('.resource-tags .show-edit-tags').click(function(event) {
+    event.preventDefault()
+    $('.resource-tags>div').hide()
+    $('.resource-tags .form').show()
+  })
+}
+
 function initializeWikiSidenav() {
   var links = []
   var offsets = []
@@ -154,5 +168,6 @@ $(document).ready(function() {
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()
+  initializeTagForm()
   initializeWikiSidenav()
 })

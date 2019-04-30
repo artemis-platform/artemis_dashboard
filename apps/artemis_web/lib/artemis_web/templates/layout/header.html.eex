@@ -33,7 +33,7 @@
                 <h3>Site</h3>
                 <p>Administrative tools to manage the site.</p>
               </header>
-              <%= render_primary_nav_section(@conn, nav_items, ["Event Log", "Features"]) %>
+              <%= render_primary_nav_section(@conn, nav_items, ["Event Log", "Features", "Tags"]) %>
             </div>
           </li>
         <% end %>

@@ -333,7 +333,9 @@ defmodule Artemis.Helpers do
   @doc """
   Generate a slug value from bitstring
   """
-  def generate_slug(value, limit \\ 80) do
+  def generate_slug(value, limit \\ 80)
+  def generate_slug(nil, _limit), do: nil
+  def generate_slug(value, limit) do
     slug = Slugger.slugify_downcase(value)
 
     case is_number(limit) do

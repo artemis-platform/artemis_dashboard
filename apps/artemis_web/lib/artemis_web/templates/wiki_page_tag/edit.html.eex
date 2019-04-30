@@ -1,0 +1,10 @@
+<%=
+  tag_form_assigns = assigns
+    |> Map.put(:action, Routes.wiki_page_tag_path(@conn, :update, @wiki_page))
+    |> Map.put(:available_tags, @tags)
+    |> Map.put(:changeset, @tags_changeset)
+    |> Map.put(:current_tags, @wiki_page.tags)
+    |> Map.put(:tag_link, fn (tag) -> Routes.wiki_page_path(@conn, :index, filter: %{tags: [tag]}) end)
+
+  render ArtemisWeb.TagView, "_resource_list.html", tag_form_assigns
+%>

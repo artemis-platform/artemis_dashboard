@@ -46,6 +46,25 @@ defmodule Artemis.CreateWikiPageTest do
     end
   end
 
+  describe "associations - tags" do
+    test "creates tags" do
+      tag1 = insert(:tag)
+      tag2 = params_for(:tag)
+      params = :wiki_page
+        |> params_for
+        |> Map.put(:tags, [%{id: tag1.id}, tag2])
+
+      {:ok, wiki_page} = CreateWikiPage.call(params, Mock.system_user())
+
+      wiki_page = Repo.preload(wiki_page, [:tags])
+
+      assert length(wiki_page.tags) == 2
+
+      assert hd(wiki_page.tags).name == tag1.name
+      assert hd(wiki_page.tags).slug == tag1.slug
+    end
+  end
+
   describe "associations - wiki revisions" do
     test "creates an associated wiki revision" do
       params = params_for(:wiki_page)

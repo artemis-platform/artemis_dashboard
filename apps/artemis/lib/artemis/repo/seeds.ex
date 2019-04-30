@@ -63,6 +63,12 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "roles:show", name: "Roles - Show"},
       %{slug: "roles:update", name: "Roles - Update"},
 
+      %{slug: "tags:create", name: "Tags - Global Create", description: "Should be restricted to administrators"},
+      %{slug: "tags:delete", name: "Tags - Global Delete", description: "Should be restricted to administrators"},
+      %{slug: "tags:list", name: "Tags - Global List", description: "Should be restricted to administrators"},
+      %{slug: "tags:show", name: "Tags - Global Show", description: "Should be restricted to administrators"},
+      %{slug: "tags:update", name: "Tags - Global Update", description: "Should be restricted to administrators"},
+
       %{slug: "user-impersonations:create", name: "User Impersonations - Create"},
 
       %{slug: "users:access:all", name: "Users - Access All", description: "Should be restricted to administrators"},
@@ -82,6 +88,7 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "wiki-pages:delete:comments", name: "Docs - Delete Comments"},
       %{slug: "wiki-pages:list:comments", name: "Docs - List Comments"},
       %{slug: "wiki-pages:update:comments", name: "Docs - Update Comments"},
+      %{slug: "wiki-pages:update:tags", name: "Docs - Update Tags"},
 
       %{slug: "wiki-revisions:delete", name: "Doc Revisions - Delete"},
       %{slug: "wiki-revisions:list", name: "Doc Revisions - List"},

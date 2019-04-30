@@ -50,6 +50,7 @@
     <article>
       <content id="wiki-page-content">
         <h1><%= @wiki_page.title %></h1>
+        <%= render ArtemisWeb.WikiPageTagView, "edit.html", assigns %>
         <%= raw @wiki_page.body_html %>
       </content>
       <footer>

@@ -66,6 +66,18 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "roles:create")
         ]
       ],
+      "Tags": [
+        [
+          label: "List Tags",
+          path: &Routes.tag_path(&1, :index),
+          verify: &has?(&1, "tags:list")
+        ],
+        [
+          label: "Create New Tag",
+          path: &Routes.tag_path(&1, :new),
+          verify: &has?(&1, "tags:create")
+        ]
+      ],
       "Users": [
         [
           label: "List Users",

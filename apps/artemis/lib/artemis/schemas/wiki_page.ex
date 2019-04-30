@@ -1,5 +1,6 @@
 defmodule Artemis.WikiPage do
   use Artemis.Schema
+  use Assoc.Schema, repo: Artemis.Repo
 
   schema "wiki_pages" do
     field :body, :string
@@ -12,6 +13,7 @@ defmodule Artemis.WikiPage do
     belongs_to :user, Artemis.User
     has_many :wiki_revisions, Artemis.WikiRevision, on_delete: :delete_all
     many_to_many :comments, Artemis.Comment, join_through: "comments_wiki_pages", on_delete: :delete_all, on_replace: :delete
+    many_to_many :tags, Artemis.Tag, join_through: "tags_wiki_pages", on_delete: :delete_all, on_replace: :delete
 
     timestamps()
   end
@@ -32,6 +34,10 @@ defmodule Artemis.WikiPage do
     :section,
     :slug,
     :title
+  ]
+
+  def updatable_associations, do: [
+    tags: Artemis.Tag
   ]
 
   def event_log_fields, do: [
