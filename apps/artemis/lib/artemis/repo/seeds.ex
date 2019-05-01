@@ -88,6 +88,7 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "wiki-pages:delete:comments", name: "Docs - Delete Comments"},
       %{slug: "wiki-pages:list:comments", name: "Docs - List Comments"},
       %{slug: "wiki-pages:update:comments", name: "Docs - Update Comments"},
+      %{slug: "wiki-pages:create:tags", name: "Docs - Create New Tags"},
       %{slug: "wiki-pages:update:tags", name: "Docs - Update Tags"},
 
       %{slug: "wiki-revisions:delete", name: "Doc Revisions - Delete"},

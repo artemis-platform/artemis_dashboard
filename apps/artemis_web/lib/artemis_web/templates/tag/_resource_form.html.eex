@@ -1,6 +1,13 @@
 <%= form_for @changeset, @action, [class: "ui form", id: "tag-form"], fn f -> %>
   <div class="field">
-    <%= multiple_select f, :tags, Enum.map(@available_tags, &(&1.name)), selected: Enum.map(@current_tags, &(&1.name)), class: "enhanced search creatable", placeholder: "Tags" %>
+    <%=
+      classes = case has?(@conn, @create_permission) do
+        true -> "enhanced search creatable"
+        false -> "enhanced search"
+      end
+
+      multiple_select f, :tags, Enum.map(@available_tags, &(&1.name)), selected: Enum.map(@current_tags, &(&1.name)), class: classes, placeholder: "Tags"
+    %>
   </div>
 
   <div>
