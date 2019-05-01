@@ -7,6 +7,20 @@ table th a {
   width: 100%;
 }
 
+ul {
+  list-style: disc;
+  padding: 0 0 0 1.5rem;
+
+  p {
+    margin-bottom: 0;
+  }
+
+  ul {
+    list-style: disc;
+  }
+}
+
+
 /* === General Classes === */
 
 .label-with-errors {
@@ -302,6 +316,10 @@ table th a {
 
     p {
       margin: 0 0 1.75rem 0;
+    }
+
+    ul p {
+      margin-bottom: 0;
     }
 
     pre {

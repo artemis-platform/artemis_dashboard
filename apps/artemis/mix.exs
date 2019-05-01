@@ -44,6 +44,7 @@ defmodule Artemis.MixProject do
       {:config_tuples, "~> 0.2.0"},
       {:slugger, "~> 0.3"},
       {:earmark, "~> 1.3"},
+      {:html_sanitize_ex, "~> 1.3"},
       {:artemis_pubsub, in_umbrella: true},
       {:ex_machina, "~> 2.2", only: :test},
       {:faker, "~> 0.11", only: :test}
