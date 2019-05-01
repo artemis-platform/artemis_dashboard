@@ -62,7 +62,7 @@
       <nav id="icon-navigation">
         <ul>
           <li>
-            <a title="Help" href="<%= Routes.help_path(@conn, :index) %>">
+            <a title="Help" href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["help"]}}) %>">
               <i class="wizard icon"></i>
             </a>
           </li>

@@ -44,8 +44,6 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "features:show", name: "Features - Show"},
       %{slug: "features:update", name: "Features - Update"},
 
-      %{slug: "help:list", name: "Help - List"},
-
       %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All", description: "Should be restricted to administrators"},
       %{slug: "http-request-logs:access:self", name: "HTTP Request Logs - Access Self"},
       %{slug: "http-request-logs:list", name: "HTTP Request Logs - List"},

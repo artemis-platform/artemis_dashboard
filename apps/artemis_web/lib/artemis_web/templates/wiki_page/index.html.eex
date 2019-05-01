@@ -21,6 +21,10 @@
 
   <h2>Topics</h2>
 
+  <%= if length(@wiki_pages.entries) == 0 do %>
+    No records found
+  <% end %>
+
   <% sections = Enum.group_by(@wiki_pages.entries, &(&1.section)) %>
   <%= Enum.map sections, fn ({section, entries}) -> %>
     <h3><%= section %></h3>
