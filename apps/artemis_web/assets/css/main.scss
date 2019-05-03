@@ -93,6 +93,20 @@ ul {
   }
 }
 
+.data-table-filters {
+
+  content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0.5rem 0 0.5rem 0;
+
+    > * {
+      margin-right: 1.5rem !important;
+    }
+  }
+}
+
 /* === Components === */
 
 .search-resource {
@@ -114,6 +128,13 @@ ul {
     &::after {
       display: none;
     }
+  }
+}
+
+.filter-form {
+
+  .active .select2-selection {
+    border-color: $blue_muted !important;
   }
 }
 

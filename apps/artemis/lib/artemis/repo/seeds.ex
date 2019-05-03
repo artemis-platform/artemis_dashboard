@@ -44,8 +44,6 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "features:show", name: "Features - Show"},
       %{slug: "features:update", name: "Features - Update"},
 
-      %{slug: "help:list", name: "Help - List"},
-
       %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All", description: "Should be restricted to administrators"},
       %{slug: "http-request-logs:access:self", name: "HTTP Request Logs - Access Self"},
       %{slug: "http-request-logs:list", name: "HTTP Request Logs - List"},
@@ -88,6 +86,7 @@ defmodule Artemis.Repo.Seeds do
       %{slug: "wiki-pages:delete:comments", name: "Docs - Delete Comments"},
       %{slug: "wiki-pages:list:comments", name: "Docs - List Comments"},
       %{slug: "wiki-pages:update:comments", name: "Docs - Update Comments"},
+      %{slug: "wiki-pages:create:tags", name: "Docs - Create New Tags"},
       %{slug: "wiki-pages:update:tags", name: "Docs - Update Tags"},
 
       %{slug: "wiki-revisions:delete", name: "Doc Revisions - Delete"},

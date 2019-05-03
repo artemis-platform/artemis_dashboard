@@ -1,3 +1,25 @@
+function initializeFilterFields() {
+  $('.filter-form .filter-multi-select').on('change', function(event) {
+    var currentQueryString = window.location.search.substring(1)
+    var currentParams = qs.parse(currentQueryString) || {}
+    var nextParams = currentParams
+    var selected = $(this).select2('data')
+    var encodingOptions = { arrayFormat: 'brackets', encodeValuesOnly: true }
+    var tags = []
+
+    selected.forEach(function(element) {
+      tags.push(element.id)
+    })
+
+    nextParams.filters = currentParams.filters || {}
+    nextParams.filters.tags = tags
+
+    var nextQueryString = qs.stringify(nextParams, encodingOptions)
+
+    window.location = window.location.pathname + '?' + nextQueryString
+  })
+}
+
 function initializeMarkdownTextarea() {
   $('textarea.markdown').each(function() {
     var easyMDE = new EasyMDE({
@@ -34,6 +56,7 @@ function initializeSelect2() {
 
     options.minimumResultsForSearch = hasSearch ? 0 : Infinity
     options.tags = hasCreate
+    options.placeholder = item.attr('placeholder') || ''
 
     // Initialize
     item.select2(options)
@@ -164,6 +187,7 @@ function initializeWikiSidenav() {
 }
 
 $(document).ready(function() {
+  initializeFilterFields()
   initializeMarkdownTextarea()
   initializeSelect2()
   initializeSidebars()

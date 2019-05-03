@@ -1,6 +1,7 @@
 defmodule Artemis.ListTags do
   use Artemis.Context
 
+  import Artemis.Helpers.Filter
   import Artemis.Helpers.Search
   import Ecto.Query
 
@@ -15,6 +16,7 @@ defmodule Artemis.ListTags do
     params = default_params(params)
 
     Tag
+    |> distinct(true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> search_filter(params)
@@ -37,13 +39,13 @@ defmodule Artemis.ListTags do
   end
   defp filter_query(query, _params, _user), do: query
 
-  defp filter(query, "name", value), do: where(query, [t], t.name == ^value)
-  defp filter(query, "slug", value), do: where(query, [t], t.slug == ^value)
-  defp filter(query, "type", value), do: where(query, [t], t.type == ^value)
+  defp filter(query, "name", value), do: where(query, [t], t.name in ^split(value))
+  defp filter(query, "slug", value), do: where(query, [t], t.slug in ^split(value))
+  defp filter(query, "type", value), do: where(query, [t], t.type in ^split(value))
   defp filter(query, "wiki_page_id", value) do
     query
     |> join(:left, [tags], wiki_pages in assoc(tags, :wiki_pages))
-    |> where([..., wp], wp.id == ^value)
+    |> where([..., wp], wp.id in ^split(value))
   end
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))

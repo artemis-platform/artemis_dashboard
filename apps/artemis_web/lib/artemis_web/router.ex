@@ -31,12 +31,12 @@ defmodule ArtemisWeb.Router do
     pipe_through :browser
     pipe_through :read_auth
 
-    get "/", HomeController, :index
     resources "/sessions", SessionController, only: [:new, :show, :delete]
 
     scope "/" do
       pipe_through :require_auth
 
+      get "/", HomeController, :index
       resources "/docs", WikiPageController do
         resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
         resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
@@ -47,7 +47,6 @@ defmodule ArtemisWeb.Router do
       resources "/features", FeatureController
       resources "/permissions", PermissionController
       resources "/roles", RoleController
-      resources "/help", HelpController, only: [:index]
       resources "/search", SearchController, only: [:index]
       resources "/tags", TagController
       resources "/users", UserController do

@@ -7,14 +7,24 @@ defmodule ArtemisWeb.GetUserByAuthProvider do
 
   @default_role "default"
 
-  def call(%{"id" => provider} = _params) do
-    case provider do
-      "local" -> get_from_config()
-      _ -> {:error, "Error provider not supported"}
+  def call(%{"id" => provider} = params) do
+    available_providers = %{
+      "local" => fn () -> get_from_config(params) end
+    }
+
+    enabled_providers = :artemis_web
+      |> Application.get_env(:auth_providers, "")
+      |> String.split(",")
+
+    providers = Map.take(available_providers, enabled_providers)
+
+    case Map.get(providers, provider) do
+      nil -> {:error, "Error provider not supported"}
+      action -> action.()
     end
   end
 
-  defp get_from_config do
+  defp get_from_config(_params) do
     case Application.get_env(:artemis, :system_user) do
       nil -> {:error, "Error fetching data from provider"}
       user_data -> create_or_update_user(user_data.email, user_data)

@@ -6,7 +6,6 @@ defmodule ArtemisWeb.WikiPageController do
   alias Artemis.DeleteWikiPage
   alias Artemis.GetWikiPage
   alias Artemis.ListComments
-  alias Artemis.ListTags
   alias Artemis.ListWikiPages
   alias Artemis.UpdateWikiPage
   alias Artemis.WikiPage
@@ -16,10 +15,12 @@ defmodule ArtemisWeb.WikiPageController do
 
   def index(conn, params) do
     authorize(conn, "wiki-pages:list", fn () ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      wiki_pages = ListWikiPages.call(params, current_user(conn))
+      tags = get_tags("wiki-pages", user)
+      wiki_pages = ListWikiPages.call(params, user)
 
-      render(conn, "index.html", wiki_pages: wiki_pages)
+      render(conn, "index.html", tags: tags, wiki_pages: wiki_pages)
     end)
   end
 
@@ -59,7 +60,7 @@ defmodule ArtemisWeb.WikiPageController do
       wiki_page = GetWikiPage.call!(id, user)
       comments = ListComments.call(%{filters: %{wiki_page_id: id}}, user)
       comment_changeset = Comment.changeset(%Comment{})
-      tags = ListTags.call(%{filters: %{type: "wiki-pages"}}, user)
+      tags = get_tags("wiki-pages", user)
       tags_changeset = WikiPage.changeset(wiki_page)
 
       render(conn, "show.html", comment_changeset: comment_changeset, comments: comments, tags: tags, tags_changeset: tags_changeset, wiki_page: wiki_page)

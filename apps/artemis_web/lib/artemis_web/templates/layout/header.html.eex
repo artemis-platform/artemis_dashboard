@@ -14,11 +14,14 @@
               <i class="angle down icon"></i>
             </a>
             <div class="dropdown">
-              <header>
-                <h3>Users</h3>
-                <p>Tools to manage site users and user access.</p>
-              </header>
-              <%= render_primary_nav_section(@conn, nav_items, ["Users", "Roles", "Permissions"]) %>
+              <content>
+                <header>
+                  <h3>Users</h3>
+                  <p>Tools to manage site users and user access.</p>
+                </header>
+                <%= render_primary_nav_section(@conn, nav_items, ["Users", "Roles", "Permissions"]) %>
+              </content>
+              <footer></footer>
             </div>
           </li>
         <% end %>
@@ -29,11 +32,14 @@
               <i class="angle down icon"></i>
             </a>
             <div class="dropdown">
-              <header>
-                <h3>Site</h3>
-                <p>Administrative tools to manage the site.</p>
-              </header>
-              <%= render_primary_nav_section(@conn, nav_items, ["Event Log", "Features", "Tags"]) %>
+              <content>
+                <header>
+                  <h3>Site</h3>
+                  <p>Administrative tools to manage the site.</p>
+                </header>
+                <%= render_primary_nav_section(@conn, nav_items, ["Event Log", "Features", "Tags"]) %>
+              </content>
+              <footer></footer>
             </div>
           </li>
         <% end %>
@@ -62,13 +68,13 @@
       <nav id="icon-navigation">
         <ul>
           <li>
-            <a title="Help" href="<%= Routes.help_path(@conn, :index) %>">
-              <i class="wizard icon"></i>
+            <a title="Alerts" href="#">
+              <i class="bullhorn icon"></i>
             </a>
           </li>
           <li>
-            <a title="Alerts" href="#">
-              <i class="bell icon"></i>
+            <a title="Help" href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["help"]}}) %>">
+              <i class="help icon"></i>
             </a>
           </li>
         </ul>

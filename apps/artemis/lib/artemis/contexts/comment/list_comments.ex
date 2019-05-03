@@ -1,6 +1,7 @@
 defmodule Artemis.ListComments do
   use Artemis.Context
 
+  import Artemis.Helpers.Filter
   import Artemis.Helpers.Search
   import Ecto.Query
 
@@ -15,6 +16,7 @@ defmodule Artemis.ListComments do
     params = default_params(params)
 
     Comment
+    |> distinct(true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> search_filter(params)
@@ -37,11 +39,11 @@ defmodule Artemis.ListComments do
   end
   defp filter_query(query, _params, _user), do: query
 
-  defp filter(query, "user_id", value), do: where(query, [c], c.user_id == ^value)
+  defp filter(query, "user_id", value), do: where(query, [c], c.user_id in ^split(value))
   defp filter(query, "wiki_page_id", value) do
     query
     |> join(:left, [comments], wiki_pages in assoc(comments, :wiki_pages))
-    |> where([..., wp], wp.id == ^value)
+    |> where([..., wp], wp.id in ^split(value))
   end
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))

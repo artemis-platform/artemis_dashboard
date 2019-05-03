@@ -5,7 +5,7 @@ defmodule ArtemisWeb.BrowserHelpers do
 
   def browser_sign_in() do
     navigate_to(session_url(ArtemisWeb.Endpoint, :new))
-    click_link("Local Provider")
+    click_link("Log in as System User")
   end
 
   # Actions

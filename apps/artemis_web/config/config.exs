@@ -2,7 +2,8 @@ use Mix.Config
 
 config :artemis_web,
   ecto_repos: [Artemis.Repo],
-  generators: [context_app: :artemis]
+  generators: [context_app: :artemis],
+  auth_providers: System.get_env("ARTEMIS_WEB_ENABLED_AUTH_PROVIDERS")
 
 config :artemis_web, ArtemisWeb.Endpoint,
   url: [host: "localhost"],

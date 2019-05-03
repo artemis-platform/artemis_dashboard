@@ -1,6 +1,7 @@
 defmodule Artemis.ListWikiRevisions do
   use Artemis.Context
 
+  import Artemis.Helpers.Filter
   import Ecto.Query
 
   alias Artemis.Repo
@@ -14,6 +15,7 @@ defmodule Artemis.ListWikiRevisions do
     params = default_params(params)
 
     WikiRevision
+    |> distinct(true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> order_query(params)
@@ -35,7 +37,7 @@ defmodule Artemis.ListWikiRevisions do
   end
   defp filter_query(query, _params, _user), do: query
 
-  defp filter(query, "wiki_page_id", value), do: where(query, [wr], wr.wiki_page_id == ^value)
+  defp filter(query, "wiki_page_id", value), do: where(query, [wr], wr.wiki_page_id in ^split(value))
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)

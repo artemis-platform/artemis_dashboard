@@ -33,6 +33,7 @@ RUN MIX_ENV=${MIX_ENV} bin/local/reset-build && \
 #
 RUN if [ "${MIX_ENV}" = "prod" ]; then \
   cp .env /app/config && \
+  sed -i"" -e "s/export //g" /app/config && \
   source /app/config && \
   cp -pr /app/source /app/build && \
   cd /app/build && \
