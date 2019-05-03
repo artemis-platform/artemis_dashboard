@@ -11,7 +11,14 @@ defmodule ArtemisWeb.SessionController do
   alias ArtemisWeb.ListSessionAuthProviders
 
   def new(conn, _params) do
-    render(conn, "new.html", providers: ListSessionAuthProviders.call(conn))
+    case current_user(conn) do
+      nil ->
+        render(conn, "new.html", providers: ListSessionAuthProviders.call(conn))
+      _user ->
+        conn
+        |> put_flash(:info, "Already logged in")
+        |> redirect(to: "/")
+    end
   end
 
   def show(conn, params) do
