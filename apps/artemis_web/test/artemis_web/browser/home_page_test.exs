@@ -15,14 +15,14 @@ defmodule ArtemisWeb.HomePageTest do
     test "when unauthenticated show log in link" do
       navigate_to(@url)
 
-      assert visible?("Log In")
+      assert visible?("Log in")
     end
 
     test "when authenticated do not show log in link" do
       browser_sign_in()
       navigate_to(@url)
 
-      assert not visible?("Log In")
+      assert not visible?("Log in")
     end
   end
 
