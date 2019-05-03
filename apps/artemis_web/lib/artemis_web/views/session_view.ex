@@ -3,8 +3,8 @@ defmodule ArtemisWeb.SessionView do
 
   def get_provider_color(%{title: title}) do
     case title do
-      "Facebook" -> "blue"
-      "Google" -> "teal"
+      "Log in as System User" -> "red"
+      "Google" -> "blue"
       _ -> "gray"
     end
   end
