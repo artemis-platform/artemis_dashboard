@@ -5,7 +5,7 @@
     |> Map.put(:changeset, @tags_changeset)
     |> Map.put(:create_permission, "wiki-pages:create:tags")
     |> Map.put(:current_tags, @wiki_page.tags)
-    |> Map.put(:tag_link, fn (tag) -> Routes.wiki_page_path(@conn, :index, filter: %{tags: [tag]}) end)
+    |> Map.put(:tag_link, fn (tag) -> Routes.wiki_page_path(@conn, :index, filters: %{tags: [tag]}) end)
 
   render ArtemisWeb.TagView, "_resource_list.html", tag_form_assigns
 %>

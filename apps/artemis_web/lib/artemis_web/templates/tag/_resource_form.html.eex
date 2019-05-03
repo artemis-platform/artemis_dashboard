@@ -1,4 +1,4 @@
-<%= form_for @changeset, @action, [class: "ui form", id: "tag-form"], fn f -> %>
+<%= form_for @changeset, @action, [class: "ui form", id: "tag-form", method: "put"], fn f -> %>
   <div class="field">
     <%=
       classes = case has?(@conn, @create_permission) do

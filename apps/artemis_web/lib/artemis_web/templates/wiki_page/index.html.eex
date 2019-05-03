@@ -17,7 +17,14 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn, placeholder: "Search Documentation", size: "full-width" %>
+  <div class="data-table-filters">
+    <content>
+      <%= render_search @conn, placeholder: "Search Documentation", size: "full-width" %>
+      <div>
+        <%= render ArtemisWeb.TagView, "_resource_filter.html", assigns %>
+      </div>
+    </content>
+  </div>
 
   <h2>Topics</h2>
 

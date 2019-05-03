@@ -1,0 +1,9 @@
+<%=
+  available_tags = Enum.map(@tags, &({&1.name, &1.slug}))
+  filter_assigns = assigns
+    |> Map.put(:available, available_tags)
+    |> Map.put(:label, "Tag")
+    |> Map.put(:value, "tags")
+
+  render ArtemisWeb.LayoutView, "filter_multi_select.html", filter_assigns
+%>

@@ -1,0 +1,7 @@
+<%= form_for @conn, "", [class: "ui form filter-form"], fn f -> %>
+  <% selected = Artemis.Helpers.deep_get(@conn, [:query_params, "filters", @value]) || [] %>
+  <% container_class = if length(selected) > 0, do: "active" %>
+  <div class="<%= container_class %>">
+    <%= multiple_select f, @value, @available, selected: selected, class: "filter-multi-select enhanced search", placeholder: "Filter by #{@label}" %>
+  </div>
+<% end %>
