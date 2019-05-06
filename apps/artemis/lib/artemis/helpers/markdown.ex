@@ -2,19 +2,22 @@ defmodule Artemis.Helpers.Markdown do
   @checked_box "- <input type=\"checkbox\" checked=\"checked\">"
   @unchecked_box "- <input type=\"checkbox\">"
   @regex_checked ~r/[-,*,+] \[[X,x]\]/
-  @regex_checked_with_text ~r/\r\n[-,*,+] \[[X,x]\] \S+|^[-,*,+] \[[X,x]\] \S+/
+  @regex_checked_with_text ~r/^[-,*,+] \[[X,x]\] \S+|\n[-,*,+] \[[X,x]\] \S+|\r\n[-,*,+] \[[X,x]\] \S+/
   @regex_unchecked ~r/[-,*,+] \[\s\]/
-  @regex_unchecked_with_text ~r/^[-,*,+]\s\[\s\]\s\S+|\r\n[-,*,+]\s\[\s\]\s\S+/
+  @regex_unchecked_with_text ~r/^[-,*,+]\s\[\s\]\s\S+|\n[-,*,+]\s\[\s\]\s\S+|\r\n[-,*,+]\s\[\s\]\s\S+/
 
   @doc """
   Convert markdown test to sanitized HTML
   """
-  def to_html!(value) do
+  def to_html!(value, options \\ []) do
     value
-    |> HtmlSanitizeEx.basic_html()
+    |> sanitize_html(options)
     |> convert_checkboxes()
     |> Earmark.as_html!()
   end
+
+  defp sanitize_html(value, sanitize: true), do: HtmlSanitizeEx.basic_html(value)
+  defp sanitize_html(value, _), do: value
 
   defp convert_checkboxes(value) do
     value

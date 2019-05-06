@@ -37,7 +37,7 @@
         </nav>
         <div class="actions">
           Updated <%= render_date(@wiki_page.updated_at) %><br/>
-          By <%= Map.get(@wiki_page.user, :name) %><br/>
+          By <%= Artemis.Helpers.deep_get(@wiki_page, [:user, :name], "Unknown") %><br/>
           <%= if has?(@conn, "wiki-revisions:list") do %>
             <%= link "View Revisions", to: Routes.wiki_page_revision_path(@conn, :index, @wiki_page) %>
           <% end %>

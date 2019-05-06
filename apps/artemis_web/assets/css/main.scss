@@ -12,11 +12,19 @@ ul {
   padding: 0 0 0 1.5rem;
 
   p {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
   }
 
   ul {
     list-style: disc;
+  }
+}
+
+ol {
+  padding: 0 0 0 1.5rem;
+
+  p {
+    margin-bottom: 0 !important;
   }
 }
 
@@ -403,13 +411,13 @@ ul {
       li.tag-H4 a {
         color: rgba(0, 0, 0, 0.70);
         font-weight: 500;
-        margin-left: 0.5rem;
+        margin-left: 1rem;
       }
 
       li.tag-H5 a {
         color: rgba(0, 0, 0, 0.50);
         font-weight: 500;
-        margin-left: 0.5rem;
+        margin-left: 1rem;
       }
 
       li.highlight {
