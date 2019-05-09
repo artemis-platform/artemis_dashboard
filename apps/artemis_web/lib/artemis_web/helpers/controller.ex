@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.Controller.Helpers do
+defmodule ArtemisWeb.Helpers.Controller do
   @doc """
   Return tags for a specific resource
   """
