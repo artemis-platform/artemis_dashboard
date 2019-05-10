@@ -10,7 +10,6 @@ defmodule ArtemisWeb.AuthController do
   alias Artemis.Event
   alias ArtemisWeb.CreateSession
   alias ArtemisWeb.GetUserByAuthProviderData
-  alias Ueberauth.Strategy.Helpers
 
   @moduledoc """
   Responsible for handling user authentication

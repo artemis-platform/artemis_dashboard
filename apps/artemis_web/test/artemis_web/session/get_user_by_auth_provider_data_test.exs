@@ -47,6 +47,83 @@ defmodule ArtemisWeb.GetUserByAuthProviderDataTest do
       assert hd(user.roles).slug == "default"
     end
 
+    test "creates an auth provider and links to an existing user when it already exists" do
+      email = "create@email.com"
+      uid = "create-uid"
+
+      user = insert(:user, email: email)
+
+      # Existing User
+
+      user = User
+        |> preload([:auth_providers, :roles])
+        |> Repo.get(user.id)
+
+      assert user.email == email
+      assert user.auth_providers == []
+      assert user.roles == []
+
+      # Create Auth Provider
+
+      data = response_data(email: email, provider: :github, uid: uid)
+      options = [enable_all_providers: true]
+
+      {:ok, user} = GetUserByAuthProviderData.call(data, options)
+
+      user = User
+        |> preload([:auth_providers, :roles])
+        |> Repo.get(user.id)
+
+      assert user.email == email
+      assert user.last_log_in_at != nil
+
+      assert hd(user.auth_providers).uid == uid
+      assert hd(user.auth_providers).type == "github"
+
+      assert user.roles == []
+    end
+
+    test "user record can have multiple associated auth providers" do
+      email = "create@email.com"
+      uid = "create-uid"
+      provider = "github"
+
+      data = response_data(email: email, provider: provider, uid: uid)
+      options = [enable_all_providers: true]
+
+      {:ok, user} = GetUserByAuthProviderData.call(data, options)
+
+      user = User
+        |> preload([:auth_providers, :roles])
+        |> Repo.get(user.id)
+
+      assert user.email == email
+      assert user.last_log_in_at != nil
+
+      assert length(user.auth_providers) == 1
+      assert hd(user.auth_providers).uid == uid
+      assert hd(user.auth_providers).type == provider
+
+      assert hd(user.roles).slug == "default"
+
+      # Create second Auth Provider
+
+      email = "create@email.com"
+      uid = "create-uid"
+      provider = "google"
+
+      data = response_data(email: email, provider: provider, uid: uid)
+      options = [enable_all_providers: true]
+
+      {:ok, user} = GetUserByAuthProviderData.call(data, options)
+
+      user = User
+        |> preload([:auth_providers, :roles])
+        |> Repo.get(user.id)
+
+      assert length(user.auth_providers) == 2
+    end
+
     test "updates auth provider and associated user when it already exists" do
       original_email = "existing@email.com"
       uid = "update-uid"
@@ -81,6 +158,37 @@ defmodule ArtemisWeb.GetUserByAuthProviderDataTest do
       # Does not update user associations
 
       assert user.roles == []
+    end
+
+    test "the auth provider email address can change" do
+      original_email = "create@email.com"
+      uid = "constant-uid"
+
+      data = response_data(email: original_email, provider: :github, uid: uid)
+      options = [enable_all_providers: true]
+
+      {:ok, user} = GetUserByAuthProviderData.call(data, options)
+
+      user_count = User
+        |> Repo.all() 
+        |> length()
+
+      # Finds existing user by auth provider uid, not email
+
+      updated_email = "updated@email.com"
+
+      updated_data = response_data(email: updated_email, provider: :github, uid: uid)
+      options = [enable_all_providers: true]
+
+      {:ok, updated_user} = GetUserByAuthProviderData.call(updated_data, options)
+
+      updated_user_count = User
+        |> Repo.all() 
+        |> length()
+
+      assert user.email == original_email
+      assert updated_user_count == user_count
+      assert updated_user.id == user.id
     end
   end
 

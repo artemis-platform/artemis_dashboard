@@ -24,7 +24,8 @@ config :scrivener_html,
 
 config :ueberauth, Ueberauth,
   providers: [
-    github: {Ueberauth.Strategy.Github, []}
+    github: {Ueberauth.Strategy.Github, []},
+    system_user: {Ueberauth.Strategy.SystemUser, []}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,

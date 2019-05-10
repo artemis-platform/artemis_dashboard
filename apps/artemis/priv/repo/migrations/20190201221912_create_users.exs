@@ -18,5 +18,6 @@ defmodule Artemis.Repo.Migrations.CreateUsers do
     create index(:users, [:client_key])
     create index(:users, [:client_secret])
     create unique_index(:users, [:client_key, :client_secret])
+    create unique_index(:users, [:email])
   end
 end
