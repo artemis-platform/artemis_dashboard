@@ -5,12 +5,13 @@ defmodule Artemis.Repo.Migrations.CreateUsers do
     create table(:users) do
       add :client_key, :string
       add :client_secret, :string
+      add :description, :text
       add :email, :string
-      add :name, :string
       add :first_name, :string
+      add :image, :string
+      add :last_log_in_at, :utc_datetime
       add :last_name, :string
-      add :provider_uid, :string
-      add :provider_data, :map
+      add :name, :string
       timestamps(type: :utc_datetime)
     end
 

@@ -3,6 +3,15 @@ defmodule Artemis.Factories do
 
   # Factories
 
+  def auth_provider_factory do
+    %Artemis.AuthProvider{
+      data: %{},
+      type: Faker.Internet.slug(),
+      uid: sequence(:uid, &"#{Faker.Internet.slug()}-#{&1}"),
+      user: insert(:user)
+    }
+  end
+
   def comment_factory do
     body = Faker.Lorem.paragraph()
 
@@ -87,6 +96,11 @@ defmodule Artemis.Factories do
   end
 
   # Traits
+
+  def with_auth_providers(%Artemis.User{} = user, number \\ 3) do
+    insert_list(number, :auth_provider, user: user)
+    user
+  end
 
   def with_comments(%Artemis.User{} = user, number \\ 3) do
     insert_list(number, :comment, user: user)

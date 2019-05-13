@@ -24,6 +24,6 @@
     </div>
     <h4>Actions</h4>
     <%= action "View Profile", to: Routes.user_path(@conn, :show, @user) %>
-    <%= action "Log Out", method: "delete", to: Routes.session_path(@conn, :delete, @user), color: "blue", data: [confirm: "Log Out?"] %>
+    <%= action "Log Out", method: "delete", to: Routes.auth_path(@conn, :delete), color: "blue", data: [confirm: "Log Out?"] %>
   </div>
 <% end %>
