@@ -20,7 +20,7 @@ defmodule Artemis.UserTest do
     :user_roles,
     :wiki_pages,
     :wiki_revisions
-]
+  ]
 
   describe "attributes - constraints" do
     test "email must be unique" do
@@ -29,65 +29,6 @@ defmodule Artemis.UserTest do
       assert_raise Ecto.ConstraintError, fn () ->
         insert(:user, email: existing.email)
       end
-    end
-  end
-
-  describe "associations - comments" do
-    setup do
-      user = :user
-        |> insert
-        |> with_comments
-
-      {:ok, user: Repo.preload(user, @preload)}
-    end
-
-    test "cannot update associations through parent", %{user: user} do
-      new_comment = insert(:comment, user: user)
-
-      user = User
-        |> preload(^@preload)
-        |> Repo.get(user.id)
-
-      assert length(user.comments) == 4
-
-      {:ok, updated} = user
-        |> User.associations_changeset(%{comments: [new_comment]})
-        |> Repo.update
-
-      updated = Repo.preload(updated, @preload)
-
-      assert length(updated.comments) == 4
-    end
-
-    test "deleting association does not remove record", %{user: user} do
-      assert Repo.get(User, user.id) != nil
-      assert length(user.comments) == 3
-
-      Enum.map(user.comments, &Repo.delete(&1))
-
-      user = User
-        |> preload(^@preload)
-        |> Repo.get(user.id)
-
-      assert Repo.get(User, user.id) != nil
-      assert length(user.comments) == 0
-    end
-
-    test "deleting record nilifies associations", %{user: user} do
-      assert Repo.get(User, user.id) != nil
-      assert length(user.comments) == 3
-
-      Enum.map(user.comments, fn (comment) ->
-        assert Repo.get(Comment, comment.id).user_id == user.id
-      end)
-
-      Repo.delete(user)
-
-      assert Repo.get(User, user.id) == nil
-
-      Enum.map(user.comments, fn (comment) ->
-        assert Repo.get(Comment, comment.id).user_id == nil
-      end)
     end
   end
 
@@ -146,6 +87,65 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.auth_providers, fn (auth_provider) ->
         assert Repo.get(AuthProvider, auth_provider.id) == nil
+      end)
+    end
+  end
+
+  describe "associations - comments" do
+    setup do
+      user = :user
+        |> insert
+        |> with_comments
+
+      {:ok, user: Repo.preload(user, @preload)}
+    end
+
+    test "cannot update associations through parent", %{user: user} do
+      new_comment = insert(:comment, user: user)
+
+      user = User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert length(user.comments) == 4
+
+      {:ok, updated} = user
+        |> User.associations_changeset(%{comments: [new_comment]})
+        |> Repo.update
+
+      updated = Repo.preload(updated, @preload)
+
+      assert length(updated.comments) == 4
+    end
+
+    test "deleting association does not remove record", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.comments) == 3
+
+      Enum.map(user.comments, &Repo.delete(&1))
+
+      user = User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert Repo.get(User, user.id) != nil
+      assert length(user.comments) == 0
+    end
+
+    test "deleting record nilifies associations", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.comments) == 3
+
+      Enum.map(user.comments, fn (comment) ->
+        assert Repo.get(Comment, comment.id).user_id == user.id
+      end)
+
+      Repo.delete(user)
+
+      assert Repo.get(User, user.id) == nil
+
+      Enum.map(user.comments, fn (comment) ->
+        assert Repo.get(Comment, comment.id).user_id == nil
       end)
     end
   end

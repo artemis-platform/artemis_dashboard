@@ -32,4 +32,14 @@ config :ueberauth, Ueberauth.Strategy.Github.OAuth,
   client_id: System.get_env("ARTEMIS_WEB_GITHUB_CLIENT_ID"),
   client_secret: System.get_env("ARTEMIS_WEB_GITHUB_CLIENT_SECRET")
 
+config :ueberauth, Ueberauth,
+  providers: [
+    github: {Ueberauth.Strategy.Github, []},
+    system_user: {Ueberauth.Strategy.SystemUser, []}
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+  client_id: System.get_env("ARTEMIS_WEB_GITHUB_CLIENT_ID"),
+  client_secret: System.get_env("ARTEMIS_WEB_GITHUB_CLIENT_SECRET")
+
 import_config "#{Mix.env()}.exs"
