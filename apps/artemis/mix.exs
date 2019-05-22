@@ -29,7 +29,7 @@ defmodule Artemis.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(_), do: ["lib", "test/support"]
 
   # Specifies your project dependencies.
   #
@@ -45,9 +45,9 @@ defmodule Artemis.MixProject do
       {:slugger, "~> 0.3"},
       {:earmark, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.3"},
-      {:artemis_pubsub, in_umbrella: true},
-      {:ex_machina, "~> 2.2", only: :test},
-      {:faker, "~> 0.11", only: :test}
+      {:ex_machina, "~> 2.2"},
+      {:faker, "~> 0.11"},
+      {:artemis_pubsub, in_umbrella: true}
     ]
   end
 

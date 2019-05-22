@@ -1,4 +1,4 @@
-defmodule Artemis.Repo.Seeds do
+defmodule Artemis.Repo.GenerateData do
   import Ecto.Query
 
   alias Artemis.Permission
@@ -8,6 +8,18 @@ defmodule Artemis.Repo.Seeds do
   alias Artemis.User
   alias Artemis.UserRole
   alias Artemis.WikiPage
+
+  @moduledoc """
+  Defines the minimum data required for the application to run.
+
+  Should be run each time new code is deployed to ensure application integrity.
+
+  To prevent data collisions, each section must be idempotent - only attempting
+  to create data when it is not present.
+
+  Note: Filler data used for development, qa, test and demo environments should
+  be defined in `Artemis.Repo.GenerateFillerData` instead.
+  """
 
   def call() do
 
@@ -142,8 +154,8 @@ defmodule Artemis.Repo.Seeds do
     # Users
 
     users = [
-      Application.fetch_env!(:artemis, :root_user),
-      Application.fetch_env!(:artemis, :system_user)
+      Application.fetch_env!(:artemis, :users)[:root_user],
+      Application.fetch_env!(:artemis, :users)[:system_user]
     ]
 
     Enum.map(users, fn (params) ->
@@ -166,8 +178,8 @@ defmodule Artemis.Repo.Seeds do
     role = Repo.get_by!(Role, slug: "developer")
 
     user_emails = [
-      Application.fetch_env!(:artemis, :root_user).email,
-      Application.fetch_env!(:artemis, :system_user).email
+      Application.fetch_env!(:artemis, :users)[:root_user].email,
+      Application.fetch_env!(:artemis, :users)[:system_user].email
     ]
     users = Enum.map(user_emails, &Repo.get_by!(User, email: &1))
 
@@ -345,5 +357,9 @@ Nunc rhoncus ligula quis ex pulvinar placerat. Praesent ultricies ut nisi ac tin
           :ok
       end
     end)
+
+    # Return Value
+
+    {:ok, []}
   end
 end
