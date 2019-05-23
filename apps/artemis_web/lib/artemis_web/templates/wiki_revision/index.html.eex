@@ -13,7 +13,7 @@
 
   <%= render_search @conn %>
 
-  <table class="ui table selectable">
+  <table class="data-table">
     <thead>
       <tr>
         <th><%= sortable_table_header(@conn, "title", "Title") %></th>

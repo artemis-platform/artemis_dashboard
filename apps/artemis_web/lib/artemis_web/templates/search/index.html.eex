@@ -44,7 +44,7 @@
             <%= search_label(key) %> - <%= search_matches_text(data) %>
           </h3>
 
-          <table class="ui table selectable">
+          <table class="data-table">
             <thead>
               <tr>
                 <th>Resource</th>
