@@ -140,6 +140,7 @@ defmodule Artemis.Factories do
     insert(:wiki_page, comments: [comment])
     comment
   end
+
   def with_wiki_page(%Artemis.Tag{} = tag) do
     insert(:wiki_page, tags: [tag])
     tag

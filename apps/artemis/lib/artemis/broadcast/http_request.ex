@@ -17,9 +17,11 @@ defmodule Artemis.HttpRequest do
 
     result
   end
+
   def broadcast({:error, _} = result, _user) do
     result
   end
+
   def broadcast(data, user) do
     broadcast({:ok, data}, user)
   end

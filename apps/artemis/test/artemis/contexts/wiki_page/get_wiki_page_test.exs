@@ -13,7 +13,7 @@ defmodule Artemis.GetWikiPageTest do
 
   describe "call" do
     test "returns nil wiki page not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       assert GetWikiPage.call(invalid_id, Mock.system_user()) == nil
     end
@@ -29,9 +29,9 @@ defmodule Artemis.GetWikiPageTest do
 
   describe "call!" do
     test "raises an exception wiki page not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Ecto.NoResultsError, fn () ->
+      assert_raise Ecto.NoResultsError, fn ->
         GetWikiPage.call!(invalid_id, Mock.system_user()) == nil
       end
     end

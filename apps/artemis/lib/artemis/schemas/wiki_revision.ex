@@ -17,28 +17,31 @@ defmodule Artemis.WikiRevision do
 
   # Callbacks
 
-  def updatable_fields, do: [
-    :body,
-    :body_html,
-    :section,
-    :slug,
-    :title,
-    :weight,
-    :user_id,
-    :wiki_page_id
-  ]
+  def updatable_fields,
+    do: [
+      :body,
+      :body_html,
+      :section,
+      :slug,
+      :title,
+      :weight,
+      :user_id,
+      :wiki_page_id
+    ]
 
-  def required_fields, do: [
-    :section,
-    :slug,
-    :title
-  ]
+  def required_fields,
+    do: [
+      :section,
+      :slug,
+      :title
+    ]
 
-  def event_log_fields, do: [
-    :slug,
-    :title,
-    :wiki_page_id
-  ]
+  def event_log_fields,
+    do: [
+      :slug,
+      :title,
+      :wiki_page_id
+    ]
 
   # Changesets
 

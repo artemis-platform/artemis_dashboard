@@ -11,7 +11,7 @@ defmodule Artemis.TagTest do
     test "compound type and slug must be unique" do
       existing = insert(:tag)
 
-      assert_raise Ecto.ConstraintError, fn () ->
+      assert_raise Ecto.ConstraintError, fn ->
         insert(:tag, type: existing.type, slug: existing.slug)
       end
 
@@ -21,7 +21,7 @@ defmodule Artemis.TagTest do
     test "compound type and name must be unique" do
       existing = insert(:tag)
 
-      assert_raise Ecto.ConstraintError, fn () ->
+      assert_raise Ecto.ConstraintError, fn ->
         insert(:tag, type: existing.type, name: existing.name)
       end
 

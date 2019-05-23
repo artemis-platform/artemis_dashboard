@@ -19,6 +19,7 @@ defmodule Artemis.GetComment do
   defp get_record(value, user, options, get_by) when not is_list(value) do
     get_record([id: value], user, options, get_by)
   end
+
   defp get_record(value, user, options, get_by) do
     Comment
     |> preload(^Keyword.get(options, :preload, @default_preload))

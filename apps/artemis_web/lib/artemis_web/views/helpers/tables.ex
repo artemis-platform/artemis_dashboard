@@ -237,10 +237,12 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   Generates export link with specified format
   """
   def export_path(conn, format) do
-    query_params = conn
+    query_params =
+      conn
       |> Map.get(:query_params, %{})
       |> Map.put("_format", format)
       |> Map.put("page_size", 50000)
+
     query_string = URI.encode_query(query_params)
 
     "#{conn.request_path}?#{query_string}"

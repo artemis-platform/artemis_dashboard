@@ -11,16 +11,18 @@ defmodule ArtemisWeb.Helpers.Controller do
   params for creating a new tag.
   """
   def tag_params(%{"tags" => names}, type, user), do: tag_params(names, type, user)
+
   def tag_params(names, type, user) when is_list(names) do
     existing = existing_tags(type, user)
 
-    Enum.map(names, fn (name) ->
+    Enum.map(names, fn name ->
       case Map.get(existing, name) do
         nil -> Artemis.GenerateTagParams.call(%{name: name, type: type})
         id -> %{id: id}
       end
     end)
   end
+
   def tag_params(_, _, _), do: []
 
   defp existing_tags(type, user) do
@@ -28,7 +30,7 @@ defmodule ArtemisWeb.Helpers.Controller do
     params = %{filters: filters}
     tags = Artemis.ListTags.call(params, user)
 
-    Enum.reduce(tags, %{}, fn (tag, acc) ->
+    Enum.reduce(tags, %{}, fn tag, acc ->
       Map.put(acc, tag.name, tag.id)
     end)
   end

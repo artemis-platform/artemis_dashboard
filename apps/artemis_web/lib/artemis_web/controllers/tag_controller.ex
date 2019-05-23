@@ -11,7 +11,7 @@ defmodule ArtemisWeb.TagController do
   @preload []
 
   def index(conn, params) do
-    authorize(conn, "tags:list", fn () ->
+    authorize(conn, "tags:list", fn ->
       params = Map.put(params, :paginate, true)
       tags = ListTags.call(params, current_user(conn))
 
@@ -20,7 +20,7 @@ defmodule ArtemisWeb.TagController do
   end
 
   def new(conn, _params) do
-    authorize(conn, "tags:create", fn () ->
+    authorize(conn, "tags:create", fn ->
       tag = %Tag{}
       changeset = Tag.changeset(tag)
 
@@ -29,7 +29,7 @@ defmodule ArtemisWeb.TagController do
   end
 
   def create(conn, %{"tag" => params}) do
-    authorize(conn, "tags:create", fn () ->
+    authorize(conn, "tags:create", fn ->
       case CreateTag.call(params, current_user(conn)) do
         {:ok, tag} ->
           conn
@@ -45,7 +45,7 @@ defmodule ArtemisWeb.TagController do
   end
 
   def show(conn, %{"id" => id}) do
-    authorize(conn, "tags:show", fn () ->
+    authorize(conn, "tags:show", fn ->
       tag = GetTag.call!(id, current_user(conn))
 
       render(conn, "show.html", tag: tag)
@@ -53,7 +53,7 @@ defmodule ArtemisWeb.TagController do
   end
 
   def edit(conn, %{"id" => id}) do
-    authorize(conn, "tags:update", fn () ->
+    authorize(conn, "tags:update", fn ->
       tag = GetTag.call(id, current_user(conn), preload: @preload)
       changeset = Tag.changeset(tag)
 
@@ -62,7 +62,7 @@ defmodule ArtemisWeb.TagController do
   end
 
   def update(conn, %{"id" => id, "tag" => params}) do
-    authorize(conn, "tags:update", fn () ->
+    authorize(conn, "tags:update", fn ->
       case UpdateTag.call(id, params, current_user(conn)) do
         {:ok, tag} ->
           conn
@@ -78,7 +78,7 @@ defmodule ArtemisWeb.TagController do
   end
 
   def delete(conn, %{"id" => id}) do
-    authorize(conn, "tags:delete", fn () ->
+    authorize(conn, "tags:delete", fn ->
       {:ok, _tag} = DeleteTag.call(id, current_user(conn))
 
       conn

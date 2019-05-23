@@ -2,7 +2,7 @@ defmodule ArtemisLog.Worker.HttpRequest do
   use GenServer
 
   import ArtemisPubSub
-  
+
   alias ArtemisLog.CreateHttpRequestLog
 
   @subscribe_to_http_requests Application.get_env(:artemis_log, :subscribe_to_events, true)
@@ -30,6 +30,7 @@ defmodule ArtemisLog.Worker.HttpRequest do
 
     {:noreply, state}
   end
+
   def handle_info(_, state) do
     {:noreply, state}
   end

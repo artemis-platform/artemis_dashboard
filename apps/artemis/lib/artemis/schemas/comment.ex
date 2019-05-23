@@ -9,39 +9,47 @@ defmodule Artemis.Comment do
     field :topic, :string
 
     belongs_to :user, Artemis.User
-    many_to_many :wiki_pages, Artemis.WikiPage, join_through: "comments_wiki_pages", on_delete: :delete_all, on_replace: :delete
+
+    many_to_many :wiki_pages, Artemis.WikiPage,
+      join_through: "comments_wiki_pages",
+      on_delete: :delete_all,
+      on_replace: :delete
 
     timestamps()
   end
 
   # Callbacks
 
-  def updatable_fields, do: [
-    :body,
-    :body_html,
-    :title,
-    :topic,
-    :user_id
-  ]
+  def updatable_fields,
+    do: [
+      :body,
+      :body_html,
+      :title,
+      :topic,
+      :user_id
+    ]
 
-  def required_fields, do: [
-    :body,
-    :body_html,
-    :title,
-    :topic,
-    :user_id
-  ]
+  def required_fields,
+    do: [
+      :body,
+      :body_html,
+      :title,
+      :topic,
+      :user_id
+    ]
 
-  def updatable_associations, do: [
-    wiki_pages: Artemis.WikiPage
-  ]
+  def updatable_associations,
+    do: [
+      wiki_pages: Artemis.WikiPage
+    ]
 
-  def event_log_fields, do: [
-    :id,
-    :title,
-    :topic,
-    :user_id
-  ]
+  def event_log_fields,
+    do: [
+      :id,
+      :title,
+      :topic,
+      :user_id
+    ]
 
   # Changesets
 

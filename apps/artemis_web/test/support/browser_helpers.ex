@@ -27,11 +27,13 @@ defmodule ArtemisWeb.BrowserHelpers do
   def fill_input(element, value), do: fill_field(element, value)
 
   def fill_enhanced_select(element, value) when is_bitstring(value), do: fill_enhanced_select(element, [value])
+
   def fill_enhanced_select(element, values) when is_list(values) do
     click({:css, "#{element} .select2-container"})
-    Enum.map(values, fn (value) ->
+
+    Enum.map(values, fn value ->
       fill_field({:css, "#{element} .select2-search__field"}, value)
-      send_keys :enter
+      send_keys(:enter)
     end)
   end
 
@@ -67,11 +69,14 @@ defmodule ArtemisWeb.BrowserHelpers do
     :timer.sleep(interval)
 
     case func.() do
-      true -> true
-      false -> case total < interval do
-        true -> wait_for(func, interval, maximum, total + interval)
-        false -> false
-      end
+      true ->
+        true
+
+      false ->
+        case total < interval do
+          true -> wait_for(func, interval, maximum, total + interval)
+          false -> false
+        end
     end
   end
 

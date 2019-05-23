@@ -7,10 +7,10 @@ defmodule Artemis.UpdateTagTest do
 
   describe "call!" do
     test "raises an exception when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
       params = params_for(:tag)
 
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         UpdateTag.call!(invalid_id, params, Mock.system_user())
       end
     end
@@ -45,7 +45,7 @@ defmodule Artemis.UpdateTagTest do
 
   describe "call" do
     test "returns an error when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
       params = params_for(:tag)
 
       {:error, _} = UpdateTag.call(invalid_id, params, Mock.system_user())
@@ -123,7 +123,8 @@ defmodule Artemis.UpdateTagTest do
     end
 
     test "removes associations when explicitly passed an empty value" do
-      tag = :tag
+      tag =
+        :tag
         |> insert
         |> with_wiki_page
 

@@ -21,7 +21,7 @@ defmodule Artemis.ListTagsTest do
     test "returns existing tag" do
       tag = insert(:tag)
 
-      assert ListTags.call(Mock.system_user())  == [tag]
+      assert ListTags.call(Mock.system_user()) == [tag]
     end
 
     test "returns a list of tags" do
@@ -60,6 +60,7 @@ defmodule Artemis.ListTagsTest do
         },
         preload: [:wiki_pages]
       }
+
       results = ListTags.call(params, Mock.system_user())
 
       assert length(results) == 1
@@ -83,7 +84,8 @@ defmodule Artemis.ListTagsTest do
         paginate: true
       }
 
-      response_keys = ListTags.call(params, Mock.system_user())
+      response_keys =
+        ListTags.call(params, Mock.system_user())
         |> Map.from_struct()
         |> Map.keys()
 

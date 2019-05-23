@@ -48,9 +48,12 @@ defmodule ArtemisWeb.SearchView do
 
   def search_link(conn, data, key) do
     label = "View " <> search_matches_text(data)
-    path = @search_links
+
+    path =
+      @search_links
       |> Map.get(key, [])
       |> Keyword.get(:path)
+
     to = path.(conn, :index, current_query_params(conn))
 
     action(label, to: to)
@@ -99,11 +102,12 @@ defmodule ArtemisWeb.SearchView do
       link: fn conn -> Routes.user_path(conn, :show, data) end
     }
   end
+
   defp search_entry(%Artemis.WikiPage{} = data) do
     %{
       title: data.title,
       permission: "wiki-pages:show",
-      link: fn (conn) -> Routes.wiki_page_path(conn, :show, data) end
+      link: fn conn -> Routes.wiki_page_path(conn, :show, data) end
     }
   end
 

@@ -31,6 +31,7 @@ defmodule ArtemisWeb.WikiRevisionControllerTest do
     test "deletes chosen wiki revision", %{conn: conn, parent: parent, record: record} do
       conn = delete(conn, Routes.wiki_page_revision_path(conn, :delete, parent, record))
       assert redirected_to(conn) == Routes.wiki_page_revision_path(conn, :index, parent)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.wiki_page_revision_path(conn, :show, parent, record))
       end

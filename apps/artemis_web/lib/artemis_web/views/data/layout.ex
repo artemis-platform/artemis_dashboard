@@ -15,8 +15,8 @@ defmodule ArtemisWeb.ViewData.Layout do
   - verify: function that takes the `current_user` as the first argument and returns a boolean
   """
   def nav_items do
-    Enum.reverse([
-      "Documentation": [
+    Enum.reverse(
+      Documentation: [
         [
           label: "View Documentation",
           path: &Routes.wiki_page_path(&1, :index),
@@ -30,7 +30,7 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "event-logs:list")
         ]
       ],
-      "Features": [
+      Features: [
         [
           label: "List Features",
           path: &Routes.feature_path(&1, :index),
@@ -42,7 +42,7 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "features:create")
         ]
       ],
-      "Permissions": [
+      Permissions: [
         [
           label: "List Permissions",
           path: &Routes.permission_path(&1, :index),
@@ -54,7 +54,7 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "permissions:create")
         ]
       ],
-      "Roles": [
+      Roles: [
         [
           label: "List Roles",
           path: &Routes.role_path(&1, :index),
@@ -66,7 +66,7 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "roles:create")
         ]
       ],
-      "Tags": [
+      Tags: [
         [
           label: "List Tags",
           path: &Routes.tag_path(&1, :index),
@@ -78,7 +78,7 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "tags:create")
         ]
       ],
-      "Users": [
+      Users: [
         [
           label: "List Users",
           path: &Routes.user_path(&1, :index),
@@ -90,6 +90,6 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "users:create")
         ]
       ]
-    ])
+    )
   end
 end

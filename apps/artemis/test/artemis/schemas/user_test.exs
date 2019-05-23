@@ -97,7 +97,8 @@ defmodule Artemis.UserTest do
 
   describe "associations - comments" do
     setup do
-      user = :user
+      user =
+        :user
         |> insert
         |> with_comments
 
@@ -107,15 +108,17 @@ defmodule Artemis.UserTest do
     test "cannot update associations through parent", %{user: user} do
       new_comment = insert(:comment, user: user)
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
       assert length(user.comments) == 4
 
-      {:ok, updated} = user
+      {:ok, updated} =
+        user
         |> User.associations_changeset(%{comments: [new_comment]})
-        |> Repo.update
+        |> Repo.update()
 
       updated = Repo.preload(updated, @preload)
 
@@ -128,7 +131,8 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.comments, &Repo.delete(&1))
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
@@ -140,7 +144,7 @@ defmodule Artemis.UserTest do
       assert Repo.get(User, user.id) != nil
       assert length(user.comments) == 3
 
-      Enum.map(user.comments, fn (comment) ->
+      Enum.map(user.comments, fn comment ->
         assert Repo.get(Comment, comment.id).user_id == user.id
       end)
 
@@ -148,7 +152,7 @@ defmodule Artemis.UserTest do
 
       assert Repo.get(User, user.id) == nil
 
-      Enum.map(user.comments, fn (comment) ->
+      Enum.map(user.comments, fn comment ->
         assert Repo.get(Comment, comment.id).user_id == nil
       end)
     end
@@ -212,7 +216,8 @@ defmodule Artemis.UserTest do
 
   describe "associations - wiki pages" do
     setup do
-      user = :user
+      user =
+        :user
         |> insert
         |> with_wiki_pages
 
@@ -222,15 +227,17 @@ defmodule Artemis.UserTest do
     test "cannot update associations through parent", %{user: user} do
       new_wiki_page = insert(:wiki_page, user: user)
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
       assert length(user.wiki_pages) == 4
 
-      {:ok, updated} = user
+      {:ok, updated} =
+        user
         |> User.associations_changeset(%{wiki_pages: [new_wiki_page]})
-        |> Repo.update
+        |> Repo.update()
 
       updated = Repo.preload(updated, @preload)
 
@@ -243,7 +250,8 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.wiki_pages, &Repo.delete(&1))
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
@@ -255,7 +263,7 @@ defmodule Artemis.UserTest do
       assert Repo.get(User, user.id) != nil
       assert length(user.wiki_pages) == 3
 
-      Enum.map(user.wiki_pages, fn (wiki_page) ->
+      Enum.map(user.wiki_pages, fn wiki_page ->
         assert Repo.get(WikiPage, wiki_page.id).user_id == user.id
       end)
 
@@ -263,7 +271,7 @@ defmodule Artemis.UserTest do
 
       assert Repo.get(User, user.id) == nil
 
-      Enum.map(user.wiki_pages, fn (wiki_page) ->
+      Enum.map(user.wiki_pages, fn wiki_page ->
         assert Repo.get(WikiPage, wiki_page.id).user_id == nil
       end)
     end
@@ -271,7 +279,8 @@ defmodule Artemis.UserTest do
 
   describe "associations - wiki revisions" do
     setup do
-      user = :user
+      user =
+        :user
         |> insert
         |> with_wiki_revisions
 
@@ -281,15 +290,17 @@ defmodule Artemis.UserTest do
     test "cannot update associations through parent", %{user: user} do
       new_wiki_revision = insert(:wiki_revision, user: user)
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
       assert length(user.wiki_revisions) == 4
 
-      {:ok, updated} = user
+      {:ok, updated} =
+        user
         |> User.associations_changeset(%{wiki_revisions: [new_wiki_revision]})
-        |> Repo.update
+        |> Repo.update()
 
       updated = Repo.preload(updated, @preload)
 
@@ -302,7 +313,8 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.wiki_revisions, &Repo.delete(&1))
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
@@ -314,7 +326,7 @@ defmodule Artemis.UserTest do
       assert Repo.get(User, user.id) != nil
       assert length(user.wiki_revisions) == 3
 
-      Enum.map(user.wiki_revisions, fn (wiki_revision) ->
+      Enum.map(user.wiki_revisions, fn wiki_revision ->
         assert Repo.get(WikiRevision, wiki_revision.id).user_id == user.id
       end)
 
@@ -322,7 +334,7 @@ defmodule Artemis.UserTest do
 
       assert Repo.get(User, user.id) == nil
 
-      Enum.map(user.wiki_revisions, fn (wiki_revision) ->
+      Enum.map(user.wiki_revisions, fn wiki_revision ->
         assert Repo.get(WikiRevision, wiki_revision.id).user_id == nil
       end)
     end

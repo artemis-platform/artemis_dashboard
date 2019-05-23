@@ -31,10 +31,11 @@ defmodule Artemis.ListWikiRevisions do
   end
 
   defp filter_query(query, %{"filters" => filters}, _user) when is_map(filters) do
-    Enum.reduce(filters, query, fn ({key, value}, acc) ->
+    Enum.reduce(filters, query, fn {key, value}, acc ->
       filter(acc, key, value)
     end)
   end
+
   defp filter_query(query, _params, _user), do: query
 
   defp filter(query, "wiki_page_id", value), do: where(query, [wr], wr.wiki_page_id in ^split(value))

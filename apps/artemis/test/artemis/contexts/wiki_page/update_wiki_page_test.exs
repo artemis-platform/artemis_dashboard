@@ -8,10 +8,10 @@ defmodule Artemis.UpdateWikiPageTest do
 
   describe "call!" do
     test "raises an exception when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
       params = params_for(:wiki_page)
 
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         UpdateWikiPage.call!(invalid_id, params, Mock.system_user())
       end
     end
@@ -46,7 +46,7 @@ defmodule Artemis.UpdateWikiPageTest do
 
   describe "call" do
     test "returns an error when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
       params = params_for(:wiki_page)
 
       {:error, _} = UpdateWikiPage.call(invalid_id, params, Mock.system_user())
@@ -92,7 +92,8 @@ defmodule Artemis.UpdateWikiPageTest do
 
   describe "associations - tags" do
     test "updates tags" do
-      wiki_page = :wiki_page
+      wiki_page =
+        :wiki_page
         |> insert()
         |> Repo.preload([:tags])
 
@@ -100,13 +101,16 @@ defmodule Artemis.UpdateWikiPageTest do
 
       tag1 = insert(:tag)
       tag2 = params_for(:tag)
-      params = wiki_page
-        |> Map.from_struct
+
+      params =
+        wiki_page
+        |> Map.from_struct()
         |> Map.put(:tags, [%{id: tag1.id}, tag2])
 
       {:ok, wiki_page} = UpdateWikiPage.call(wiki_page, params, Mock.system_user())
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload([:tags])
         |> Repo.get(wiki_page.id)
 
@@ -120,7 +124,9 @@ defmodule Artemis.UpdateWikiPageTest do
   describe "associations - wiki revisions" do
     test "creates an associated wiki revision" do
       params = params_for(:wiki_page)
-      wiki_page = :wiki_page
+
+      wiki_page =
+        :wiki_page
         |> insert()
         |> Repo.preload([:wiki_revisions])
 
@@ -128,7 +134,8 @@ defmodule Artemis.UpdateWikiPageTest do
 
       {:ok, wiki_page} = UpdateWikiPage.call(wiki_page, params, Mock.system_user())
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload([:wiki_revisions])
         |> Repo.get(wiki_page.id)
 
@@ -141,7 +148,8 @@ defmodule Artemis.UpdateWikiPageTest do
 
       {:ok, wiki_page} = UpdateWikiPage.call(wiki_page, params, Mock.system_user())
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload([:wiki_revisions])
         |> Repo.get(wiki_page.id)
 

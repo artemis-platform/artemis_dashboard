@@ -17,6 +17,7 @@ defmodule Artemis.GetWikiRevision do
   defp get_record(value, options, get_by) when not is_list(value) do
     get_record([id: value], options, get_by)
   end
+
   defp get_record(value, options, get_by) do
     WikiRevision
     |> preload(^Keyword.get(options, :preload, @default_preload))

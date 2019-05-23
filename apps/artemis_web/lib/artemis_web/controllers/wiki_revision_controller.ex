@@ -7,12 +7,15 @@ defmodule ArtemisWeb.WikiRevisionController do
   alias Artemis.ListWikiRevisions
 
   def index(conn, params) do
-    authorize(conn, "wiki-revisions:list", fn () ->
+    authorize(conn, "wiki-revisions:list", fn ->
       wiki_page = get_wiki_page!(conn, params)
       filters = %{wiki_page_id: wiki_page.id}
-      params = params
+
+      params =
+        params
         |> Map.put(:filters, filters)
         |> Map.put(:paginate, true)
+
       wiki_revisions = ListWikiRevisions.call(params, current_user(conn))
 
       render(conn, "index.html", wiki_page: wiki_page, wiki_revisions: wiki_revisions)
@@ -20,7 +23,7 @@ defmodule ArtemisWeb.WikiRevisionController do
   end
 
   def show(conn, params) do
-    authorize(conn, "wiki-revisions:show", fn () ->
+    authorize(conn, "wiki-revisions:show", fn ->
       wiki_page = get_wiki_page!(conn, params)
       wiki_revision = GetWikiRevision.call!(Map.get(params, "id"), current_user(conn))
 
@@ -29,10 +32,11 @@ defmodule ArtemisWeb.WikiRevisionController do
   end
 
   def delete(conn, params) do
-    authorize(conn, "wiki-revisions:delete", fn () ->
+    authorize(conn, "wiki-revisions:delete", fn ->
       wiki_page = get_wiki_page!(conn, params)
 
-      {:ok, _wiki_revision} = params
+      {:ok, _wiki_revision} =
+        params
         |> Map.get("id")
         |> DeleteWikiRevision.call(current_user(conn))
 

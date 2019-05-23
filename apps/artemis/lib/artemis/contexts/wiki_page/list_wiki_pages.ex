@@ -33,19 +33,22 @@ defmodule Artemis.ListWikiPages do
   end
 
   defp filter_query(query, %{"filters" => filters}, _user) when is_map(filters) do
-    Enum.reduce(filters, query, fn ({key, value}, acc) ->
+    Enum.reduce(filters, query, fn {key, value}, acc ->
       filter(acc, key, value)
     end)
   end
+
   defp filter_query(query, _params, _user), do: query
 
   defp filter(query, "section", value), do: where(query, [wp], wp.section in ^split(value))
   defp filter(query, "slug", value), do: where(query, [wp], wp.slug in ^split(value))
+
   defp filter(query, "tags", value) do
     query
     |> join(:left, [wiki_pages], tags in assoc(wiki_pages, :tags))
     |> where([..., t], t.slug in ^split(value))
   end
+
   defp filter(query, "title", value), do: where(query, [wp], wp.title in ^split(value))
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))

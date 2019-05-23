@@ -25,7 +25,8 @@ defmodule Artemis.CommentTest do
 
       params = %{name: "Updated Name"}
 
-      {:ok, user} = user
+      {:ok, user} =
+        user
         |> User.changeset(params)
         |> Repo.update()
 

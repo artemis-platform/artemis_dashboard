@@ -14,7 +14,7 @@ defmodule Artemis.UpdateTag do
   end
 
   def call(id, params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       id
       |> get_record
       |> update_record(params)
@@ -27,11 +27,12 @@ defmodule Artemis.UpdateTag do
   def get_record(id), do: Repo.get(Tag, id)
 
   defp update_record(nil, _params), do: {:error, "Record not found"}
+
   defp update_record(record, params) do
     params = GenerateTagParams.call(params, record)
 
     record
     |> Tag.changeset(params)
-    |> Repo.update
+    |> Repo.update()
   end
 end

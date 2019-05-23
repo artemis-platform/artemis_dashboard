@@ -21,7 +21,7 @@ defmodule Artemis.ListCommentsTest do
     test "returns existing comment" do
       comment = insert(:comment)
 
-      assert ListComments.call(Mock.system_user())  == [comment]
+      assert ListComments.call(Mock.system_user()) == [comment]
     end
 
     test "returns a list of comments" do
@@ -57,6 +57,7 @@ defmodule Artemis.ListCommentsTest do
           user_id: comment.user_id
         }
       }
+
       results = ListComments.call(params, Mock.system_user())
 
       assert length(results) == 1
@@ -71,6 +72,7 @@ defmodule Artemis.ListCommentsTest do
         },
         preload: [:user, :wiki_pages]
       }
+
       results = ListComments.call(params, Mock.system_user())
 
       assert length(results) == 1
@@ -94,7 +96,8 @@ defmodule Artemis.ListCommentsTest do
         paginate: true
       }
 
-      response_keys = ListComments.call(params, Mock.system_user())
+      response_keys =
+        ListComments.call(params, Mock.system_user())
         |> Map.from_struct()
         |> Map.keys()
 

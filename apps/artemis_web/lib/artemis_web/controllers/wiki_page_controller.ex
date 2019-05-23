@@ -14,7 +14,7 @@ defmodule ArtemisWeb.WikiPageController do
   @preload []
 
   def index(conn, params) do
-    authorize(conn, "wiki-pages:list", fn () ->
+    authorize(conn, "wiki-pages:list", fn ->
       user = current_user(conn)
       params = Map.put(params, :paginate, true)
       tags = get_tags("wiki-pages", user)
@@ -25,7 +25,7 @@ defmodule ArtemisWeb.WikiPageController do
   end
 
   def new(conn, _params) do
-    authorize(conn, "wiki-pages:create", fn () ->
+    authorize(conn, "wiki-pages:create", fn ->
       wiki_page = %WikiPage{}
       changeset = WikiPage.changeset(wiki_page)
       sections = get_sections()
@@ -35,7 +35,7 @@ defmodule ArtemisWeb.WikiPageController do
   end
 
   def create(conn, %{"wiki_page" => params}) do
-    authorize(conn, "wiki-pages:create", fn () ->
+    authorize(conn, "wiki-pages:create", fn ->
       user = current_user(conn)
       params = Map.put(params, "user_id", user.id)
 
@@ -55,7 +55,7 @@ defmodule ArtemisWeb.WikiPageController do
   end
 
   def show(conn, %{"id" => id}) do
-    authorize(conn, "wiki-pages:show", fn () ->
+    authorize(conn, "wiki-pages:show", fn ->
       user = current_user(conn)
       wiki_page = GetWikiPage.call!(id, user)
       comments = ListComments.call(%{filters: %{wiki_page_id: id}}, user)
@@ -63,12 +63,18 @@ defmodule ArtemisWeb.WikiPageController do
       tags = get_tags("wiki-pages", user)
       tags_changeset = WikiPage.changeset(wiki_page)
 
-      render(conn, "show.html", comment_changeset: comment_changeset, comments: comments, tags: tags, tags_changeset: tags_changeset, wiki_page: wiki_page)
+      render(conn, "show.html",
+        comment_changeset: comment_changeset,
+        comments: comments,
+        tags: tags,
+        tags_changeset: tags_changeset,
+        wiki_page: wiki_page
+      )
     end)
   end
 
   def edit(conn, %{"id" => id}) do
-    authorize(conn, "wiki-pages:update", fn () ->
+    authorize(conn, "wiki-pages:update", fn ->
       wiki_page = GetWikiPage.call(id, current_user(conn), preload: @preload)
       changeset = WikiPage.changeset(wiki_page)
       sections = get_sections()
@@ -78,7 +84,7 @@ defmodule ArtemisWeb.WikiPageController do
   end
 
   def update(conn, %{"id" => id, "wiki_page" => params}) do
-    authorize(conn, "wiki-pages:update", fn () ->
+    authorize(conn, "wiki-pages:update", fn ->
       user = current_user(conn)
       params = Map.put(params, "user_id", user.id)
 
@@ -98,7 +104,7 @@ defmodule ArtemisWeb.WikiPageController do
   end
 
   def delete(conn, %{"id" => id}) do
-    authorize(conn, "wiki-pages:delete", fn () ->
+    authorize(conn, "wiki-pages:delete", fn ->
       {:ok, _wiki_page} = DeleteWikiPage.call(id, current_user(conn))
 
       conn
@@ -116,9 +122,10 @@ defmodule ArtemisWeb.WikiPageController do
       true ->
         omitted = List.delete(sections, @default_section)
 
-        [@default_section|omitted]
+        [@default_section | omitted]
+
       false ->
-        [@default_section|sections]
+        [@default_section | sections]
     end
   end
 end

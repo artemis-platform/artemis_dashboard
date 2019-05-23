@@ -32,7 +32,8 @@ defmodule Artemis.Helpers.Search do
   def search_filter(ecto_query, _), do: ecto_query
 
   defp add_search_filters(ecto_query, search_query) do
-    values = search_query
+    values =
+      search_query
       |> String.split(" ")
       |> Enum.map(&String.trim(&1))
       |> Enum.reject(&(&1 == ""))

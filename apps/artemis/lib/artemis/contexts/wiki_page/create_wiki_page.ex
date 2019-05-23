@@ -15,7 +15,7 @@ defmodule Artemis.CreateWikiPage do
   end
 
   def call(params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       params
       |> insert_record()
       |> update_associations(params)
@@ -29,19 +29,23 @@ defmodule Artemis.CreateWikiPage do
 
     %WikiPage{}
     |> WikiPage.changeset(params)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   defp create_params(params) do
     params = Artemis.Helpers.keys_to_strings(params)
-    html = case Map.get(params, "body") do
-      nil -> nil
-      body -> Markdown.to_html!(body)
-    end
-    slug = case Map.get(params, "title") do
-      nil -> nil
-      title -> Artemis.Helpers.generate_slug(title)
-    end
+
+    html =
+      case Map.get(params, "body") do
+        nil -> nil
+        body -> Markdown.to_html!(body)
+      end
+
+    slug =
+      case Map.get(params, "title") do
+        nil -> nil
+        title -> Artemis.Helpers.generate_slug(title)
+      end
 
     params
     |> Map.put("body_html", html)
@@ -49,7 +53,8 @@ defmodule Artemis.CreateWikiPage do
   end
 
   defp create_wiki_revision({:ok, record}, user) do
-    params = record
+    params =
+      record
       |> Map.from_struct()
       |> Map.put(:wiki_page_id, record.id)
 
@@ -58,5 +63,6 @@ defmodule Artemis.CreateWikiPage do
       error -> error
     end
   end
+
   defp create_wiki_revision(error, _user), do: error
 end

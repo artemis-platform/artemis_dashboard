@@ -395,6 +395,7 @@ defmodule Artemis.Helpers do
   """
   def generate_slug(value, limit \\ 80)
   def generate_slug(nil, _limit), do: nil
+
   def generate_slug(value, limit) do
     slug = Slugger.slugify_downcase(value)
 

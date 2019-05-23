@@ -83,6 +83,7 @@ defmodule ArtemisWeb.WikiPageControllerTest do
     test "deletes chosen wiki page", %{conn: conn, record: record} do
       conn = delete(conn, Routes.wiki_page_path(conn, :delete, record))
       assert redirected_to(conn) == Routes.wiki_page_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.wiki_page_path(conn, :show, record))
       end

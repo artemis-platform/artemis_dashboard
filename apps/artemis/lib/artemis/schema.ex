@@ -19,7 +19,7 @@ defmodule Artemis.Schema do
         |> select(^[field])
         |> distinct(^field)
         |> order_by(asc: ^field)
-        |> Repo.all
+        |> Repo.all()
         |> Enum.map(&Map.get(&1, field))
         |> Enum.reject(&is_nil(&1))
       end

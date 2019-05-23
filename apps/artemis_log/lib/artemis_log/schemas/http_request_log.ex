@@ -14,22 +14,24 @@ defmodule ArtemisLog.RequestLog do
 
   # Callbacks
 
-  def updatable_fields, do: [
-    :endpoint,
-    :node,
-    :path,
-    :query_string,
-    :user_id,
-    :user_name
-  ]
+  def updatable_fields,
+    do: [
+      :endpoint,
+      :node,
+      :path,
+      :query_string,
+      :user_id,
+      :user_name
+    ]
 
-  def required_fields, do: [
-    :endpoint,
-    :node,
-    :path,
-    :user_id,
-    :user_name
-  ]
+  def required_fields,
+    do: [
+      :endpoint,
+      :node,
+      :path,
+      :user_id,
+      :user_name
+    ]
 
   # Changesets
 
