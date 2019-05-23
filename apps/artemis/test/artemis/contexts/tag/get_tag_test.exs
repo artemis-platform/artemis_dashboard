@@ -6,7 +6,8 @@ defmodule Artemis.GetTagTest do
   alias Artemis.GetTag
 
   setup do
-    tag = :tag
+    tag =
+      :tag
       |> insert()
       |> with_wiki_page()
 
@@ -15,7 +16,7 @@ defmodule Artemis.GetTagTest do
 
   describe "call" do
     test "returns nil tag not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       assert GetTag.call(invalid_id, Mock.system_user()) == nil
     end
@@ -48,9 +49,9 @@ defmodule Artemis.GetTagTest do
 
   describe "call!" do
     test "raises an exception tag not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Ecto.NoResultsError, fn () ->
+      assert_raise Ecto.NoResultsError, fn ->
         GetTag.call!(invalid_id, Mock.system_user()) == nil
       end
     end

@@ -13,7 +13,7 @@ defmodule Artemis.GetWikiRevisionTest do
 
   describe "call" do
     test "returns nil wiki revision not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       assert GetWikiRevision.call(invalid_id, Mock.system_user()) == nil
     end
@@ -23,15 +23,16 @@ defmodule Artemis.GetWikiRevisionTest do
     end
 
     test "finds user keyword list", %{wiki_revision: wiki_revision} do
-      assert GetWikiRevision.call([title: wiki_revision.title, slug: wiki_revision.slug], Mock.system_user()).id == wiki_revision.id
+      assert GetWikiRevision.call([title: wiki_revision.title, slug: wiki_revision.slug], Mock.system_user()).id ==
+               wiki_revision.id
     end
   end
 
   describe "call!" do
     test "raises an exception wiki revision not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Ecto.NoResultsError, fn () ->
+      assert_raise Ecto.NoResultsError, fn ->
         GetWikiRevision.call!(invalid_id, Mock.system_user()) == nil
       end
     end

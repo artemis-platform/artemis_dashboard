@@ -7,7 +7,7 @@ defmodule Artemis.Helpers.MarkdownTest do
     test "returns error when passed an invalid data type" do
       value = %{invalid: "type"}
 
-      assert_raise FunctionClauseError, fn () ->
+      assert_raise FunctionClauseError, fn ->
         Markdown.to_html!(value)
       end
     end

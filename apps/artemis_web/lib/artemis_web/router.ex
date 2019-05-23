@@ -45,11 +45,13 @@ defmodule ArtemisWeb.Router do
       pipe_through :require_auth
 
       get "/", HomeController, :index
+
       resources "/docs", WikiPageController do
         resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
         resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
         put "/tags", WikiPageTagController, :update, as: :tag
       end
+
       get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]
       resources "/features", FeatureController
@@ -57,6 +59,7 @@ defmodule ArtemisWeb.Router do
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]
       resources "/tags", TagController
+
       resources "/users", UserController do
         resources "/impersonation", UserImpersonationController, as: "impersonation", only: [:create]
       end

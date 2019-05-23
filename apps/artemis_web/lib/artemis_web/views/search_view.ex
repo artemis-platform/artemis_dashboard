@@ -27,8 +27,9 @@ defmodule ArtemisWeb.SearchView do
   }
 
   def search_results?(%{total_entries: total_entries}), do: total_entries > 0
+
   def search_results?(data) do
-    Enum.any?(data, fn ({_, resource}) ->
+    Enum.any?(data, fn {_, resource} ->
       Map.get(resource, :total_entries) > 0
     end)
   end
@@ -47,9 +48,12 @@ defmodule ArtemisWeb.SearchView do
 
   def search_link(conn, data, key) do
     label = "View " <> search_matches_text(data)
-    path = @search_links
+
+    path =
+      @search_links
       |> Map.get(key, [])
       |> Keyword.get(:path)
+
     to = path.(conn, :index, current_query_params(conn))
 
     action(label, to: to)
@@ -71,35 +75,39 @@ defmodule ArtemisWeb.SearchView do
     %{
       title: data.slug,
       permission: "features:show",
-      link: fn (conn) -> Routes.feature_path(conn, :show, data) end
+      link: fn conn -> Routes.feature_path(conn, :show, data) end
     }
   end
+
   defp search_entry(%Artemis.Permission{} = data) do
     %{
       title: data.slug,
       permission: "permissions:show",
-      link: fn (conn) -> Routes.permission_path(conn, :show, data) end
+      link: fn conn -> Routes.permission_path(conn, :show, data) end
     }
   end
+
   defp search_entry(%Artemis.Role{} = data) do
     %{
       title: data.slug,
       permission: "roles:show",
-      link: fn (conn) -> Routes.user_path(conn, :show, data) end
+      link: fn conn -> Routes.user_path(conn, :show, data) end
     }
   end
+
   defp search_entry(%Artemis.User{} = data) do
     %{
       title: data.name,
       permission: "users:show",
-      link: fn (conn) -> Routes.user_path(conn, :show, data) end
+      link: fn conn -> Routes.user_path(conn, :show, data) end
     }
   end
+
   defp search_entry(%Artemis.WikiPage{} = data) do
     %{
       title: data.title,
       permission: "wiki-pages:show",
-      link: fn (conn) -> Routes.wiki_page_path(conn, :show, data) end
+      link: fn conn -> Routes.wiki_page_path(conn, :show, data) end
     }
   end
 

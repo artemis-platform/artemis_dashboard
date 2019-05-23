@@ -18,7 +18,7 @@ defmodule ArtemisLog.CreateHttpRequestLogTest do
     test "raises an exception when missing required params" do
       payload = %{}
 
-      assert_raise FunctionClauseError, fn () ->
+      assert_raise FunctionClauseError, fn ->
         CreateHttpRequestLog.call(payload)
       end
     end

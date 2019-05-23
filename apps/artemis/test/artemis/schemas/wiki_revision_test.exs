@@ -27,7 +27,8 @@ defmodule Artemis.WikiRevisionTest do
 
       params = %{name: "Updated Name"}
 
-      {:ok, user} = user
+      {:ok, user} =
+        user
         |> User.changeset(params)
         |> Repo.update()
 
@@ -71,7 +72,8 @@ defmodule Artemis.WikiRevisionTest do
 
       params = %{title: "Updated Title"}
 
-      {:ok, wiki_page} = wiki_page
+      {:ok, wiki_page} =
+        wiki_page
         |> WikiPage.changeset(params)
         |> Repo.update()
 

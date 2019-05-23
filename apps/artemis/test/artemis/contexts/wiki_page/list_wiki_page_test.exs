@@ -21,7 +21,7 @@ defmodule Artemis.ListWikiPagesTest do
     test "returns existing wiki page" do
       wiki_page = insert(:wiki_page)
 
-      assert ListWikiPages.call(Mock.system_user())  == [wiki_page]
+      assert ListWikiPages.call(Mock.system_user()) == [wiki_page]
     end
 
     test "returns a list of wiki pages" do
@@ -58,7 +58,8 @@ defmodule Artemis.ListWikiPagesTest do
         paginate: true
       }
 
-      response_keys = ListWikiPages.call(params, Mock.system_user())
+      response_keys =
+        ListWikiPages.call(params, Mock.system_user())
         |> Map.from_struct()
         |> Map.keys()
 

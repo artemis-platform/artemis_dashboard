@@ -36,7 +36,8 @@ defmodule ArtemisWeb.ViewHelper.Layout do
     size = Keyword.get(options, :size, "small")
     method = Keyword.get(options, :method, "get")
 
-    tag_options = options
+    tag_options =
+      options
       |> Enum.into(%{})
       |> Map.put(:class, "button ui #{size} #{color}")
       |> Enum.into([])
@@ -52,7 +53,8 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   Renders a filter button for setting query params in the URL
   """
   def filter_button(conn, label, values) do
-    filter_params = values
+    filter_params =
+      values
       |> Enum.into(%{})
       |> Artemis.Helpers.keys_to_strings()
 
@@ -61,15 +63,17 @@ defmodule ArtemisWeb.ViewHelper.Layout do
     query_string = Plug.Conn.Query.encode(merged_query_params)
     path = "#{conn.request_path}?#{query_string}"
 
-    active? = case conn.query_params["filters"] != nil do
-      true -> MapSet.subset?(MapSet.new(new_query_params["filters"]), MapSet.new(conn.query_params["filters"]))
-      false -> false
-    end
+    active? =
+      case conn.query_params["filters"] != nil do
+        true -> MapSet.subset?(MapSet.new(new_query_params["filters"]), MapSet.new(conn.query_params["filters"]))
+        false -> false
+      end
 
-    class = case active? do
-      true -> "ui basic button blue"
-      false -> "ui basic button"
-    end
+    class =
+      case active? do
+        true -> "ui basic button blue"
+        false -> "ui basic button"
+      end
 
     options = [
       class: class,
@@ -97,16 +101,20 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   """
   def render_primary_nav(conn, user) do
     nav_items = nav_items_for_current_user(user)
-    links = Enum.map(nav_items, fn ({section, items}) ->
-      label = section
-      path = items
-        |> hd
-        |> Keyword.get(:path)
 
-      content_tag(:li) do
-        link(label, to: path.(conn))
-      end
-    end)
+    links =
+      Enum.map(nav_items, fn {section, items} ->
+        label = section
+
+        path =
+          items
+          |> hd
+          |> Keyword.get(:path)
+
+        content_tag(:li) do
+          link(label, to: path.(conn))
+        end
+      end)
 
     content_tag(:ul, links)
   end
@@ -135,7 +143,7 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   def render_primary_nav_section?(nav_items, keys) do
     allowed_keys = Keyword.keys(nav_items)
 
-    Enum.any?(keys, fn (key) ->
+    Enum.any?(keys, fn key ->
       Enum.member?(allowed_keys, String.to_atom(key))
     end)
   end
@@ -148,16 +156,18 @@ defmodule ArtemisWeb.ViewHelper.Layout do
     allowed_keys = Keyword.keys(nav_items)
     section_keys = Enum.filter(requested_keys, &Enum.member?(allowed_keys, &1))
 
-    Enum.map(section_keys, fn (section) ->
+    Enum.map(section_keys, fn section ->
       entries = Keyword.get(nav_items, section)
-      links = Enum.map(entries, fn (item) ->
-        label = Keyword.get(item, :label)
-        path = Keyword.get(item, :path)
 
-        content_tag(:li) do
-          link(label, to: path.(conn))
-        end
-      end)
+      links =
+        Enum.map(entries, fn item ->
+          label = Keyword.get(item, :label)
+          path = Keyword.get(item, :path)
+
+          content_tag(:li) do
+            link(label, to: path.(conn))
+          end
+        end)
 
       content_tag(:article) do
         [
@@ -173,34 +183,40 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   """
   def render_footer_nav(conn, user) do
     nav_items = nav_items_for_current_user(user)
-    sections = Enum.map(nav_items, fn ({section, items}) ->
-      links = Enum.map(items, fn (item) ->
-        label = Keyword.get(item, :label)
-        path = Keyword.get(item, :path)
 
-        content_tag(:li) do
-          link(label, to: path.(conn))
+    sections =
+      Enum.map(nav_items, fn {section, items} ->
+        links =
+          Enum.map(items, fn item ->
+            label = Keyword.get(item, :label)
+            path = Keyword.get(item, :path)
+
+            content_tag(:li) do
+              link(label, to: path.(conn))
+            end
+          end)
+
+        content_tag(:div, class: "section") do
+          [
+            content_tag(:h5, section),
+            content_tag(:ul, links)
+          ]
         end
       end)
-
-      content_tag(:div, class: "section") do
-        [
-          content_tag(:h5, section),
-          content_tag(:ul, links)
-        ]
-      end
-    end)
 
     case sections == [] do
       true ->
         nil
+
       false ->
-        per_column = length(sections) / 3
+        per_column =
+          (length(sections) / 3)
           |> Float.ceil()
           |> trunc()
+
         chunked = Enum.chunk_every(sections, per_column)
 
-        Enum.map(chunked, fn (sections) ->
+        Enum.map(chunked, fn sections ->
           content_tag(:div, sections, class: "column")
         end)
     end
@@ -210,17 +226,19 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   Filter nav items by current users permissions
   """
   def nav_items_for_current_user(nil), do: []
-  def nav_items_for_current_user(user) do
-    Enum.reduce(nav_items(), [], fn ({section, potential_items}, acc) ->
-      verified_items = Enum.filter(potential_items, fn (item) ->
-        verify = Keyword.get(item, :verify)
 
-        verify.(user)
-      end)
+  def nav_items_for_current_user(user) do
+    Enum.reduce(nav_items(), [], fn {section, potential_items}, acc ->
+      verified_items =
+        Enum.filter(potential_items, fn item ->
+          verify = Keyword.get(item, :verify)
+
+          verify.(user)
+        end)
 
       case verified_items == [] do
         true -> acc
-        false -> [{section, verified_items}|acc]
+        false -> [{section, verified_items} | acc]
       end
     end)
   end
@@ -230,9 +248,12 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   """
   def render_pagination(conn, data, options \\ [])
   def render_pagination(_, %{total_pages: total_pages}, _) when total_pages == 1, do: nil
+
   def render_pagination(conn, data, options) do
     args = Keyword.get(options, :args, [])
-    params = options
+
+    params =
+      options
       |> Keyword.get(:params, conn.query_params)
       |> Artemis.Helpers.keys_to_atoms()
       |> Map.delete(:page)
@@ -245,11 +266,13 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   Generates empty table row if no records match
   """
   def render_table_row_if_empty(records, options \\ [])
+
   def render_table_row_if_empty(records, options) when length(records) == 0 do
     message = Keyword.get(options, :message, "No records found")
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "table_row_if_empty.html", message: message)
   end
+
   def render_table_row_if_empty(_records, _options), do: nil
 
   @doc """
@@ -263,7 +286,8 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   Generates breadcrumbs from current URL
   """
   def render_breadcrumbs(conn) do
-    path_sections = conn
+    path_sections =
+      conn
       |> Map.get(:request_path)
       |> String.split("/", trim: true)
 
@@ -275,16 +299,19 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   defp get_root_breadcrumb, do: [["Home", "/"]]
 
   defp get_breadcrumbs(sections) when sections == [], do: []
+
   defp get_breadcrumbs(sections) do
     range = Range.new(0, length(sections) - 1)
 
-    Enum.map(range, fn (index) ->
-      title = sections
+    Enum.map(range, fn index ->
+      title =
+        sections
         |> Enum.at(index)
         |> String.replace("-", " ")
         |> Artemis.Helpers.titlecase()
 
-      path = sections
+      path =
+        sections
         |> Enum.take(index + 1)
         |> Enum.join("/")
 

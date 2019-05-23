@@ -32,14 +32,16 @@ defmodule Artemis.WikiPageTest do
 
       params = %{title: "Updated Title"}
 
-      {:ok, comment} = comment
+      {:ok, comment} =
+        comment
         |> Comment.changeset(params)
         |> Repo.update()
 
       assert comment != nil
       assert comment.title == "Updated Title"
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload(^@preload)
         |> Repo.get(wiki_page.id)
 
@@ -53,7 +55,8 @@ defmodule Artemis.WikiPageTest do
 
       Repo.delete!(comment)
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload(^@preload)
         |> Repo.get(wiki_page.id)
 
@@ -64,7 +67,8 @@ defmodule Artemis.WikiPageTest do
       # Only the join table records are removed. This is a limitation of Ecto many_to_many:
       # https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
       #
-      comment = Comment
+      comment =
+        Comment
         |> preload([:wiki_pages])
         |> Repo.get(hd(wiki_page.comments).id)
 
@@ -73,7 +77,8 @@ defmodule Artemis.WikiPageTest do
 
       Repo.delete!(wiki_page)
 
-      comment = Comment
+      comment =
+        Comment
         |> preload([:wiki_pages])
         |> Repo.get(hd(wiki_page.comments).id)
 
@@ -100,14 +105,16 @@ defmodule Artemis.WikiPageTest do
 
       params = %{name: "Updated Name"}
 
-      {:ok, tag} = tag
+      {:ok, tag} =
+        tag
         |> Tag.changeset(params)
         |> Repo.update()
 
       assert tag != nil
       assert tag.name == "Updated Name"
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload(^@preload)
         |> Repo.get(wiki_page.id)
 
@@ -121,7 +128,8 @@ defmodule Artemis.WikiPageTest do
 
       Repo.delete!(tag)
 
-      wiki_page = WikiPage
+      wiki_page =
+        WikiPage
         |> preload(^@preload)
         |> Repo.get(wiki_page.id)
 
@@ -132,7 +140,8 @@ defmodule Artemis.WikiPageTest do
       # Only the join table records are removed. This is a limitation of Ecto many_to_many:
       # https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
       #
-      tag = Tag
+      tag =
+        Tag
         |> preload([:wiki_pages])
         |> Repo.get(hd(wiki_page.tags).id)
 
@@ -141,7 +150,8 @@ defmodule Artemis.WikiPageTest do
 
       Repo.delete!(wiki_page)
 
-      tag = Tag
+      tag =
+        Tag
         |> preload([:wiki_pages])
         |> Repo.get(hd(wiki_page.tags).id)
 
@@ -165,7 +175,8 @@ defmodule Artemis.WikiPageTest do
 
       params = %{name: "Updated Name"}
 
-      {:ok, user} = user
+      {:ok, user} =
+        user
         |> User.changeset(params)
         |> Repo.update()
 

@@ -19,6 +19,7 @@ defmodule Artemis.GetTag do
   defp get_record(value, user, options, get_by) when not is_list(value) do
     get_record([id: value], user, options, get_by)
   end
+
   defp get_record(value, _user, options, get_by) do
     Tag
     |> preload(^Keyword.get(options, :preload, @default_preload))

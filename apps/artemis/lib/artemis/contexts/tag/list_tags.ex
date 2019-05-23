@@ -33,15 +33,17 @@ defmodule Artemis.ListTags do
   end
 
   defp filter_query(query, %{"filters" => filters}, _user) when is_map(filters) do
-    Enum.reduce(filters, query, fn ({key, value}, acc) ->
+    Enum.reduce(filters, query, fn {key, value}, acc ->
       filter(acc, key, value)
     end)
   end
+
   defp filter_query(query, _params, _user), do: query
 
   defp filter(query, "name", value), do: where(query, [t], t.name in ^split(value))
   defp filter(query, "slug", value), do: where(query, [t], t.slug in ^split(value))
   defp filter(query, "type", value), do: where(query, [t], t.type in ^split(value))
+
   defp filter(query, "wiki_page_id", value) do
     query
     |> join(:left, [tags], wiki_pages in assoc(tags, :wiki_pages))

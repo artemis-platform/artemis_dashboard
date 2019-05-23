@@ -13,7 +13,7 @@ defmodule Artemis.DeleteWikiPage do
   end
 
   def call(id, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       id
       |> get_record
       |> DeleteManyAssociatedComments.call(user)

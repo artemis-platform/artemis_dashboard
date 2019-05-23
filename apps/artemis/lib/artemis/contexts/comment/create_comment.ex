@@ -14,7 +14,7 @@ defmodule Artemis.CreateComment do
   end
 
   def call(params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       params
       |> insert_record
       |> update_associations(params)
@@ -27,15 +27,17 @@ defmodule Artemis.CreateComment do
 
     %Comment{}
     |> Comment.changeset(params)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   defp create_params(params) do
     params = Artemis.Helpers.keys_to_strings(params)
-    html = case Map.get(params, "body") do
-      nil -> nil
-      body -> Markdown.to_html!(body)
-    end
+
+    html =
+      case Map.get(params, "body") do
+        nil -> nil
+        body -> Markdown.to_html!(body)
+      end
 
     Map.put(params, "body_html", html)
   end

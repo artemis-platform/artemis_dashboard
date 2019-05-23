@@ -22,20 +22,20 @@ defmodule Artemis.Repo.GenerateData do
   """
 
   def call() do
-
     # Roles
 
     roles = [
       %{slug: "developer", name: "Site Developer"},
-      %{slug: "default", name: "Default"},
+      %{slug: "default", name: "Default"}
     ]
 
-    Enum.map(roles, fn (params) ->
+    Enum.map(roles, fn params ->
       case Repo.get_by(Role, slug: params.slug) do
         nil ->
           %Role{}
           |> Role.changeset(params)
-          |> Repo.insert!
+          |> Repo.insert!()
+
         _ ->
           :ok
       end
@@ -44,45 +44,49 @@ defmodule Artemis.Repo.GenerateData do
     # Permissions
 
     permissions = [
-      %{slug: "comments:access:all", name: "Comments - Access All", description: "Should be restricted to administrators"},
+      %{
+        slug: "comments:access:all",
+        name: "Comments - Access All",
+        description: "Should be restricted to administrators"
+      },
       %{slug: "comments:access:self", name: "Comments - Access Self"},
-
-      %{slug: "event-logs:access:all", name: "Event Logs - Access All", description: "Should be restricted to administrators"},
+      %{
+        slug: "event-logs:access:all",
+        name: "Event Logs - Access All",
+        description: "Should be restricted to administrators"
+      },
       %{slug: "event-logs:access:self", name: "Event Logs - Access Self"},
       %{slug: "event-logs:list", name: "Event Logs - List"},
       %{slug: "event-logs:show", name: "Event Logs - Show"},
-
       %{slug: "features:create", name: "Features - Create"},
       %{slug: "features:delete", name: "Features - Delete"},
       %{slug: "features:list", name: "Features - List"},
       %{slug: "features:show", name: "Features - Show"},
       %{slug: "features:update", name: "Features - Update"},
-
-      %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All", description: "Should be restricted to administrators"},
+      %{
+        slug: "http-request-logs:access:all",
+        name: "HTTP Request Logs - Access All",
+        description: "Should be restricted to administrators"
+      },
       %{slug: "http-request-logs:access:self", name: "HTTP Request Logs - Access Self"},
       %{slug: "http-request-logs:list", name: "HTTP Request Logs - List"},
       %{slug: "http-request-logs:show", name: "HTTP Request Logs - Show"},
-
       %{slug: "permissions:create", name: "Permissions - Create"},
       %{slug: "permissions:delete", name: "Permissions - Delete"},
       %{slug: "permissions:list", name: "Permissions - List"},
       %{slug: "permissions:show", name: "Permissions - Show"},
       %{slug: "permissions:update", name: "Permissions - Update"},
-
       %{slug: "roles:create", name: "Roles - Create"},
       %{slug: "roles:delete", name: "Roles - Delete"},
       %{slug: "roles:list", name: "Roles - List"},
       %{slug: "roles:show", name: "Roles - Show"},
       %{slug: "roles:update", name: "Roles - Update"},
-
       %{slug: "tags:create", name: "Tags - Global Create", description: "Should be restricted to administrators"},
       %{slug: "tags:delete", name: "Tags - Global Delete", description: "Should be restricted to administrators"},
       %{slug: "tags:list", name: "Tags - Global List", description: "Should be restricted to administrators"},
       %{slug: "tags:show", name: "Tags - Global Show", description: "Should be restricted to administrators"},
       %{slug: "tags:update", name: "Tags - Global Update", description: "Should be restricted to administrators"},
-
       %{slug: "user-impersonations:create", name: "User Impersonations - Create"},
-
       %{slug: "users:access:all", name: "Users - Access All", description: "Should be restricted to administrators"},
       %{slug: "users:access:self", name: "Users - Access Self"},
       %{slug: "users:create", name: "Users - Create"},
@@ -90,7 +94,6 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "users:list", name: "Users - List"},
       %{slug: "users:show", name: "Users - Show"},
       %{slug: "users:update", name: "Users - Update"},
-
       %{slug: "wiki-pages:create", name: "Docs - Create"},
       %{slug: "wiki-pages:delete", name: "Docs - Delete"},
       %{slug: "wiki-pages:list", name: "Docs - List"},
@@ -102,18 +105,18 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "wiki-pages:update:comments", name: "Docs - Update Comments"},
       %{slug: "wiki-pages:create:tags", name: "Docs - Create New Tags"},
       %{slug: "wiki-pages:update:tags", name: "Docs - Update Tags"},
-
       %{slug: "wiki-revisions:delete", name: "Doc Revisions - Delete"},
       %{slug: "wiki-revisions:list", name: "Doc Revisions - List"},
       %{slug: "wiki-revisions:show", name: "Doc Revisions - Show"}
     ]
 
-    Enum.map(permissions, fn (params) ->
+    Enum.map(permissions, fn params ->
       case Repo.get_by(Permission, slug: params.slug) do
         nil ->
           %Permission{}
           |> Permission.changeset(params)
-          |> Repo.insert!
+          |> Repo.insert!()
+
         _ ->
           :ok
       end
@@ -123,13 +126,14 @@ defmodule Artemis.Repo.GenerateData do
 
     permissions = Repo.all(Permission)
 
-    role = Role
+    role =
+      Role
       |> preload([:permissions, :user_roles])
       |> Repo.get_by(slug: "developer")
 
     role
     |> Role.associations_changeset(%{permissions: permissions})
-    |> Repo.update!
+    |> Repo.update!()
 
     # Role Permissions - Default Role
 
@@ -139,17 +143,19 @@ defmodule Artemis.Repo.GenerateData do
       "users:show"
     ]
 
-    permissions = Permission
+    permissions =
+      Permission
       |> where([p], p.slug in ^permission_slugs)
       |> Repo.all()
 
-    role = Role
+    role =
+      Role
       |> preload([:permissions, :user_roles])
       |> Repo.get_by(slug: "default")
 
     role
     |> Role.associations_changeset(%{permissions: permissions})
-    |> Repo.update!
+    |> Repo.update!()
 
     # Users
 
@@ -158,16 +164,18 @@ defmodule Artemis.Repo.GenerateData do
       Application.fetch_env!(:artemis, :users)[:system_user]
     ]
 
-    Enum.map(users, fn (params) ->
+    Enum.map(users, fn params ->
       case Repo.get_by(User, email: params.email) do
         nil ->
-          params = params
+          params =
+            params
             |> Map.put(:client_key, Artemis.Helpers.random_string(30))
             |> Map.put(:client_secret, Artemis.Helpers.random_string(100))
 
           %User{}
           |> User.changeset(params)
-          |> Repo.insert!
+          |> Repo.insert!()
+
         _ ->
           :ok
       end
@@ -181,9 +189,10 @@ defmodule Artemis.Repo.GenerateData do
       Application.fetch_env!(:artemis, :users)[:root_user].email,
       Application.fetch_env!(:artemis, :users)[:system_user].email
     ]
+
     users = Enum.map(user_emails, &Repo.get_by!(User, email: &1))
 
-    Enum.map(users, fn(user) ->
+    Enum.map(users, fn user ->
       case Repo.get_by(UserRole, role_id: role.id, user_id: user.id) do
         nil ->
           params = %{
@@ -194,7 +203,8 @@ defmodule Artemis.Repo.GenerateData do
 
           %UserRole{}
           |> UserRole.changeset(params)
-          |> Repo.insert!
+          |> Repo.insert!()
+
         _ ->
           :ok
       end
@@ -206,12 +216,13 @@ defmodule Artemis.Repo.GenerateData do
       %{name: "Help", slug: "help", type: "wiki-pages"}
     ]
 
-    Enum.map(tags, fn (params) ->
+    Enum.map(tags, fn params ->
       case Repo.get_by(Tag, slug: params.slug, type: params.type) do
         nil ->
           %Tag{}
           |> Tag.changeset(params)
-          |> Repo.insert!
+          |> Repo.insert!()
+
         _ ->
           :ok
       end
@@ -221,114 +232,116 @@ defmodule Artemis.Repo.GenerateData do
 
     system_user = Artemis.GetSystemUser.call!()
     help_tag = Repo.get_by(Tag, slug: "help", type: "wiki-pages")
+
     help_body = """
-Artemis Dashboard is an example of an operational dashboard built on top of Artemis Platform.
+    Artemis Dashboard is an example of an operational dashboard built on top of Artemis Platform.
 
-Learn more about [Artemis Dashboard on GitHub](https://github.com/chrislaskey/artemis_dashboard).
-"""
+    Learn more about [Artemis Dashboard on GitHub](https://github.com/chrislaskey/artemis_dashboard).
+    """
+
     example_body = """
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc erat augue, maximus ut congue vitae, tincidunt ut neque.
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc erat augue, maximus ut congue vitae, tincidunt ut neque.
 
-## Features
+    ## Features
 
-### Dynamic Sidebar with Scroll Progress
+    ### Dynamic Sidebar with Scroll Progress
 
-The dynamic sidebar on the left side of the page acts as a quick find navigation. It scrolls along with the page and marks the current position.
+    The dynamic sidebar on the left side of the page acts as a quick find navigation. It scrolls along with the page and marks the current position.
 
-### Full Text Search Support
+    ### Full Text Search Support
 
-All documentation pages support full text search on their content. For example, search for "Lorem ipsum" in the search input at the very top of the page. This documentation page will show up in the results.
+    All documentation pages support full text search on their content. For example, search for "Lorem ipsum" in the search input at the very top of the page. This documentation page will show up in the results.
 
-### Tagging and Comments
+    ### Tagging and Comments
 
-Each documentation page supports user comments and tags.
+    Each documentation page supports user comments and tags.
 
-### Revision History
+    ### Revision History
 
-A revision is captured each time the file changes.
+    A revision is captured each time the file changes.
 
-### Lists
+    ### Lists
 
-Different list types are supported.
+    Different list types are supported.
 
-#### Unordered Lists
+    #### Unordered Lists
 
-- Fusce tempus laoreet arcu
-	- A posuere est vehicula sit amet
-		- Duis sit amet interdum urna
-			- Mauris in turpis quis nisi elementum dignissim a quis ligula
-			- Aenean sit amet velit efficitur
-- Dictum odio eget volutpat quam
+    - Fusce tempus laoreet arcu
+    	- A posuere est vehicula sit amet
+    		- Duis sit amet interdum urna
+    			- Mauris in turpis quis nisi elementum dignissim a quis ligula
+    			- Aenean sit amet velit efficitur
+    - Dictum odio eget volutpat quam
 
-#### Ordered Lists
+    #### Ordered Lists
 
-1. Fusce tempus laoreet arcu
-	1. A posuere est vehicula sit amet
-		1. Duis sit amet interdum urna
-			1. Mauris in turpis quis nisi elementum dignissim a quis ligula
-			1. Aenean sit amet velit efficitur
-1. Dictum odio eget volutpat quam
+    1. Fusce tempus laoreet arcu
+    	1. A posuere est vehicula sit amet
+    		1. Duis sit amet interdum urna
+    			1. Mauris in turpis quis nisi elementum dignissim a quis ligula
+    			1. Aenean sit amet velit efficitur
+    1. Dictum odio eget volutpat quam
 
-#### Checklists
+    #### Checklists
 
-Phasellus luctus ultricies egestas:
+    Phasellus luctus ultricies egestas:
 
-- [x] Praesent et interdum ligula
-  - [x] Pellentesque congue mi sit amet lacus elementum, vel dapibus tellus volutpat
-  - [ ] Suspendisse vitae massa at purus mattis lacinia ac sit amet lacus
-- [ ] Fusce mollis lobortis suscipit
-- [x] Suspendisse at erat at dolor maximus feugiat
-- [ ] Duis ultrices non leo nec consequat
-- [ ] Nulla facilisi
+    - [x] Praesent et interdum ligula
+      - [x] Pellentesque congue mi sit amet lacus elementum, vel dapibus tellus volutpat
+      - [ ] Suspendisse vitae massa at purus mattis lacinia ac sit amet lacus
+    - [ ] Fusce mollis lobortis suscipit
+    - [x] Suspendisse at erat at dolor maximus feugiat
+    - [ ] Duis ultrices non leo nec consequat
+    - [ ] Nulla facilisi
 
-### Code Blocks
+    ### Code Blocks
 
-Code blocks are supported, along with syntax highlighting via `highlightjs`:
+    Code blocks are supported, along with syntax highlighting via `highlightjs`:
 
-```elixir
-defmodule ArtemisLog.Filter do
-  import ArtemisLog.Helpers, only: [deep_take: 2]
+    ```elixir
+    defmodule ArtemisLog.Filter do
+      import ArtemisLog.Helpers, only: [deep_take: 2]
 
-  def call(%{__struct__: struct} = data) do
-    case defined_log_fields?(struct) do
-      true -> deep_take(data, struct.event_log_fields())
-      false -> data
+      def call(%{__struct__: struct} = data) do
+        case defined_log_fields?(struct) do
+          true -> deep_take(data, struct.event_log_fields())
+          false -> data
+        end
+      end
+      def call(data), do: data
+
+      defp defined_log_fields?(struct) do
+        struct.__info__(:functions)
+        |> Keyword.keys
+        |> Enum.member?(:event_log_fields)
+      end
     end
-  end
-  def call(data), do: data
+    ```
 
-  defp defined_log_fields?(struct) do
-    struct.__info__(:functions)
-    |> Keyword.keys
-    |> Enum.member?(:event_log_fields)
-  end
-end
-```
+    ## Paragraphs and Headers
 
-## Paragraphs and Headers
+    Facilisis mauris sed, egestas tortor. Sed lobortis ut ipsum pulvinar semper. Aliquam egestas nulla purus, eget porta libero semper ut.
 
-Facilisis mauris sed, egestas tortor. Sed lobortis ut ipsum pulvinar semper. Aliquam egestas nulla purus, eget porta libero semper ut.
+    Donec pretium feugiat nunc non venenatis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
 
-Donec pretium feugiat nunc non venenatis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+    Donec ullamcorper, sem sed tempor vulputate, risus augue faucibus sem, quis rutrum turpis sem sit amet libero.
 
-Donec ullamcorper, sem sed tempor vulputate, risus augue faucibus sem, quis rutrum turpis sem sit amet libero.
+    ### Praesent ac Ipsum
 
-### Praesent ac Ipsum
+    Sem tempus placerat porta ut felis. Nunc lacinia sodales nulla in pellentesque.
 
-Sem tempus placerat porta ut felis. Nunc lacinia sodales nulla in pellentesque.
+    #### Sed at Nisi
 
-#### Sed at Nisi
+    In ac ante urna. Praesent et tellus lobortis, cursus arcu et, tempor magna. Vivamus justo tellus, fringilla at mauris dignissim, placerat interdum metus.
 
-In ac ante urna. Praesent et tellus lobortis, cursus arcu et, tempor magna. Vivamus justo tellus, fringilla at mauris dignissim, placerat interdum metus.
+    #### Integer Pharetra Varius Sapien
 
-#### Integer Pharetra Varius Sapien
+    Fusce varius, diam ac convallis commodo, neque diam hendrerit neque, nec vehicula arcu metus nec orci. Proin non placerat diam.
 
-Fusce varius, diam ac convallis commodo, neque diam hendrerit neque, nec vehicula arcu metus nec orci. Proin non placerat diam.
+    #### Vitae Convallis
 
-#### Vitae Convallis
-
-Nunc rhoncus ligula quis ex pulvinar placerat. Praesent ultricies ut nisi ac tincidunt. Sed eleifend est elit, nec efficitur arcu imperdiet vel. Mauris malesuada, lorem ac sollicitudin aliquet, elit orci sagittis purus, sed vulputate lacus felis nec risus. Phasellus nibh ante, feugiat non nisl in, tempor finibus ex. Ut interdum mollis pulvinar. Nunc in scelerisque mi.
-"""
+    Nunc rhoncus ligula quis ex pulvinar placerat. Praesent ultricies ut nisi ac tincidunt. Sed eleifend est elit, nec efficitur arcu imperdiet vel. Mauris malesuada, lorem ac sollicitudin aliquet, elit orci sagittis purus, sed vulputate lacus felis nec risus. Phasellus nibh ante, feugiat non nisl in, tempor finibus ex. Ut interdum mollis pulvinar. Nunc in scelerisque mi.
+    """
 
     wiki_pages = [
       %{
@@ -349,10 +362,11 @@ Nunc rhoncus ligula quis ex pulvinar placerat. Praesent ultricies ut nisi ac tin
       }
     ]
 
-    Enum.map(wiki_pages, fn (params) ->
+    Enum.map(wiki_pages, fn params ->
       case Repo.get_by(WikiPage, section: params.section, slug: params.slug) do
         nil ->
           Artemis.CreateWikiPage.call!(params, system_user)
+
         _ ->
           :ok
       end

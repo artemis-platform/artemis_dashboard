@@ -33,13 +33,15 @@ defmodule Artemis.ListComments do
   end
 
   defp filter_query(query, %{"filters" => filters}, _user) when is_map(filters) do
-    Enum.reduce(filters, query, fn ({key, value}, acc) ->
+    Enum.reduce(filters, query, fn {key, value}, acc ->
       filter(acc, key, value)
     end)
   end
+
   defp filter_query(query, _params, _user), do: query
 
   defp filter(query, "user_id", value), do: where(query, [c], c.user_id in ^split(value))
+
   defp filter(query, "wiki_page_id", value) do
     query
     |> join(:left, [comments], wiki_pages in assoc(comments, :wiki_pages))

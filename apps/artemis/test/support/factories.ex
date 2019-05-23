@@ -125,10 +125,12 @@ defmodule Artemis.Factories do
   end
 
   def with_user_roles(_record, number \\ 3)
+
   def with_user_roles(%Artemis.Role{} = role, number) do
     insert_list(number, :user_role, role: role)
     role
   end
+
   def with_user_roles(%Artemis.User{} = user, number) do
     insert_list(number, :user_role, user: user)
     user
@@ -138,6 +140,7 @@ defmodule Artemis.Factories do
     insert(:wiki_page, comments: [comment])
     comment
   end
+
   def with_wiki_page(%Artemis.Tag{} = tag) do
     insert(:wiki_page, tags: [tag])
     tag

@@ -8,34 +8,41 @@ defmodule Artemis.Tag do
     field :slug, :string
     field :type, :string
 
-    many_to_many :wiki_pages, Artemis.WikiPage, join_through: "tags_wiki_pages", on_delete: :delete_all, on_replace: :delete
+    many_to_many :wiki_pages, Artemis.WikiPage,
+      join_through: "tags_wiki_pages",
+      on_delete: :delete_all,
+      on_replace: :delete
   end
 
   # Callbacks
 
-  def updatable_fields, do: [
-    :description,
-    :slug,
-    :name,
-    :type
-  ]
+  def updatable_fields,
+    do: [
+      :description,
+      :slug,
+      :name,
+      :type
+    ]
 
-  def required_fields, do: [
-    :name,
-    :slug,
-    :type
-  ]
+  def required_fields,
+    do: [
+      :name,
+      :slug,
+      :type
+    ]
 
-  def updatable_associations, do: [
-    wiki_pages: Artemis.WikiPage
-  ]
+  def updatable_associations,
+    do: [
+      wiki_pages: Artemis.WikiPage
+    ]
 
-  def event_log_fields, do: [
-    :id,
-    :name,
-    :slug,
-    :type
-  ]
+  def event_log_fields,
+    do: [
+      :id,
+      :name,
+      :slug,
+      :type
+    ]
 
   # Changesets
 

@@ -14,10 +14,12 @@ defmodule ArtemisWeb.WikiPageCommentController do
   @preload []
 
   def create(conn, %{"comment" => params, "wiki_page_id" => wiki_page_id}) do
-    authorize(conn, "wiki-pages:create:comments", fn () ->
+    authorize(conn, "wiki-pages:create:comments", fn ->
       wiki_page = GetWikiPage.call!(wiki_page_id, current_user(conn))
       user = current_user(conn)
-      params = params
+
+      params =
+        params
         |> Map.put("user_id", user.id)
         |> Map.put("wiki_pages", [%{id: wiki_page.id}])
 
@@ -34,13 +36,19 @@ defmodule ArtemisWeb.WikiPageCommentController do
 
           conn
           |> put_view(ArtemisWeb.WikiPageView)
-          |> render(:show, comment_changeset: comment_changeset, comments: comments, tags: tags, tags_changeset: tags_changeset, wiki_page: wiki_page)
+          |> render(:show,
+            comment_changeset: comment_changeset,
+            comments: comments,
+            tags: tags,
+            tags_changeset: tags_changeset,
+            wiki_page: wiki_page
+          )
       end
     end)
   end
 
   def edit(conn, %{"id" => id, "wiki_page_id" => wiki_page_id}) do
-    authorize(conn, "wiki-pages:update:comments", fn () ->
+    authorize(conn, "wiki-pages:update:comments", fn ->
       wiki_page = GetWikiPage.call(wiki_page_id, current_user(conn))
       comment = GetComment.call(id, current_user(conn), preload: @preload)
       changeset = Comment.changeset(comment)
@@ -50,10 +58,12 @@ defmodule ArtemisWeb.WikiPageCommentController do
   end
 
   def update(conn, %{"comment" => params, "id" => id, "wiki_page_id" => wiki_page_id}) do
-    authorize(conn, "wiki-pages:update:comments", fn () ->
+    authorize(conn, "wiki-pages:update:comments", fn ->
       user = current_user(conn)
       wiki_page = GetWikiPage.call!(wiki_page_id, user)
-      params = params
+
+      params =
+        params
         |> Map.put("user_id", user.id)
         |> Map.put("wiki_pages", [%{id: wiki_page.id}])
 
@@ -71,8 +81,8 @@ defmodule ArtemisWeb.WikiPageCommentController do
     end)
   end
 
-  def delete(conn, %{"id" => id,  "wiki_page_id" => wiki_page_id}) do
-    authorize(conn, "wiki-pages:delete:comments", fn () ->
+  def delete(conn, %{"id" => id, "wiki_page_id" => wiki_page_id}) do
+    authorize(conn, "wiki-pages:delete:comments", fn ->
       wiki_page = GetWikiPage.call!(wiki_page_id, current_user(conn))
       {:ok, _comment} = DeleteComment.call(id, current_user(conn))
 

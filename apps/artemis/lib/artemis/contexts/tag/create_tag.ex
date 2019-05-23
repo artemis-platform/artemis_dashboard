@@ -14,7 +14,7 @@ defmodule Artemis.CreateTag do
   end
 
   def call(params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       params
       |> insert_record
       |> update_associations(params)
@@ -27,6 +27,6 @@ defmodule Artemis.CreateTag do
 
     %Tag{}
     |> Tag.changeset(params)
-    |> Repo.insert
+    |> Repo.insert()
   end
 end

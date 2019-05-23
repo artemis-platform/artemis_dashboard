@@ -14,9 +14,9 @@ defmodule ArtemisWeb.WikiPageCommentView do
     owner? = comment_user_id == user.id
 
     cond do
-       has_all?(user, ["wiki-pages:update:comments", "comments:access:all"]) -> true
-       has_all?(user, ["wiki-pages:update:comments", "comments:access:self"]) && owner? -> true
-       true -> false
+      has_all?(user, ["wiki-pages:update:comments", "comments:access:all"]) -> true
+      has_all?(user, ["wiki-pages:update:comments", "comments:access:self"]) && owner? -> true
+      true -> false
     end
   end
 
@@ -25,9 +25,9 @@ defmodule ArtemisWeb.WikiPageCommentView do
     owner? = comment_user_id == user.id
 
     cond do
-       has_all?(user, ["wiki-pages:delete:comments", "comments:access:all"]) -> true
-       has_all?(user, ["wiki-pages:delete:comments", "comments:access:self"]) && owner? -> true
-       true -> false
+      has_all?(user, ["wiki-pages:delete:comments", "comments:access:all"]) -> true
+      has_all?(user, ["wiki-pages:delete:comments", "comments:access:self"]) && owner? -> true
+      true -> false
     end
   end
 end

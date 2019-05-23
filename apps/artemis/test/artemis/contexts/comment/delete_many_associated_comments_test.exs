@@ -10,7 +10,7 @@ defmodule Artemis.DeleteManyAssociatedCommentsTest do
     test "raises an exception record has no comments association" do
       record = insert(:feature)
 
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         DeleteManyAssociatedComments.call!(record, Mock.system_user())
       end
     end

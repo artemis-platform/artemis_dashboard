@@ -23,7 +23,7 @@ defmodule Artemis.ListWikiRevisionsTest do
 
       results = ListWikiRevisions.call(Mock.system_user())
 
-      assert hd(results).id  == wiki_revision.id
+      assert hd(results).id == wiki_revision.id
     end
 
     test "returns a list of wiki revisions" do
@@ -59,6 +59,7 @@ defmodule Artemis.ListWikiRevisionsTest do
           wiki_page_id: wiki_page.id
         }
       }
+
       results = ListWikiRevisions.call(params, Mock.system_user())
 
       assert length(results) == 2
@@ -81,7 +82,8 @@ defmodule Artemis.ListWikiRevisionsTest do
         paginate: true
       }
 
-      response_keys = ListWikiRevisions.call(params, Mock.system_user())
+      response_keys =
+        ListWikiRevisions.call(params, Mock.system_user())
         |> Map.from_struct()
         |> Map.keys()
 

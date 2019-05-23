@@ -7,7 +7,7 @@ defmodule Artemis.CreateTagTest do
 
   describe "call!" do
     test "returns error when params are empty" do
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         CreateTag.call!(%{}, Mock.system_user())
       end
     end
@@ -54,7 +54,9 @@ defmodule Artemis.CreateTagTest do
 
     test "creates a tag with associations" do
       wiki_page = insert(:wiki_page)
-      params = :tag
+
+      params =
+        :tag
         |> params_for
         |> Map.put(:wiki_pages, [%{id: wiki_page.id}])
 

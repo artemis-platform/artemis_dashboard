@@ -14,7 +14,7 @@ defmodule ArtemisLog.GetHttpRequestLogTest do
 
   describe "call" do
     test "returns nil request log not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       assert GetHttpRequestLog.call(invalid_id, Mock.system_user()) == nil
     end
@@ -33,9 +33,9 @@ defmodule ArtemisLog.GetHttpRequestLogTest do
 
   describe "call!" do
     test "raises an exception request log not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Ecto.NoResultsError, fn () ->
+      assert_raise Ecto.NoResultsError, fn ->
         GetHttpRequestLog.call!(invalid_id, Mock.system_user()) == nil
       end
     end

@@ -15,7 +15,7 @@ defmodule Artemis.UpdateWikiPage do
   end
 
   def call(id, params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       id
       |> get_record
       |> update_record(params)
@@ -29,24 +29,29 @@ defmodule Artemis.UpdateWikiPage do
   def get_record(id), do: Repo.get(WikiPage, id)
 
   defp update_record(nil, _params), do: {:error, "Record not found"}
+
   defp update_record(record, params) do
     params = update_params(record, params)
 
     record
     |> WikiPage.changeset(params)
-    |> Repo.update
+    |> Repo.update()
   end
 
   defp update_params(record, params) do
     params = Artemis.Helpers.keys_to_strings(params)
-    html = case Map.get(params, "body") do
-      nil -> nil
-      body -> Markdown.to_html!(body)
-    end
-    slug = case Map.get(params, "title", record.title) do
-      nil -> nil
-      title -> Artemis.Helpers.generate_slug(title)
-    end
+
+    html =
+      case Map.get(params, "body") do
+        nil -> nil
+        body -> Markdown.to_html!(body)
+      end
+
+    slug =
+      case Map.get(params, "title", record.title) do
+        nil -> nil
+        title -> Artemis.Helpers.generate_slug(title)
+      end
 
     params
     |> Map.put("body_html", html)
@@ -54,7 +59,8 @@ defmodule Artemis.UpdateWikiPage do
   end
 
   defp create_wiki_revision({:ok, record}, user) do
-    params = record
+    params =
+      record
       |> Map.from_struct()
       |> Map.put(:wiki_page_id, record.id)
 
@@ -63,5 +69,6 @@ defmodule Artemis.UpdateWikiPage do
       error -> error
     end
   end
+
   defp create_wiki_revision(error, _user), do: error
 end

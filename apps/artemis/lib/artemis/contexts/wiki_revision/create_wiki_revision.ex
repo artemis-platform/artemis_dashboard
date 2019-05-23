@@ -12,7 +12,7 @@ defmodule Artemis.CreateWikiRevision do
   end
 
   def call(params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       params
       |> insert_record
       |> Event.broadcast("wiki-revision:created", user)
@@ -24,12 +24,14 @@ defmodule Artemis.CreateWikiRevision do
 
     %WikiRevision{}
     |> WikiRevision.changeset(params)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   defp create_params(params) do
     params = Artemis.Helpers.keys_to_strings(params)
-    slug = params
+
+    slug =
+      params
       |> Map.get("title", "")
       |> Artemis.Helpers.generate_slug()
 

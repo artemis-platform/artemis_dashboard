@@ -7,7 +7,9 @@ defmodule Artemis.GetCommentTest do
 
   setup do
     user = insert(:user)
-    comment = :comment
+
+    comment =
+      :comment
       |> insert(user: user)
       |> with_wiki_page()
 
@@ -37,7 +39,7 @@ defmodule Artemis.GetCommentTest do
 
   describe "call" do
     test "returns nil comment not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       assert GetComment.call(invalid_id, Mock.system_user()) == nil
     end
@@ -70,9 +72,9 @@ defmodule Artemis.GetCommentTest do
 
   describe "call!" do
     test "raises an exception comment not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Ecto.NoResultsError, fn () ->
+      assert_raise Ecto.NoResultsError, fn ->
         GetComment.call!(invalid_id, Mock.system_user()) == nil
       end
     end
