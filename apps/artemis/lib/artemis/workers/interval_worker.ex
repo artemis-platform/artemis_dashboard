@@ -92,9 +92,11 @@ defmodule Artemis.IntervalWorker do
 
       @impl true
       def init(state) do
-        if get_option(:enabled, true) do
-          state = Map.put(state, :timer, schedule_update())
-        end
+        state =
+          case get_option(:enabled, true) do
+            true -> Map.put(state, :timer, schedule_update())
+            false -> state
+          end
 
         {:ok, state}
       end

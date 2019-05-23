@@ -81,7 +81,7 @@
             <% end %>
             <%= if incident.source == "pagerduty" do %>
               <div>
-                <%= link "View on PagerDuty", to: "https://artemis.pagerduty.com/incidents/#{incident.source_uid}", target: "_blank" %>
+                <%= link "View on PagerDuty", to: "https://#{get_subdomain()}.pagerduty.com/incidents/#{incident.source_uid}", target: "_blank" %>
               </div>
             <% end %>
           </td>

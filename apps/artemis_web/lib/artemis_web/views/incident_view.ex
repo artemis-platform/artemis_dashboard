@@ -10,4 +10,6 @@ defmodule ArtemisWeb.IncidentView do
       end
     end)
   end
+
+  def get_subdomain(), do: Application.fetch_env!(:artemis, :pager_duty)[:subdomain]
 end

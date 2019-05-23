@@ -42,6 +42,7 @@ defmodule Artemis.MixProject do
       {:jason, "~> 1.0"},
       {:assoc, "~> 0.1"},
       {:config_tuples, "~> 0.2.0"},
+      {:httpoison, "~> 1.5"},
       {:slugger, "~> 0.3"},
       {:timex, "~> 3.0"},
       {:earmark, "~> 1.3"},
