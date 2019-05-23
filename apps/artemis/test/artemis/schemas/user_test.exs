@@ -26,7 +26,7 @@ defmodule Artemis.UserTest do
     test "email must be unique" do
       existing = insert(:user)
 
-      assert_raise Ecto.ConstraintError, fn () ->
+      assert_raise Ecto.ConstraintError, fn ->
         insert(:user, email: existing.email)
       end
     end
@@ -34,7 +34,8 @@ defmodule Artemis.UserTest do
 
   describe "associations - auth providers" do
     setup do
-      user = :user
+      user =
+        :user
         |> insert
         |> with_auth_providers
 
@@ -44,15 +45,17 @@ defmodule Artemis.UserTest do
     test "cannot update associations through parent", %{user: user} do
       new_auth_provider = insert(:auth_provider, user: user)
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
       assert length(user.auth_providers) == 4
 
-      {:ok, updated} = user
+      {:ok, updated} =
+        user
         |> User.associations_changeset(%{auth_providers: [new_auth_provider]})
-        |> Repo.update
+        |> Repo.update()
 
       updated = Repo.preload(updated, @preload)
 
@@ -65,7 +68,8 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.auth_providers, &Repo.delete(&1))
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
@@ -77,7 +81,7 @@ defmodule Artemis.UserTest do
       assert Repo.get(User, user.id) != nil
       assert length(user.auth_providers) == 3
 
-      Enum.map(user.auth_providers, fn (auth_provider) ->
+      Enum.map(user.auth_providers, fn auth_provider ->
         assert Repo.get(AuthProvider, auth_provider.id).user_id == user.id
       end)
 
@@ -85,7 +89,7 @@ defmodule Artemis.UserTest do
 
       assert Repo.get(User, user.id) == nil
 
-      Enum.map(user.auth_providers, fn (auth_provider) ->
+      Enum.map(user.auth_providers, fn auth_provider ->
         assert Repo.get(AuthProvider, auth_provider.id) == nil
       end)
     end
@@ -152,7 +156,8 @@ defmodule Artemis.UserTest do
 
   describe "associations - user roles" do
     setup do
-      user = :user
+      user =
+        :user
         |> insert
         |> with_user_roles
 
@@ -165,9 +170,10 @@ defmodule Artemis.UserTest do
 
       assert length(user.roles) == 3
 
-      {:ok, updated} = user
+      {:ok, updated} =
+        user
         |> User.associations_changeset(%{user_roles: [new_user_role]})
-        |> Repo.update
+        |> Repo.update()
 
       updated = Repo.preload(updated, @preload)
 
@@ -181,7 +187,8 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.user_roles, &Repo.delete(&1))
 
-      user = User
+      user =
+        User
         |> preload(^@preload)
         |> Repo.get(user.id)
 
@@ -197,7 +204,7 @@ defmodule Artemis.UserTest do
 
       assert Repo.get(User, user.id) == nil
 
-      Enum.map(user.user_roles, fn (user_role) ->
+      Enum.map(user.user_roles, fn user_role ->
         assert Repo.get(UserRole, user_role.id) == nil
       end)
     end
