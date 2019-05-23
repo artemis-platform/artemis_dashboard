@@ -16,7 +16,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp order_path(conn, value, delimiter) do
     updated_query_params = update_query_param(conn, value, delimiter)
-    query_string = URI.encode_query(updated_query_params)
+    query_string = Plug.Conn.Query.encode(updated_query_params)
 
     "#{conn.request_path}?#{query_string}"
   end

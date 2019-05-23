@@ -1,0 +1,94 @@
+<div id="content-header">
+  <header>
+    <h1>Incidents</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <div class="data-table-filters">
+    <header>
+	    <h4>Filters</h4>
+	  </header>
+	  <content>
+      <%= render_search @conn, placeholder: "Search Incidents" %>
+      <div class="ui basic buttons small">
+        <%
+          this_week = Timex.now()
+            |> Timex.Timezone.convert("America/New_York")
+            |> Timex.beginning_of_week()
+          last_week = Timex.shift(this_week, days: -7)
+          next_week = Timex.shift(this_week, days: 7)
+        %>
+        <%= filter_button(@conn, "All Dates", triggered_before: "", triggered_after: "") %>
+        <%= filter_button(@conn, "This Week", triggered_after: DateTime.to_iso8601(this_week), triggered_before: DateTime.to_iso8601(next_week)) %>
+        <%= filter_button(@conn, "Last Week", triggered_after: DateTime.to_iso8601(last_week), triggered_before: DateTime.to_iso8601(this_week)) %>
+      </div>
+      <div class="ui basic buttons small">
+        <%= filter_button(@conn, "All Statuses", status: "") %>
+        <%= filter_button(@conn, "Resolved", status: "resolved") %>
+        <%= filter_button(@conn, "Acknowledged", status: "acknowledged") %>
+        <%= filter_button(@conn, "Triggered", status: "triggered") %>
+      </div>
+      <div>
+        <%= render ArtemisWeb.TagView, "_resource_filter.html", assigns %>
+      </div>
+    </content>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= sortable_table_header(@conn, "source_uid", "Incident") %></th>
+        <th><%= sortable_table_header(@conn, "triggered_at", "Date") %></th>
+        <th><%= sortable_table_header(@conn, "title", "Title") %></th>
+        <th><%= sortable_table_header(@conn, "status", "Status") %></th>
+        <th><%= sortable_table_header(@conn, "severity", "Severity") %></th>
+        <th>Tags</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render_table_row_if_empty(@incidents.entries) %>
+      <%= for incident <- @incidents.entries do %>
+        <tr>
+          <td>
+            <%= if has?(@conn, "incidents:show") do %>
+              <%= link incident.source_uid, to: Routes.incident_path(@conn, :show, incident) %>
+            <% else %>
+              <%= incident.source_uid %>
+            <% end %>
+          </td>
+          <td><%= render_date_time(incident.triggered_at) %></td>
+          <td class="text"><%= incident.title %></td>
+          <td>
+            <span class="status-label status-<%= incident.status %>">
+              <%= incident.status %>
+            </span>
+          </td>
+          <td><%= incident.severity %></td>
+          <td><%= render_tags(@conn, incident) %></td>
+          <td>
+            <%= if has?(@conn, "incidents:show") do %>
+              <div>
+                <%= link "Show", to: Routes.incident_path(@conn, :show, incident) %>
+              </div>
+            <% end %>
+            <%= if incident.source == "pagerduty" do %>
+              <div>
+                <%= link "View on PagerDuty", to: "https://artemis.pagerduty.com/incidents/#{incident.source_uid}", target: "_blank" %>
+              </div>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= render_pagination @conn, @incidents %>
+</div>

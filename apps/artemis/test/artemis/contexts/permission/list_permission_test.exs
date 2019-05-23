@@ -92,9 +92,9 @@ defmodule Artemis.ListPermissionsTest do
     end
 
     test "query - search" do
-      insert(:permission, name: "John Smith", slug: "johnn-smith")
-      insert(:permission, name: "Jill Smith", slug: "jill-smith")
-      insert(:permission, name: "John Doe", slug: "johnn-doe")
+      insert(:permission, name: "Four Six", slug: "four-six")
+      insert(:permission, name: "Four Two", slug: "four-two")
+      insert(:permission, name: "Five Six", slug: "five-six")
 
       user = Mock.system_user()
       permissions = ListPermissions.call(user)
@@ -104,7 +104,7 @@ defmodule Artemis.ListPermissionsTest do
       # Succeeds when given a word part of a larger phrase
 
       params = %{
-        query: "smit"
+        query: "Six"
       }
 
       permissions = ListPermissions.call(params, user)
@@ -114,7 +114,7 @@ defmodule Artemis.ListPermissionsTest do
       # Succeeds with partial value when it is start of a word
 
       params = %{
-        query: "johnn-"
+        query: "four-"
       }
 
       permissions = ListPermissions.call(params, user)
@@ -124,7 +124,7 @@ defmodule Artemis.ListPermissionsTest do
       # Fails with partial value when it is not the start of a word
 
       params = %{
-        query: "mith"
+        query: "our"
       }
 
       permissions = ListPermissions.call(params, user)

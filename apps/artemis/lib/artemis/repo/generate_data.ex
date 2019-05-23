@@ -43,18 +43,12 @@ defmodule Artemis.Repo.GenerateData do
 
     # Permissions
 
+    admin_only = "Should be restricted to administrators"
+
     permissions = [
-      %{
-        slug: "comments:access:all",
-        name: "Comments - Access All",
-        description: "Should be restricted to administrators"
-      },
+      %{slug: "comments:access:all", name: "Comments - Access All", description: admin_only},
       %{slug: "comments:access:self", name: "Comments - Access Self"},
-      %{
-        slug: "event-logs:access:all",
-        name: "Event Logs - Access All",
-        description: "Should be restricted to administrators"
-      },
+      %{slug: "event-logs:access:all", name: "Event Logs - Access All", description: admin_only},
       %{slug: "event-logs:access:self", name: "Event Logs - Access Self"},
       %{slug: "event-logs:list", name: "Event Logs - List"},
       %{slug: "event-logs:show", name: "Event Logs - Show"},
@@ -63,14 +57,19 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "features:list", name: "Features - List"},
       %{slug: "features:show", name: "Features - Show"},
       %{slug: "features:update", name: "Features - Update"},
-      %{
-        slug: "http-request-logs:access:all",
-        name: "HTTP Request Logs - Access All",
-        description: "Should be restricted to administrators"
-      },
+      %{slug: "http-request-logs:access:all", name: "HTTP Request Logs - Access All", description: admin_only},
       %{slug: "http-request-logs:access:self", name: "HTTP Request Logs - Access Self"},
       %{slug: "http-request-logs:list", name: "HTTP Request Logs - List"},
       %{slug: "http-request-logs:show", name: "HTTP Request Logs - Show"},
+      %{slug: "incidents:delete", name: "Incidents - Delete"},
+      %{slug: "incidents:list", name: "Incidents - List"},
+      %{slug: "incidents:show", name: "Incidents - Show"},
+      %{slug: "incidents:create:comments", name: "Incidents - Create Comments"},
+      %{slug: "incidents:delete:comments", name: "Incidents - Delete Comments"},
+      %{slug: "incidents:list:comments", name: "Incidents - List Comments"},
+      %{slug: "incidents:update:comments", name: "Incidents - Update Comments"},
+      %{slug: "incidents:create:tags", name: "Incidents - Create New Tags"},
+      %{slug: "incidents:update:tags", name: "Incidents - Update Tags"},
       %{slug: "permissions:create", name: "Permissions - Create"},
       %{slug: "permissions:delete", name: "Permissions - Delete"},
       %{slug: "permissions:list", name: "Permissions - List"},
@@ -81,13 +80,13 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "roles:list", name: "Roles - List"},
       %{slug: "roles:show", name: "Roles - Show"},
       %{slug: "roles:update", name: "Roles - Update"},
-      %{slug: "tags:create", name: "Tags - Global Create", description: "Should be restricted to administrators"},
-      %{slug: "tags:delete", name: "Tags - Global Delete", description: "Should be restricted to administrators"},
-      %{slug: "tags:list", name: "Tags - Global List", description: "Should be restricted to administrators"},
-      %{slug: "tags:show", name: "Tags - Global Show", description: "Should be restricted to administrators"},
-      %{slug: "tags:update", name: "Tags - Global Update", description: "Should be restricted to administrators"},
+      %{slug: "tags:create", name: "Tags - Global Create", description: admin_only},
+      %{slug: "tags:delete", name: "Tags - Global Delete", description: admin_only},
+      %{slug: "tags:list", name: "Tags - Global List", description: admin_only},
+      %{slug: "tags:show", name: "Tags - Global Show", description: admin_only},
+      %{slug: "tags:update", name: "Tags - Global Update", description: admin_only},
       %{slug: "user-impersonations:create", name: "User Impersonations - Create"},
-      %{slug: "users:access:all", name: "Users - Access All", description: "Should be restricted to administrators"},
+      %{slug: "users:access:all", name: "Users - Access All", description: admin_only},
       %{slug: "users:access:self", name: "Users - Access Self"},
       %{slug: "users:create", name: "Users - Create"},
       %{slug: "users:delete", name: "Users - Delete"},

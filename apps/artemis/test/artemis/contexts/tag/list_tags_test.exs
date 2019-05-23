@@ -101,9 +101,9 @@ defmodule Artemis.ListTagsTest do
     end
 
     test "query - search" do
-      insert(:tag, name: "John Smith", type: "john-smith")
-      insert(:tag, name: "Jill Smith", type: "jill-smith")
-      insert(:tag, name: "John Doe", type: "john-doe")
+      insert(:tag, name: "Four Six", type: "four-six")
+      insert(:tag, name: "Four Two", type: "four-two")
+      insert(:tag, name: "Five Six", type: "five-six")
 
       user = Mock.system_user()
       tags = ListTags.call(user)
@@ -113,7 +113,7 @@ defmodule Artemis.ListTagsTest do
       # Succeeds when given a word part of a larger phrase
 
       params = %{
-        query: "smit"
+        query: "Six"
       }
 
       tags = ListTags.call(params, user)
@@ -123,7 +123,7 @@ defmodule Artemis.ListTagsTest do
       # Succeeds with partial value when it is start of a word
 
       params = %{
-        query: "john-"
+        query: "four-"
       }
 
       tags = ListTags.call(params, user)
@@ -133,7 +133,7 @@ defmodule Artemis.ListTagsTest do
       # Fails with partial value when it is not the start of a word
 
       params = %{
-        query: "mith"
+        query: "our"
       }
 
       tags = ListTags.call(params, user)

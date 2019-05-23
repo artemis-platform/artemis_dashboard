@@ -1,0 +1,81 @@
+<div id="content-header">
+  <header>
+    <h1>
+      Incident Details <%= @incident.source_uid %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "incidents:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.incident_path(@conn, :delete, @incident), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+    </div>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <%= if @comment_changeset.action do %>
+    <%= render_notification :error, body: "Error Saving Comment" %>
+  <% end %>
+
+  <section id="incident-page">
+    <content>
+      <h2>Incident Details</h2>
+
+      <%= render ArtemisWeb.IncidentTagView, "edit.html", assigns %>
+
+      <p>
+        <span class="status-label status-<%= @incident.status %>">
+          <%= @incident.status %>
+        </span>
+      </p>
+
+      <%= if @incident.source == "pagerduty" do %>
+        <p>
+          <%= link "View on PagerDuty", to: "https://artemis.pagerduty.com/incidents/#{@incident.source_uid}", target: "_blank" %>
+        </p>
+      <% end %>
+
+      <ul>
+        <li>
+          <strong>Severity:</strong>
+          <%= @incident.severity %>
+        </li>
+
+        <li>
+          <strong>Title:</strong>
+          <%= @incident.title %>
+        </li>
+
+        <li>
+          <strong>Description:</strong>
+          <%= @incident.description %>
+        </li>
+
+        <li>
+          <strong>Source:</strong>
+          <%= @incident.source %>
+        </li>
+
+        <li>
+          <strong>Source UID:</strong>
+          <%= @incident.source_uid %>
+        </li>
+
+        <li>
+          <strong>Meta:</strong>
+          <pre><code><%= Jason.encode!(@incident.meta, pretty: true) %></code></pre>
+        </li>
+
+      </ul>
+    </content>
+    <aside>
+      <%= render ArtemisWeb.IncidentCommentView, "index.html", assigns %>
+    </aside>
+  </section>
+</div>

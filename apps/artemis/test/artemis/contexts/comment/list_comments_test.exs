@@ -113,9 +113,9 @@ defmodule Artemis.ListCommentsTest do
     end
 
     test "query - search" do
-      insert(:comment, title: "John Smith", topic: "john-smith")
-      insert(:comment, title: "Jill Smith", topic: "jill-smith")
-      insert(:comment, title: "John Doe", topic: "john-doe")
+      insert(:comment, title: "Four Six", topic: "four-six")
+      insert(:comment, title: "Four Two", topic: "four-two")
+      insert(:comment, title: "Five Six", topic: "five-six")
 
       user = Mock.system_user()
       comments = ListComments.call(user)
@@ -125,7 +125,7 @@ defmodule Artemis.ListCommentsTest do
       # Succeeds when given a word part of a larger phrase
 
       params = %{
-        query: "smit"
+        query: "Six"
       }
 
       comments = ListComments.call(params, user)
@@ -135,7 +135,7 @@ defmodule Artemis.ListCommentsTest do
       # Succeeds with partial value when it is start of a word
 
       params = %{
-        query: "john-"
+        query: "four-"
       }
 
       comments = ListComments.call(params, user)
@@ -145,7 +145,7 @@ defmodule Artemis.ListCommentsTest do
       # Fails with partial value when it is not the start of a word
 
       params = %{
-        query: "mith"
+        query: "our"
       }
 
       comments = ListComments.call(params, user)

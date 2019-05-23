@@ -34,19 +34,19 @@ defmodule Artemis.Factories do
 
   def incident_factory do
     resolved_at = DateTime.truncate(DateTime.utc_now(), :second)
-    acknowledged_at = DateTime.add(resolved_at, :rand.uniform(3600) * -1)
-    triggered_at = DateTime.add(acknowledged_at, :rand.uniform(3600) * -1)
+    acknowledged_at = DateTime.add(resolved_at, :rand.uniform(3600 * 24 * 14) * -1)
+    triggered_at = DateTime.add(acknowledged_at, :rand.uniform(3600 * 24 * 14) * -1)
 
     %Artemis.Incident{
       acknowledged_at: acknowledged_at,
       acknowledged_by: Faker.Name.name(),
-      description: Faker.Lorem.sentence(),
+      description: Faker.Lorem.paragraph(),
       meta: %{},
       resolved_at: resolved_at,
       resolved_by: Faker.Name.name(),
-      severity: "sev-#{:rand.uniform(5)}",
+      severity: "sev-#{:rand.uniform(3)}",
       source: "pagerduty",
-      source_uid: Faker.UUID.v4(),
+      source_uid: String.slice(Faker.UUID.v4(), 0, 8),
       status: Enum.random(Artemis.Incident.allowed_statuses()),
       time_to_acknowledge: DateTime.diff(acknowledged_at, triggered_at),
       time_to_resolve: DateTime.diff(resolved_at, triggered_at),

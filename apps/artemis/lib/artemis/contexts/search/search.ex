@@ -6,6 +6,7 @@ defmodule Artemis.Search do
   @default_page_size 5
   @searchable_resources %{
     "features" => [function: &Artemis.ListFeatures.call/2, permissions: "features:list"],
+    "incidents" => [function: &Artemis.ListIncidents.call/2, permissions: "incidents:list"],
     "permissions" => [function: &Artemis.ListPermissions.call/2, permissions: "permissions:list"],
     "roles" => [function: &Artemis.ListRoles.call/2, permissions: "roles:list"],
     "users" => [function: &Artemis.ListUsers.call/2, permissions: "users:list"],

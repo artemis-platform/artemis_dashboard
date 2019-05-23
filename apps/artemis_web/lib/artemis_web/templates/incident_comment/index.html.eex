@@ -1,0 +1,43 @@
+<h2>Comments</h2>
+
+<%=
+  if create_comments?(@conn) do
+    comment_form_assigns = assigns
+      |> Map.put(:action, Routes.incident_comment_path(@conn, :create, @incident))
+      |> Map.put(:changeset, @comment_changeset)
+
+    render ArtemisWeb.CommentView, "form.html", comment_form_assigns
+  end
+%>
+
+<%= if list_comments?(@conn) do %>
+  <%= Enum.map @comments, fn (comment) -> %>
+    <div class="comment">
+      <header>
+        <span class="title"><%= comment.title %></span>
+      </header>
+      <content>
+        <%= raw comment.body_html %>
+      </content>
+      <footer>
+        <div class="meta">
+          <span class="author">Comment by <%= Artemis.Helpers.deep_get(comment, [:user, :name], "Unknown") %></span>
+          <span class="timestamp">on <%= render_date_time(comment.inserted_at) %></span>
+          <span class="timestamp-relative"><%= Timex.Format.DateTime.Formatters.Relative.format!(comment.inserted_at, "{relative}") %></span>
+        </div>
+        <div class="actions">
+          <%= if update_comments?(comment, current_user(@conn)) do %>
+            <span>
+              <%= link "Edit Comment", to: Routes.incident_comment_path(@conn, :edit, @incident, comment) %>
+            </span>
+          <% end %>
+          <%= if delete_comments?(comment, current_user(@conn)) do %>
+            <span>
+              <%= link "Delete Comment", method: "delete", to: Routes.incident_comment_path(@conn, :delete, @incident, comment), data: [confirm: "Delete Comment?"] %>
+            </span>
+          <% end %>
+        </div>
+      </footer>
+    </div>
+  <% end %>
+<% end %>
