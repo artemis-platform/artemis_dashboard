@@ -51,7 +51,7 @@ ol {
 
 .data-table {
   border-collapse: collapse;
-  margin-top: 1.5rem;
+  margin: 1.5rem 0;
   text-align: left;
   width: 100%;
 
@@ -64,7 +64,7 @@ ol {
         margin: 0;
         padding: 0 0 1rem 0;
 
-        &:first-child {
+        &.checkbox {
           justify-content: center;
           padding-left: 0.5rem;
           padding-right: 1.5rem;
@@ -89,7 +89,7 @@ ol {
         margin: 0;
         padding: 1rem 0;
 
-        &:first-child {
+        &.checkbox {
           justify-content: center;
           padding-left: 0.5rem;
           padding-right: 1rem;

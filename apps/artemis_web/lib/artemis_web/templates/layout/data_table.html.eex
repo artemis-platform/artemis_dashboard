@@ -1,4 +1,4 @@
-<table class="ui table selectable data-table">
+<table class="data-table">
   <thead>
     <tr>
       <%= Enum.map @columns, fn (column) -> %>
