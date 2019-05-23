@@ -25,6 +25,10 @@ config :artemis, :users,
     email: System.get_env("ARTEMIS_SYSTEM_EMAIL")
   }
 
+config :artemis, :pager_duty,
+  team_ids: System.get_env("PAGER_DUTY_TEAM_IDS"),
+  token: System.get_env("PAGER_DUTY_TOKEN")
+
 config :slugger, separator_char: ?-
 config :slugger, replacement_file: "lib/replacements.exs"
 

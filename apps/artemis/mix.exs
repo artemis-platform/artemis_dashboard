@@ -43,6 +43,7 @@ defmodule Artemis.MixProject do
       {:assoc, "~> 0.1"},
       {:config_tuples, "~> 0.2.0"},
       {:slugger, "~> 0.3"},
+      {:timex, "~> 3.0"},
       {:earmark, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.3"},
       {:ex_machina, "~> 2.2"},
