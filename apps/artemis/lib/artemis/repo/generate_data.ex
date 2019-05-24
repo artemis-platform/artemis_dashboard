@@ -212,7 +212,8 @@ defmodule Artemis.Repo.GenerateData do
     # Tags
 
     tags = [
-      %{name: "Help", slug: "help", type: "wiki-pages"}
+      %{name: "Help", slug: "help", type: "wiki-pages"},
+      %{name: "Links", slug: "links", type: "wiki-pages"}
     ]
 
     Enum.map(tags, fn params ->

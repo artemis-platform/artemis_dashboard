@@ -10,7 +10,7 @@
         <%= if render_primary_nav_section?(nav_items, ["Incidents"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.incident_path(@conn, :index) %>">
-              On-Call
+              On Call
               <i class="angle down icon"></i>
             </a>
             <div class="dropdown">
@@ -103,6 +103,33 @@
       </ul>
     </nav>
   </section>
+
+  <aside>
+    <div class="on-call">
+      <%= render_on_call_status(@conn, @user) %>
+      <%= render_on_call_person(@conn) %>
+    </div>
+    <div class="external-links">
+      <ul>
+        <li>
+          <%= link "GitHub", to: "https://github.com/chrislaskey/artemis_dashboard", target: "_blank" %>
+        </li>
+        <li>
+          <%= link "ServiceNow", to: "https://service-now.com", target: "_blank" %>
+        </li>
+        <li>
+          <%= link "PagerDuty", to: "https://artemis.pagerduty.com", target: "_blank" %>
+        </li>
+        <li>
+          <i class="angle down icon"></i>
+          <a class="more-links" href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["links"]}}) %>">
+            More Links
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
   <footer>
 
   </footer>

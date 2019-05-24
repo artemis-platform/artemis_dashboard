@@ -68,12 +68,14 @@
 /* === Underline Animation on Links === */
 
 #primary-footer a,
+#primary-header aside a,
 .hover-underline-animation {
   display: inline-block;
   position: relative;
 }
 
 #primary-footer a::after,
+#primary-header aside a::after,
 .hover-underline-animation::after {
   background-color: $blue_muted;
   bottom: 0;
@@ -88,6 +90,7 @@
 }
 
 #primary-footer a:hover::after,
+#primary-header aside a:hover::after,
 .hover-underline-animation:hover::after {
   transform: scaleX(1);
   transform-origin: bottom left;

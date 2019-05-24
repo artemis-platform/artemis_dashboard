@@ -66,7 +66,9 @@ defmodule Artemis.IntervalWorker do
       @default_log_limit 500
 
       def start_link() do
-        initial_state = %State{}
+        initial_state = %State{
+          data: %Data{}
+        }
 
         options = [
           name: get_name()
@@ -77,13 +79,15 @@ defmodule Artemis.IntervalWorker do
 
       def get_name(), do: get_option(:name)
 
-      def get_log(), do: GenServer.call(get_name(), :log)
+      def get_data(), do: GenServer.call(get_name(), :data)
 
-      def get_log_summary(), do: GenServer.call(get_name(), :log_summary)
+      def get_log(), do: GenServer.call(get_name(), :log)
 
       def get_options(), do: unquote(options)
 
       def get_option(key, default \\ nil), do: Keyword.get(get_options(), key, default)
+
+      def get_result(), do: GenServer.call(get_name(), :result)
 
       def get_state(), do: GenServer.call(get_name(), :state)
 
@@ -107,23 +111,16 @@ defmodule Artemis.IntervalWorker do
       end
 
       @impl true
+      def handle_call(:data, _from, state) do
+        {:reply, state.data, state}
+      end
+
+      @impl true
       def handle_call(:log, _from, state) do
         {:reply, state.log, state}
       end
 
-      def handle_call(:log_summary, _from, state) do
-        log_summary = Enum.map(state.log, fn entry ->
-          result = case entry.success do
-            true -> :ok
-            false -> :error
-          end
-
-          {result, entry.started_at}
-        end)
-
-        {:reply, log_summary, state}
-      end
-
+      @impl true
       def handle_call(:pause, _from, state) do
         if state.timer do
           Process.cancel_timer(state.timer)
@@ -132,6 +129,14 @@ defmodule Artemis.IntervalWorker do
         {:reply, true, %State{state | timer: nil}}
       end
 
+      @impl true
+      def handle_call(:result, _from, state) do
+        result = Artemis.Helpers.deep_get(state, [:data, :result])
+
+        {:reply, result, state}
+      end
+
+      @impl true
       def handle_call(:resume, _from, state) do
         if state.timer do
           Process.cancel_timer(state.timer)
@@ -140,6 +145,7 @@ defmodule Artemis.IntervalWorker do
         {:reply, true, %State{state | timer: schedule_update()}}
       end
 
+      @impl true
       def handle_call(:state, _from, state) do
         {:reply, state, state}
       end
