@@ -15,18 +15,58 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   alias Artemis.ListIncidents
 
   @default_start_date DateTime.from_naive!(~N[2019-01-01 00:00:00], "Etc/UTC")
-  @fetch_limit 500
+  # Warning!
+  #
+  # As of 2019/05 the PagerDuty API endpoint contains a critical bugs.
+  #
+  # The documentation states the maximum `limit` value is 100. Anything higher
+  # than 100 automatically gets rounded down to 100.
+  #
+  # This alone isn't a problem, except for there are additional undocumented
+  # constraints that do cause problems.
+  #
+  # The actual constraint is `limit` plus `offset`. Once the combined value
+  # reached `100` pagination stops working and no further records will be returned.
+  # This includes the `more` key which will always return `false` once the
+  # constraint is hit.
+  #
+  # Finally, a more minor issue is the `total` value cannot be trusted. When
+  # explicitly passing `total: true` as a parameter, the return value for `total`
+  # is frequently incorrect.
+  @fetch_limit 99
 
   # Callbacks
 
   @impl true
-  def call(_data, _meta) do
-    user = GetSystemUser.call!()
-
-    with {:ok, response} <- get_pager_duty_incidents(user),
+  def call(data, options \\ []) do
+    with user <- GetSystemUser.call!(),
+         {:ok, response} <- get_pager_duty_incidents(user, options),
          200  <- response.status_code,
-         {:ok, incidents} <- process_response(response) do
-      CreateManyIncidents.call(incidents, user)
+         {:ok, incidents} <- process_response(response),
+         {:ok, result} <- CreateManyIncidents.call(incidents, user) do
+      total = Map.get(result, :total) + Keyword.get(options, :total, 0)
+      more? = deep_get(response, [:body, "more"])
+
+      case more? do
+        false ->
+          meta = [api_response: response]
+          data = create_data(total, meta)
+          {:ok, data}
+
+        true ->
+          date =
+            incidents
+            |> Enum.map(&(&1.triggered_at))
+            |> Enum.sort()
+            |> hd()
+
+          options =
+            options
+            |> Keyword.put(:since, date)
+            |> Keyword.put(:total, total)
+
+          call(data, options)
+      end
     else
       {:skipped, message} -> {:skipped, message}
       {:error, message} -> {:error, message}
@@ -47,8 +87,18 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     |> Artemis.Helpers.present?()
   end
 
-  def get_pager_duty_incidents(user) do
-    date = get_start_date(user)
+  defp create_data(result, meta) do
+    %Data{
+      meta: Enum.into(meta, %{}),
+      result: result
+    }
+  end
+
+  defp get_pager_duty_incidents(user, options) do
+    date = case Keyword.get(options, :since) do
+      nil -> DateTime.to_iso8601(get_start_date(user))
+      date -> date
+    end
 
     path = "/incidents"
     headers = []
@@ -60,7 +110,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         "include[]": "users",
         limit: @fetch_limit,
         offset: 0,
-        since: DateTime.to_iso8601(date),
+        since: date,
         "team_ids[]": get_team_ids()
       ]
     ]
