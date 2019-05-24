@@ -62,7 +62,7 @@ ol {
 
       th {
         margin: 0;
-        padding: 0 0 1rem 0;
+        padding: 0 0.25rem 1rem 0.25rem;
 
         &.checkbox {
           justify-content: center;
@@ -87,7 +87,8 @@ ol {
 
       td {
         margin: 0;
-        padding: 1rem 0;
+        padding: 1rem 0.25rem 1rem 0.25rem;
+        vertical-align: top;
 
         &.checkbox {
           justify-content: center;
@@ -112,6 +113,10 @@ ol {
     > * {
       margin-right: 1.5rem !important;
     }
+  }
+
+  .buttons {
+    max-height: 36px;
   }
 }
 

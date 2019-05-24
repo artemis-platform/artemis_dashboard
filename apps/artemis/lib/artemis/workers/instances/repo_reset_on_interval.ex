@@ -1,6 +1,6 @@
 defmodule Artemis.Worker.RepoResetOnInterval do
   use Artemis.IntervalWorker,
-    enabled: Application.fetch_env!(:artemis, :actions)[:repo_reset_on_interval][:enabled],
+    enabled: enabled?(),
     interval: get_interval(),
     log_limit: 500,
     name: :repo_reset_on_interval
@@ -12,7 +12,7 @@ defmodule Artemis.Worker.RepoResetOnInterval do
   # Callbacks
 
   @impl true
-  def call(_data, _meta) do
+  def call(_data) do
     with {:ok, _} <- DeleteAll.call(DeleteAll.verification_phrase()),
          {:ok, _} <- GenerateData.call(),
          {:ok, _} <- GenerateFillerData.call(GenerateFillerData.verification_phrase()) do
@@ -24,6 +24,10 @@ defmodule Artemis.Worker.RepoResetOnInterval do
   end
 
   # Helpers
+
+  defp enabled?() do
+    Application.fetch_env!(:artemis, :actions)[:repo_reset_on_interval][:enabled]
+  end
 
   defp get_interval() do
     hours =

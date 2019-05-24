@@ -5,8 +5,8 @@ defmodule Artemis.IntervalWorker do
 
   ## Callbacks
 
-  Define a `call/2` function to be executed at the interval. Receives the
-  current `state.data` and `state.meta` as parameters.
+  Define a `call/1` function to be executed at the interval. Receives the
+  current `state.data`.
 
   Must return a tuple `{:ok, _}` or `{:error, _}`.
 
@@ -18,7 +18,6 @@ defmodule Artemis.IntervalWorker do
     :enabled - Optional. If set to false, starts in paused state.
     :interval - Optional. Interval between calls.
     :log_limit - Optional. Number of log entries to keep.
-    :meta - Optional. Passed as the second parameter to `update`.
 
   For example:
 
@@ -29,7 +28,7 @@ defmodule Artemis.IntervalWorker do
 
   """
 
-  @callback call(map(), any()) :: {:ok, any()} | {:error, any()}
+  @callback call(map()) :: {:ok, any()} | {:error, any()}
 
   defmacro __using__(options) do
     quote do
@@ -40,9 +39,15 @@ defmodule Artemis.IntervalWorker do
       defmodule State do
         defstruct [
           :data,
-          :meta,
           :timer,
           log: []
+        ]
+      end
+
+      defmodule Data do
+        defstruct [
+          :meta,
+          :result
         ]
       end
 
@@ -62,7 +67,7 @@ defmodule Artemis.IntervalWorker do
 
       def start_link() do
         initial_state = %State{
-          meta: get_option(:meta)
+          data: %Data{}
         }
 
         options = [
@@ -74,11 +79,15 @@ defmodule Artemis.IntervalWorker do
 
       def get_name(), do: get_option(:name)
 
+      def get_data(), do: GenServer.call(get_name(), :data)
+
       def get_log(), do: GenServer.call(get_name(), :log)
 
       def get_options(), do: unquote(options)
 
       def get_option(key, default \\ nil), do: Keyword.get(get_options(), key, default)
+
+      def get_result(), do: GenServer.call(get_name(), :result)
 
       def get_state(), do: GenServer.call(get_name(), :state)
 
@@ -92,11 +101,18 @@ defmodule Artemis.IntervalWorker do
 
       @impl true
       def init(state) do
-        if get_option(:enabled, true) do
-          state = Map.put(state, :timer, schedule_update())
-        end
+        state =
+          case get_option(:enabled, true) do
+            true -> Map.put(state, :timer, schedule_update())
+            false -> state
+          end
 
         {:ok, state}
+      end
+
+      @impl true
+      def handle_call(:data, _from, state) do
+        {:reply, state.data, state}
       end
 
       @impl true
@@ -104,6 +120,7 @@ defmodule Artemis.IntervalWorker do
         {:reply, state.log, state}
       end
 
+      @impl true
       def handle_call(:pause, _from, state) do
         if state.timer do
           Process.cancel_timer(state.timer)
@@ -112,6 +129,14 @@ defmodule Artemis.IntervalWorker do
         {:reply, true, %State{state | timer: nil}}
       end
 
+      @impl true
+      def handle_call(:result, _from, state) do
+        result = Artemis.Helpers.deep_get(state, [:data, :result])
+
+        {:reply, result, state}
+      end
+
+      @impl true
       def handle_call(:resume, _from, state) do
         if state.timer do
           Process.cancel_timer(state.timer)
@@ -120,6 +145,7 @@ defmodule Artemis.IntervalWorker do
         {:reply, true, %State{state | timer: schedule_update()}}
       end
 
+      @impl true
       def handle_call(:state, _from, state) do
         {:reply, state, state}
       end
@@ -127,7 +153,7 @@ defmodule Artemis.IntervalWorker do
       @impl true
       def handle_info(:update, state) do
         started_at = Timex.now()
-        result = call(state.data, state.meta)
+        result = call(state.data)
         ended_at = Timex.now()
 
         state =
@@ -152,14 +178,18 @@ defmodule Artemis.IntervalWorker do
       end
 
       defp schedule_update_unless_paused(%{timer: timer}) when is_nil(timer), do: nil
-      defp schedule_update_unless_paused(_), do: schedule_update()
+      defp schedule_update_unless_paused(%{timer: timer}) do
+        Process.cancel_timer(timer)
+
+        schedule_update()
+      end
 
       def parse_data(_state, {:ok, data}), do: data
       def parse_data(%{data: current_data}, _), do: current_data
 
       defp update_log(%{log: log}, result, started_at, ended_at) do
         entry = %Log{
-          details: get_error(result),
+          details: elem(result, 1),
           duration: Timex.diff(ended_at, started_at),
           ended_at: ended_at,
           started_at: started_at,
@@ -174,9 +204,6 @@ defmodule Artemis.IntervalWorker do
 
       defp success?({:ok, _}), do: true
       defp success?(_), do: false
-
-      defp get_error({:error, error}), do: error
-      defp get_error(_), do: nil
 
       # Allow defined `@callback`s to be overwritten
 

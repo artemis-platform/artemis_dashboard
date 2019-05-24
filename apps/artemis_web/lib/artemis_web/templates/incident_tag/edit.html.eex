@@ -1,0 +1,12 @@
+<%=
+  tag_form_assigns = assigns
+    |> Map.put(:action, Routes.incident_tag_path(@conn, :update, @incident))
+    |> Map.put(:available_tags, @tags)
+    |> Map.put(:changeset, @tags_changeset)
+    |> Map.put(:create_permission, "incidents:create:tags")
+    |> Map.put(:current_tags, @incident.tags)
+    |> Map.put(:tag_link, fn (tag) -> Routes.incident_path(@conn, :index, filters: %{tags: [tag]}) end)
+    |> Map.put(:update_permission, "incidents:update:tags")
+
+  render ArtemisWeb.TagView, "_resource_list.html", tag_form_assigns
+%>

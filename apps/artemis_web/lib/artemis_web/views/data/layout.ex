@@ -42,6 +42,13 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "features:create")
         ]
       ],
+      Incidents: [
+        [
+          label: "List Incidents",
+          path: &Routes.incident_path(&1, :index),
+          verify: &has?(&1, "incidents:list")
+        ]
+      ],
       Permissions: [
         [
           label: "List Permissions",

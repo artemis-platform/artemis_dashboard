@@ -11,6 +11,8 @@ defmodule Artemis.IntervalSupervisor do
 
   def init(:ok) do
     children = [
+      worker(Artemis.Worker.PagerDutyIncidentSynchronizer, []),
+      worker(Artemis.Worker.PagerDutyOnCallSynchronizer, []),
       worker(Artemis.Worker.RepoResetOnInterval, [])
     ]
 

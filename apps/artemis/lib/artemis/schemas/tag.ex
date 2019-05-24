@@ -8,6 +8,11 @@ defmodule Artemis.Tag do
     field :slug, :string
     field :type, :string
 
+    many_to_many :incidents, Artemis.Incident,
+      join_through: "tags_incidents",
+      on_delete: :delete_all,
+      on_replace: :delete
+
     many_to_many :wiki_pages, Artemis.WikiPage,
       join_through: "tags_wiki_pages",
       on_delete: :delete_all,

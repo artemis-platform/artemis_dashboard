@@ -75,9 +75,9 @@ defmodule Artemis.ListWikiPagesTest do
     end
 
     test "query - search" do
-      insert(:wiki_page, title: "John Smith", slug: "john-smith")
-      insert(:wiki_page, title: "Jill Smith", slug: "jill-smith")
-      insert(:wiki_page, title: "John Doe", slug: "john-doe")
+      insert(:wiki_page, title: "Four Six", slug: "four-six")
+      insert(:wiki_page, title: "Four Two", slug: "four-two")
+      insert(:wiki_page, title: "Five Six", slug: "five-six")
 
       user = Mock.system_user()
       wiki_pages = ListWikiPages.call(user)
@@ -87,7 +87,7 @@ defmodule Artemis.ListWikiPagesTest do
       # Succeeds when given a word part of a larger phrase
 
       params = %{
-        query: "smit"
+        query: "Six"
       }
 
       wiki_pages = ListWikiPages.call(params, user)
@@ -97,7 +97,7 @@ defmodule Artemis.ListWikiPagesTest do
       # Succeeds with partial value when it is start of a word
 
       params = %{
-        query: "john-"
+        query: "four-"
       }
 
       wiki_pages = ListWikiPages.call(params, user)
@@ -107,7 +107,7 @@ defmodule Artemis.ListWikiPagesTest do
       # Fails with partial value when it is not the start of a word
 
       params = %{
-        query: "mith"
+        query: "our"
       }
 
       wiki_pages = ListWikiPages.call(params, user)

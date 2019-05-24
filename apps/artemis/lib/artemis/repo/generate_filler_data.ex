@@ -41,7 +41,19 @@ defmodule Artemis.Repo.GenerateFillerData do
   defp generate_data do
     system_user = GetSystemUser.call!()
 
+    generate_incidents(system_user)
+    generate_roles(system_user)
     generate_users(system_user)
+  end
+
+  defp generate_incidents(_system_user), do: insert_list(100, :incident)
+
+  defp generate_roles(_system_user) do
+    [
+      insert(:role, name: "Executive Viewers", slug: "executive-viewer"),
+      insert(:role, name: "Client Success Manager", slug: "client-success-manager"),
+      insert(:role, name: "Network Administrator", slug: "network-administrator")
+    ]
   end
 
   defp generate_users(system_user) do

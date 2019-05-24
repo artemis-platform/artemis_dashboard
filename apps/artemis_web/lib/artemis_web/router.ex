@@ -55,6 +55,12 @@ defmodule ArtemisWeb.Router do
       get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]
       resources "/features", FeatureController
+
+      resources "/incidents", IncidentController, only: [:index, :show, :delete] do
+        resources "/comments", IncidentCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        put "/tags", IncidentTagController, :update, as: :tag
+      end
+
       resources "/permissions", PermissionController
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]
