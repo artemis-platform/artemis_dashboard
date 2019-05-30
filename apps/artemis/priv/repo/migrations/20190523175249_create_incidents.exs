@@ -18,7 +18,7 @@ defmodule Artemis.Repo.Migrations.CreateIncidents do
       add :title, :text
       add :triggered_at, :utc_datetime
       add :triggered_by, :text
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:incidents, :acknowledged_by)
