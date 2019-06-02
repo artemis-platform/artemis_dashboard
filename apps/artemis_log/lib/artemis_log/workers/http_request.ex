@@ -5,7 +5,6 @@ defmodule ArtemisLog.Worker.HttpRequest do
 
   alias ArtemisLog.CreateHttpRequestLog
 
-  @subscribe_to_http_requests Application.get_env(:artemis_log, :subscribe_to_events, true)
   @topic "private:artemis:http-requests"
 
   def start_link() do
@@ -18,7 +17,7 @@ defmodule ArtemisLog.Worker.HttpRequest do
   # Callbacks
 
   def init(state) do
-    if @subscribe_to_http_requests do
+    if enabled?() do
       :ok = subscribe(@topic)
     end
 
@@ -34,4 +33,8 @@ defmodule ArtemisLog.Worker.HttpRequest do
   def handle_info(_, state) do
     {:noreply, state}
   end
+
+  # Helpers
+
+  defp enabled?(), do: Application.fetch_env!(:artemis_log, :subscribe_to_http_requests)
 end

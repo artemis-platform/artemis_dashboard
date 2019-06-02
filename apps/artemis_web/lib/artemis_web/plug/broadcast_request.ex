@@ -19,6 +19,7 @@ defmodule ArtemisWeb.Plug.BroadcastRequest do
   end
 
   defp broadcast_request(conn) do
+    user = current_user(conn)
     payload = %{
       endpoint: "web",
       node: Atom.to_string(node()),
@@ -26,7 +27,7 @@ defmodule ArtemisWeb.Plug.BroadcastRequest do
       query_string: conn.query_string
     }
 
-    HttpRequest.broadcast(payload, current_user(conn))
+    HttpRequest.broadcast(payload, user)
 
     conn
   end

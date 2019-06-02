@@ -25,7 +25,7 @@ defmodule ArtemisLog.CreateHttpRequestLogTest do
 
     test "returns error when missing required user values" do
       params = %{
-        data: params_for(:request_log),
+        data: params_for(:http_request_log),
         user: nil
       }
 
@@ -50,7 +50,7 @@ defmodule ArtemisLog.CreateHttpRequestLogTest do
 
     test "returns error when user params are empty" do
       params = %{
-        data: params_for(:request_log),
+        data: params_for(:http_request_log),
         user: %{id: nil, name: nil}
       }
 
@@ -62,7 +62,7 @@ defmodule ArtemisLog.CreateHttpRequestLogTest do
 
     test "creates a record when passed valid params", %{user: user} do
       params = %{
-        data: params_for(:request_log),
+        data: params_for(:http_request_log),
         user: user
       }
 
