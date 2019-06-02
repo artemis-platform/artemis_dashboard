@@ -7,7 +7,7 @@ defmodule ArtemisLog.GetHttpRequestLogTest do
 
   setup do
     user = Mock.system_user()
-    request_log = insert(:request_log, user_id: user.id, user_name: user.name)
+    request_log = insert(:http_request_log, user_id: user.id, user_name: user.name)
 
     {:ok, request_log: request_log}
   end

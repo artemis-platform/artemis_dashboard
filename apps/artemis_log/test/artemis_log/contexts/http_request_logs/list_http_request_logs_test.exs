@@ -4,11 +4,11 @@ defmodule ArtemisLog.ListHttpRequestLogsTest do
   import ArtemisLog.Factories
 
   alias ArtemisLog.ListHttpRequestLogs
+  alias ArtemisLog.HttpRequestLog
   alias ArtemisLog.Repo
-  alias ArtemisLog.RequestLog
 
   setup do
-    Repo.delete_all(RequestLog)
+    Repo.delete_all(HttpRequestLog)
 
     {:ok, []}
   end
@@ -36,7 +36,7 @@ defmodule ArtemisLog.ListHttpRequestLogsTest do
     end
 
     test "returns existing request logs" do
-      request_log = insert(:request_log)
+      request_log = insert(:http_request_log)
 
       request_logs = ListHttpRequestLogs.call(Mock.system_user())
 
@@ -45,7 +45,7 @@ defmodule ArtemisLog.ListHttpRequestLogsTest do
 
     test "returns a list of request logs" do
       count = 3
-      insert_list(count, :request_log)
+      insert_list(count, :http_request_log)
 
       request_logs = ListHttpRequestLogs.call(Mock.system_user())
 
@@ -55,13 +55,13 @@ defmodule ArtemisLog.ListHttpRequestLogsTest do
 
   describe "call - params" do
     setup do
-      request_log = insert(:request_log)
+      request_log = insert(:http_request_log)
 
       {:ok, request_log: request_log}
     end
 
     test "order" do
-      insert_list(3, :request_log)
+      insert_list(3, :http_request_log)
 
       params = %{order: "endpoint"}
       ascending = ListHttpRequestLogs.call(params, Mock.system_user())

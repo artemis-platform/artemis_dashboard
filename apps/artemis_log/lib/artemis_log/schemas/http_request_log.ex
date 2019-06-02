@@ -1,4 +1,4 @@
-defmodule ArtemisLog.RequestLog do
+defmodule ArtemisLog.HttpRequestLog do
   use ArtemisLog.Schema
 
   schema "http_request_logs" do
@@ -6,6 +6,7 @@ defmodule ArtemisLog.RequestLog do
     field :node, :string
     field :path, :string
     field :query_string, :string
+    field :session_id, :string
     field :user_id, :integer
     field :user_name, :string
 
@@ -20,6 +21,7 @@ defmodule ArtemisLog.RequestLog do
       :node,
       :path,
       :query_string,
+      :session_id,
       :user_id,
       :user_name
     ]

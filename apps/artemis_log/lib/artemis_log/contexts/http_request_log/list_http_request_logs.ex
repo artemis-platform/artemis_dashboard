@@ -1,7 +1,7 @@
 defmodule ArtemisLog.ListHttpRequestLogs do
   use ArtemisLog.Context
 
-  alias ArtemisLog.RequestLog
+  alias ArtemisLog.HttpRequestLog
   alias ArtemisLog.Repo
 
   @default_order "-inserted_at"
@@ -10,7 +10,7 @@ defmodule ArtemisLog.ListHttpRequestLogs do
   def call(params \\ %{}, _user) do
     params = default_params(params)
 
-    RequestLog
+    HttpRequestLog
     |> order_query(params)
     |> Repo.paginate(params)
   end

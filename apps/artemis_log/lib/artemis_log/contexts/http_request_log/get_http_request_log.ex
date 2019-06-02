@@ -3,7 +3,7 @@ defmodule ArtemisLog.GetHttpRequestLog do
 
   import Ecto.Query
 
-  alias ArtemisLog.RequestLog
+  alias ArtemisLog.HttpRequestLog
   alias ArtemisLog.Repo
 
   def call!(value, user) do
@@ -19,7 +19,7 @@ defmodule ArtemisLog.GetHttpRequestLog do
   end
 
   defp get_record(value, user, get_by) do
-    RequestLog
+    HttpRequestLog
     |> restrict_access(user)
     |> get_by.(value)
   end
