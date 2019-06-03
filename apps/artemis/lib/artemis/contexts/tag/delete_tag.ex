@@ -1,7 +1,7 @@
 defmodule Artemis.DeleteTag do
   use Artemis.Context
 
-  alias Artemis.Tag
+  alias Artemis.GetTag
   alias Artemis.Repo
 
   def call!(id, user) do
@@ -13,13 +13,13 @@ defmodule Artemis.DeleteTag do
 
   def call(id, user) do
     id
-    |> get_record
+    |> get_record(user)
     |> delete_record
     |> Event.broadcast("tag:deleted", user)
   end
 
-  def get_record(record) when is_map(record), do: record
-  def get_record(id), do: Repo.get(Tag, id)
+  def get_record(%{id: id}, user), do: get_record(id, user)
+  def get_record(id, user), do: GetTag.call(id, user)
 
   defp delete_record(nil), do: {:error, "Record not found"}
   defp delete_record(record), do: Repo.delete(record)

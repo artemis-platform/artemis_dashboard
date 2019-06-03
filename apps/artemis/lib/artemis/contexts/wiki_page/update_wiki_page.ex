@@ -3,6 +3,7 @@ defmodule Artemis.UpdateWikiPage do
   use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.CreateWikiRevision
+  alias Artemis.GetWikiPage
   alias Artemis.Helpers.Markdown
   alias Artemis.Repo
   alias Artemis.WikiPage
@@ -17,7 +18,7 @@ defmodule Artemis.UpdateWikiPage do
   def call(id, params, user) do
     with_transaction(fn ->
       id
-      |> get_record
+      |> get_record(user)
       |> update_record(params)
       |> create_wiki_revision(user)
       |> update_associations(params)
@@ -25,8 +26,8 @@ defmodule Artemis.UpdateWikiPage do
     end)
   end
 
-  def get_record(record) when is_map(record), do: record
-  def get_record(id), do: Repo.get(WikiPage, id)
+  def get_record(%{id: id}, user), do: get_record(id, user)
+  def get_record(id, user), do: GetWikiPage.call(id, user)
 
   defp update_record(nil, _params), do: {:error, "Record not found"}
 
