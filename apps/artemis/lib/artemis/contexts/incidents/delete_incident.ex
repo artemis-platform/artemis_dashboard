@@ -2,7 +2,7 @@ defmodule Artemis.DeleteIncident do
   use Artemis.Context
 
   alias Artemis.DeleteManyAssociatedComments
-  alias Artemis.Incident
+  alias Artemis.GetIncident
   alias Artemis.Repo
 
   def call!(id, user) do
@@ -15,15 +15,15 @@ defmodule Artemis.DeleteIncident do
   def call(id, user) do
     with_transaction(fn () ->
       id
-      |> get_record
+      |> get_record(user)
       |> DeleteManyAssociatedComments.call(user)
       |> delete_record
       |> Event.broadcast("incident:deleted", user)
     end)
   end
 
-  def get_record(record) when is_map(record), do: record
-  def get_record(id), do: Repo.get(Incident, id)
+  def get_record(%{id: id}, user), do: get_record(id, user)
+  def get_record(id, user), do: GetIncident.call(id, user)
 
   defp delete_record(nil), do: {:error, "Record not found"}
   defp delete_record(record), do: Repo.delete(record)
