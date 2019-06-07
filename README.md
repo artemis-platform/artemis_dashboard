@@ -51,14 +51,12 @@ bin/demo/stop # Stop the demo environment
 bin/demo/remove # Remove the demo environment
 ```
 
-## Looking for a Generic Platform?
+## Looking for More?
 
 > ### [Artemis Platform](https://github.com/chrislaskey/artemis_platform)
 
-Artemis Platform is a generic platform ready to be the foundation of your next web application.
+Artemis Platform is a generic Elixir / Phoenix platform ready to be the foundation of your next web application.
 
-## Development
+> ### [Artemis Teams](https://github.com/chrislaskey/artemis_teams)
 
-Artemis can be used as a pattern reference for an existing application or as a starting point for a new one.
-
-To build a new application using Artemis, see the [`DEVELOPMENT.md`](DEVELOPMENT.md).
+Collaborative Team-Based Tools written in Elixir and Phoenix.
