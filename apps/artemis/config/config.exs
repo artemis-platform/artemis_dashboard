@@ -4,6 +4,9 @@ config :artemis,
   ecto_repos: [Artemis.Repo]
 
 config :artemis, :actions,
+  ibm_cloud_iam_access_token: [
+    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUD_IAM_ACCESS_TOKEN_ENABLED") == "true"
+  ],
   repo_delete_all: [
     enabled: System.get_env("ARTEMIS_ACTION_REPO_DELETE_ALL_ENABLED") == "true"
   ],
@@ -24,6 +27,10 @@ config :artemis, :users,
     name: System.get_env("ARTEMIS_SYSTEM_USER"),
     email: System.get_env("ARTEMIS_SYSTEM_EMAIL")
   }
+
+config :artemis, :ibm_cloud,
+  iam_api_key: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_KEY"),
+  iam_api_url: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_URL")
 
 config :artemis, :pager_duty,
   subdomain: System.get_env("ARTEMIS_PAGER_DUTY_SUBDOMAIN"),
