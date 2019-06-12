@@ -20,6 +20,17 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
     end
   end
 
+  # Functions
+
+  def get_token!() do
+    data = get_data()
+
+    case valid?(data) do
+      true -> Map.get(data, :token)
+      false -> update().data.token
+    end
+  end
+
   # Helpers
 
   defp enabled?() do
@@ -69,4 +80,12 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
   end
 
   defp process_response(_), do: {:error, "Unknown error response from IBM Cloud IAM API"}
+
+  defp valid?(%{meta: %{expiration: expiration}, token: token}) do
+    now = DateTime.to_unix(DateTime.utc_now())
+    threshold = now - (5 * 60)
+
+    expiration < threshold && token
+  end
+  defp valid?(_), do: false
 end

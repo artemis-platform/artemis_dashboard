@@ -14,6 +14,13 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   alias Artemis.GetSystemUser
   alias Artemis.ListIncidents
 
+  defmodule Data do
+    defstruct [
+      :meta,
+      :result
+    ]
+  end
+
   @default_start_date DateTime.from_naive!(~N[2019-01-01 00:00:00], "Etc/UTC")
   # Warning!
   #
