@@ -27,18 +27,14 @@ UI Patterns:
 - Breadcrumbs
 - Pagination
 - Table Search
-
-In Flight:
-
-- Optional RabbitMQ Support
-- On-demand Caching
+- Table Export
+- Table Sorting
+- Table Filtering
 
 Planned:
 
 - Node Clustering
-- Table Sorting
-- Table Filtering
-- Table Export
+- On-demand Caching
 
 ## Demo
 
