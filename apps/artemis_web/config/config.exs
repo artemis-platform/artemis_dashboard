@@ -35,11 +35,18 @@ config :ueberauth, Ueberauth.Strategy.Github.OAuth,
 config :ueberauth, Ueberauth,
   providers: [
     github: {Ueberauth.Strategy.Github, []},
-    system_user: {Ueberauth.Strategy.SystemUser, []}
+    system_user: {Ueberauth.Strategy.SystemUser, []},
+    w3id: {Ueberauth.Strategy.W3ID, []}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,
-  client_id: System.get_env("ARTEMIS_WEB_GITHUB_CLIENT_ID"),
-  client_secret: System.get_env("ARTEMIS_WEB_GITHUB_CLIENT_SECRET")
+  client_id: System.get_env("UEBERAUTH_GITHUB_CLIENT_ID"),
+  client_secret: System.get_env("UEBERAUTH_GITHUB_CLIENT_SECRET")
+
+config :ueberauth, Ueberauth.Strategy.W3ID.OAuth,
+  client_id: System.get_env("UEBERAUTH_W3ID_CLIENT_ID"),
+  client_secret: System.get_env("UEBERAUTH_W3ID_CLIENT_SECRET"),
+  token_url: System.get_env("UEBERAUTH_W3ID_TOKEN_URL"),
+  authorize_url: System.get_env("UEBERAUTH_W3ID_AUTHORIZE_URL")
 
 import_config "#{Mix.env()}.exs"

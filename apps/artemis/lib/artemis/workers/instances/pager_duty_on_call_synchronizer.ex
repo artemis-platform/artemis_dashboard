@@ -10,6 +10,13 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   alias Artemis.Drivers.PagerDuty
   alias Artemis.GetSystemUser
 
+  defmodule Data do
+    defstruct [
+      :meta,
+      :result
+    ]
+  end
+
   @fetch_limit 99
 
   # Callbacks

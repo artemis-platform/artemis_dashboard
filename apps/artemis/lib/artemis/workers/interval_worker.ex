@@ -44,13 +44,6 @@ defmodule Artemis.IntervalWorker do
         ]
       end
 
-      defmodule Data do
-        defstruct [
-          :meta,
-          :result
-        ]
-      end
-
       defmodule Log do
         defstruct [
           :details,
@@ -66,9 +59,7 @@ defmodule Artemis.IntervalWorker do
       @default_log_limit 500
 
       def start_link() do
-        initial_state = %State{
-          data: %Data{}
-        }
+        initial_state = %State{}
 
         options = [
           name: get_name()
@@ -95,7 +86,12 @@ defmodule Artemis.IntervalWorker do
 
       def resume(), do: GenServer.call(get_name(), :resume)
 
-      def update(), do: Process.send(get_name(), :update, [])
+      def update(options \\ []) do
+        case Keyword.get(options, :async) do
+          true -> Process.send(get_name(), :update, [])
+          _ -> GenServer.call(get_name(), :update)
+        end
+      end
 
       # Callbacks
 
@@ -151,16 +147,17 @@ defmodule Artemis.IntervalWorker do
       end
 
       @impl true
-      def handle_info(:update, state) do
-        started_at = Timex.now()
-        result = call(state.data)
-        ended_at = Timex.now()
+      @doc "Synchronous"
+      def handle_call(:update, _from, state) do
+        state = update_state(state)
 
-        state =
-          state
-          |> Map.put(:data, parse_data(state, result))
-          |> Map.put(:log, update_log(state, result, started_at, ended_at))
-          |> Map.put(:timer, schedule_update_unless_paused(state))
+        {:reply, state, state}
+      end
+
+      @impl true
+      @doc "Asynchronous"
+      def handle_info(:update, state) do
+        state = update_state(state)
 
         {:noreply, state}
       end
@@ -170,6 +167,17 @@ defmodule Artemis.IntervalWorker do
       end
 
       # Callback Helpers
+
+      defp update_state(state) do
+        started_at = Timex.now()
+        result = call(state.data)
+        ended_at = Timex.now()
+
+        state
+        |> Map.put(:data, parse_data(state, result))
+        |> Map.put(:log, update_log(state, result, started_at, ended_at))
+        |> Map.put(:timer, schedule_update_unless_paused(state))
+      end
 
       defp schedule_update() do
         interval = get_option(:interval, @default_interval)
