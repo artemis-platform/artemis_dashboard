@@ -30,7 +30,7 @@
       <%= render ArtemisWeb.IncidentTagView, "edit.html", assigns %>
 
       <p>
-        <span class="status-label status-<%= @incident.status %>">
+        <span class="status-label <%= status_color(@incident) %>">
           <%= @incident.status %>
         </span>
       </p>

@@ -6,16 +6,17 @@ defmodule Artemis.Drivers.IBMCloudant do
 
     [
       "Accept": "application/json",
-      "Authorization": "Bearer #{token}"
+      "Authorization": "Bearer #{token}",
+      "Content-Type": "application/json"
     ] ++ headers
   end
 
-  def process_request_url(options \\ []) do
-    domain = Keyword.get(options, :domain)
-    database = Keyword.get(options, :database)
-    document = Keyword.get(options, :document)
+  def process_request_url(path) do
+    # domain = Keyword.get(options, :domain)
+    # database = Keyword.get(options, :database)
+    # document = Keyword.get(options, :document)
 
-    "https://#{domain}/#{database}/#{document}"
+    "https://#{path}"
   end
 
   def process_response_body(body) do

@@ -50,7 +50,8 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
          {:ok, response} <- get_pager_duty_incidents(user, options),
          200  <- response.status_code,
          {:ok, incidents} <- process_response(response),
-         {:ok, result} <- CreateManyIncidents.call(incidents, user) do
+         {:ok, filtered} <- filter_incidents(incidents, user),
+         {:ok, result} <- CreateManyIncidents.call(filtered, user) do
       total = Map.get(result, :total) + Keyword.get(options, :total, 0)
       more? = deep_get(response, [:body, "more"])
 
@@ -198,6 +199,23 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         triggered_by: nil
       }
     end)
+  end
+
+  # Filter out updates to existing incidents that are already resolved
+  defp filter_incidents(incidents, user) do
+    resolved_incidents = get_existing_resolved_incidents(user)
+
+    filtered = Enum.reject(incidents, fn incident ->
+      Enum.member?(resolved_incidents, incident.source_uid)
+    end)
+
+    {:ok, filtered}
+  end
+
+  defp get_existing_resolved_incidents(user) do
+    %{filters: %{status: "resolved"}}
+    |> ListIncidents.call(user)
+    |> Enum.map(&(&1.source_uid))
   end
 
   def get_team_ids, do: Application.fetch_env!(:artemis, :pager_duty)[:team_ids]

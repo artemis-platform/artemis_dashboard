@@ -70,6 +70,27 @@ defmodule Artemis.Factories do
     }
   end
 
+  def shared_job_factory do
+    %Artemis.SharedJob{
+      _id: Faker.UUID.v4(),
+      _rev: sequence(:slug, &"#{&1}-#{Faker.UUID.v4()}"),
+      deps: Faker.UUID.v4(),
+      uuid: Faker.UUID.v4(),
+      name: Faker.Name.name(),
+      instance_uuid: Faker.UUID.v4(),
+      cmd: "#{Faker.Internet.slug()}.py",
+      estimation: 0,
+      timeout: 0,
+      interval: 0,
+      status: "Completed",
+      task_id: "task_#{Faker.UUID.v4()}",
+      transaction_id: "task_#{Faker.UUID.v4()}",
+      zzdoc_type: "job",
+      first_run: DateTime.utc_now() |> DateTime.to_unix(),
+      last_run: DateTime.utc_now() |> DateTime.to_unix()
+    }
+  end
+
   def tag_factory do
     %Artemis.Tag{
       description: Faker.Lorem.paragraph(),
