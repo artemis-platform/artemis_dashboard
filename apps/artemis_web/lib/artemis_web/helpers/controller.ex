@@ -14,6 +14,7 @@ defmodule ArtemisWeb.Helpers.Controller do
   on database.
   """
   def add_cloudant_search_param(%{"query" => ""} = params, _keys), do: params
+
   def add_cloudant_search_param(%{"query" => query} = params, keys) do
     exact_search? = String.contains?(query, [":", " AND ", " NOT ", " OR "])
 
@@ -22,30 +23,34 @@ defmodule ArtemisWeb.Helpers.Controller do
       false -> Map.put(params, "query", cloudant_wildcard_search_query(query, keys))
     end
   end
+
   def add_cloudant_search_param(params, _keys), do: params
 
   defp cloudant_wildcard_search_query(query, keys) do
-    wildcard_query = case String.contains?(query, "*") do
-      true -> query
-      false -> query <> "*"
-    end
+    wildcard_query =
+      case String.contains?(query, "*") do
+        true -> query
+        false -> query <> "*"
+      end
 
     words = String.split(wildcard_query)
 
-    keys_with_default = case Enum.member?(keys, :default) do
-      true -> keys
-      false -> [:default|keys]
-    end
-
-    key_sections = Enum.map(keys_with_default, fn key ->
-      tokens = Enum.map(words, &"#{key}:#{&1}")
-      joined = Enum.join(tokens, " AND ")
-
-      case length(tokens) > 1 do
-        true -> "(#{joined})"
-        false -> joined
+    keys_with_default =
+      case Enum.member?(keys, :default) do
+        true -> keys
+        false -> [:default | keys]
       end
-    end)
+
+    key_sections =
+      Enum.map(keys_with_default, fn key ->
+        tokens = Enum.map(words, &"#{key}:#{&1}")
+        joined = Enum.join(tokens, " AND ")
+
+        case length(tokens) > 1 do
+          true -> "(#{joined})"
+          false -> joined
+        end
+      end)
 
     Enum.join(key_sections, " OR ")
   end

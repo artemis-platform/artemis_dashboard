@@ -21,5 +21,6 @@ defmodule ArtemisWeb.IncidentView do
       true -> nil
     end
   end
+
   def status_color(_), do: nil
 end

@@ -34,7 +34,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     end
   rescue
     error ->
-      Logger.info "Error synchronizing pager duty on call: " <> inspect(error)
+      Logger.info("Error synchronizing pager duty on call: " <> inspect(error))
       {:error, "Exception raised while synchronizing pager duty on call"}
   end
 
@@ -68,9 +68,10 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   # Helpers - Escalation Policies
 
   def synchronize_escalation_policies(%{meta: %{escalation_policies: current}}) when not is_nil(current), do: current
+
   def synchronize_escalation_policies(_) do
     with {:ok, response} <- get_pager_duty_escalation_policies(),
-         200  <- response.status_code,
+         200 <- response.status_code,
          {:ok, escalation_policies} <- process_escalation_polices_response(response) do
       {:ok, escalation_policies}
     else
@@ -79,13 +80,14 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     end
   rescue
     error ->
-      Logger.info "Error synchronizing pager duty escalation policies: " <> inspect(error)
+      Logger.info("Error synchronizing pager duty escalation policies: " <> inspect(error))
       {:error, "Exception raised while synchronizing pager duty escalation policies"}
   end
 
   def get_pager_duty_escalation_policies() do
     path = "/escalation_policies"
     headers = []
+
     options = [
       params: [
         limit: @fetch_limit,
@@ -102,13 +104,14 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   rescue
     _ -> {:error, "Error processing escalation policies"}
   end
+
   defp process_escalation_polices_response(_), do: {:error, "Invalid escalation policies response"}
 
   # Helpers - On Calls
 
   def synchronize_on_calls(escalation_policies) do
     with {:ok, response} <- get_pager_duty_on_calls(escalation_policies),
-         200  <- response.status_code,
+         200 <- response.status_code,
          {:ok, on_calls} <- process_on_calls_response(response) do
       {:ok, on_calls}
     else
@@ -122,19 +125,22 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   def get_pager_duty_on_calls(escalation_policies) do
     path = "/oncalls"
     headers = []
-    additional_params = case is_list(escalation_policies) do
-      true -> Enum.map(escalation_policies, &({"escalation_policy_ids[]", &1}))
-      false -> []
-    end
+
+    additional_params =
+      case is_list(escalation_policies) do
+        true -> Enum.map(escalation_policies, &{"escalation_policy_ids[]", &1})
+        false -> []
+      end
 
     options = [
-      params: [
-        # "include[]": "escalation_policies",
-        # "include[]": "schedules",
-        # "include[]": "users",
-        limit: @fetch_limit,
-        offset: 0
-      ] ++ additional_params
+      params:
+        [
+          # "include[]": "escalation_policies",
+          # "include[]": "schedules",
+          # "include[]": "users",
+          limit: @fetch_limit,
+          offset: 0
+        ] ++ additional_params
     ]
 
     PagerDuty.get(path, headers, options)
@@ -145,6 +151,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   rescue
     _ -> {:error, "Error processing on calls"}
   end
+
   defp process_on_calls_response(_), do: {:error, "Invalid on calls response"}
 
   def get_team_ids, do: Application.fetch_env!(:artemis, :pager_duty)[:team_ids]

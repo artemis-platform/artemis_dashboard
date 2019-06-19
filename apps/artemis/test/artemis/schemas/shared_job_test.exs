@@ -8,7 +8,7 @@ defmodule Artemis.SharedJobTest do
 
   describe "changeset - validations" do
     test "validates `raw_data` is can be encoded to JSON" do
-      struct = 
+      struct =
         :shared_job
         |> params_for()
         |> SharedJob.from_json()
@@ -52,7 +52,7 @@ defmodule Artemis.SharedJobTest do
 
   describe "helpers - from_json" do
     test "returns a struct from encoded JSON" do
-      params = 
+      params =
         :shared_job
         |> params_for()
         |> Jason.encode!()
@@ -64,7 +64,7 @@ defmodule Artemis.SharedJobTest do
     end
 
     test "returns a struct from decoded JSON" do
-      params = 
+      params =
         :shared_job
         |> params_for()
         |> Jason.encode!()
@@ -77,7 +77,7 @@ defmodule Artemis.SharedJobTest do
     end
 
     test "drops keys not defined in schema; stores original data under `raw_data`" do
-      params = 
+      params =
         :shared_job
         |> params_for()
         |> Jason.encode!()
@@ -97,7 +97,7 @@ defmodule Artemis.SharedJobTest do
 
   describe "helpers - to_json" do
     test "uses `raw_data` to ensure all keys are preserved" do
-      params = 
+      params =
         :shared_job
         |> params_for()
         |> Jason.encode!()

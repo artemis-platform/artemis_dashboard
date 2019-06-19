@@ -5,8 +5,8 @@ defmodule Artemis.Drivers.IBMCloudant do
     token = Artemis.Worker.IBMCloudIAMAccessToken.get_token!()
 
     [
-      "Accept": "application/json",
-      "Authorization": "Bearer #{token}",
+      Accept: "application/json",
+      Authorization: "Bearer #{token}",
       "Content-Type": "application/json"
     ] ++ headers
   end

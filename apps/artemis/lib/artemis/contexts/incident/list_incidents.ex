@@ -33,10 +33,11 @@ defmodule Artemis.ListIncidents do
   end
 
   defp filter_query(query, %{"filters" => filters}, _user) when is_map(filters) do
-    Enum.reduce(filters, query, fn ({key, value}, acc) ->
+    Enum.reduce(filters, query, fn {key, value}, acc ->
       filter(acc, key, value)
     end)
   end
+
   defp filter_query(query, _params, _user), do: query
 
   defp filter(query, _key, nil), do: query
@@ -46,11 +47,13 @@ defmodule Artemis.ListIncidents do
   defp filter(query, "severity", value), do: where(query, [i], i.severity in ^split(value))
   defp filter(query, "source", value), do: where(query, [i], i.source in ^split(value))
   defp filter(query, "status", value), do: where(query, [i], i.status in ^split(value))
+
   defp filter(query, "tags", value) do
     query
     |> join(:left, [incidents], tags in assoc(incidents, :tags))
     |> where([..., t], t.slug in ^split(value))
   end
+
   defp filter(query, "triggered_after", value), do: where(query, [i], i.triggered_at >= ^value)
   defp filter(query, "triggered_before", value), do: where(query, [i], i.triggered_at < ^value)
   defp filter(query, _key, _value), do: query
@@ -58,4 +61,3 @@ defmodule Artemis.ListIncidents do
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)
 end
-

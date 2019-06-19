@@ -5,8 +5,8 @@ defmodule Artemis.Drivers.PagerDuty do
 
   def process_request_headers(headers) do
     [
-      "Accept": "application/vnd.pagerduty+json;version=2",
-      "Authorization": "Token token=#{token()}"
+      Accept: "application/vnd.pagerduty+json;version=2",
+      Authorization: "Token token=#{token()}"
     ] ++ headers
   end
 

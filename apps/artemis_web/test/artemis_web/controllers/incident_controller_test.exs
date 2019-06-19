@@ -29,6 +29,7 @@ defmodule ArtemisWeb.IncidentControllerTest do
     test "deletes chosen incident", %{conn: conn, record: record} do
       conn = delete(conn, Routes.incident_path(conn, :delete, record))
       assert redirected_to(conn) == Routes.incident_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.incident_path(conn, :show, record))
       end

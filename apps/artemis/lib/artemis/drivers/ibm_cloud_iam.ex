@@ -3,7 +3,7 @@ defmodule Artemis.Drivers.IBMCloudIAM do
 
   def process_request_headers(headers) do
     [
-      "Accept": "application/json"
+      Accept: "application/json"
     ] ++ headers
   end
 

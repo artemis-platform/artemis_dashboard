@@ -8,10 +8,10 @@ defmodule Artemis.UpdateIncidentTest do
 
   describe "call!" do
     test "raises an exception when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
       params = params_for(:incident)
 
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         UpdateIncident.call!(invalid_id, params, Mock.system_user())
       end
     end
@@ -46,7 +46,7 @@ defmodule Artemis.UpdateIncidentTest do
 
   describe "call" do
     test "returns an error when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
       params = params_for(:incident)
 
       {:error, _} = UpdateIncident.call(invalid_id, params, Mock.system_user())
@@ -82,7 +82,8 @@ defmodule Artemis.UpdateIncidentTest do
 
   describe "associations - tags" do
     test "updates tags" do
-      incident = :incident
+      incident =
+        :incident
         |> insert()
         |> Repo.preload([:tags])
 
@@ -90,13 +91,16 @@ defmodule Artemis.UpdateIncidentTest do
 
       tag1 = insert(:tag)
       tag2 = params_for(:tag)
-      params = incident
-        |> Map.from_struct
+
+      params =
+        incident
+        |> Map.from_struct()
         |> Map.put(:tags, [%{id: tag1.id}, tag2])
 
       {:ok, incident} = UpdateIncident.call(incident, params, Mock.system_user())
 
-      incident = Incident
+      incident =
+        Incident
         |> preload([:tags])
         |> Repo.get(incident.id)
 
@@ -125,4 +129,3 @@ defmodule Artemis.UpdateIncidentTest do
     end
   end
 end
-

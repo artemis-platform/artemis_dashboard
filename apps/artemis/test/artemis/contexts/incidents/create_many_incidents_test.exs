@@ -9,7 +9,7 @@ defmodule Artemis.CreateManyIncidentsTest do
 
   describe "call!" do
     test "returns error when params are empty" do
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         CreateManyIncidents.call!(%{}, Mock.system_user())
       end
     end
@@ -76,15 +76,17 @@ defmodule Artemis.CreateManyIncidentsTest do
         %{}
       ]
 
-      count_before = Incident
+      count_before =
+        Incident
         |> select([i], count(i.id))
-        |> Repo.one
+        |> Repo.one()
 
       {:ok, result} = CreateManyIncidents.call(params, Mock.system_user())
 
-      count_after = Incident
+      count_after =
+        Incident
         |> select([i], count(i.id))
-        |> Repo.one
+        |> Repo.one()
 
       assert Repo.get_by(Incident, source_uid: valid_params1.source_uid) != nil
       assert Repo.get_by(Incident, source_uid: valid_params2.source_uid) != nil
@@ -100,10 +102,12 @@ defmodule Artemis.CreateManyIncidentsTest do
       existing1 = insert(:incident, status: "acknowledged")
       existing2 = insert(:incident)
 
-      existing_params1 = existing1
+      existing_params1 =
+        existing1
         |> Map.from_struct()
         |> Map.put(:status, "resolved")
         |> Map.put(:title, "Updated Title")
+
       existing_params2 = Map.from_struct(existing2)
       valid_params1 = params_for(:incident)
       valid_params2 = params_for(:incident)
@@ -124,9 +128,10 @@ defmodule Artemis.CreateManyIncidentsTest do
 
       {:ok, result} = CreateManyIncidents.call(params, Mock.system_user())
 
-      count_after = Incident
+      count_after =
+        Incident
         |> select([i], count(i.id))
-        |> Repo.one
+        |> Repo.one()
 
       # Existing records are changed if passed different params
 

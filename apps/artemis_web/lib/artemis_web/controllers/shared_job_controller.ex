@@ -15,6 +15,7 @@ defmodule ArtemisWeb.SharedJobController do
         params
         |> add_cloudant_search_param(@cloudant_search_keys)
         |> Map.put(:paginate, true)
+
       jobs = ListSharedJobs.call(params, current_user(conn))
 
       render(conn, "index.html", jobs: jobs)

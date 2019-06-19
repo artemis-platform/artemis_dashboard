@@ -30,7 +30,7 @@ defmodule Artemis.ListSharedJobs do
     search? =
       params
       |> Map.get("query")
-      |> Artemis.Helpers.present?
+      |> Artemis.Helpers.present?()
 
     case search? do
       true -> get_search_records(params)
@@ -47,7 +47,7 @@ defmodule Artemis.ListSharedJobs do
       execution_stats: true,
       fields: ["_id", "name", "status", "first_run"],
       limit: params["page_size"],
-      selector: select_all_selector,
+      selector: select_all_selector
       # TODO
       # sort: sort
       # TODO
@@ -61,7 +61,10 @@ defmodule Artemis.ListSharedJobs do
 
   defp get_search_records(%{"query" => query}) do
     # TODO: create Cloudant migrator to add text search index if missing
-    path = "#{@cloudant_host}/#{@cloudant_database}/_design/#{@cloudant_search_design_doc}/_search/#{@cloudant_search_index}"
+    base = "#{@cloudant_host}/#{@cloudant_database}"
+    design_doc = "_design/#{@cloudant_search_design_doc}"
+    search_index = "_search/#{@cloudant_search_index}"
+    path = "#{base}/#{design_doc}/#{search_index}"
 
     # TODO: in the controller, add a `*` at the end
     #  - Unless it contains a `:` meaning it's a already a specific query
@@ -104,6 +107,7 @@ defmodule Artemis.ListSharedJobs do
 
     parse_response_body(%{"docs" => docs})
   end
+
   defp parse_response_body(%{"docs" => docs}) do
     Enum.map(docs, &SharedJob.from_json(&1))
   end

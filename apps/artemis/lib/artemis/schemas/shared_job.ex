@@ -70,6 +70,7 @@ defmodule Artemis.SharedJob do
   rescue
     _ -> add_error(changeset, :raw_data, "invalid json")
   end
+
   defp validate_raw_data(changeset), do: changeset
 
   # Helpers
@@ -85,6 +86,7 @@ defmodule Artemis.SharedJob do
     |> Jason.decode!()
     |> from_json()
   end
+
   def from_json(data) do
     params =
       data
@@ -105,7 +107,7 @@ defmodule Artemis.SharedJob do
       struct
       |> Map.delete(:__struct__)
       |> Artemis.Helpers.keys_to_strings()
-    
+
     data
     |> Map.get("raw_data")
     |> Artemis.Helpers.deep_merge(data)
