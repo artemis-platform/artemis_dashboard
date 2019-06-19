@@ -4,10 +4,6 @@ defmodule Artemis.GetSharedJob do
   alias Artemis.Drivers.IBMCloudant
   alias Artemis.SharedJob
 
-  @cloudant_database "jobs"
-  # TODO: move to config
-  @cloudant_host "b133e32d-f26f-4240-aaff-301c222501d1-bluemix.cloudantnosqldb.appdomain.cloud"
-
   def call!(id, user, options \\ []) do
     case call(id, user, options) do
       {:error, _} -> raise(Artemis.Context.Error, "Error getting shared job")
@@ -22,24 +18,14 @@ defmodule Artemis.GetSharedJob do
   end
 
   defp get_record(id, _options, _user) do
-    path = "#{@cloudant_host}/#{@cloudant_database}/#{id}"
+    path = "#{SharedJob.cloudant_path()}/#{id}"
 
-    IBMCloudant.get(path)
+    IBMCloudant.call(%{
+      method: :get,
+      url: path
+    })
   end
 
-  defp parse_response({:ok, %{body: body, status_code: status_code}}) when status_code in 200..399 do
-    SharedJob.from_json(body)
-  end
-
-  defp parse_response({:ok, %{status_code: status_code} = request}) when status_code in 400..599 do
-    Logger.info("Error getting shared job: " <> inspect(request))
-
-    {:error, "Server returned #{status_code}"}
-  end
-
-  defp parse_response({:error, message}) do
-    Logger.info("Error: " <> inspect(message))
-
-    {:error, "Error getting shared job"}
-  end
+  defp parse_response({:ok, body}), do: SharedJob.from_json(body)
+  defp parse_response(_), do: {:error, "Error getting shared job"}
 end

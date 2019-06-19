@@ -22,7 +22,18 @@ defmodule Artemis.SharedJob do
     field :zzdoc_type, :string
   end
 
-  # # Callbacks
+  # Config
+
+  def cloudant_database,
+    do: "jobs"
+
+  def cloudant_host,
+    do: "b133e32d-f26f-4240-aaff-301c222501d1-bluemix.cloudantnosqldb.appdomain.cloud"
+
+  def cloudant_path,
+    do: "#{cloudant_host()}/#{cloudant_database()}"
+
+  # Callbacks
 
   def updatable_fields,
     do: [
@@ -52,6 +63,15 @@ defmodule Artemis.SharedJob do
       :_id,
       :_rev,
       :name,
+      :uuid
+    ]
+
+  def search_fields,
+    do: [
+      :_id,
+      :cmd,
+      :name,
+      :status,
       :uuid
     ]
 

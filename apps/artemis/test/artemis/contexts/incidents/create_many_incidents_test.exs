@@ -8,10 +8,12 @@ defmodule Artemis.CreateManyIncidentsTest do
   alias Artemis.Repo
 
   describe "call!" do
-    test "returns error when params are empty" do
-      assert_raise Artemis.Context.Error, fn ->
-        CreateManyIncidents.call!(%{}, Mock.system_user())
-      end
+    test "returns an empty total when passed empty params" do
+      params = []
+
+      result = CreateManyIncidents.call!(params, Mock.system_user())
+
+      assert result.total == 0
     end
 
     test "creates an incident when passed valid params" do
@@ -36,8 +38,12 @@ defmodule Artemis.CreateManyIncidentsTest do
   end
 
   describe "call" do
-    test "returns error when params are empty" do
-      {:error, _} = CreateManyIncidents.call([], Mock.system_user())
+    test "returns an empty total when passed empty params" do
+      params = []
+
+      {:ok, result} = CreateManyIncidents.call(params, Mock.system_user())
+
+      assert result.total == 0
     end
 
     test "creates an incident when passed valid params" do
