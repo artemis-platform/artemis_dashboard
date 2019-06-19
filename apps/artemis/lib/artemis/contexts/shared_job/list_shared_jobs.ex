@@ -87,12 +87,16 @@ defmodule Artemis.ListSharedJobs do
     parse_response_body(body)
   end
 
-  defp parse_response({:ok, %{body: _body, status_code: status_code}}) when status_code in 400..599 do
-    {:error, "Server returned #{status_code}"}
+  defp parse_response({:ok, %{status_code: status_code} = response}) when status_code in 400..599 do
+    Logger.info("Error listing shared jobs: " <> inspect(response))
+
+    []
   end
 
-  defp parse_response({:error, _message}) do
-    {:error, "Error getting shared job"}
+  defp parse_response({:error, message}) do
+    Logger.info("Error: " <> inspect(message))
+
+    []
   end
 
   defp parse_response_body(%{"rows" => rows}) do

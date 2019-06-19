@@ -7,8 +7,6 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
 
   import Artemis.Helpers
 
-  require Logger
-
   alias Artemis.CreateManyIncidents
   alias Artemis.Drivers.PagerDuty
   alias Artemis.GetSystemUser

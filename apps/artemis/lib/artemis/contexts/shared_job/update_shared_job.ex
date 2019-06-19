@@ -1,8 +1,6 @@
 defmodule Artemis.UpdateSharedJob do
   use Artemis.Context
 
-  require Logger
-
   alias Artemis.Drivers.IBMCloudant
   alias Artemis.GetSharedJob
   alias Artemis.SharedJob
@@ -70,8 +68,8 @@ defmodule Artemis.UpdateSharedJob do
     body
 	end
 
-  defp parse_response({:ok, %{body: body, status_code: status_code}}) when status_code in 400..599 do
-    Logger.debug("Error deleting shared job: " <> inspect(body))
+  defp parse_response({:ok, %{status_code: status_code} = response}) when status_code in 400..599 do
+    Logger.info("Error deleting shared job: " <> inspect(response))
 
 		{:error, "Server returned #{status_code}"}
 	end
@@ -81,7 +79,7 @@ defmodule Artemis.UpdateSharedJob do
   end
 
   defp parse_response({:error, message}) do
-    Logger.debug("Error deleting shared job: " <> inspect(message))
+    Logger.info("Error deleting shared job: " <> inspect(message))
 
 		{:error, "Error deleting shared job"}
 	end

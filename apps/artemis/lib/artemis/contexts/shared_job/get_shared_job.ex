@@ -1,4 +1,6 @@
 defmodule Artemis.GetSharedJob do
+  use Artemis.Context
+
   alias Artemis.Drivers.IBMCloudant
   alias Artemis.SharedJob
 
@@ -29,11 +31,15 @@ defmodule Artemis.GetSharedJob do
     SharedJob.from_json(body)
 	end
 
-  defp parse_response({:ok, %{body: _body, status_code: status_code}}) when status_code in 400..599 do
+  defp parse_response({:ok, %{status_code: status_code} = request}) when status_code in 400..599 do
+    Logger.info("Error getting shared job: " <> inspect(request))
+
 		{:error, "Server returned #{status_code}"}
 	end
 
-  defp parse_response({:error, _message}) do
+  defp parse_response({:error, message}) do
+    Logger.info("Error: " <> inspect(message))
+
 		{:error, "Error getting shared job"}
 	end
 end

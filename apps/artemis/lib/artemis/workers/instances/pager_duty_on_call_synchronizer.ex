@@ -5,8 +5,6 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     log_limit: 500,
     name: :pager_duty_on_call_synchronizer
 
-  require Logger
-
   alias Artemis.Drivers.PagerDuty
   alias Artemis.GetSystemUser
 

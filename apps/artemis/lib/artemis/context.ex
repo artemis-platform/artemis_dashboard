@@ -10,6 +10,8 @@ defmodule Artemis.Context do
       import Artemis.Repo.Order
       import Artemis.UserAccess
 
+      require Logger
+
       alias Artemis.Event
     end
   end

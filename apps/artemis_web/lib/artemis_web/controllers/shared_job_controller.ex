@@ -7,9 +7,14 @@ defmodule ArtemisWeb.SharedJobController do
   alias Artemis.SharedJob
   alias Artemis.UpdateSharedJob
 
+  @cloudant_search_keys [:name, :uuid]
+
   def index(conn, params) do
     authorize(conn, "shared-jobs:list", fn ->
-      params = Map.put(params, :paginate, true)
+      params =
+        params
+        |> add_cloudant_search_param(@cloudant_search_keys)
+        |> Map.put(:paginate, true)
       jobs = ListSharedJobs.call(params, current_user(conn))
 
       render(conn, "index.html", jobs: jobs)
