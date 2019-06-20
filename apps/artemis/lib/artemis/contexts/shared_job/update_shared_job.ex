@@ -51,6 +51,7 @@ defmodule Artemis.UpdateSharedJob do
   defp update(%{_id: id, _rev: rev}, params) do
     path = "#{SharedJob.cloudant_path()}/#{id}"
     query_params = [rev: rev]
+
     body =
       params
       |> SharedJob.to_json()

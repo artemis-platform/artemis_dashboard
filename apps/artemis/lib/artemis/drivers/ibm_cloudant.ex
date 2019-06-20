@@ -53,14 +53,20 @@ defmodule Artemis.Drivers.IBMCloudant do
 
   # Helpers
 
+  defp simplified_response({:ok, %HTTPoison.AsyncResponse{} = async_response}) do
+    {:ok, async_response}
+  end
+
   defp simplified_response({:ok, %{body: body, status_code: status_code}}) when status_code in 200..399 do
     {:ok, body}
   end
+
   defp simplified_response({:ok, %{body: body, status_code: status_code} = request}) when status_code in 400..599 do
     Logger.debug("Error response for Cloudant HTTP request: " <> inspect(request))
 
     {:error, body}
   end
+
   defp simplified_response(error) do
     Logger.info("Error response for Cloudant HTTP request: " <> inspect(error))
 

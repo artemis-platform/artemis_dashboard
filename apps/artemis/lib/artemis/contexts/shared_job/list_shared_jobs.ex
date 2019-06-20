@@ -55,6 +55,7 @@ defmodule Artemis.ListSharedJobs do
     host = SharedJob.cloudant_host()
     database = SharedJob.cloudant_database()
     path = Artemis.Helpers.CloudantSearch.get_query_url(host, database)
+
     query_params = [
       include_docs: true,
       query: query

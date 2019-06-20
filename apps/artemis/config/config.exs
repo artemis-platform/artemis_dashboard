@@ -7,6 +7,9 @@ config :artemis, :actions,
   ibm_cloud_iam_access_token: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUD_IAM_ACCESS_TOKEN_ENABLED") == "true"
   ],
+  ibm_cloudant_change_listener: [
+    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_CHANGE_LISTENER") == "true"
+  ],
   repo_delete_all: [
     enabled: System.get_env("ARTEMIS_ACTION_REPO_DELETE_ALL_ENABLED") == "true"
   ],

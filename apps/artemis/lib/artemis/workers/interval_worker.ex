@@ -18,6 +18,7 @@ defmodule Artemis.IntervalWorker do
     :enabled - Optional. If set to false, starts in paused state.
     :interval - Optional. Interval between calls.
     :log_limit - Optional. Number of log entries to keep.
+    :delayed_start - Optional. Wait until timer expires for initial call.
 
   For example:
 
@@ -29,6 +30,9 @@ defmodule Artemis.IntervalWorker do
   """
 
   @callback call(map()) :: {:ok, any()} | {:error, any()}
+  @callback handle_info_callback(any(), any()) :: {:ok, any()} | {:error, any()}
+
+  @optional_callbacks handle_info_callback: 2
 
   defmacro __using__(options) do
     quote do
@@ -38,6 +42,7 @@ defmodule Artemis.IntervalWorker do
 
       defmodule State do
         defstruct [
+          :config,
           :data,
           :timer,
           log: []
@@ -58,8 +63,10 @@ defmodule Artemis.IntervalWorker do
       @default_interval 60_000
       @default_log_limit 500
 
-      def start_link() do
-        initial_state = %State{}
+      def start_link(config \\ nil) do
+        initial_state = %State{
+          config: config
+        }
 
         options = [
           name: get_name()
@@ -69,6 +76,8 @@ defmodule Artemis.IntervalWorker do
       end
 
       def get_name(), do: get_option(:name)
+
+      def get_config(), do: GenServer.call(get_name(), :config)
 
       def get_data(), do: GenServer.call(get_name(), :data)
 
@@ -97,13 +106,14 @@ defmodule Artemis.IntervalWorker do
 
       @impl true
       def init(state) do
-        state =
-          case get_option(:enabled, true) do
-            true -> Map.put(state, :timer, schedule_update())
-            false -> state
-          end
+        state = initial_actions(state)
 
         {:ok, state}
+      end
+
+      @impl true
+      def handle_call(:config, _from, state) do
+        {:reply, state.config, state}
       end
 
       @impl true
@@ -122,7 +132,7 @@ defmodule Artemis.IntervalWorker do
           Process.cancel_timer(state.timer)
         end
 
-        {:reply, true, %State{state | timer: nil}}
+        {:reply, true, %State{state | timer: :paused}}
       end
 
       @impl true
@@ -162,11 +172,29 @@ defmodule Artemis.IntervalWorker do
         {:noreply, state}
       end
 
-      def handle_info(_, state) do
-        {:noreply, state}
+      def handle_info(data, state) do
+        handle_info_callback(data, state)
+      end
+
+      def handle_info_callback(_, state) do
+        {:no_reply, state}
       end
 
       # Callback Helpers
+
+      defp initial_actions(state) do
+        case get_option(:enabled, true) do
+          true -> schedule_or_execute_initial_call(state)
+          false -> Map.put(state, :timer, :paused)
+        end
+      end
+
+      defp schedule_or_execute_initial_call(state) do
+        case get_option(:delayed_start, false) do
+          true -> Map.put(state, :timer, schedule_update())
+          false -> update_state(state)
+        end
+      end
 
       defp update_state(state) do
         started_at = Timex.now()
@@ -185,8 +213,8 @@ defmodule Artemis.IntervalWorker do
         Process.send_after(self(), :update, interval)
       end
 
-      defp schedule_update_unless_paused(%{timer: timer}) when is_nil(timer), do: nil
-
+      defp schedule_update_unless_paused(%{timer: timer}) when timer == :paused, do: nil
+      defp schedule_update_unless_paused(%{timer: timer}) when is_nil(timer), do: schedule_update()
       defp schedule_update_unless_paused(%{timer: timer}) do
         Process.cancel_timer(timer)
 

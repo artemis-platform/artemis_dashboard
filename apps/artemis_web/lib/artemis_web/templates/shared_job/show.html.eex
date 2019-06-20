@@ -37,7 +37,7 @@
     <li>
       <strong>Status:</strong>
       <span class="status-label <%= status_color(@job) %>">
-        <%= @job.status %>
+        <%= @job.status || "Undefined" %>
       </span>
     </li>
 

@@ -40,11 +40,12 @@ defmodule Artemis.Helpers.CloudantSearch do
   end
 
   defp create_search_document(path) do
-    {:ok, _} = IBMCloudant.call(%{
-      body: "{}",
-      method: :put,
-      url: "#{path}/_design/#{@cloudant_search_design_doc}"
-    })
+    {:ok, _} =
+      IBMCloudant.call(%{
+        body: "{}",
+        method: :put,
+        url: "#{path}/_design/#{@cloudant_search_design_doc}"
+      })
 
     get_search_document(path)
   end
@@ -52,13 +53,14 @@ defmodule Artemis.Helpers.CloudantSearch do
   defp generate_search_index(fields) do
     fields_without_default = List.delete(fields, :_id)
 
-    clauses = Enum.map(fields_without_default, fn field ->
-      """
-        if (typeof(doc.#{field}) !== 'undefined') {
-          index("#{field}", doc.#{field});
-        }
-      """
-    end)
+    clauses =
+      Enum.map(fields_without_default, fn field ->
+        """
+          if (typeof(doc.#{field}) !== 'undefined') {
+            index("#{field}", doc.#{field});
+          }
+        """
+      end)
 
     """
     function (doc) {

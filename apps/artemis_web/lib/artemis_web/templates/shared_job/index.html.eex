@@ -37,7 +37,7 @@
           <td><%= job.name %></td>
           <td>
             <span class="status-label <%= status_color(job) %>">
-              <%= job.status %>
+              <%= job.status || "Undefined" %>
             </span>
           </td>
           <td><%= job.first_run %></td>
@@ -46,13 +46,11 @@
               <%= link "Show", to: Routes.shared_job_path(@conn, :show, job._id) %>
             <% end %>
             <%= if has?(@conn, "shared-jobs:update") do %>
-              <%# <%= link "Edit", to: Routes.shared_job_path(@conn, :edit, job._id) %1> %>
+              <%= link "Edit", to: Routes.shared_job_path(@conn, :edit, job._id) %>
             <% end %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
-  <%# TODO <%= render_pagination @conn, @shared_jobs %1> %>
 </div>

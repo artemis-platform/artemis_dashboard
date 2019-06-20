@@ -43,7 +43,18 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   # Callbacks
 
   @impl true
-  def call(data, options \\ []) do
+  def call(data), do: fetch_data(data)
+
+  # Helpers
+
+  defp enabled?() do
+    :artemis
+    |> Application.fetch_env!(:pager_duty)
+    |> Keyword.get(:token)
+    |> Artemis.Helpers.present?()
+  end
+
+  defp fetch_data(data, options \\ []) do
     with user <- GetSystemUser.call!(),
          {:ok, response} <- get_pager_duty_incidents(user, options),
          200 <- response.status_code,
@@ -71,7 +82,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
             |> Keyword.put(:since, date)
             |> Keyword.put(:total, total)
 
-          call(data, options)
+          fetch_data(data, options)
       end
     else
       {:skipped, message} -> {:skipped, message}
@@ -82,15 +93,6 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     error ->
       Logger.info("Error synchronizing pager duty incidents: " <> inspect(error))
       {:error, "Exception raised while synchronizing incidents"}
-  end
-
-  # Helpers
-
-  defp enabled?() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.get(:token)
-    |> Artemis.Helpers.present?()
   end
 
   defp create_data(result, meta) do
