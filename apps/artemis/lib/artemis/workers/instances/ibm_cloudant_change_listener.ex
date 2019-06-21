@@ -160,14 +160,9 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   end
 
   defp broadcast_cloudant_change(data, database, host) do
-    document = Map.get(data, "doc")
     id = Map.get(data, "id")
-
-    action =
-      case Map.get(data, "deleted") do
-        nil -> "change"
-        _ -> "delete"
-      end
+    action = get_action(data)
+    document = get_document(data)
 
     Artemis.CloudantChange.broadcast(%{
       action: action,
@@ -176,5 +171,28 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
       host: host,
       id: id
     })
+  end
+
+  defp get_action(data) do
+    cond  do
+      deleted?(data) -> "delete"
+      first_revision?(data) -> "create"
+      true -> "update"
+    end
+  end
+
+  defp deleted?(%{"deleted" => _}), do: true
+  defp deleted?(_), do: false
+
+  defp first_revision?(%{"doc" => %{"_rev" => rev}}), do: String.starts_with?(rev, "1-")
+  defp first_revision?(_), do: false
+
+  defp get_document(data) do
+    document = Map.get(data, "doc")
+
+    case Artemis.Helpers.present?(document) do
+      true -> Artemis.SharedJob.from_json(document)
+      false -> document
+    end
   end
 end

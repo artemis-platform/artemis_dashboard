@@ -6,11 +6,16 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "child-replace-with-polyfill": "^1.0.1",
+    "formdata-polyfill": "^3.0.18",
     "highlight.js": "^9.15.6",
     "jquery": "^3.4.1",
+    "mdn-polyfills": "^5.17.0",
     "phoenix": "file:../../../deps/phoenix",
     "phoenix_html": "file:../../../deps/phoenix_html",
-    "qs": "^6.7.0"
+    "phoenix_live_view": "file:../../../deps/phoenix_live_view",
+    "qs": "^6.7.0",
+    "url-search-params-polyfill": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

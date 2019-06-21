@@ -1,6 +1,8 @@
 defmodule ArtemisWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :artemis_web
 
+  socket "/live", Phoenix.LiveView.Socket
+
   socket "/socket", ArtemisWeb.UserSocket,
     websocket: true,
     longpoll: false

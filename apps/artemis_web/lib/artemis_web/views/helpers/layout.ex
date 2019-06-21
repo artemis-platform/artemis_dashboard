@@ -35,6 +35,7 @@ defmodule ArtemisWeb.ViewHelper.Layout do
     color = Keyword.get(options, :color, "basic")
     size = Keyword.get(options, :size, "small")
     method = Keyword.get(options, :method, "get")
+    live? = Keyword.get(options, :live, false)
 
     tag_options =
       options
@@ -42,10 +43,10 @@ defmodule ArtemisWeb.ViewHelper.Layout do
       |> Map.put(:class, "button ui #{size} #{color}")
       |> Enum.into([])
 
-    if method == "get" do
-      link(label, tag_options)
-    else
-      button(label, tag_options)
+    cond do
+      method == "get" && live? -> Phoenix.LiveView.live_link(label, tag_options)
+      method == "get" -> link(label, tag_options)
+      true -> button(label, tag_options)
     end
   end
 

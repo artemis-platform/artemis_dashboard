@@ -1,0 +1,23 @@
+<ul>
+  <li>
+    <strong>ID:</strong>
+    <%= @job._id %>
+  </li>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @job.name %>
+  </li>
+
+  <li>
+    <strong>Status:</strong>
+    <span class="status-label <%= status_color(@job) %>">
+      <%= @job.status || "Undefined" %>
+    </span>
+  </li>
+
+  <li>
+    <strong>Raw JSON:</strong>
+    <pre><code><%= Jason.encode!(@job.raw_data, pretty: true) %></code></pre>
+  </li>
+</ul>
