@@ -1,17 +1,17 @@
 defmodule Artemis.Helpers.CloudantSearch do
   alias Artemis.Drivers.IBMCloudant
 
+  # TODO: refactor as part of data migration manager
+  # TODO: get values from config
+
   @cloudant_search_design_doc "text-search"
   @cloudant_search_index "text-search-index"
 
-  def get_query_url(host, database) do
-    "#{host}/#{database}/_design/#{@cloudant_search_design_doc}/_search/#{@cloudant_search_index}"
-  end
+  def enable_search(schema, search_fields) do
+    cloudant_host = schema.get_cloudant_host()
+    cloudant_path = schema.get_cloudant_path()
 
-  def enable_search(cloudant_host, cloudant_database, search_fields) do
-    path = "#{cloudant_host}/#{cloudant_database}"
-
-    {:ok, document} = get_or_create_search_document(path)
+    {:ok, document} = get_or_create_search_document(cloudant_host, cloudant_path)
 
     current_indexes = Map.get(document, "indexes", %{})
     current_search_function = Artemis.Helpers.deep_get(current_indexes, [@cloudant_search_index, "index"])
@@ -19,35 +19,37 @@ defmodule Artemis.Helpers.CloudantSearch do
 
     case search_function == current_search_function do
       true -> {:ok, "Search index already exists"}
-      false -> create_search_index(path, document, current_indexes, search_function)
+      false -> create_search_index(cloudant_host, cloudant_path, document, current_indexes, search_function)
     end
   end
 
   # Helpers
 
-  defp get_or_create_search_document(path) do
-    case get_search_document(path) do
-      {:error, %{"error" => "not_found"}} -> create_search_document(path)
+  defp get_or_create_search_document(host, path) do
+    case get_search_document(host, path) do
+      {:error, %{"error" => "not_found"}} -> create_search_document(host, path)
       response -> response
     end
   end
 
-  defp get_search_document(path) do
+  defp get_search_document(host, path) do
     IBMCloudant.call(%{
+      host: host,
       method: :get,
-      url: "#{path}/_design/#{@cloudant_search_design_doc}"
+      path: "#{path}/_design/#{@cloudant_search_design_doc}"
     })
   end
 
-  defp create_search_document(path) do
+  defp create_search_document(host, path) do
     {:ok, _} =
       IBMCloudant.call(%{
         body: "{}",
+        host: host,
         method: :put,
-        url: "#{path}/_design/#{@cloudant_search_design_doc}"
+        path: "#{path}/_design/#{@cloudant_search_design_doc}"
       })
 
-    get_search_document(path)
+    get_search_document(host, path)
   end
 
   defp generate_search_index(fields) do
@@ -76,16 +78,17 @@ defmodule Artemis.Helpers.CloudantSearch do
     """
   end
 
-  defp create_search_index(path, document, current_indexes, search_function) do
+  defp create_search_index(host, path, document, current_indexes, search_function) do
     search_index = Map.put(%{}, @cloudant_search_index, %{"analyzer" => "standard", "index" => search_function})
     indexes = Map.merge(current_indexes, search_index)
     body = Map.put(document, "indexes", indexes)
-    url = "#{path}/_design/#{@cloudant_search_design_doc}"
+    index_path = "#{path}/_design/#{@cloudant_search_design_doc}"
 
     IBMCloudant.call(%{
       body: Jason.encode!(body),
+      host: host,
       method: :put,
-      url: url
+      path: index_path
     })
   end
 end

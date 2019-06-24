@@ -1,5 +1,6 @@
 defmodule Artemis.SharedJob do
   use Artemis.Schema
+  use Artemis.Schema.Cloudant
 
   @primary_key false
   embedded_schema do
@@ -21,17 +22,6 @@ defmodule Artemis.SharedJob do
     field :uuid, :string
     field :zzdoc_type, :string
   end
-
-  # Config
-
-  def cloudant_database,
-    do: "jobs"
-
-  def cloudant_host,
-    do: "b133e32d-f26f-4240-aaff-301c222501d1-bluemix.cloudantnosqldb.appdomain.cloud"
-
-  def cloudant_path,
-    do: "#{cloudant_host()}/#{cloudant_database()}"
 
   # Callbacks
 
@@ -81,56 +71,6 @@ defmodule Artemis.SharedJob do
     struct
     |> cast(params, updatable_fields())
     |> validate_required(required_fields())
-    |> validate_raw_data()
-  end
-
-  defp validate_raw_data(%{changes: %{raw_data: data}} = changeset) do
-    Jason.encode!(data)
-    changeset
-  rescue
-    _ -> add_error(changeset, :raw_data, "invalid json")
-  end
-
-  defp validate_raw_data(changeset), do: changeset
-
-  # Helpers
-
-  @doc """
-  Creates a new struct from JSON data.
-
-  Stores the original data under the `raw_data` key, ensuring no data is lost
-  in the translation to a schema with predefined keys.
-  """
-  def from_json(data) when is_bitstring(data) do
-    data
-    |> Jason.decode!()
-    |> from_json()
-  end
-
-  def from_json(data) do
-    params =
-      data
-      |> Artemis.Helpers.keys_to_atoms()
-      |> Map.put(:raw_data, data)
-
-    struct(SharedJob, params)
-  end
-
-  @doc """
-  Converts a struct back to JSON compatible map with string keys.
-
-  Merges the struct values with the original data stored under `raw_data` key,
-  ensuring no data keys are lost.
-  """
-  def to_json(struct) do
-    data =
-      struct
-      |> Map.delete(:__struct__)
-      |> Artemis.Helpers.keys_to_strings()
-
-    data
-    |> Map.get("raw_data")
-    |> Artemis.Helpers.deep_merge(data)
-    |> Map.delete("raw_data")
+    |> validate_cloudant_raw_data()
   end
 end

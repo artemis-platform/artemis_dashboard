@@ -10,9 +10,8 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   defmodule Data do
     defstruct [
       :connection,
-      :database,
-      :host,
-      :last_sequence
+      :last_sequence,
+      :schema
     ]
   end
 
@@ -23,9 +22,8 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   @impl true
   def call(data) do
     data = get_data_struct(data)
-
-    host = Artemis.SharedJob.cloudant_host()
-    database = Artemis.SharedJob.cloudant_database()
+    cloudant_host = data.schema.get_cloudant_host()
+    cloudant_path = data.schema.get_cloudant_path()
     timeout = get_request_timeout()
 
     ensure_connection_pool_available()
@@ -51,13 +49,14 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     end
 
     {:ok, connection} = IBMCloudant.call(%{
+      host: cloudant_host,
       method: :get,
       options: options,
       params: query_params,
-      url: "#{host}/#{database}/_changes"
+      path: "#{cloudant_path}/_changes"
     })
 
-    {:ok, struct(data, connection: connection, database: database, host: host)}
+    {:ok, struct(data, connection: connection)}
   end
 
   @impl true
@@ -72,7 +71,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     sequence = Map.get(decoded, "seq")
     state = store_last_sequence(state, sequence)
 
-    broadcast_cloudant_change(decoded, state.data.database, state.data.host)
+    broadcast_cloudant_change(decoded, state.data.schema)
 
     HTTPoison.stream_next(state.data.connection)
 
@@ -145,7 +144,11 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
 
   defp get_data_struct(%Data{} = value), do: value
   defp get_data_struct(map) when is_map(map), do: struct(Data, map)
-  defp get_data_struct(_), do: %Data{}
+  defp get_data_struct(_), do: get_initial_data_struct()
+
+  defp get_initial_data_struct() do
+    struct(Data, schema: Artemis.SharedJob)
+  end
 
   defp decode_data(data) do
     Jason.decode!(data)
@@ -159,17 +162,16 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     Map.put(state, :data, data)
   end
 
-  defp broadcast_cloudant_change(data, database, host) do
+  defp broadcast_cloudant_change(data, schema) do
     id = Map.get(data, "id")
     action = get_action(data)
     document = get_document(data)
 
     Artemis.CloudantChange.broadcast(%{
       action: action,
-      database: database,
       document: document,
-      host: host,
-      id: id
+      id: id,
+      schema: schema
     })
   end
 

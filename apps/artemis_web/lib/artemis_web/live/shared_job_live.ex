@@ -28,8 +28,8 @@ defmodule ArtemisWeb.SharedJobLive do
 
   # Helpers
 
-  defp update_if_match(socket, %{action: action, document: document, id: id}) do
-    match? = (id == socket.assigns.job._id)
+  defp update_if_match(socket, %{action: action, document: document, id: id, schema: schema}) do
+    match? = (id == socket.assigns.job._id && schema == Artemis.SharedJob)
 
     cond do
       match? && action == "delete" -> assign(socket, :job, document)

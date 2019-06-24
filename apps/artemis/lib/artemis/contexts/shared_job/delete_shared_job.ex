@@ -24,13 +24,15 @@ defmodule Artemis.DeleteSharedJob do
   def get_record(id, user), do: GetSharedJob.call(id, user)
 
   defp delete_record(%{_id: id, _rev: rev}) do
-    path = "#{SharedJob.cloudant_path()}/#{id}"
+    cloudant_host = SharedJob.get_cloudant_host()
+    cloudant_path = SharedJob.get_cloudant_path()
     query_params = [rev: rev]
 
     IBMCloudant.call(%{
+      host: cloudant_host,
       method: :delete,
       params: query_params,
-      url: path
+      path: "#{cloudant_path}/#{id}"
     })
   end
 

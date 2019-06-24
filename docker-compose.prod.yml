@@ -1,6 +1,19 @@
 version: "3.7"
 
 services:
+  couchdb:
+    image: couchdb:2
+    environment:
+      COUCHDB_USER: couchdb
+      COUCHDB_PASSWORD: couchdb
+    networks:
+      - artemis_network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: couchdb_data
+        target: "/opt/couchdb/data"
+
   postgres:
     image: postgres:11.1
     environment:
@@ -36,4 +49,5 @@ networks:
     driver: bridge
 
 volumes:
+  couchdb_data:
   postgres_data:

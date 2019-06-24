@@ -2,7 +2,7 @@ defmodule Artemis.Schema do
   @callback fields :: List.t()
   @callback required :: List.t()
 
-  defmacro __using__(_opts) do
+  defmacro __using__(_options) do
     quote do
       use Ecto.Schema
 

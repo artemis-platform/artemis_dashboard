@@ -18,11 +18,13 @@ defmodule Artemis.GetSharedJob do
   end
 
   defp get_record(id, _options, _user) do
-    path = "#{SharedJob.cloudant_path()}/#{id}"
+    cloudant_host = SharedJob.get_cloudant_host()
+    cloudant_path = SharedJob.get_cloudant_path()
 
     IBMCloudant.call(%{
+      host: cloudant_host,
       method: :get,
-      url: path
+      path: "#{cloudant_path}/#{id}"
     })
   end
 

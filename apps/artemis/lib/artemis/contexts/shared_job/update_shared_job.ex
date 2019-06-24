@@ -49,7 +49,8 @@ defmodule Artemis.UpdateSharedJob do
   end
 
   defp update(%{_id: id, _rev: rev}, params) do
-    path = "#{SharedJob.cloudant_path()}/#{id}"
+    cloudant_host = SharedJob.get_cloudant_host()
+    cloudant_path = SharedJob.get_cloudant_path()
     query_params = [rev: rev]
 
     body =
@@ -59,9 +60,10 @@ defmodule Artemis.UpdateSharedJob do
 
     IBMCloudant.call(%{
       body: body,
+      host: cloudant_host,
       method: :put,
       params: query_params,
-      url: path
+      path: "#{cloudant_path}/#{id}"
     })
   end
 

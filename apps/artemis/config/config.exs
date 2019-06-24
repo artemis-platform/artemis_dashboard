@@ -35,6 +35,27 @@ config :artemis, :ibm_cloud,
   iam_api_key: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_KEY"),
   iam_api_url: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_URL")
 
+config :artemis, :ibm_cloudant,
+  hosts: [
+    [
+      name: :shared,
+      auth_type: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_AUTH_TYPE"),
+      username: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_USERNAME"),
+      password: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PASSWORD"),
+      hostname: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_HOSTNAME"),
+      search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED") == "true",
+      search_design_doc: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_DESIGN_DOC"),
+      search_index: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_INDEX")
+    ]
+  ],
+  databases: [
+    [
+      host: :shared,
+      name: "jobs",
+      schema: Artemis.SharedJob
+    ]
+  ]
+
 config :artemis, :pager_duty,
   subdomain: System.get_env("ARTEMIS_PAGER_DUTY_SUBDOMAIN"),
   team_ids: System.get_env("ARTEMIS_PAGER_DUTY_TEAM_IDS"),

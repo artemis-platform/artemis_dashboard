@@ -6,16 +6,15 @@ defmodule Artemis.CloudantChange do
   defmodule Data do
     defstruct [
       :action,
-      :database,
       :document,
-      :host,
-      :id
+      :id,
+      :schema
     ]
   end
 
   def topic, do: "private:artemis:cloudant-changes"
 
-  def broadcast(%{database: _, host: _, id: _} = data) do
+  def broadcast(%{id: _, schema: _} = data) do
     payload = struct(Data, data)
 
     :ok = ArtemisPubSub.broadcast(topic(), "cloudant-change", payload)

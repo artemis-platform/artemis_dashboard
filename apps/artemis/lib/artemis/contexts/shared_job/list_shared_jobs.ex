@@ -34,7 +34,8 @@ defmodule Artemis.ListSharedJobs do
   end
 
   defp get_filtered_records(params) do
-    path = "#{SharedJob.cloudant_path()}/_find"
+    cloudant_host = SharedJob.get_cloudant_host()
+    cloudant_path = SharedJob.get_cloudant_path()
     select_all_selector = %{_id: %{"$gt": nil}}
 
     body = %{
@@ -46,15 +47,15 @@ defmodule Artemis.ListSharedJobs do
 
     IBMCloudant.call(%{
       body: Jason.encode!(body),
+      host: cloudant_host,
       method: :post,
-      url: path
+      path: "#{cloudant_path}/_find"
     })
   end
 
   defp get_search_records(%{"query" => query}) do
-    host = SharedJob.cloudant_host()
-    database = SharedJob.cloudant_database()
-    path = Artemis.Helpers.CloudantSearch.get_query_url(host, database)
+    cloudant_host = SharedJob.get_cloudant_host()
+    cloudant_path = SharedJob.get_cloudant_search_path()
 
     query_params = [
       include_docs: true,
@@ -62,9 +63,10 @@ defmodule Artemis.ListSharedJobs do
     ]
 
     IBMCloudant.call(%{
+      host: cloudant_host,
       method: :get,
       params: query_params,
-      url: path
+      path: cloudant_path
     })
   end
 
