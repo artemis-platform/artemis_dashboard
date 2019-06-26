@@ -1,6 +1,7 @@
 defmodule ArtemisWeb.SharedJobController do
   use ArtemisWeb, :controller
 
+  alias Artemis.CreateSharedJob
   alias Artemis.DeleteSharedJob
   alias Artemis.GetSharedJob
   alias Artemis.ListSharedJobs
@@ -20,12 +21,39 @@ defmodule ArtemisWeb.SharedJobController do
     end)
   end
 
+  def new(conn, _params) do
+    authorize(conn, "shared-jobs:create", fn ->
+      job = %SharedJob{raw_data: %{}}
+      changeset = SharedJob.changeset(job)
+
+      render(conn, "new.html", changeset: changeset, job: job)
+    end)
+  end
+
+  def create(conn, %{"shared_job" => params}) do
+    authorize(conn, "shared-jobs:create", fn ->
+      case CreateSharedJob.call(params, current_user(conn)) do
+        {:ok, job} ->
+          conn
+          |> put_flash(:info, "Job created successfully.")
+          |> redirect(to: Routes.shared_job_path(conn, :show, job._id))
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          job = %SharedJob{raw_data: %{}}
+
+          render(conn, "new.html", changeset: changeset, job: job)
+      end
+    end)
+  end
+
   def show(conn, %{"id" => id}) do
     authorize(conn, "shared-jobs:show", fn ->
       job = GetSharedJob.call!(id, current_user(conn))
 
       render(conn, "show.html", job: job)
     end)
+  rescue
+    _ in Artemis.Context.Error -> render_not_found(conn)
   end
 
   def edit(conn, %{"id" => id}) do

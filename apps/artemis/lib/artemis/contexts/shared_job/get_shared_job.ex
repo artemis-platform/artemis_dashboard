@@ -6,7 +6,7 @@ defmodule Artemis.GetSharedJob do
 
   def call!(id, user, options \\ []) do
     case call(id, user, options) do
-      {:error, _} -> raise(Artemis.Context.Error, "Error getting shared job")
+      nil -> raise(Artemis.Context.Error, "Error getting shared job")
       response -> response
     end
   end
@@ -29,5 +29,5 @@ defmodule Artemis.GetSharedJob do
   end
 
   defp parse_response({:ok, body}), do: SharedJob.from_json(body)
-  defp parse_response(_), do: {:error, "Error getting shared job"}
+  defp parse_response(_), do: nil
 end

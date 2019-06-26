@@ -79,7 +79,7 @@ defmodule Artemis.Drivers.IBMCloudant.Request do
   # Helpers
 
   defp get_request_params(%{host: host, path: path} = params) do
-    host_config = IBMCloudant.Config.get_host_config!(:name, host)
+    host_config = IBMCloudant.Config.get_host_config_by!(name: host)
     headers = add_authorization_header(host_config, params)
     url = "#{host_config[:hostname]}/#{path}"
 
@@ -90,7 +90,7 @@ defmodule Artemis.Drivers.IBMCloudant.Request do
     |> Map.put(:url, url)
   end
 
-  defp get_request_params(%{path: _}), do: raise "Must specify `host` when using `path` param"
+  defp get_request_params(%{path: _}), do: raise("Must specify `host` when using `path` param")
 
   defp get_request_params(params), do: params
 

@@ -1,8 +1,11 @@
-defmodule Artemis.Drivers.IBMCloudant.DeleteAll do
+defmodule Artemis.Drivers.IBMCloudant.CreateAll do
   alias Artemis.Drivers.IBMCloudant
 
   @moduledoc """
-  Deletes all IBM Cloudant databases on all IBM Cloudant hosts
+  Creates IBM Cloudant instances and ensures databases and indexes (filter,
+  search, sort) exist. Will create any that are missing.
+
+  Is idempotent.
   """
 
   def call() do
@@ -19,9 +22,11 @@ defmodule Artemis.Drivers.IBMCloudant.DeleteAll do
         Enum.map(expected_databases, fn database ->
           database_name = Keyword.fetch!(database, :name)
 
-          if Enum.member?(existing_databases, database_name) do
-            {:ok, _} = IBMCloudant.Delete.call(host_config, database)
+          unless Enum.member?(existing_databases, database_name) do
+            {:ok, _} = IBMCloudant.Create.call(host_config, database)
           end
+
+          {:ok, _} = IBMCloudant.CreateIndexes.call(host_config, database)
         end)
       end)
 

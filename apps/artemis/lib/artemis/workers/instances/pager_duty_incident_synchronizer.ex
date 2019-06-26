@@ -49,9 +49,9 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
 
   defp enabled?() do
     :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.get(:token)
-    |> Artemis.Helpers.present?()
+    |> Application.fetch_env!(:actions)
+    |> Keyword.fetch!(:pager_duty_synchronize_incidents)
+    |> Keyword.fetch!(:enabled)
   end
 
   defp fetch_data(data, options \\ []) do

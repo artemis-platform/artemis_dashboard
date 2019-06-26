@@ -42,10 +42,16 @@ defmodule Artemis.Drivers.IBMCloudant.Config do
 
   @config_key :ibm_cloudant
 
-  def get_database_config!(key, value) do
+  def get_database_config_by!(options) when is_list(options) and length(options) == 1 do
+    {key, value} = Enum.at(options, 0)
+
+    get_database_config_by!(key, value)
+  end
+
+  def get_database_config_by!(key, value) do
     get_config()
     |> Keyword.fetch!(:databases)
-    |> Enum.find(&Keyword.fetch!(&1, key) == value)
+    |> Enum.find(&(Keyword.fetch!(&1, key) == value))
   end
 
   def get_databases_config!() do
@@ -53,10 +59,16 @@ defmodule Artemis.Drivers.IBMCloudant.Config do
     |> Keyword.fetch!(:databases)
   end
 
-  def get_host_config!(key, value) do
+  def get_host_config_by!(options) when is_list(options) and length(options) == 1 do
+    {key, value} = Enum.at(options, 0)
+
+    get_host_config_by!(key, value)
+  end
+
+  def get_host_config_by!(key, value) do
     get_config()
     |> Keyword.fetch!(:hosts)
-    |> Enum.find(&Keyword.fetch!(&1, key) == value)
+    |> Enum.find(&(Keyword.fetch!(&1, key) == value))
   end
 
   def get_hosts_config!() do
@@ -77,11 +89,13 @@ defmodule Artemis.Drivers.IBMCloudant.Config do
 
   defp prepend_database_names(config, value) do
     databases = Keyword.get(config, :databases)
-    updated = Enum.map(databases, fn database ->
-      name = Keyword.get(database, :name)
 
-      Keyword.put(database, :name, "#{value}#{name}")
-    end)
+    updated =
+      Enum.map(databases, fn database ->
+        name = Keyword.get(database, :name)
+
+        Keyword.put(database, :name, "#{value}#{name}")
+      end)
 
     Keyword.put(config, :databases, updated)
   end

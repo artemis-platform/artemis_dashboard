@@ -67,6 +67,16 @@ defmodule ArtemisWeb do
           false -> render_forbidden(conn)
         end
       end
+
+      @doc """
+      Return a 404 not found page
+      """
+      def render_not_found(conn) do
+        conn
+        |> put_status(404)
+        |> put_view(ArtemisWeb.ErrorView)
+        |> render("404.html", error_page: true)
+      end
     end
   end
 

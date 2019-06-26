@@ -220,6 +220,7 @@ defmodule Artemis.IntervalWorker do
 
       defp schedule_update_unless_paused(%{timer: timer}) when timer == :paused, do: nil
       defp schedule_update_unless_paused(%{timer: timer}) when is_nil(timer), do: schedule_update()
+
       defp schedule_update_unless_paused(%{timer: timer}) do
         Process.cancel_timer(timer)
 

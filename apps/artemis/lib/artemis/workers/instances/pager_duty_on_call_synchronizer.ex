@@ -42,9 +42,9 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
 
   defp enabled?() do
     :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.get(:token)
-    |> Artemis.Helpers.present?()
+    |> Application.fetch_env!(:actions)
+    |> Keyword.fetch!(:pager_duty_synchronize_on_call)
+    |> Keyword.fetch!(:enabled)
   end
 
   defp create_data(result, meta) do

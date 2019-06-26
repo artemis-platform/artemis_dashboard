@@ -377,4 +377,16 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   def render_flash_notifications(conn) do
     Phoenix.View.render(ArtemisWeb.LayoutView, "flash_notifications.html", conn: conn)
   end
+
+  @doc """
+  Encodes JSON compatable data into a pretty printed string
+  """
+  def pretty_print_json_into_textarea(form, key) do
+    form
+    |> input_value(key)
+    |> pretty_print_value()
+  end
+
+  defp pretty_print_value(value) when is_map(value), do: Jason.encode!(value, pretty: true)
+  defp pretty_print_value(value), do: value
 end

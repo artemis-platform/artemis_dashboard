@@ -1,8 +1,8 @@
-defmodule Artemis.Drivers.IBMCloudant.Create do
+defmodule Artemis.Drivers.IBMCloudant.Delete do
   alias Artemis.Drivers.IBMCloudant
 
   @moduledoc """
-  Creates specified IBM Cloudant database, including design docs and indexes.
+  Deletes specified IBM Cloudant database
   """
 
   def call(schema) do
@@ -16,25 +16,25 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
     database_name = Keyword.fetch!(database_config, :name)
     host_name = Keyword.fetch!(host_config, :name)
 
-    create_database(host_name, database_name)
+    delete_database(host_name, database_name)
   end
 
   # Helpers
 
-  defp create_database(host_name, database_name) do
+  defp delete_database(host_name, database_name) do
     host_name
-    |> create_request(database_name)
+    |> delete_request(database_name)
     |> parse_results()
   end
 
-  defp create_request(host_name, database_name) do
+  defp delete_request(host_name, database_name) do
     IBMCloudant.Request.call(%{
       host: host_name,
-      method: :put,
+      method: :delete,
       path: database_name
     })
   end
 
-  defp parse_results({:error, %{"error" => "file_exists"}}), do: {:ok, true}
+  defp parse_results({:error, %{"error" => "not_found", "reason" => "Database does not exist."}}), do: {:ok, true}
   defp parse_results(result), do: result
 end

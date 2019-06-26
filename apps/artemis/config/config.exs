@@ -13,6 +13,12 @@ config :artemis, :actions,
   ibm_cloudant_migrator: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR") == "true"
   ],
+  pager_duty_synchronize_incidents: [
+    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_INCIDENTS") == "true"
+  ],
+  pager_duty_synchronize_on_call: [
+    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_ON_CALL") == "true"
+  ],
   repo_delete_all: [
     enabled: System.get_env("ARTEMIS_ACTION_REPO_DELETE_ALL_ENABLED") == "true"
   ],

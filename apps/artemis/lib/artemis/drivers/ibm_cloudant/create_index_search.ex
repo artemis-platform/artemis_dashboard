@@ -1,4 +1,4 @@
-defmodule Artemis.Drivers.IBMCloudant.SearchIndex do
+defmodule Artemis.Drivers.IBMCloudant.CreateIndexSearch do
   alias Artemis.Drivers.IBMCloudant
 
   @moduledoc """

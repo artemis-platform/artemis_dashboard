@@ -1,7 +1,7 @@
-<%= form_for @changeset, @action, [class: "ui form", id: "shared-job-form", method: @method || "post"], fn f -> %>
+<%= form_for @changeset, @action, [class: "ui form", id: "shared-job-form", method: assigns[:method] || "post"], fn f -> %>
   <div class="field">
     <%= label_with_errors f, :raw_data, "JSON Data" %>
-    <%= textarea f, :raw_data, value: Jason.encode!(f.data.raw_data, pretty: true) %>
+    <%= textarea f, :raw_data, value: pretty_print_json_into_textarea(f, :raw_data) %>
   </div>
 
   <div>

@@ -60,7 +60,7 @@ defmodule Artemis.Schema.Cloudant do
           |> Artemis.Helpers.keys_to_strings()
 
         data
-        |> Map.get("raw_data")
+        |> Map.get("raw_data", %{})
         |> Artemis.Helpers.deep_merge(data)
         |> Map.delete("raw_data")
       end
@@ -99,11 +99,11 @@ defmodule Artemis.Schema.Cloudant do
       # Helpers
 
       defp get_cloudant_database_config(schema) do
-        IBMCloudant.Config.get_database_config!(:schema, schema)
+        IBMCloudant.Config.get_database_config_by!(schema: schema)
       end
 
       defp get_cloudant_host_config(host_name) do
-        IBMCloudant.Config.get_host_config!(:name, host_name)
+        IBMCloudant.Config.get_host_config_by!(name: host_name)
       end
     end
   end

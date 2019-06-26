@@ -20,8 +20,10 @@ defmodule Artemis.DeleteSharedJob do
     |> Event.broadcast("shared-jobs:deleted", user)
   end
 
-  def get_record(%{id: id}, user), do: get_record(id, user)
+  def get_record(%{_id: id}, user), do: get_record(id, user)
   def get_record(id, user), do: GetSharedJob.call(id, user)
+
+  defp delete_record(nil), do: {:error, "Record not found"}
 
   defp delete_record(%{_id: id, _rev: rev}) do
     cloudant_host = SharedJob.get_cloudant_host()

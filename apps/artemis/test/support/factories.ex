@@ -1,5 +1,6 @@
 defmodule Artemis.Factories do
   use ExMachina.Ecto, repo: Artemis.Repo
+  use Artemis.FactoryStrategy.CloudantInsert
 
   # Factories
 

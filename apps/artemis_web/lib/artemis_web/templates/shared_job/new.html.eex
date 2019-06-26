@@ -1,0 +1,20 @@
+<div id="content-header">
+  <header>
+    <h1>New Shared Job</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <%=
+    form_assigns = Map.put(assigns, :action, Routes.shared_job_path(@conn, :create))
+
+    render "form.html", form_assigns
+  %>
+</div>
+

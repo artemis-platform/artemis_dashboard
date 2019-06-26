@@ -1,6 +1,12 @@
 <div id="content-header">
   <header>
-    <h1>Jobs</h1>
+    <h1>Shared Jobs</h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "shared-jobs:create") do %>
+        <%= action "New", to: Routes.shared_job_path(@conn, :new), color: "blue" %>
+      <% end %>
+    </div>
   </header>
 </div>
 

@@ -83,7 +83,7 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
 
   defp valid?(%{meta: %{expiration: expiration}, token: token}) do
     now = DateTime.to_unix(DateTime.utc_now())
-    threshold = expiration - (5 * 60)
+    threshold = expiration - 5 * 60
 
     now < threshold && Artemis.Helpers.present?(token)
   end

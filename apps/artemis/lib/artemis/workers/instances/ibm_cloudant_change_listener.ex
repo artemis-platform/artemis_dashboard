@@ -48,13 +48,14 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
       :hackney.stop_async(data.connection)
     end
 
-    {:ok, connection} = IBMCloudant.Request.call(%{
-      host: cloudant_host,
-      method: :get,
-      options: options,
-      params: query_params,
-      path: "#{cloudant_path}/_changes"
-    })
+    {:ok, connection} =
+      IBMCloudant.Request.call(%{
+        host: cloudant_host,
+        method: :get,
+        options: options,
+        params: query_params,
+        path: "#{cloudant_path}/_changes"
+      })
 
     {:ok, struct(data, connection: connection)}
   end
@@ -176,7 +177,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   end
 
   defp get_action(data) do
-    cond  do
+    cond do
       deleted?(data) -> "delete"
       first_revision?(data) -> "create"
       true -> "update"

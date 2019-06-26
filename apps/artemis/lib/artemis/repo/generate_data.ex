@@ -80,6 +80,7 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "roles:list", name: "Roles - List"},
       %{slug: "roles:show", name: "Roles - Show"},
       %{slug: "roles:update", name: "Roles - Update"},
+      %{slug: "shared-jobs:create", name: "Shared Jobs - Create"},
       %{slug: "shared-jobs:delete", name: "Shared Jobs - Delete"},
       %{slug: "shared-jobs:list", name: "Shared Jobs - List"},
       %{slug: "shared-jobs:show", name: "Shared Jobs - Show"},

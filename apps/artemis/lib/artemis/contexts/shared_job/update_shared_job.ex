@@ -13,6 +13,8 @@ defmodule Artemis.UpdateSharedJob do
   end
 
   def call(id, params, user) do
+    params = update_params(params)
+
     id
     |> get_record(user)
     |> update_record(params)
@@ -21,17 +23,33 @@ defmodule Artemis.UpdateSharedJob do
     |> Event.broadcast("shared-job:updated", user)
   end
 
+  defp update_params(params) do
+    params
+    |> Artemis.Helpers.keys_to_strings()
+    |> decode_raw_data_param()
+  end
+
+  defp decode_raw_data_param(%{"raw_data" => raw_data} = params) when is_bitstring(raw_data) do
+    decoded =
+      case Jason.decode(raw_data) do
+        {:ok, value} -> value
+        _ -> raw_data
+      end
+
+    Map.put(params, "raw_data", decoded)
+  end
+
+  defp decode_raw_data_param(params), do: params
+
   defp get_updated_record(%{"ok" => true, "id" => id}, user), do: get_record(id, user)
   defp get_updated_record(error, _), do: error
 
-  defp get_record(%{id: id}, user), do: get_record(id, user)
+  defp get_record(%{_id: id}, user), do: get_record(id, user)
   defp get_record(id, user), do: GetSharedJob.call(id, user)
 
   defp update_record(nil, _params), do: {:error, "Record not found"}
 
   defp update_record(record, params) do
-    decoded_raw_data = try_to_decode_raw_data(params)
-    params = Map.put(params, "raw_data", decoded_raw_data)
     changeset = SharedJob.changeset(record, params)
 
     case changeset.valid? do
@@ -40,26 +58,14 @@ defmodule Artemis.UpdateSharedJob do
     end
   end
 
-  # When invalid, rescue and return the original value so the changeset can
-  # generate a user-friendly error
-  defp try_to_decode_raw_data(%{"raw_data" => raw_data}) do
-    Jason.decode!(raw_data)
-  rescue
-    _ -> raw_data
-  end
-
-  defp update(%{_id: id, _rev: rev}, params) do
+  defp update(%{_id: id, _rev: rev} = record, params) do
+    body = get_body(record, params)
     cloudant_host = SharedJob.get_cloudant_host()
     cloudant_path = SharedJob.get_cloudant_path()
     query_params = [rev: rev]
 
-    body =
-      params
-      |> SharedJob.to_json()
-      |> Jason.encode!()
-
     IBMCloudant.Request.call(%{
-      body: body,
+      body: Jason.encode!(body),
       host: cloudant_host,
       method: :put,
       params: query_params,
@@ -67,7 +73,16 @@ defmodule Artemis.UpdateSharedJob do
     })
   end
 
+  # Allow custom payloads by giving `raw_data` value precedence if passed
+  defp get_body(_, %{"raw_data" => raw_data}), do: raw_data
+
+  defp get_body(record, params) do
+    params
+    |> Map.put_new("raw_data", record.raw_data)
+    |> SharedJob.to_json()
+  end
+
   defp parse_response({:ok, body}), do: body
   defp parse_response({:error, %Ecto.Changeset{} = changeset}), do: {:error, changeset}
-  defp parse_response(_), do: {:error, "Error deleting shared job"}
+  defp parse_response(_), do: {:error, "Error updating shared job"}
 end
