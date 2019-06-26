@@ -58,7 +58,7 @@ defmodule Artemis.UpdateSharedJob do
       |> SharedJob.to_json()
       |> Jason.encode!()
 
-    IBMCloudant.call(%{
+    IBMCloudant.Request.call(%{
       body: body,
       host: cloudant_host,
       method: :put,

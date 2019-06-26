@@ -2,8 +2,16 @@ defmodule Artemis.Schema.Cloudant do
   @moduledoc """
   Adds Cloudant specific schema functions
   """
+
+  @callback filter_fields :: List.t()
+  @callback search_fields :: List.t()
+  @callback sort_fields :: List.t()
+
   defmacro __using__(_options) do
     quote do
+      alias Artemis.Drivers.IBMCloudant
+
+      @behaviour Artemis.Schema.Cloudant
 
       # Ecto Validators
 
@@ -72,10 +80,13 @@ defmodule Artemis.Schema.Cloudant do
       end
 
       def get_cloudant_search_path() do
+        database = get_cloudant_database_config(__MODULE__)
+        host = get_cloudant_host_config(database[:host])
+        design_doc = host[:search_design_doc]
+        index = host[:search_index]
         base_path = get_cloudant_path()
-        search_config = get_cloudant_config!(:search)
 
-        "#{base_path}/_design/#{search_config[:design_doc]}/_search/#{search_config[:index]}"
+        "#{base_path}/_design/#{design_doc}/_search/#{index}"
       end
 
       def get_cloudant_url() do
@@ -88,21 +99,11 @@ defmodule Artemis.Schema.Cloudant do
       # Helpers
 
       defp get_cloudant_database_config(schema) do
-        :databases
-        |> get_cloudant_config!()
-        |> Enum.find(&Keyword.get(&1, :schema) == schema)
+        IBMCloudant.Config.get_database_config!(:schema, schema)
       end
 
-      defp get_cloudant_host_config(host) do
-        :hosts
-        |> get_cloudant_config!()
-        |> Enum.find(&Keyword.get(&1, :name) == host)
-      end
-
-      defp get_cloudant_config!(key) do
-        :artemis
-        |> Application.fetch_env!(:ibm_cloudant)
-        |> Keyword.fetch!(key)
+      defp get_cloudant_host_config(host_name) do
+        IBMCloudant.Config.get_host_config!(:name, host_name)
       end
     end
   end

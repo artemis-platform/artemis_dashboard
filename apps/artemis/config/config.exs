@@ -10,6 +10,9 @@ config :artemis, :actions,
   ibm_cloudant_change_listener: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_CHANGE_LISTENER") == "true"
   ],
+  ibm_cloudant_migrator: [
+    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR") == "true"
+  ],
   repo_delete_all: [
     enabled: System.get_env("ARTEMIS_ACTION_REPO_DELETE_ALL_ENABLED") == "true"
   ],

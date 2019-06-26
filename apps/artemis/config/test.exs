@@ -16,3 +16,6 @@ config :artemis, Artemis.Repo,
   database: System.get_env("ARTEMIS_POSTGRES_DB") <> "_test",
   hostname: System.get_env("ARTEMIS_POSTGRES_HOST"),
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :artemis, :ibm_cloudant,
+  prepend_database_names_with: "test_"

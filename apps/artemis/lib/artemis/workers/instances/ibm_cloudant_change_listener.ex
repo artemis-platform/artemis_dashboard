@@ -48,7 +48,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
       :hackney.stop_async(data.connection)
     end
 
-    {:ok, connection} = IBMCloudant.call(%{
+    {:ok, connection} = IBMCloudant.Request.call(%{
       host: cloudant_host,
       method: :get,
       options: options,

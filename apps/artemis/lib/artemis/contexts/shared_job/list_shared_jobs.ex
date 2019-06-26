@@ -45,7 +45,7 @@ defmodule Artemis.ListSharedJobs do
       selector: select_all_selector
     }
 
-    IBMCloudant.call(%{
+    IBMCloudant.Request.call(%{
       body: Jason.encode!(body),
       host: cloudant_host,
       method: :post,
@@ -62,7 +62,7 @@ defmodule Artemis.ListSharedJobs do
       query: query
     ]
 
-    IBMCloudant.call(%{
+    IBMCloudant.Request.call(%{
       host: cloudant_host,
       method: :get,
       params: query_params,

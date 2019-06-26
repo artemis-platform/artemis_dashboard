@@ -7,20 +7,11 @@ defmodule Artemis.SharedJob do
     field :_id, :string
     field :_rev, :string
     field :cmd, :string
-    field :deps, :string
-    field :estimation, :integer
-    field :first_run, :integer
-    field :instance_uuid, :string
-    field :interval, :integer
-    field :last_run, :integer
+    field :first_run, :string
     field :name, :string
     field :raw_data, :map
     field :status, :string
-    field :task_id, :string
-    field :timeout, :integer
-    field :transaction_id, :string
     field :uuid, :string
-    field :zzdoc_type, :string
   end
 
   # Callbacks
@@ -29,20 +20,11 @@ defmodule Artemis.SharedJob do
     do: [
       :_rev,
       :cmd,
-      :deps,
-      :estimation,
       :first_run,
-      :instance_uuid,
-      :interval,
-      :last_run,
       :name,
       :raw_data,
       :status,
-      :task_id,
-      :timeout,
-      :transaction_id,
-      :uuid,
-      :zzdoc_type
+      :uuid
     ]
 
   def required_fields,
@@ -56,6 +38,9 @@ defmodule Artemis.SharedJob do
       :uuid
     ]
 
+  def filter_fields,
+    do: []
+
   def search_fields,
     do: [
       :_id,
@@ -64,6 +49,9 @@ defmodule Artemis.SharedJob do
       :status,
       :uuid
     ]
+
+  def sort_fields,
+    do: []
 
   # Changesets
 
