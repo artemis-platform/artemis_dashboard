@@ -15,12 +15,12 @@ defmodule Artemis.ListSharedJobsTest do
   end
 
   describe "call" do
-    test "returns empty list when no features exist" do
+    test "returns empty list when no shared jobs exist" do
       assert ListSharedJobs.call(Mock.system_user()) == []
     end
 
-    test "returns existing feature" do
-      shared_job = cloudant_insert(:shared_job)
+    test "returns existing shared job" do
+      shared_job = IO.inspect cloudant_insert(:shared_job)
 
       result = ListSharedJobs.call(Mock.system_user())
 
@@ -28,9 +28,9 @@ defmodule Artemis.ListSharedJobsTest do
       assert hd(result)._id == shared_job._id
     end
 
-    test "returns a list of features" do
+    test "returns a list of shared jobs" do
       count = 3
-      cloudant_insert_list(count, :shared_job)
+      IO.inspect cloudant_insert_list(count, :shared_job)
 
       shared_jobs = ListSharedJobs.call(Mock.system_user())
 
