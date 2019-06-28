@@ -7,6 +7,24 @@
     <nav id="primary-navigation" role="navigation">
       <% nav_items = nav_items_for_current_user(@user) %>
       <ul>
+        <%= if render_primary_nav_section?(nav_items, ["Shared Jobs"]) do %>
+          <li class="with-dropdown">
+            <a href="<%= Routes.shared_job_path(@conn, :index) %>">
+              Services
+              <i class="angle down icon"></i>
+            </a>
+            <div class="dropdown">
+              <content>
+                <header>
+                  <h3>Services</h3>
+                  <p>Details of every service in the offering catalogue.</p>
+                </header>
+                <%= render_primary_nav_section(@conn, nav_items, ["Shared Jobs"]) %>
+              </content>
+              <footer></footer>
+            </div>
+          </li>
+        <% end %>
         <%= if render_primary_nav_section?(nav_items, ["Incidents"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.incident_path(@conn, :index) %>">

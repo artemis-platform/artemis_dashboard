@@ -73,6 +73,18 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "roles:create")
         ]
       ],
+      "Shared Jobs": [
+        [
+          label: "List Shared Jobs",
+          path: &Routes.shared_job_path(&1, :index),
+          verify: &has?(&1, "shared-jobs:list")
+        ],
+        [
+          label: "Create New Shared Job",
+          path: &Routes.shared_job_path(&1, :new),
+          verify: &has?(&1, "shared-jobs:create")
+        ]
+      ],
       Tags: [
         [
           label: "List Tags",
