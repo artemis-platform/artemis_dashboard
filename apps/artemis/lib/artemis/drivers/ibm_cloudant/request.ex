@@ -81,7 +81,7 @@ defmodule Artemis.Drivers.IBMCloudant.Request do
   defp get_request_params(%{host: host, path: path} = params) do
     host_config = IBMCloudant.Config.get_host_config_by!(name: host)
     headers = add_authorization_header(host_config, params)
-    url = "#{host_config[:hostname]}/#{path}"
+    url = "#{host_config[:protocol]}://#{host_config[:hostname]}/#{path}"
 
     params
     |> Map.delete(:host)
@@ -99,7 +99,8 @@ defmodule Artemis.Drivers.IBMCloudant.Request do
 
     case host_config[:auth_type] do
       "ibm_cloud_iam" -> add_ibm_cloud_iam_authorization_header(host_config, headers)
-      _ -> add_basic_authorization_header(host_config, headers)
+      "basic" -> add_basic_authorization_header(host_config, headers)
+      _ -> headers
     end
   end
 

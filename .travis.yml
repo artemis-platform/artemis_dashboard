@@ -19,6 +19,7 @@ addons:
       - google-chrome-stable
 
 services:
+  - couchdb
   - xvfb
 
 cache:

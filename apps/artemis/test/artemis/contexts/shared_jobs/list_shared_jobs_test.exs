@@ -45,6 +45,7 @@ defmodule Artemis.ListSharedJobsTest do
       {:ok, shared_job: shared_job}
     end
 
+    @tag :cloudant_exclusive_feature
     test "query - search" do
       cloudant_insert(:shared_job, name: "Four Six", status: "four-six")
       cloudant_insert(:shared_job, name: "Four Two", status: "four-two")
