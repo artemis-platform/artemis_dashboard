@@ -43,7 +43,7 @@ defmodule ArtemisWeb.SharedJobPageTest do
       assert visible?("Shared Jobs")
     end
 
-    @tags :cloudant_exclusive_feature
+    # @tag :cloudant_exclusive_feature
     # test "search", %{shared_job: shared_job} do
     #   fill_inputs(".search-resource", %{
     #     query: shared_job.name
@@ -120,7 +120,7 @@ defmodule ArtemisWeb.SharedJobPageTest do
       {:ok, shared_job: shared_job}
     end
 
-    test "successfully updates record", %{shared_job: shared_job} do
+    test "successfully updates record" do
       click_link("Edit")
 
       raw_data = %{
