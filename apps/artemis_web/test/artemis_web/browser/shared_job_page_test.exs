@@ -43,6 +43,7 @@ defmodule ArtemisWeb.SharedJobPageTest do
       assert visible?("Shared Jobs")
     end
 
+    @tags :cloudant_exclusive_feature
     test "search", %{shared_job: shared_job} do
       fill_inputs(".search-resource", %{
         query: shared_job.name
@@ -98,14 +99,12 @@ defmodule ArtemisWeb.SharedJobPageTest do
       shared_job = cloudant_insert(:shared_job)
 
       browser_sign_in()
-      navigate_to(@url)
+      navigate_to("#{@url}/#{shared_job._id}")
 
       {:ok, shared_job: shared_job}
     end
 
     test "record details", %{shared_job: shared_job} do
-      click_link(shared_job._id)
-
       assert visible?(shared_job.name)
       assert visible?(shared_job.status)
     end
@@ -116,13 +115,12 @@ defmodule ArtemisWeb.SharedJobPageTest do
       shared_job = cloudant_insert(:shared_job)
 
       browser_sign_in()
-      navigate_to(@url)
+      navigate_to("#{@url}/#{shared_job._id}")
 
       {:ok, shared_job: shared_job}
     end
 
     test "successfully updates record", %{shared_job: shared_job} do
-      click_link(shared_job._id)
       click_link("Edit")
 
       raw_data = %{
@@ -146,14 +144,13 @@ defmodule ArtemisWeb.SharedJobPageTest do
       shared_job = cloudant_insert(:shared_job)
 
       browser_sign_in()
-      navigate_to(@url)
+      navigate_to("#{@url}/#{shared_job._id}")
 
       {:ok, shared_job: shared_job}
     end
 
     @tag :uses_browser_alert_box
     # test "deletes record and redirects to index", %{shared_job: shared_job} do
-    #   click_link(shared_job._id)
     #   click_button("Delete")
     #   accept_dialog()
 
