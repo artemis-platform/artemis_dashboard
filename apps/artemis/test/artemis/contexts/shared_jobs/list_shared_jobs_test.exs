@@ -19,8 +19,9 @@ defmodule Artemis.ListSharedJobsTest do
       assert ListSharedJobs.call(Mock.system_user()) == []
     end
 
+    @tag :cloudant_exclusive_feature
     test "returns existing shared job" do
-      shared_job = IO.inspect cloudant_insert(:shared_job)
+      shared_job = cloudant_insert(:shared_job)
 
       result = ListSharedJobs.call(Mock.system_user())
 
@@ -28,9 +29,10 @@ defmodule Artemis.ListSharedJobsTest do
       assert hd(result)._id == shared_job._id
     end
 
+    @tag :cloudant_exclusive_feature
     test "returns a list of shared jobs" do
       count = 3
-      IO.inspect cloudant_insert_list(count, :shared_job)
+      cloudant_insert_list(count, :shared_job)
 
       shared_jobs = ListSharedJobs.call(Mock.system_user())
 
