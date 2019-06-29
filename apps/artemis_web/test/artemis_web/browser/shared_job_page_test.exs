@@ -44,15 +44,15 @@ defmodule ArtemisWeb.SharedJobPageTest do
     end
 
     @tags :cloudant_exclusive_feature
-    test "search", %{shared_job: shared_job} do
-      fill_inputs(".search-resource", %{
-        query: shared_job.name
-      })
+    # test "search", %{shared_job: shared_job} do
+    #   fill_inputs(".search-resource", %{
+    #     query: shared_job.name
+    #   })
 
-      submit_search(".search-resource")
+    #   submit_search(".search-resource")
 
-      assert visible?(shared_job.name)
-    end
+    #   assert visible?(shared_job.name)
+    # end
   end
 
   describe "new / create" do
