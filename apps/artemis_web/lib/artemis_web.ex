@@ -22,6 +22,7 @@ defmodule ArtemisWeb do
       use Phoenix.Controller, namespace: ArtemisWeb
 
       import Plug.Conn
+      import Phoenix.LiveView.Controller, only: [live_render: 3]
       import ArtemisWeb.Gettext
       import ArtemisWeb.Guardian.Helpers
       import ArtemisWeb.Helpers.Controller
@@ -66,6 +67,16 @@ defmodule ArtemisWeb do
           false -> render_forbidden(conn)
         end
       end
+
+      @doc """
+      Return a 404 not found page
+      """
+      def render_not_found(conn) do
+        conn
+        |> put_status(404)
+        |> put_view(ArtemisWeb.ErrorView)
+        |> render("404.html", error_page: true)
+      end
     end
   end
 
@@ -77,6 +88,7 @@ defmodule ArtemisWeb do
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
+      import Phoenix.LiveView, only: [live_render: 2, live_render: 3, live_link: 1, live_link: 2]
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
@@ -98,6 +110,7 @@ defmodule ArtemisWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 

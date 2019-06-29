@@ -13,7 +13,7 @@ defmodule Artemis.GetIncidentTest do
 
   describe "call" do
     test "returns nil incident not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       assert GetIncident.call(invalid_id, Mock.system_user()) == nil
     end
@@ -23,15 +23,16 @@ defmodule Artemis.GetIncidentTest do
     end
 
     test "finds user keyword list", %{incident: incident} do
-      assert GetIncident.call([source_uid: incident.source_uid, title: incident.title], Mock.system_user()).id == incident.id
+      assert GetIncident.call([source_uid: incident.source_uid, title: incident.title], Mock.system_user()).id ==
+               incident.id
     end
   end
 
   describe "call!" do
     test "raises an exception incident not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Ecto.NoResultsError, fn () ->
+      assert_raise Ecto.NoResultsError, fn ->
         GetIncident.call!(invalid_id, Mock.system_user()) == nil
       end
     end

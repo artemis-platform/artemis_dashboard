@@ -19,7 +19,11 @@ defmodule Artemis.Incident do
     field :triggered_at, :utc_datetime
     field :triggered_by, :string
 
-    many_to_many :comments, Artemis.Comment, join_through: "comments_incidents", on_delete: :delete_all, on_replace: :delete
+    many_to_many :comments, Artemis.Comment,
+      join_through: "comments_incidents",
+      on_delete: :delete_all,
+      on_replace: :delete
+
     many_to_many :tags, Artemis.Tag, join_through: "tags_incidents", on_delete: :delete_all, on_replace: :delete
 
     timestamps()
@@ -27,46 +31,51 @@ defmodule Artemis.Incident do
 
   # Callbacks
 
-  def updatable_fields, do: [
-    :acknowledged_at,
-    :acknowledged_by,
-    :description,
-    :meta,
-    :resolved_at,
-    :resolved_by,
-    :severity,
-    :source,
-    :source_uid,
-    :status,
-    :title,
-    :triggered_at,
-    :triggered_by
-  ]
+  def updatable_fields,
+    do: [
+      :acknowledged_at,
+      :acknowledged_by,
+      :description,
+      :meta,
+      :resolved_at,
+      :resolved_by,
+      :severity,
+      :source,
+      :source_uid,
+      :status,
+      :title,
+      :triggered_at,
+      :triggered_by
+    ]
 
-  def required_fields, do: [
-    :severity,
-    :source,
-    :status,
-    :title
-  ]
+  def required_fields,
+    do: [
+      :severity,
+      :source,
+      :status,
+      :title
+    ]
 
-  def updatable_associations, do: [
-    tags: Artemis.Tag
-  ]
+  def updatable_associations,
+    do: [
+      tags: Artemis.Tag
+    ]
 
-  def event_log_fields, do: [
-    :id,
-    :severity,
-    :source,
-    :status,
-    :title
-  ]
+  def event_log_fields,
+    do: [
+      :id,
+      :severity,
+      :source,
+      :status,
+      :title
+    ]
 
-  def allowed_statuses, do: [
-    "triggered",
-    "acknowledged",
-    "resolved"
-  ]
+  def allowed_statuses,
+    do: [
+      "triggered",
+      "acknowledged",
+      "resolved"
+    ]
 
   # Changesets
 

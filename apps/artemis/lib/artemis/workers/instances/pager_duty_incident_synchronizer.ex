@@ -7,8 +7,6 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
 
   import Artemis.Helpers
 
-  require Logger
-
   alias Artemis.CreateManyIncidents
   alias Artemis.Drivers.PagerDuty
   alias Artemis.GetSystemUser
@@ -45,12 +43,24 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   # Callbacks
 
   @impl true
-  def call(data, options \\ []) do
+  def call(data), do: fetch_data(data)
+
+  # Helpers
+
+  defp enabled?() do
+    :artemis
+    |> Application.fetch_env!(:actions)
+    |> Keyword.fetch!(:pager_duty_synchronize_incidents)
+    |> Keyword.fetch!(:enabled)
+  end
+
+  defp fetch_data(data, options \\ []) do
     with user <- GetSystemUser.call!(),
          {:ok, response} <- get_pager_duty_incidents(user, options),
-         200  <- response.status_code,
+         200 <- response.status_code,
          {:ok, incidents} <- process_response(response),
-         {:ok, result} <- CreateManyIncidents.call(incidents, user) do
+         {:ok, filtered} <- filter_incidents(incidents, user),
+         {:ok, result} <- CreateManyIncidents.call(filtered, user) do
       total = Map.get(result, :total) + Keyword.get(options, :total, 0)
       more? = deep_get(response, [:body, "more"])
 
@@ -63,7 +73,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         true ->
           date =
             incidents
-            |> Enum.map(&(&1.triggered_at))
+            |> Enum.map(& &1.triggered_at)
             |> Enum.sort()
             |> hd()
 
@@ -72,7 +82,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
             |> Keyword.put(:since, date)
             |> Keyword.put(:total, total)
 
-          call(data, options)
+          fetch_data(data, options)
       end
     else
       {:skipped, message} -> {:skipped, message}
@@ -81,17 +91,8 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     end
   rescue
     error ->
-      Logger.info "Error synchronizing pager duty incidents: " <> inspect(error)
+      Logger.info("Error synchronizing pager duty incidents: " <> inspect(error))
       {:error, "Exception raised while synchronizing incidents"}
-  end
-
-  # Helpers
-
-  defp enabled?() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.get(:token)
-    |> Artemis.Helpers.present?()
   end
 
   defp create_data(result, meta) do
@@ -102,13 +103,15 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   end
 
   defp get_pager_duty_incidents(user, options) do
-    date = case Keyword.get(options, :since) do
-      nil -> DateTime.to_iso8601(get_start_date(user))
-      date -> date
-    end
+    date =
+      case Keyword.get(options, :since) do
+        nil -> DateTime.to_iso8601(get_start_date(user))
+        date -> date
+      end
 
     path = "/incidents"
     headers = []
+
     options = [
       params: [
         "include[]": "acknowledgers",
@@ -141,14 +144,16 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   defp get_earliest_unresolved_incident(user) do
     case get_incident_by("triggered_at", %{status: ["triggered", "acknowledged"]}, user) do
       nil -> nil
-      incident -> Timex.shift(incident.triggered_at, seconds: -1) # Include record in API response
+      # Include record in API response
+      incident -> Timex.shift(incident.triggered_at, seconds: -1)
     end
   end
 
   defp get_oldest_resolved_incident(user) do
     case get_incident_by("-triggered_at", %{status: ["resolved"]}, user) do
       nil -> nil
-      incident -> Timex.shift(incident.triggered_at, seconds: 1) # Do not include record in API response
+      # Do not include record in API response
+      incident -> Timex.shift(incident.triggered_at, seconds: 1)
     end
   end
 
@@ -176,9 +181,11 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   end
 
   defp process_response_entries(incidents) do
-    Enum.map(incidents, fn (incident) ->
+    Enum.map(incidents, fn incident ->
       severity = deep_get(incident, ["priority", "summary"]) || deep_get(incident, ["service", "summary"])
-      triggered_at = incident
+
+      triggered_at =
+        incident
         |> Map.get("created_at")
         |> Timex.parse!("{ISO:Extended}")
 
@@ -198,6 +205,24 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         triggered_by: nil
       }
     end)
+  end
+
+  # Filter out updates to existing incidents that are already resolved
+  defp filter_incidents(incidents, user) do
+    resolved_incidents = get_existing_resolved_incidents(user)
+
+    filtered =
+      Enum.reject(incidents, fn incident ->
+        Enum.member?(resolved_incidents, incident.source_uid)
+      end)
+
+    {:ok, filtered}
+  end
+
+  defp get_existing_resolved_incidents(user) do
+    %{filters: %{status: "resolved"}}
+    |> ListIncidents.call(user)
+    |> Enum.map(& &1.source_uid)
   end
 
   def get_team_ids, do: Application.fetch_env!(:artemis, :pager_duty)[:team_ids]

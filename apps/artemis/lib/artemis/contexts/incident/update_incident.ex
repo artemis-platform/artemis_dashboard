@@ -14,7 +14,7 @@ defmodule Artemis.UpdateIncident do
   end
 
   def call(id, params, user) do
-    with_transaction(fn () ->
+    with_transaction(fn ->
       id
       |> get_record(user)
       |> update_record(params)
@@ -27,9 +27,10 @@ defmodule Artemis.UpdateIncident do
   def get_record(id, user), do: GetIncident.call(id, user)
 
   defp update_record(nil, _params), do: {:error, "Record not found"}
+
   defp update_record(record, params) do
     record
     |> Incident.changeset(params)
-    |> Repo.update
+    |> Repo.update()
   end
 end

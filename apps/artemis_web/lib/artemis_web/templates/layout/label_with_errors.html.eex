@@ -2,6 +2,6 @@
 
 <label for="<%= "#{@form.id}_#{@field}" %>" class="label-with-errors <%= error_class %>">
   <i class="ui icon warning circle red"></i>
-  <%= humanize(@field) %>
+  <%= @label %>
   <%= error_tag(@form, @field) %>
 </label>

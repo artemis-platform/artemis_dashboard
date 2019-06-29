@@ -7,6 +7,7 @@ defmodule ArtemisWeb.Router do
     plug :accepts, ["html", "csv"]
     plug :fetch_session
     plug :fetch_flash
+    plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -65,6 +66,7 @@ defmodule ArtemisWeb.Router do
       resources "/permissions", PermissionController
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]
+      resources "/shared-jobs", SharedJobController
       resources "/tags", TagController
 
       resources "/users", UserController do

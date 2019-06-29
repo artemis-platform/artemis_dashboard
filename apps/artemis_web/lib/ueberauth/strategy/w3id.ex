@@ -59,7 +59,7 @@ defmodule Ueberauth.Strategy.W3ID do
 
   def credentials(conn) do
     token = conn.private.w3id_token
-    scope_string = (token.other_params["scope"] || "")
+    scope_string = token.other_params["scope"] || ""
     scopes = String.split(scope_string, ",")
 
     %Ueberauth.Auth.Credentials{
@@ -110,6 +110,6 @@ defmodule Ueberauth.Strategy.W3ID do
     |> String.split(".")
     |> Enum.at(1)
     |> Base.url_decode64!(padding: false)
-    |> Jason.decode!
+    |> Jason.decode!()
   end
 end

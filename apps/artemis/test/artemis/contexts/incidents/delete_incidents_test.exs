@@ -9,9 +9,9 @@ defmodule Artemis.DeleteIncidentTest do
 
   describe "call!" do
     test "raises an exception when id not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
-      assert_raise Artemis.Context.Error, fn () ->
+      assert_raise Artemis.Context.Error, fn ->
         DeleteIncident.call!(invalid_id, Mock.system_user())
       end
     end
@@ -35,7 +35,7 @@ defmodule Artemis.DeleteIncidentTest do
 
   describe "call" do
     test "returns an error when record not found" do
-      invalid_id = 50000000
+      invalid_id = 50_000_000
 
       {:error, _} = DeleteIncident.call(invalid_id, Mock.system_user())
     end
@@ -61,7 +61,8 @@ defmodule Artemis.DeleteIncidentTest do
       comments = insert_list(3, :comment, incidents: [record])
       _other = insert_list(2, :comment)
 
-      total_before = Comment
+      total_before =
+        Comment
         |> Repo.all()
         |> length()
 
@@ -69,7 +70,8 @@ defmodule Artemis.DeleteIncidentTest do
 
       assert Repo.get(Incident, record.id) == nil
 
-      total_after = Comment
+      total_after =
+        Comment
         |> Repo.all()
         |> length()
 

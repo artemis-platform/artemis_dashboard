@@ -23,7 +23,7 @@ defmodule Artemis.ListIncidentsTest do
 
       results = ListIncidents.call(Mock.system_user())
 
-      assert hd(results).id  == incident.id
+      assert hd(results).id == incident.id
     end
 
     test "returns a list of incidents" do
@@ -57,6 +57,7 @@ defmodule Artemis.ListIncidentsTest do
           source: "custom-source"
         }
       }
+
       results = ListIncidents.call(params, Mock.system_user())
 
       assert length(results) == 2
@@ -79,7 +80,8 @@ defmodule Artemis.ListIncidentsTest do
         paginate: true
       }
 
-      response_keys = ListIncidents.call(params, Mock.system_user())
+      response_keys =
+        ListIncidents.call(params, Mock.system_user())
         |> Map.from_struct()
         |> Map.keys()
 

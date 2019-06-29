@@ -1,5 +1,6 @@
 defmodule Artemis.Factories do
   use ExMachina.Ecto, repo: Artemis.Repo
+  use Artemis.FactoryStrategy.CloudantInsert
 
   # Factories
 
@@ -67,6 +68,18 @@ defmodule Artemis.Factories do
     %Artemis.Role{
       name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
       slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
+    }
+  end
+
+  def shared_job_factory do
+    %Artemis.SharedJob{
+      _id: Faker.UUID.v4(),
+      _rev: sequence(:slug, &"#{&1}-#{Faker.UUID.v4()}"),
+      cmd: "#{Faker.Internet.slug()}.py",
+      first_run: DateTime.utc_now() |> DateTime.to_unix(),
+      name: Faker.Name.name(),
+      status: "Completed",
+      uuid: Faker.UUID.v4()
     }
   end
 

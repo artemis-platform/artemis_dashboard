@@ -233,6 +233,40 @@ ol {
   }
 }
 
+/* === Components - Status Labels === */
+
+.status-label {
+  border-radius: 4px;
+  border: 1px solid #e2e2e2;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  line-height: 10px;
+  padding: 0.5rem 0.5rem;
+  text-transform: uppercase;
+
+  &.blue {
+    border-color: #2185d0;
+    color: #2185d0;
+  }
+
+  &.green {
+    border-color: #21ba45;
+    color: #21ba45;
+  }
+
+  &.yellow {
+    border-color: #fbbd08;
+    color: #fbbd08;
+  }
+
+  &.red {
+    border-color: #db2828;
+    color: #db2828;
+  }
+}
+
 /* === Components - Comments === */
 
 .comment {

@@ -47,6 +47,7 @@ defmodule Artemis.ListComments do
     |> join(:left, [comments], wiki_pages in assoc(comments, :wiki_pages))
     |> where([..., wp], wp.id in ^split(value))
   end
+
   defp filter(query, _, _), do: query
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))

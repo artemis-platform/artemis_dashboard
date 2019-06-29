@@ -19,7 +19,7 @@ defmodule Artemis.IncidentTest do
       _existing = insert(:incident, source: "test", source_uid: "1")
       params = params_for(:incident, source: "test", source_uid: "1")
 
-      assert_raise Ecto.ConstraintError, fn () ->
+      assert_raise Ecto.ConstraintError, fn ->
         %Incident{}
         |> Incident.changeset(params)
         |> Repo.insert()
@@ -30,7 +30,8 @@ defmodule Artemis.IncidentTest do
       _existing = insert(:incident, source: "test", source_uid: nil)
       params = params_for(:incident, source: "test", source_uid: nil)
 
-      {:ok, _} = %Incident{}
+      {:ok, _} =
+        %Incident{}
         |> Incident.changeset(params)
         |> Repo.insert()
 
@@ -39,7 +40,8 @@ defmodule Artemis.IncidentTest do
       _existing = insert(:incident, source: "test", source_uid: "2")
       params = params_for(:incident, source: "different-source", source_uid: "2")
 
-      {:ok, _} = %Incident{}
+      {:ok, _} =
+        %Incident{}
         |> Incident.changeset(params)
         |> Repo.insert()
     end
@@ -63,14 +65,16 @@ defmodule Artemis.IncidentTest do
 
       params = %{title: "Updated Title"}
 
-      {:ok, comment} = comment
+      {:ok, comment} =
+        comment
         |> Comment.changeset(params)
         |> Repo.update()
 
       assert comment != nil
       assert comment.title == "Updated Title"
 
-      incident = Incident
+      incident =
+        Incident
         |> preload(^@preload)
         |> Repo.get(incident.id)
 
@@ -84,7 +88,8 @@ defmodule Artemis.IncidentTest do
 
       Repo.delete!(comment)
 
-      incident = Incident
+      incident =
+        Incident
         |> preload(^@preload)
         |> Repo.get(incident.id)
 
@@ -95,7 +100,8 @@ defmodule Artemis.IncidentTest do
       # Only the join table records are removed. This is a limitation of Ecto many_to_many:
       # https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
       #
-      comment = Comment
+      comment =
+        Comment
         |> preload([:incidents])
         |> Repo.get(hd(incident.comments).id)
 
@@ -104,7 +110,8 @@ defmodule Artemis.IncidentTest do
 
       Repo.delete!(incident)
 
-      comment = Comment
+      comment =
+        Comment
         |> preload([:incidents])
         |> Repo.get(hd(incident.comments).id)
 
@@ -131,14 +138,16 @@ defmodule Artemis.IncidentTest do
 
       params = %{name: "Updated Name"}
 
-      {:ok, tag} = tag
+      {:ok, tag} =
+        tag
         |> Tag.changeset(params)
         |> Repo.update()
 
       assert tag != nil
       assert tag.name == "Updated Name"
 
-      incident = Incident
+      incident =
+        Incident
         |> preload(^@preload)
         |> Repo.get(incident.id)
 
@@ -152,7 +161,8 @@ defmodule Artemis.IncidentTest do
 
       Repo.delete!(tag)
 
-      incident = Incident
+      incident =
+        Incident
         |> preload(^@preload)
         |> Repo.get(incident.id)
 
@@ -163,7 +173,8 @@ defmodule Artemis.IncidentTest do
       # Only the join table records are removed. This is a limitation of Ecto many_to_many:
       # https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
       #
-      tag = Tag
+      tag =
+        Tag
         |> preload([:incidents])
         |> Repo.get(hd(incident.tags).id)
 
@@ -172,7 +183,8 @@ defmodule Artemis.IncidentTest do
 
       Repo.delete!(incident)
 
-      tag = Tag
+      tag =
+        Tag
         |> preload([:incidents])
         |> Repo.get(hd(incident.tags).id)
 

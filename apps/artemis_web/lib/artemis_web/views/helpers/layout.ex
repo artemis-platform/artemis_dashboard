@@ -35,6 +35,7 @@ defmodule ArtemisWeb.ViewHelper.Layout do
     color = Keyword.get(options, :color, "basic")
     size = Keyword.get(options, :size, "small")
     method = Keyword.get(options, :method, "get")
+    live? = Keyword.get(options, :live, false)
 
     tag_options =
       options
@@ -42,10 +43,10 @@ defmodule ArtemisWeb.ViewHelper.Layout do
       |> Map.put(:class, "button ui #{size} #{color}")
       |> Enum.into([])
 
-    if method == "get" do
-      link(label, tag_options)
-    else
-      button(label, tag_options)
+    cond do
+      method == "get" && live? -> Phoenix.LiveView.live_link(label, tag_options)
+      method == "get" -> link(label, tag_options)
+      true -> button(label, tag_options)
     end
   end
 
@@ -123,13 +124,17 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   Renders person currently on call.
   """
   def render_on_call_person(conn) do
-    people = case Artemis.Worker.PagerDutyOnCallSynchronizer.get_result() do
-      nil -> []
-      data -> data
-        |> Enum.filter(&(Map.get(&1, "escalation_level") == 1))
-        |> Enum.map(&Artemis.Helpers.deep_get(&1, ["user", "summary"]))
-        |> Enum.uniq
-    end
+    people =
+      case Artemis.Worker.PagerDutyOnCallSynchronizer.get_result() do
+        nil ->
+          []
+
+        data ->
+          data
+          |> Enum.filter(&(Map.get(&1, "escalation_level") == 1))
+          |> Enum.map(&Artemis.Helpers.deep_get(&1, ["user", "summary"]))
+          |> Enum.uniq()
+      end
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_person.html", conn: conn, people: people)
   end
@@ -139,12 +144,14 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   """
   def render_on_call_status(conn, user) do
     by_status = Artemis.GetIncidentReports.call(%{reports: [:count_by_status]}, user).count_by_status
-    color = cond do
-      has_status?(by_status, "triggered") -> "red"
-      has_status?(by_status, "acknowledged") -> "yellow"
-      has_status?(by_status, "resolved") ->  "green"
-      true -> "gray"
-    end
+
+    color =
+      cond do
+        has_status?(by_status, "triggered") -> "red"
+        has_status?(by_status, "acknowledged") -> "yellow"
+        has_status?(by_status, "resolved") -> "green"
+        true -> "gray"
+      end
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_status.html", conn: conn, color: color)
   end
@@ -370,4 +377,16 @@ defmodule ArtemisWeb.ViewHelper.Layout do
   def render_flash_notifications(conn) do
     Phoenix.View.render(ArtemisWeb.LayoutView, "flash_notifications.html", conn: conn)
   end
+
+  @doc """
+  Encodes JSON compatable data into a pretty printed string
+  """
+  def pretty_print_json_into_textarea(form, key) do
+    form
+    |> input_value(key)
+    |> pretty_print_value()
+  end
+
+  defp pretty_print_value(value) when is_map(value), do: Jason.encode!(value, pretty: true)
+  defp pretty_print_value(value), do: value
 end

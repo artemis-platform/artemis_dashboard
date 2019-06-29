@@ -67,7 +67,7 @@
           <td><%= render_date_time(incident.triggered_at) %></td>
           <td class="text"><%= incident.title %></td>
           <td>
-            <span class="status-label status-<%= incident.status %>">
+            <span class="status-label <%= status_color(incident) %>">
               <%= incident.status %>
             </span>
           </td>

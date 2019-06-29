@@ -1,8 +1,8 @@
 defmodule Artemis.Schema do
-  @callback fields :: List.t()
-  @callback required :: List.t()
+  @callback required_fields :: List.t()
+  @callback updatable_fields :: List.t()
 
-  defmacro __using__(_opts) do
+  defmacro __using__(_options) do
     quote do
       use Ecto.Schema
 
@@ -23,6 +23,8 @@ defmodule Artemis.Schema do
         |> Enum.map(&Map.get(&1, field))
         |> Enum.reject(&is_nil(&1))
       end
+
+      @behaviour Artemis.Schema
     end
   end
 end

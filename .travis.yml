@@ -19,6 +19,7 @@ addons:
       - google-chrome-stable
 
 services:
+  - couchdb
   - xvfb
 
 cache:
@@ -59,6 +60,7 @@ before_script:
 env:
   matrix:
     - TEST="--include browser"
+    - TEST="formatter"
 
 script:
   - bin/ci/test "${TEST}"
