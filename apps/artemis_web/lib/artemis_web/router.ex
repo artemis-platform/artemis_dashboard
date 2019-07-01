@@ -66,7 +66,7 @@ defmodule ArtemisWeb.Router do
       resources "/permissions", PermissionController
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]
-      resources "/shared-jobs", SharedJobController
+      resources "/jobs", JobController
       resources "/tags", TagController
 
       resources "/users", UserController do

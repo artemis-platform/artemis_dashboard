@@ -1,8 +1,8 @@
-defmodule Artemis.ListSharedJobs do
+defmodule Artemis.ListJobs do
   use Artemis.Context
 
   alias Artemis.Drivers.IBMCloudant
-  alias Artemis.SharedJob
+  alias Artemis.Job
 
   @default_order "slug"
   @default_page_size 25
@@ -34,8 +34,8 @@ defmodule Artemis.ListSharedJobs do
   end
 
   defp get_filtered_records(params) do
-    cloudant_host = SharedJob.get_cloudant_host()
-    cloudant_path = SharedJob.get_cloudant_path()
+    cloudant_host = Job.get_cloudant_host()
+    cloudant_path = Job.get_cloudant_path()
     select_all_selector = %{_id: %{"$gt": nil}}
 
     body = %{
@@ -54,8 +54,8 @@ defmodule Artemis.ListSharedJobs do
   end
 
   defp get_search_records(%{"query" => query}) do
-    cloudant_host = SharedJob.get_cloudant_host()
-    cloudant_path = SharedJob.get_cloudant_search_path()
+    cloudant_host = Job.get_cloudant_host()
+    cloudant_path = Job.get_cloudant_search_path()
 
     query_params = [
       include_docs: true,
@@ -80,6 +80,6 @@ defmodule Artemis.ListSharedJobs do
   end
 
   defp parse_response_body(%{"docs" => docs}) do
-    Enum.map(docs, &SharedJob.from_json(&1))
+    Enum.map(docs, &Job.from_json(&1))
   end
 end

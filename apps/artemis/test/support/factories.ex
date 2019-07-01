@@ -71,8 +71,8 @@ defmodule Artemis.Factories do
     }
   end
 
-  def shared_job_factory do
-    %Artemis.SharedJob{
+  def job_factory do
+    %Artemis.Job{
       _id: Faker.UUID.v4(),
       _rev: sequence(:slug, &"#{&1}-#{Faker.UUID.v4()}"),
       cmd: "#{Faker.Internet.slug()}.py",

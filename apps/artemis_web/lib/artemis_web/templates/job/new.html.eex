@@ -1,6 +1,6 @@
 <div id="content-header">
   <header>
-    <h1>Edit Shared Job</h1>
+    <h1>New Job</h1>
   </header>
 </div>
 
@@ -12,11 +12,9 @@
   <%= render_flash_notifications @conn %>
 
   <%=
-    form_assigns =
-      assigns
-      |> Map.put(:action, Routes.shared_job_path(@conn, :update, @job._id))
-      |> Map.put(:method, "put")
+    form_assigns = Map.put(assigns, :action, Routes.job_path(@conn, :create))
 
     render "form.html", form_assigns
   %>
 </div>
+

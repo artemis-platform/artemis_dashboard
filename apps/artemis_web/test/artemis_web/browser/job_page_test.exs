@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.SharedJobPageTest do
+defmodule ArtemisWeb.JobPageTest do
   use ArtemisWeb.ConnCase
   use ExUnit.Case
   use Hound.Helpers
@@ -7,15 +7,15 @@ defmodule ArtemisWeb.SharedJobPageTest do
   import ArtemisWeb.BrowserHelpers
   import ArtemisWeb.Router.Helpers
 
-  alias Artemis.SharedJob
+  alias Artemis.Job
 
   @moduletag :browser
-  @url shared_job_url(ArtemisWeb.Endpoint, :index)
+  @url job_url(ArtemisWeb.Endpoint, :index)
 
   hound_session()
 
   setup_all do
-    Artemis.DataCase.cloudant_delete_all(SharedJob)
+    Artemis.DataCase.cloudant_delete_all(Job)
 
     {:ok, []}
   end
@@ -30,28 +30,28 @@ defmodule ArtemisWeb.SharedJobPageTest do
 
   describe "index" do
     setup do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
 
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, shared_job: shared_job}
+      {:ok, job: job}
     end
 
     test "list of records" do
       assert page_title() == "Artemis"
-      assert visible?("Shared Jobs")
+      assert visible?("Jobs")
     end
 
     # @tag :cloudant_exclusive_feature
-    # test "search", %{shared_job: shared_job} do
+    # test "search", %{job: job} do
     #   fill_inputs(".search-resource", %{
-    #     query: shared_job.name
+    #     query: job.name
     #   })
 
     #   submit_search(".search-resource")
 
-    #   assert visible?(shared_job.name)
+    #   assert visible?(job.name)
     # end
   end
 
@@ -66,11 +66,11 @@ defmodule ArtemisWeb.SharedJobPageTest do
     test "submitting an invalid form shows an error" do
       click_link("New")
 
-      fill_inputs("#shared-job-form", %{
-        "shared_job[raw_data]": "{"
+      fill_inputs("#job-form", %{
+        "job[raw_data]": "{"
       })
 
-      submit_form("#shared-job-form")
+      submit_form("#job-form")
 
       assert visible?("is invalid")
     end
@@ -83,11 +83,11 @@ defmodule ArtemisWeb.SharedJobPageTest do
         status: "Completed"
       }
 
-      fill_inputs("#shared-job-form", %{
-        "shared_job[raw_data]": Jason.encode!(raw_data)
+      fill_inputs("#job-form", %{
+        "job[raw_data]": Jason.encode!(raw_data)
       })
 
-      submit_form("#shared-job-form")
+      submit_form("#job-form")
 
       assert visible?("Test Name")
       assert visible?("Completed")
@@ -96,28 +96,28 @@ defmodule ArtemisWeb.SharedJobPageTest do
 
   describe "show" do
     setup do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
 
       browser_sign_in()
-      navigate_to("#{@url}/#{shared_job._id}")
+      navigate_to("#{@url}/#{job._id}")
 
-      {:ok, shared_job: shared_job}
+      {:ok, job: job}
     end
 
-    test "record details", %{shared_job: shared_job} do
-      assert visible?(shared_job.name)
-      assert visible?(shared_job.status)
+    test "record details", %{job: job} do
+      assert visible?(job.name)
+      assert visible?(job.status)
     end
   end
 
   describe "edit / update" do
     setup do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
 
       browser_sign_in()
-      navigate_to("#{@url}/#{shared_job._id}")
+      navigate_to("#{@url}/#{job._id}")
 
-      {:ok, shared_job: shared_job}
+      {:ok, job: job}
     end
 
     test "successfully updates record" do
@@ -128,11 +128,11 @@ defmodule ArtemisWeb.SharedJobPageTest do
         status: "Pending"
       }
 
-      fill_inputs("#shared-job-form", %{
-        "shared_job[raw_data]": Jason.encode!(raw_data)
+      fill_inputs("#job-form", %{
+        "job[raw_data]": Jason.encode!(raw_data)
       })
 
-      submit_form("#shared-job-form")
+      submit_form("#job-form")
 
       assert visible?("Updated Name")
       assert visible?("Pending")
@@ -141,21 +141,21 @@ defmodule ArtemisWeb.SharedJobPageTest do
 
   describe "delete" do
     setup do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
 
       browser_sign_in()
-      navigate_to("#{@url}/#{shared_job._id}")
+      navigate_to("#{@url}/#{job._id}")
 
-      {:ok, shared_job: shared_job}
+      {:ok, job: job}
     end
 
     @tag :uses_browser_alert_box
-    # test "deletes record and redirects to index", %{shared_job: shared_job} do
+    # test "deletes record and redirects to index", %{job: job} do
     #   click_button("Delete")
     #   accept_dialog()
 
     #   assert current_url() == @url
-    #   assert not visible?(shared_job._id)
+    #   assert not visible?(job._id)
     # end
   end
 end

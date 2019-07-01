@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.SharedJobLive do
+defmodule ArtemisWeb.JobLive do
   use ArtemisWeb.LiveView
 
   # LiveView Callbacks
@@ -14,7 +14,7 @@ defmodule ArtemisWeb.SharedJobLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(ArtemisWeb.SharedJobView, "_record.html", assigns)
+    Phoenix.View.render(ArtemisWeb.JobView, "_record.html", assigns)
   end
 
   # GenServer Callbacks
@@ -29,7 +29,7 @@ defmodule ArtemisWeb.SharedJobLive do
   # Helpers
 
   defp update_if_match(socket, %{action: action, document: document, id: id, schema: schema}) do
-    match? = id == socket.assigns.job._id && schema == Artemis.SharedJob
+    match? = id == socket.assigns.job._id && schema == Artemis.Job
 
     cond do
       match? && action == "delete" -> assign(socket, :job, document)

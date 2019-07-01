@@ -19,7 +19,7 @@ defmodule Artemis.Drivers.IBMCloudant.Config do
         [
           host: :shared,
           name: "jobs",
-          schema: Artemis.SharedJob
+          schema: Artemis.Job
         ]
       ]
 

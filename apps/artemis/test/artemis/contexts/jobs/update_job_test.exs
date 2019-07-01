@@ -1,9 +1,9 @@
-defmodule Artemis.UpdateSharedJobTest do
+defmodule Artemis.UpdateJobTest do
   use Artemis.DataCase
 
   import Artemis.Factories
 
-  alias Artemis.UpdateSharedJob
+  alias Artemis.UpdateJob
 
   @moduletag :cloudant
 
@@ -13,33 +13,33 @@ defmodule Artemis.UpdateSharedJobTest do
       params = get_update_params()
 
       assert_raise Artemis.Context.Error, fn ->
-        UpdateSharedJob.call!(invalid_id, params, Mock.system_user())
+        UpdateJob.call!(invalid_id, params, Mock.system_user())
       end
     end
 
     test "returns successfully when params are empty" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = %{}
 
-      updated = UpdateSharedJob.call!(shared_job, params, Mock.system_user())
+      updated = UpdateJob.call!(job, params, Mock.system_user())
 
-      assert updated.name == shared_job.name
+      assert updated.name == job.name
     end
 
     test "updates a record when passed valid params" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = get_update_params()
 
-      updated = UpdateSharedJob.call!(shared_job, params, Mock.system_user())
+      updated = UpdateJob.call!(job, params, Mock.system_user())
 
       assert updated.name == params.name
     end
 
     test "updates a record when passed an id and valid params" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = get_update_params()
 
-      updated = UpdateSharedJob.call!(shared_job._id, params, Mock.system_user())
+      updated = UpdateJob.call!(job._id, params, Mock.system_user())
 
       assert updated.name == params.name
     end
@@ -50,52 +50,52 @@ defmodule Artemis.UpdateSharedJobTest do
       invalid_id = 50_000_000
       params = get_update_params()
 
-      {:error, _} = UpdateSharedJob.call(invalid_id, params, Mock.system_user())
+      {:error, _} = UpdateJob.call(invalid_id, params, Mock.system_user())
     end
 
     test "returns successfully when params are empty" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = %{}
 
-      {:ok, updated} = UpdateSharedJob.call(shared_job, params, Mock.system_user())
+      {:ok, updated} = UpdateJob.call(job, params, Mock.system_user())
 
-      assert updated.name == shared_job.name
+      assert updated.name == job.name
     end
 
     test "updates a record when passed valid params" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = get_update_params()
 
-      {:ok, updated} = UpdateSharedJob.call(shared_job, params, Mock.system_user())
+      {:ok, updated} = UpdateJob.call(job, params, Mock.system_user())
 
       assert updated.name == params.name
     end
 
     test "updates a record when passed an id and valid params" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = get_update_params()
 
-      {:ok, updated} = UpdateSharedJob.call(shared_job._id, params, Mock.system_user())
+      {:ok, updated} = UpdateJob.call(job._id, params, Mock.system_user())
 
       assert updated.name == params.name
     end
 
     test "updates only the passed attributes" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       updated_name = "Updated Name"
       params = %{name: updated_name}
 
-      assert shared_job.name != updated_name
-      assert shared_job.status != nil
+      assert job.name != updated_name
+      assert job.status != nil
 
-      {:ok, updated} = UpdateSharedJob.call(shared_job, params, Mock.system_user())
+      {:ok, updated} = UpdateJob.call(job, params, Mock.system_user())
 
       assert updated.name == params.name
-      assert updated.status == shared_job.status
+      assert updated.status == job.status
     end
 
     test "if passed, the `raw_data` attribute trumps other values" do
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       updated_name = "Updated Name"
 
       params = %{
@@ -106,10 +106,10 @@ defmodule Artemis.UpdateSharedJobTest do
         status: "Ignored Status Update"
       }
 
-      assert shared_job.name != updated_name
-      assert shared_job.status != nil
+      assert job.name != updated_name
+      assert job.status != nil
 
-      {:ok, updated} = UpdateSharedJob.call(shared_job, params, Mock.system_user())
+      {:ok, updated} = UpdateJob.call(job, params, Mock.system_user())
 
       assert updated.name == params.raw_data.name
       assert updated.status == nil
@@ -120,13 +120,13 @@ defmodule Artemis.UpdateSharedJobTest do
     test "publishes event and record" do
       ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())
 
-      shared_job = cloudant_insert(:shared_job)
+      job = cloudant_insert(:job)
       params = get_update_params()
 
-      {:ok, updated} = UpdateSharedJob.call(shared_job, params, Mock.system_user())
+      {:ok, updated} = UpdateJob.call(job, params, Mock.system_user())
 
       assert_received %Phoenix.Socket.Broadcast{
-        event: "shared-job:updated",
+        event: "job:updated",
         payload: %{
           data: ^updated
         }
@@ -137,7 +137,7 @@ defmodule Artemis.UpdateSharedJobTest do
   # Helpers
 
   defp get_update_params() do
-    :shared_job
+    :job
     |> params_for()
     |> Map.delete(:_id)
     |> Map.delete(:_rev)

@@ -62,7 +62,7 @@ config :artemis, :ibm_cloudant,
     [
       host: :shared,
       name: "jobs",
-      schema: Artemis.SharedJob
+      schema: Artemis.Job
     ]
   ]
 

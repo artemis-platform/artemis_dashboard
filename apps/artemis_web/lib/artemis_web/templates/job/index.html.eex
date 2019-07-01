@@ -1,10 +1,10 @@
 <div id="content-header">
   <header>
-    <h1>Shared Jobs</h1>
+    <h1>Jobs</h1>
 
     <div class="actions">
-      <%= if has?(@conn, "shared-jobs:create") do %>
-        <%= action "New", to: Routes.shared_job_path(@conn, :new), color: "blue" %>
+      <%= if has?(@conn, "jobs:create") do %>
+        <%= action "New", to: Routes.job_path(@conn, :new), color: "blue" %>
       <% end %>
     </div>
   </header>
@@ -34,8 +34,8 @@
       <%= for job <- @jobs do %>
         <tr>
           <td>
-            <%= if has?(@conn, "shared-jobs:show") do %>
-              <%= link job._id, to: Routes.shared_job_path(@conn, :show, job._id) %>
+            <%= if has?(@conn, "jobs:show") do %>
+              <%= link job._id, to: Routes.job_path(@conn, :show, job._id) %>
             <% else %>
               <%= job._id %>
             <% end %>
@@ -48,11 +48,11 @@
           </td>
           <td><%= job.first_run %></td>
           <td>
-            <%= if has?(@conn, "shared-jobs:show") do %>
-              <%= link "Show", to: Routes.shared_job_path(@conn, :show, job._id) %>
+            <%= if has?(@conn, "jobs:show") do %>
+              <%= link "Show", to: Routes.job_path(@conn, :show, job._id) %>
             <% end %>
-            <%= if has?(@conn, "shared-jobs:update") do %>
-              <%= link "Edit", to: Routes.shared_job_path(@conn, :edit, job._id) %>
+            <%= if has?(@conn, "jobs:update") do %>
+              <%= link "Edit", to: Routes.job_path(@conn, :edit, job._id) %>
             <% end %>
           </td>
         </tr>

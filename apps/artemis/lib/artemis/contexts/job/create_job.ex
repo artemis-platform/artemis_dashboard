@@ -1,19 +1,19 @@
-defmodule Artemis.CreateSharedJob do
+defmodule Artemis.CreateJob do
   use Artemis.Context
 
   alias Artemis.Drivers.IBMCloudant
-  alias Artemis.GetSharedJob
-  alias Artemis.SharedJob
+  alias Artemis.GetJob
+  alias Artemis.Job
 
   @moduledoc """
-  Creates a new Shared Job document in IBM Cloudant.
+  Creates a new Job document in IBM Cloudant.
 
   See `Artemis.Context.Cloudant` for details.
   """
 
   def call!(params, user) do
     case call(params, user) do
-      {:error, _} -> raise(Artemis.Context.Error, "Error creating shared job")
+      {:error, _} -> raise(Artemis.Context.Error, "Error creating job")
       {:ok, result} -> result
     end
   end
@@ -25,7 +25,7 @@ defmodule Artemis.CreateSharedJob do
     |> insert_record()
     |> parse_response()
     |> get_record(user)
-    |> Event.broadcast("shared-job:created", user)
+    |> Event.broadcast("job:created", user)
   end
 
   defp create_params(params) do
@@ -48,7 +48,7 @@ defmodule Artemis.CreateSharedJob do
   defp decode_raw_data_param(params), do: params
 
   defp insert_record(params) do
-    changeset = SharedJob.changeset(%SharedJob{}, params)
+    changeset = Job.changeset(%Job{}, params)
 
     case changeset.valid? do
       false -> Ecto.Changeset.apply_action(changeset, :insert)
@@ -58,8 +58,8 @@ defmodule Artemis.CreateSharedJob do
 
   defp insert(params) do
     body = get_body(params)
-    cloudant_host = SharedJob.get_cloudant_host()
-    cloudant_path = SharedJob.get_cloudant_path()
+    cloudant_host = Job.get_cloudant_host()
+    cloudant_path = Job.get_cloudant_path()
 
     IBMCloudant.Request.call(%{
       body: Jason.encode!(body),
@@ -71,12 +71,12 @@ defmodule Artemis.CreateSharedJob do
 
   # Allow custom payloads by giving `raw_data` value precedence if passed
   defp get_body(%{"raw_data" => raw_data}), do: raw_data
-  defp get_body(params), do: SharedJob.to_json(params)
+  defp get_body(params), do: Job.to_json(params)
 
   defp parse_response({:ok, body}), do: body
   defp parse_response({:error, %Ecto.Changeset{} = changeset}), do: {:error, changeset}
-  defp parse_response(_), do: {:error, "Error creating shared job"}
+  defp parse_response(_), do: {:error, "Error creating job"}
 
-  defp get_record(%{"ok" => true, "id" => id}, user), do: GetSharedJob.call(id, user)
+  defp get_record(%{"ok" => true, "id" => id}, user), do: GetJob.call(id, user)
   defp get_record(error, _), do: error
 end

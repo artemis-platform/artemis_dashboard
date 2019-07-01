@@ -1,13 +1,13 @@
-defmodule Artemis.UpdateSharedJob do
+defmodule Artemis.UpdateJob do
   use Artemis.Context
 
   alias Artemis.Drivers.IBMCloudant
-  alias Artemis.GetSharedJob
-  alias Artemis.SharedJob
+  alias Artemis.GetJob
+  alias Artemis.Job
 
   def call!(id, params, user) do
     case call(id, params, user) do
-      {:error, _} -> raise(Artemis.Context.Error, "Error updating shared job")
+      {:error, _} -> raise(Artemis.Context.Error, "Error updating job")
       {:ok, result} -> result
     end
   end
@@ -20,7 +20,7 @@ defmodule Artemis.UpdateSharedJob do
     |> update_record(params)
     |> parse_response()
     |> get_updated_record(user)
-    |> Event.broadcast("shared-job:updated", user)
+    |> Event.broadcast("job:updated", user)
   end
 
   defp update_params(params) do
@@ -45,12 +45,12 @@ defmodule Artemis.UpdateSharedJob do
   defp get_updated_record(error, _), do: error
 
   defp get_record(%{_id: id}, user), do: get_record(id, user)
-  defp get_record(id, user), do: GetSharedJob.call(id, user)
+  defp get_record(id, user), do: GetJob.call(id, user)
 
   defp update_record(nil, _params), do: {:error, "Record not found"}
 
   defp update_record(record, params) do
-    changeset = SharedJob.changeset(record, params)
+    changeset = Job.changeset(record, params)
 
     case changeset.valid? do
       false -> Ecto.Changeset.apply_action(changeset, :update)
@@ -60,8 +60,8 @@ defmodule Artemis.UpdateSharedJob do
 
   defp update(%{_id: id, _rev: rev} = record, params) do
     body = get_body(record, params)
-    cloudant_host = SharedJob.get_cloudant_host()
-    cloudant_path = SharedJob.get_cloudant_path()
+    cloudant_host = Job.get_cloudant_host()
+    cloudant_path = Job.get_cloudant_path()
     query_params = [rev: rev]
 
     IBMCloudant.Request.call(%{
@@ -79,10 +79,10 @@ defmodule Artemis.UpdateSharedJob do
   defp get_body(record, params) do
     params
     |> Map.put_new("raw_data", record.raw_data)
-    |> SharedJob.to_json()
+    |> Job.to_json()
   end
 
   defp parse_response({:ok, body}), do: body
   defp parse_response({:error, %Ecto.Changeset{} = changeset}), do: {:error, changeset}
-  defp parse_response(_), do: {:error, "Error updating shared job"}
+  defp parse_response(_), do: {:error, "Error updating job"}
 end

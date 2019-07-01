@@ -1,17 +1,17 @@
-defmodule Artemis.SharedJobTest do
+defmodule Artemis.JobTest do
   use Artemis.DataCase
   use ExUnit.Case, async: true
 
   import Artemis.Factories
 
-  alias Artemis.SharedJob
+  alias Artemis.Job
 
   describe "changeset - validations" do
     test "validates `raw_data` is can be encoded to JSON" do
       struct =
-        :shared_job
+        :job
         |> params_for()
-        |> SharedJob.from_json()
+        |> Job.from_json()
 
       # Other Params
 
@@ -19,7 +19,7 @@ defmodule Artemis.SharedJobTest do
         name: "new name"
       }
 
-      changeset = SharedJob.changeset(struct, other_params)
+      changeset = Job.changeset(struct, other_params)
 
       assert changeset.valid? == true
 
@@ -31,7 +31,7 @@ defmodule Artemis.SharedJobTest do
         }
       }
 
-      changeset = SharedJob.changeset(struct, valid_params)
+      changeset = Job.changeset(struct, valid_params)
 
       assert changeset.valid? == true
 
@@ -43,7 +43,7 @@ defmodule Artemis.SharedJobTest do
         }
       }
 
-      changeset = SharedJob.changeset(struct, invalid_params)
+      changeset = Job.changeset(struct, invalid_params)
 
       assert changeset.valid? == false
       assert errors_on(changeset) == %{raw_data: ["invalid json"]}
@@ -53,11 +53,11 @@ defmodule Artemis.SharedJobTest do
   describe "helpers - from_json" do
     test "returns a struct from encoded JSON" do
       params =
-        :shared_job
+        :job
         |> params_for()
         |> Jason.encode!()
 
-      struct = SharedJob.from_json(params)
+      struct = Job.from_json(params)
 
       assert struct._id != nil
       assert struct._id == Jason.decode!(params)["_id"]
@@ -65,12 +65,12 @@ defmodule Artemis.SharedJobTest do
 
     test "returns a struct from decoded JSON" do
       params =
-        :shared_job
+        :job
         |> params_for()
         |> Jason.encode!()
         |> Jason.decode!()
 
-      struct = SharedJob.from_json(params)
+      struct = Job.from_json(params)
 
       assert struct._id != nil
       assert struct._id == params["_id"]
@@ -78,13 +78,13 @@ defmodule Artemis.SharedJobTest do
 
     test "drops keys not defined in schema; stores original data under `raw_data`" do
       params =
-        :shared_job
+        :job
         |> params_for()
         |> Jason.encode!()
         |> Jason.decode!()
         |> Map.put("custom_key", "custom_value")
 
-      struct = SharedJob.from_json(params)
+      struct = Job.from_json(params)
 
       assert struct._id == params["_id"]
 
@@ -98,18 +98,18 @@ defmodule Artemis.SharedJobTest do
   describe "helpers - to_json" do
     test "uses `raw_data` to ensure all keys are preserved" do
       params =
-        :shared_job
+        :job
         |> params_for()
         |> Jason.encode!()
         |> Jason.decode!()
         |> Map.put("custom_key", "custom_value")
 
-      struct = SharedJob.from_json(params)
+      struct = Job.from_json(params)
 
       assert Map.get(struct, :custom_key) == nil
       assert Map.get(struct, "custom_key") == nil
 
-      json = SharedJob.to_json(struct)
+      json = Job.to_json(struct)
 
       assert Map.has_key?(json, "raw_data") == false
       assert json["custom_key"] == "custom_value"

@@ -148,7 +148,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   defp get_data_struct(_), do: get_initial_data_struct()
 
   defp get_initial_data_struct() do
-    struct(Data, schema: Artemis.SharedJob)
+    struct(Data, schema: Artemis.Job)
   end
 
   defp decode_data(data) do
@@ -194,7 +194,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     document = Map.get(data, "doc")
 
     case Artemis.Helpers.present?(document) do
-      true -> Artemis.SharedJob.from_json(document)
+      true -> Artemis.Job.from_json(document)
       false -> document
     end
   end

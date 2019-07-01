@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.SharedJobView do
+defmodule ArtemisWeb.JobView do
   use ArtemisWeb, :view
 
   def status_color(%{status: status}) when is_bitstring(status) do

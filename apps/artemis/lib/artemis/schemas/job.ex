@@ -1,4 +1,4 @@
-defmodule Artemis.SharedJob do
+defmodule Artemis.Job do
   use Artemis.Schema
   use Artemis.Schema.Cloudant
 
