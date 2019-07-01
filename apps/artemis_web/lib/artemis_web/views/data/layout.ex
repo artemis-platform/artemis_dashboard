@@ -73,7 +73,7 @@ defmodule ArtemisWeb.ViewData.Layout do
           verify: &has?(&1, "roles:create")
         ]
       ],
-      "Jobs": [
+      Jobs: [
         [
           label: "List Jobs",
           path: &Routes.job_path(&1, :index),
