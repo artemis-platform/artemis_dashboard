@@ -241,7 +241,7 @@ defmodule Artemis.Repo.GenerateData do
     help_body = """
     Artemis Dashboard is an example of an operational dashboard built on top of Artemis Platform.
 
-    Learn more about [Artemis Dashboard on GitHub](https://github.com/chrislaskey/artemis_dashboard).
+    Learn more about [Artemis Dashboard on GitHub](https://github.com/artemis-platform/artemis_dashboard).
     """
 
     example_body = """
