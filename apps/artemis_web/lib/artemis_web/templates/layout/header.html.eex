@@ -130,7 +130,7 @@
     <div class="external-links">
       <ul>
         <li>
-          <%= link "GitHub", to: "https://github.com/chrislaskey/artemis_dashboard", target: "_blank" %>
+          <%= link "GitHub", to: "https://github.com/artemis-platform/artemis_dashboard", target: "_blank" %>
         </li>
         <li>
           <%= link "ServiceNow", to: "https://service-now.com", target: "_blank" %>
