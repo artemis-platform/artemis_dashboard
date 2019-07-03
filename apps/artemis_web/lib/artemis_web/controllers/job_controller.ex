@@ -16,8 +16,9 @@ defmodule ArtemisWeb.JobController do
         |> Map.put(:paginate, true)
 
       jobs = ListJobs.call(params, current_user(conn))
+      search_enabled = Job.search_enabled?()
 
-      render(conn, "index.html", jobs: jobs)
+      render(conn, "index.html", jobs: jobs, search_enabled: search_enabled)
     end)
   end
 

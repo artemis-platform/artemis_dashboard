@@ -96,6 +96,13 @@ defmodule Artemis.Schema.Cloudant do
         "#{host[:hostname]}/#{database[:name]}"
       end
 
+      def search_enabled?() do
+        database = get_cloudant_database_config(__MODULE__)
+        host = get_cloudant_host_config(database[:host])
+
+        Keyword.fetch!(host, :search_enabled)
+      end
+
       # Helpers
 
       defp get_cloudant_database_config(schema) do

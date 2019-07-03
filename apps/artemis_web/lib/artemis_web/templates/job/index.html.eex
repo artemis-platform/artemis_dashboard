@@ -17,7 +17,9 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <%= if @search_enabled do %>
+    <%= render_search @conn %>
+  <% end %>
 
   <table class="data-table">
     <thead>

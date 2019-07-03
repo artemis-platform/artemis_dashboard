@@ -8,6 +8,9 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
   Is idempotent.
   """
 
+  # See: http://docs.couchdb.org/en/latest/setup/single-node.html
+  @change_databases [:_global_changes, :_replicator, :_users]
+
   def call() do
     hosts_config = IBMCloudant.Config.get_hosts_config!()
     databases_config = IBMCloudant.Config.get_databases_config!()
@@ -18,6 +21,12 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
         host_name = Keyword.fetch!(host_config, :name)
         existing_databases = get_existing_databases(host_name)
         expected_databases = Map.fetch!(databases_by_host, host_name)
+
+        Enum.map(@change_databases, fn database_name ->
+          database_config = [name: database_name]
+
+          {:ok, _} = IBMCloudant.Create.call(host_config, database_config)
+        end)
 
         Enum.map(expected_databases, fn database ->
           database_name = Keyword.fetch!(database, :name)
