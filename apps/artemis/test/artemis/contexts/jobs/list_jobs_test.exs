@@ -16,7 +16,7 @@ defmodule Artemis.ListJobsTest do
 
   describe "call" do
     test "returns empty list when no jobs exist" do
-      assert ListJobs.call(Mock.system_user()) == []
+      assert ListJobs.call(Mock.system_user()).entries == []
     end
 
     @tag :cloudant_exclusive_feature
@@ -25,8 +25,8 @@ defmodule Artemis.ListJobsTest do
 
       result = ListJobs.call(Mock.system_user())
 
-      assert length(result) == 1
-      assert hd(result)._id == job._id
+      assert length(result.entries) == 1
+      assert hd(result.entries)._id == job._id
     end
 
     @tag :cloudant_exclusive_feature
@@ -34,7 +34,7 @@ defmodule Artemis.ListJobsTest do
       count = 3
       cloudant_insert_list(count, :job)
 
-      jobs = ListJobs.call(Mock.system_user())
+      jobs = ListJobs.call(Mock.system_user()).entries
 
       assert length(jobs) == count
     end
@@ -54,7 +54,7 @@ defmodule Artemis.ListJobsTest do
       cloudant_insert(:job, name: "Five Six", status: "five-six")
 
       user = Mock.system_user()
-      jobs = ListJobs.call(user)
+      jobs = ListJobs.call(user).entries
 
       assert length(jobs) == 4
 
@@ -64,7 +64,7 @@ defmodule Artemis.ListJobsTest do
         query: "name:Six"
       }
 
-      jobs = ListJobs.call(params, user)
+      jobs = ListJobs.call(params, user).entries
 
       assert length(jobs) == 2
 
@@ -74,7 +74,7 @@ defmodule Artemis.ListJobsTest do
         query: "status:four*"
       }
 
-      jobs = ListJobs.call(params, user)
+      jobs = ListJobs.call(params, user).entries
 
       assert length(jobs) == 2
 
@@ -84,7 +84,7 @@ defmodule Artemis.ListJobsTest do
         query: "status:our*"
       }
 
-      jobs = ListJobs.call(params, user)
+      jobs = ListJobs.call(params, user).entries
 
       assert length(jobs) == 0
     end

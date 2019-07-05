@@ -1,4 +1,10 @@
 <div class="pagination-container">
-  <%= pagination_links @conn, @data, @args, @params %>
-  <span class="page-summary">Page <%= @data.page_number %> of <%= @data.total_pages %></span>
+  <%= if @type == "scrivener" do %>
+    <%= pagination_links @conn, @data, @args, @params %>
+    <span class="page-summary">Page <%= Map.get(@data, :page_number) %> of <%= Map.get(@data, :total_pages) %></span>
+  <% else %>
+    <div class="ui pagination menu">
+      <%= Enum.map(@links, &(&1)) %>
+    </div>
+  <% end %>
 </div>
