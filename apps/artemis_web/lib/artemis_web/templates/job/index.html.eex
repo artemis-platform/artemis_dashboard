@@ -33,7 +33,7 @@
     </thead>
     <tbody>
       <%= render_table_row_if_empty(@jobs) %>
-      <%= for job <- @jobs do %>
+      <%= for job <- @jobs.entries do %>
         <tr>
           <td>
             <%= if has?(@conn, "jobs:show") do %>
@@ -61,4 +61,6 @@
       <% end %>
     </tbody>
   </table>
+
+  <%= render_pagination @conn, @jobs %>
 </div>

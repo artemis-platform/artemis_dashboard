@@ -4,6 +4,21 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   @default_delimiter ","
 
   @doc """
+  Generates empty table row if no records match
+  """
+  def render_table_row_if_empty(records, options \\ [])
+
+  def render_table_row_if_empty(%{entries: entries}, options), do: render_table_row_if_empty(entries, options)
+
+  def render_table_row_if_empty(records, options) when length(records) == 0 do
+    message = Keyword.get(options, :message, "No records found")
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "table_row_if_empty.html", message: message)
+  end
+
+  def render_table_row_if_empty(_records, _options), do: nil
+
+  @doc """
   Render sortable table header 
   """
   def sortable_table_header(conn, value, label, delimiter \\ @default_delimiter) do

@@ -96,9 +96,16 @@ defmodule ArtemisWeb do
       import ArtemisWeb.Gettext
       import ArtemisWeb.Guardian.Helpers
       import ArtemisWeb.UserAccess
-      import ArtemisWeb.ViewData.Layout
+      import ArtemisWeb.ViewHelper.Breadcrumbs
       import ArtemisWeb.ViewHelper.Errors
-      import ArtemisWeb.ViewHelper.Layout
+      import ArtemisWeb.ViewHelper.Filter
+      import ArtemisWeb.ViewHelper.HTML
+      import ArtemisWeb.ViewHelper.Navigation
+      import ArtemisWeb.ViewHelper.Notifications
+      import ArtemisWeb.ViewHelper.OnCall
+      import ArtemisWeb.ViewHelper.Pagination
+      import ArtemisWeb.ViewHelper.Print
+      import ArtemisWeb.ViewHelper.Search
       import ArtemisWeb.ViewHelper.Tables
 
       alias ArtemisWeb.Router.Helpers, as: Routes
