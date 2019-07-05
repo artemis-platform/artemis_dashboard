@@ -53,6 +53,7 @@ config :artemis, :ibm_cloudant,
       password: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PASSWORD"),
       hostname: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_HOSTNAME"),
       protocol: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PROTOCOL"),
+      global_changes_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_GLOBAL_CHANGES_ENABLED") == "true",
       search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED") == "true",
       search_design_doc: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_DESIGN_DOC"),
       search_index: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_INDEX")

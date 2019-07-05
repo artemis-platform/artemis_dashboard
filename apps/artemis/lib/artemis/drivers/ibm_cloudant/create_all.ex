@@ -9,7 +9,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
   """
 
   # See: http://docs.couchdb.org/en/latest/setup/single-node.html
-  @change_databases [:_global_changes, :_replicator, :_users]
+  @global_change_databases [:_global_changes, :_replicator, :_users]
 
   def call() do
     hosts_config = IBMCloudant.Config.get_hosts_config!()
@@ -19,14 +19,13 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
     results =
       Enum.map(hosts_config, fn host_config ->
         host_name = Keyword.fetch!(host_config, :name)
+        global_changes_enabled? = Keyword.fetch!(host_config, :global_changes_enabled)
         existing_databases = get_existing_databases(host_name)
         expected_databases = Map.fetch!(databases_by_host, host_name)
 
-        Enum.map(@change_databases, fn database_name ->
-          database_config = [name: database_name]
-
-          {:ok, _} = IBMCloudant.Create.call(host_config, database_config)
-        end)
+        if global_changes_enabled? do
+          create_global_change_databases(host_config)
+        end
 
         Enum.map(expected_databases, fn database ->
           database_name = Keyword.fetch!(database, :name)
@@ -53,5 +52,13 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
       })
 
     databases
+  end
+
+  defp create_global_change_databases(host_config) do
+    Enum.map(@global_change_databases, fn database_name ->
+      database_config = [name: database_name]
+
+      {:ok, _} = IBMCloudant.Create.call(host_config, database_config)
+    end)
   end
 end
