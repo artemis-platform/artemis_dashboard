@@ -24,5 +24,7 @@ defmodule Artemis.Worker.IBMCloudantMigrator do
     |> Application.fetch_env!(:actions)
     |> Keyword.fetch!(:ibm_cloudant_migrator)
     |> Keyword.fetch!(:enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 end

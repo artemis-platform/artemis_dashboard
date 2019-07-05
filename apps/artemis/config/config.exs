@@ -5,19 +5,19 @@ config :artemis,
 
 config :artemis, :actions,
   ibm_cloud_iam_access_token: [
-    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUD_IAM_ACCESS_TOKEN_ENABLED") == "true"
+    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUD_IAM_ACCESS_TOKEN_ENABLED")
   ],
   ibm_cloudant_change_listener: [
-    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_CHANGE_LISTENER") == "true"
+    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_CHANGE_LISTENER")
   ],
   ibm_cloudant_migrator: [
-    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR") == "true"
+    enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR")
   ],
   pager_duty_synchronize_incidents: [
-    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_INCIDENTS") == "true"
+    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_INCIDENTS")
   ],
   pager_duty_synchronize_on_call: [
-    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_ON_CALL") == "true"
+    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_ON_CALL")
   ],
   repo_delete_all: [
     enabled: System.get_env("ARTEMIS_ACTION_REPO_DELETE_ALL_ENABLED")
@@ -53,8 +53,8 @@ config :artemis, :ibm_cloudant,
       password: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PASSWORD"),
       hostname: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_HOSTNAME"),
       protocol: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PROTOCOL"),
-      global_changes_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_GLOBAL_CHANGES_ENABLED") == "true",
-      search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED") == "true",
+      global_changes_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_GLOBAL_CHANGES_ENABLED"),
+      search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED"),
       search_design_doc: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_DESIGN_DOC"),
       search_index: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_INDEX")
     ]
