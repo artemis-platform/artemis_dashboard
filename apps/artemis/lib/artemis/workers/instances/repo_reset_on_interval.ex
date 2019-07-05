@@ -27,7 +27,12 @@ defmodule Artemis.Worker.RepoResetOnInterval do
   # Helpers
 
   defp enabled?() do
-    Application.fetch_env!(:artemis, :actions)[:repo_reset_on_interval][:enabled]
+    :artemis
+    |> Application.fetch_env!(:actions)
+    |> Keyword.fetch!(:repo_reset_on_interval)
+    |> Keyword.fetch!(:enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 
   defp get_interval() do

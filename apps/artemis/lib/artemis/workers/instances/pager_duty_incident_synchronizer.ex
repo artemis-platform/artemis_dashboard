@@ -52,6 +52,8 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     |> Application.fetch_env!(:actions)
     |> Keyword.fetch!(:pager_duty_synchronize_incidents)
     |> Keyword.fetch!(:enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 
   defp fetch_data(data, options \\ []) do

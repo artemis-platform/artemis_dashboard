@@ -100,7 +100,10 @@ defmodule Artemis.Schema.Cloudant do
         database = get_cloudant_database_config(__MODULE__)
         host = get_cloudant_host_config(database[:host])
 
-        Keyword.fetch!(host, :search_enabled)
+        host
+        |> Keyword.fetch!(:search_enabled)
+        |> String.downcase()
+        |> String.equivalent?("true")
       end
 
       # Helpers

@@ -19,11 +19,10 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
     results =
       Enum.map(hosts_config, fn host_config ->
         host_name = Keyword.fetch!(host_config, :name)
-        global_changes_enabled? = Keyword.fetch!(host_config, :global_changes_enabled)
         existing_databases = get_existing_databases(host_name)
         expected_databases = Map.fetch!(databases_by_host, host_name)
 
-        if global_changes_enabled? do
+        if global_changes_enabled?(host_config) do
           create_global_change_databases(host_config)
         end
 
@@ -52,6 +51,13 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
       })
 
     databases
+  end
+
+  defp global_changes_enabled?(host_config) do
+    host_config
+    |> Keyword.fetch!(:global_changes_enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 
   defp create_global_change_databases(host_config) do

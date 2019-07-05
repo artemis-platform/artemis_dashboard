@@ -45,6 +45,8 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     |> Application.fetch_env!(:actions)
     |> Keyword.fetch!(:pager_duty_synchronize_on_call)
     |> Keyword.fetch!(:enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 
   defp create_data(result, meta) do

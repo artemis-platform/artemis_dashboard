@@ -38,6 +38,8 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
     |> Application.fetch_env!(:actions)
     |> Keyword.fetch!(:ibm_cloud_iam_access_token)
     |> Keyword.fetch!(:enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 
   defp get_api_key() do
