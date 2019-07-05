@@ -128,7 +128,7 @@ defmodule Artemis.IntervalWorker do
 
       @impl true
       def handle_call(:pause, _from, state) do
-        if state.timer do
+        if state.timer && state.timer != :paused do
           Process.cancel_timer(state.timer)
         end
 
@@ -144,7 +144,7 @@ defmodule Artemis.IntervalWorker do
 
       @impl true
       def handle_call(:resume, _from, state) do
-        if state.timer do
+        if state.timer && state.timer != :paused do
           Process.cancel_timer(state.timer)
         end
 
