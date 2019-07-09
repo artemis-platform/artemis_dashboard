@@ -26,14 +26,14 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
           create_global_change_databases(host_config)
         end
 
-        Enum.map(expected_databases, fn database ->
-          database_name = Keyword.fetch!(database, :name)
+        Enum.map(expected_databases, fn database_config ->
+          database_name = Keyword.fetch!(database_config, :name)
 
           unless Enum.member?(existing_databases, database_name) do
-            {:ok, _} = IBMCloudant.Create.call(host_config, database)
+            {:ok, _} = IBMCloudant.Create.call(host_config, database_config)
           end
 
-          {:ok, _} = IBMCloudant.CreateIndexes.call(host_config, database)
+          {:ok, _} = IBMCloudant.CreateSearch.call(host_config, database_config)
         end)
       end)
 

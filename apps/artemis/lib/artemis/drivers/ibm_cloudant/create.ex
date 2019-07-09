@@ -2,7 +2,8 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
   alias Artemis.Drivers.IBMCloudant
 
   @moduledoc """
-  Creates specified IBM Cloudant database, including design docs and indexes.
+  Creates specified IBM Cloudant database including design docs and associated
+  indexes and views.
   """
 
   def call(schema) do
