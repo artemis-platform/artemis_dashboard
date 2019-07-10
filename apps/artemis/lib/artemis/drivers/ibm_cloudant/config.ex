@@ -10,6 +10,7 @@ defmodule Artemis.Drivers.IBMCloudant.Config do
           username: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_USERNAME"),
           password: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PASSWORD"),
           hostname: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_HOSTNAME"),
+          create_change_databases: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_CREATE_CHANGE_DATABASES"),
           search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED") == "true",
           search_design_doc: "text-search",
           search_index: "text-search-index"
