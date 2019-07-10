@@ -44,7 +44,7 @@ defmodule Artemis.DataCase do
   def cloudant_delete_all(schema) do
     {:ok, _} = IBMCloudant.Delete.call(schema)
     {:ok, _} = IBMCloudant.Create.call(schema)
-    {:ok, _} = IBMCloudant.CreateIndexes.call(schema)
+    {:ok, _} = IBMCloudant.CreateSearch.call(schema)
   end
 
   @doc """
