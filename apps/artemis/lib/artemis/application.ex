@@ -10,7 +10,8 @@ defmodule Artemis.Application do
   def start(_type, _args) do
     children = [
       Artemis.Repo,
-      supervisor(Artemis.IntervalSupervisor, [])
+      Artemis.CacheSupervisor,
+      supervisor(Artemis.IntervalSupervisor, []),
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Artemis.Supervisor)
