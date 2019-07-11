@@ -3,9 +3,10 @@ defmodule Artemis.Context do
     defexception message: "Context Error"
   end
 
-  defmacro __using__(_opts) do
+  defmacro __using__(options) do
     quote do
-      use Artemis.ContextCache
+      use Artemis.ContextCache,
+        cache_reset_events: Keyword.get(unquote(options), :cache_reset_events, [])
 
       import Artemis.Context
       import Artemis.Repo.Helpers

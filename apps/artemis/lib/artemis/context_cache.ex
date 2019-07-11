@@ -15,7 +15,7 @@ defmodule Artemis.ContextCache do
 
   """
 
-  defmacro __using__(_opts) do
+  defmacro __using__(options) do
     quote do
       import Artemis.ContextCache
 
@@ -51,8 +51,7 @@ defmodule Artemis.ContextCache do
 
           false ->
             options = [
-              # TODO: define and get reset events from schema
-              cache_reset_events: [],
+              cache_reset_events: Keyword.get(unquote(options), :cache_reset_events, []),
               module: __MODULE__
             ]
 
