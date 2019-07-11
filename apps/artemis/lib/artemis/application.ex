@@ -11,7 +11,7 @@ defmodule Artemis.Application do
     children = [
       Artemis.Repo,
       Artemis.CacheSupervisor,
-      supervisor(Artemis.IntervalSupervisor, []),
+      supervisor(Artemis.IntervalSupervisor, [])
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Artemis.Supervisor)

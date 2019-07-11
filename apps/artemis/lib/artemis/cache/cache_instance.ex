@@ -47,12 +47,12 @@ defmodule Artemis.CacheInstance do
   def fetch(module, key, getter) do
     case get(module, key) do
       {:ok, nil} ->
-        Logger.debug "#{get_cache_server_name(module)}: cache miss"
+        Logger.debug("#{get_cache_server_name(module)}: cache miss")
 
         put(module, key, getter.())
 
       {:ok, value} ->
-        Logger.debug "#{get_cache_server_name(module)}: cache hit"
+        Logger.debug("#{get_cache_server_name(module)}: cache hit")
 
         value
     end
@@ -98,6 +98,7 @@ defmodule Artemis.CacheInstance do
 
     {:reply, result, state}
   end
+
   def handle_call({:put, key, value}, _from, state) do
     {:ok, _} = Cachex.put(state.cachex_instance_name, key, value)
 
@@ -107,7 +108,7 @@ defmodule Artemis.CacheInstance do
   @impl true
   def handle_info(%{event: event}, state) do
     if Enum.member?(state.cache_reset_events, event) do
-      Logger.debug "#{state.cachex_instance_name}: Cache reset by event #{event}"
+      Logger.debug("#{state.cachex_instance_name}: Cache reset by event #{event}")
 
       {:ok, _} = Cachex.clear(state.cachex_instance_name)
     end
@@ -125,10 +126,11 @@ defmodule Artemis.CacheInstance do
 
   defp create_cachex_instance(state) do
     cachex_instance_options = [
-      expiration: expiration(
-        default: :timer.minutes(5),
-        interval: :timer.seconds(5)
-      ),
+      expiration:
+        expiration(
+          default: :timer.minutes(5),
+          interval: :timer.seconds(5)
+        ),
       limit: 100,
       stats: true
     ]

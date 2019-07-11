@@ -70,7 +70,7 @@ defmodule Artemis.ContextCache do
         args
         |> get_user_arg()
         |> Map.get(:permissions)
-        |> Enum.map(&(&1.slug))
+        |> Enum.map(& &1.slug)
         |> Enum.sort()
       end
 
@@ -97,10 +97,10 @@ defmodule Artemis.ContextCache do
             |> Enum.reverse()
             |> List.delete_at(index)
             |> Enum.reverse()
-        end 
+        end
       end
 
-      defp user?(value), do: (is_map(value) && value.__struct__ == Artemis.User)
+      defp user?(value), do: is_map(value) && value.__struct__ == Artemis.User
     end
   end
 end
