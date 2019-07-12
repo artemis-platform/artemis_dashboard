@@ -20,6 +20,15 @@ function initializeFilterFields() {
   })
 }
 
+function initializeHighlightJs() {
+  hljs.initHighlightingOnLoad()
+}
+
+function reinitializeHighlightJs() {
+  hljs.initHighlighting.called = false
+  hljs.initHighlighting()
+}
+
 function initializeMarkdownTextarea() {
   $('textarea.markdown').each(function() {
     var easyMDE = new EasyMDE({
@@ -188,10 +197,17 @@ function initializeWikiSidenav() {
 
 $(document).ready(function() {
   initializeFilterFields()
+  initializeHighlightJs()
   initializeMarkdownTextarea()
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()
   initializeTagForm()
   initializeWikiSidenav()
+
+  // Reinitialize after LiveView Updates
+
+  $(document).on("phx:update", function () {
+    reinitializeHighlightJs()
+  })
 })
