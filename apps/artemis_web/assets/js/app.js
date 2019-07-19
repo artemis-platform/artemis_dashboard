@@ -9,5 +9,3 @@ global.$ = jquery
 global.jQuery = jquery
 global.hljs = hljs
 global.qs = qs
-
-hljs.initHighlightingOnLoad()
