@@ -30,6 +30,7 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Command</th>
         <th>Status</th>
         <th>First Run</th>
         <th></th>
@@ -47,6 +48,7 @@
             <% end %>
           </td>
           <td><%= job.name %></td>
+          <td><%= job.cmd %></td>
           <td>
             <span class="status-label <%= status_color(job) %>">
               <%= job.status || "Undefined" %>
