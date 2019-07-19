@@ -18,6 +18,10 @@
   <%= render_flash_notifications @conn %>
 
   <%= if @search_enabled do %>
+    <%= render_cloudant_search_limit_notification @conn %>
+  <% end %>
+
+  <%= if @search_enabled do %>
     <%= render_search @conn %>
   <% end %>
 
