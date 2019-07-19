@@ -18,6 +18,10 @@
   <%= render_flash_notifications @conn %>
 
   <%= if @search_enabled do %>
+    <%= render_cloudant_search_limit_notification @conn %>
+  <% end %>
+
+  <%= if @search_enabled do %>
     <%= render_search @conn %>
   <% end %>
 
@@ -26,6 +30,7 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Command</th>
         <th>Status</th>
         <th>First Run</th>
         <th></th>
@@ -43,6 +48,7 @@
             <% end %>
           </td>
           <td><%= job.name %></td>
+          <td><%= job.cmd %></td>
           <td>
             <span class="status-label <%= status_color(job) %>">
               <%= job.status || "Undefined" %>

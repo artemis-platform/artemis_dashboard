@@ -51,7 +51,7 @@ defmodule Artemis.ListJobs do
 
     query_params = %{
       execution_stats: true,
-      fields: ["_id", "name", "status", "first_run"],
+      fields: ["_id", "name", "cmd", "status", "first_run"],
       limit: params["page_size"],
       selector: select_all_selector
     }
