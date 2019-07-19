@@ -97,6 +97,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.Guardian.Helpers
       import ArtemisWeb.UserAccess
       import ArtemisWeb.ViewHelper.Breadcrumbs
+      import ArtemisWeb.ViewHelper.Cache
       import ArtemisWeb.ViewHelper.Errors
       import ArtemisWeb.ViewHelper.Filter
       import ArtemisWeb.ViewHelper.HTML
