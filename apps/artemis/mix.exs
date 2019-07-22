@@ -50,6 +50,7 @@ defmodule Artemis.MixProject do
       {:html_sanitize_ex, "~> 1.3"},
       {:ex_machina, "~> 2.2"},
       {:faker, "~> 0.11"},
+      {:licensir, "~> 0.4", only: :dev, runtime: false},
       {:artemis_pubsub, in_umbrella: true}
     ]
   end
