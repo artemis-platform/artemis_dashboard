@@ -3,8 +3,10 @@ defmodule ArtemisWeb.JobView do
 
   def data_table_available_columns() do
     [
-      {"ID", "id"},
+      {"Actions", "actions"},
       {"Command", "command"},
+      {"First Run", "first_run"},
+      {"ID", "id"},
       {"Name", "name"},
       {"Status", "status"}
     ]
