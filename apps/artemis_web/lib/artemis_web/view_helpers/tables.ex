@@ -275,4 +275,11 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
     "#{conn.request_path}?#{query_string}"
   end
+
+  @doc """
+  Render a select box to allow users to choose custom columns
+  """
+  def render_data_table_column_selector(conn, available_columns) do
+    Phoenix.View.render(ArtemisWeb.LayoutView, "data_table_columns.html", available: available_columns, conn: conn)
+  end
 end

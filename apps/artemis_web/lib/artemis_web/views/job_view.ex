@@ -1,6 +1,15 @@
 defmodule ArtemisWeb.JobView do
   use ArtemisWeb, :view
 
+  def data_table_available_columns() do
+    [
+      {"ID", "id"},
+      {"Command", "command"},
+      {"Name", "name"},
+      {"Status", "status"}
+    ]
+  end
+
   def data_table_allowed_columns() do
     %{
       "actions" => [
