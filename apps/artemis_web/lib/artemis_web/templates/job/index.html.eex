@@ -21,52 +21,24 @@
     <%= render_cloudant_search_limit_notification @conn %>
   <% end %>
 
-  <%= if @search_enabled do %>
-    <%= render_search @conn %>
-  <% end %>
+  <div class="table-header">
+    <%= if @search_enabled do %>
+      <%= render_search @conn %>
+    <% end %>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Command</th>
-        <th>Status</th>
-        <th>First Run</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@jobs) %>
-      <%= for job <- @jobs.entries do %>
-        <tr>
-          <td>
-            <%= if has?(@conn, "jobs:show") do %>
-              <%= link job._id, to: Routes.job_path(@conn, :show, job._id) %>
-            <% else %>
-              <%= job._id %>
-            <% end %>
-          </td>
-          <td><%= job.name %></td>
-          <td><%= job.cmd %></td>
-          <td>
-            <span class="status-label <%= status_color(job) %>">
-              <%= job.status || "Undefined" %>
-            </span>
-          </td>
-          <td><%= job.first_run %></td>
-          <td>
-            <%= if has?(@conn, "jobs:show") do %>
-              <%= link "Show", to: Routes.job_path(@conn, :show, job._id) %>
-            <% end %>
-            <%= if has?(@conn, "jobs:update") do %>
-              <%= link "Edit", to: Routes.job_path(@conn, :edit, job._id) %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+    <div class="table-actions">
+      <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
+    </div>
+  </div>
+
+  <%=
+    render_data_table(
+      @conn,
+      @jobs.entries,
+      allowed_columns: data_table_allowed_columns(),
+      default_columns: ["id", "name", "command", "status", "first_run", "actions"]
+    )
+  %>
 
   <%= render_pagination @conn, @jobs %>
 </div>
