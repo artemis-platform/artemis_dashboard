@@ -226,10 +226,10 @@ ol {
       background: #e1e2e3;
       border-radius: 0.5rem;
       display: flex;
+      flex-grow: 0;
       height: 120px;
       justify-content: center;
       width: 120px;
-      flex-grow: 0;
 
       .image {
         align-self: center;
@@ -255,6 +255,38 @@ ol {
 
       .email {
         margin: 0 0 1rem 0;
+      }
+    }
+  }
+}
+
+#sidebar-primary-navigation {
+  padding: 1.5rem;
+  width: 100%;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 1.5rem 0;
+
+    h3 {
+      align-self: center;
+      margin: 0;
+    }
+  }
+
+  section {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+
+    .primary-navigation-items {
+      align-items: center;
+      padding-right: 5%;
+      padding-left: 5%;
+
+      article {
+        width: 100%;
       }
     }
   }

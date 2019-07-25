@@ -1,0 +1,13 @@
+<%= unless is_nil(@user) do %>
+  <div class="ui sidebar left vertical menu" id="sidebar-primary-navigation">
+    <header>
+      <h3>Navigation</h3>
+      <button href="#close-sidebar-primary-navigation" class="ui icon tiny button close-sidebar-primary-navigation">
+        <i class="close icon"></i>
+      </button>
+    </header>
+    <section>
+      <%= render_primary_navigation_items(@conn, @user) %>
+    </section>
+  </div>
+<% end %>

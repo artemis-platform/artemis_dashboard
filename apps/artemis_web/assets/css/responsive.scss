@@ -4,11 +4,26 @@
   display: none;
 }
 
+#primary-header #primary-navigation .primary-navigation-link {
+  display: none;
+}
+
 /* Tablet Breakpoint */
 
 @media only screen and (max-width: 1024px) {
 
   #primary-header {
+
+    #primary-navigation {
+
+      li {
+        display: none !important;
+      }
+
+      li.primary-navigation-link {
+        display: block !important;
+      }
+    }
 
     #quick-search {
       display: none !important;
@@ -33,5 +48,4 @@
       }
     }
   }
-
 }

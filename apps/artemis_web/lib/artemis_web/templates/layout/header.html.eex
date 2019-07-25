@@ -68,6 +68,11 @@
             </a>
           </li>
         <% end %>
+        <li class="primary-navigation-link">
+          <a href="#open-sidebar-primary-navigation" class="open-sidebar-primary-navigation">
+            <i class="bars icon"></i>
+          </a>
+        </li>
       </ul>
     </nav>
 
