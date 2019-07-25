@@ -7,7 +7,7 @@
     </div>
 
     <nav id="primary-footer-navigation" role="navigation">
-      <%= render_footer_nav(@conn, @user, columns: 5) %>
+      <%= render_primary_navigation_items(@conn, @user) %>
     </nav>
   </div>
 

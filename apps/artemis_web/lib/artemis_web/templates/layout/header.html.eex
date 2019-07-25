@@ -19,7 +19,7 @@
                   <h3>Services</h3>
                   <p>Details of every service in the offering catalogue.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, nav_items, ["Jobs"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Jobs"]) %>
               </content>
               <footer></footer>
             </div>
@@ -37,7 +37,7 @@
                   <h3>On Call</h3>
                   <p>Tools to better understand and respond to the current status.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, nav_items, ["Incidents"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Incidents"]) %>
               </content>
               <footer></footer>
             </div>
@@ -55,7 +55,7 @@
                   <h3>Site</h3>
                   <p>Administrative tools to manage the site.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, nav_items, ["Users", "Roles", "Permissions", "Event Log", "Features"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Users", "Roles", "Permissions", "Event Log", "Features"]) %>
               </content>
               <footer></footer>
             </div>

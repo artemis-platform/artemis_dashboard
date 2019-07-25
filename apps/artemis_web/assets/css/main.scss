@@ -126,8 +126,31 @@ ol {
 
 /* === Components === */
 
-.search-resource {
+.primary-navigation-items {
+  align-items: flex-start;
+  display: flex;
+  flex-flow: column wrap;
+  flex-grow: 1;
 
+  article {
+    max-width: 33%;
+
+    h5 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 8px 0 !important;
+    }
+
+    ul {
+      font-size: 14px;
+      list-style: none;
+      margin: 0 0 1.75rem 0;
+      padding: 0;
+    }
+  }
+}
+
+.search-resource {
 
   &.full-width > div {
     width: 100%;
