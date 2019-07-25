@@ -98,4 +98,35 @@ defmodule ArtemisWeb.JobView do
   end
 
   def status_color(_), do: nil
+
+  @doc """
+  Render elapsed time
+  """
+  def render_elapsed_time(%{first_run: nil}), do: nil
+
+  def render_elapsed_time(%{status: "Running"} = job) do
+    {:ok, start} = DateTime.from_unix(job.first_run)
+
+    get_duration(start, Timex.now())
+  end
+
+  def render_elapsed_time(%{status: "Completed"} = job) do
+    {:ok, first} = DateTime.from_unix(job.first_run)
+    {:ok, last} = DateTime.from_unix(job.last_run)
+
+    get_duration(first, last)
+  rescue
+    _ -> nil
+  end
+
+  defp get_duration(first, second) do
+    diff_in_seconds =
+      second
+      |> Timex.diff(first)
+      |> div(1_000_000)
+
+    duration = Timex.Duration.from_seconds(diff_in_seconds)
+
+    Timex.Format.Duration.Formatters.Humanized.format(duration)
+  end
 end

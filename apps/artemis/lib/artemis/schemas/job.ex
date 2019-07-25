@@ -8,6 +8,7 @@ defmodule Artemis.Job do
     field :_rev, :string
     field :cmd, :string
     field :first_run, :integer
+    field :last_run, :integer
     field :name, :string
     field :raw_data, :map
     field :status, :string
@@ -21,6 +22,7 @@ defmodule Artemis.Job do
       :_rev,
       :cmd,
       :first_run,
+      :last_run,
       :name,
       :raw_data,
       :status,
