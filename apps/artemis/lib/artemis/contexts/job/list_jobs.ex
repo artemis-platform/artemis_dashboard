@@ -2,6 +2,7 @@ defmodule Artemis.ListJobs do
   use Artemis.Context
 
   alias Artemis.Drivers.IBMCloudant
+  alias Artemis.Helpers.IBMCloudantSearch
   alias Artemis.Job
 
   @default_order "slug"
@@ -69,6 +70,7 @@ defmodule Artemis.ListJobs do
   defp get_search_records(params) do
     cloudant_host = Job.get_cloudant_host()
     cloudant_path = Job.get_cloudant_search_path()
+    params = IBMCloudantSearch.add_search_param(params, Job.search_fields())
 
     query_params = %{
       include_docs: true,
@@ -98,6 +100,7 @@ defmodule Artemis.ListJobs do
       bookmark_previous: Map.get(params, "bookmark"),
       entries: documents,
       is_last_page: last_page?,
+      total_entries: length(documents),
       total_pages: Map.get(body, "total_rows")
     }
   end
