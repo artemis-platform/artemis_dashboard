@@ -2,6 +2,6 @@
   <% selected = parse_data_table_requested_columns(@conn) %>
   <% container_class = if length(selected) > 0, do: "active" %>
   <div class="<%= container_class %>">
-    <%= multiple_select f, :columns, @available, selected: selected, class: "enhanced data-table-columns search", placeholder: "Columns" %>
+    <%= multiple_select f, :columns, @available, selected: selected, class: "enhanced data-table-columns search", placeholder: "Custom Columns" %>
   </div>
 <% end %>

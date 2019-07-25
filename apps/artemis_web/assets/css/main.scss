@@ -197,6 +197,12 @@ ol {
 
   .table-actions {
     align-self: center;
+    display: flex;
+
+    .data-table-columns {
+      margin-right: 1rem;
+      width: 200px;
+    }
   }
 }
 
