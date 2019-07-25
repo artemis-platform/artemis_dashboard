@@ -156,9 +156,9 @@
         <li>
           <%= link "PagerDuty", to: "https://artemis.pagerduty.com", target: "_blank" %>
         </li>
-        <li>
+        <li class="more-links">
           <i class="angle down icon"></i>
-          <a class="more-links" href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["links"]}}) %>">
+          <a href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["links"]}}) %>">
             More Links
           </a>
         </li>

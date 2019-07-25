@@ -49,3 +49,23 @@
     }
   }
 }
+
+@media only screen and (max-width: 640px) {
+  #primary-header {
+
+    aside {
+
+      .on-call .on-call-person {
+        display: none;
+      }
+
+      .external-links li {
+        display: none !important;
+
+        &.more-links {
+          display: flex !important;
+        }
+      }
+    }
+  }
+}
