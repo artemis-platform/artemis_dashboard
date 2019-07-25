@@ -1,0 +1,87 @@
+/* Full Size */
+
+#primary-header #icon-navigation .search-icon {
+  display: none;
+}
+
+#primary-header #primary-navigation .primary-navigation-link {
+  display: none;
+}
+
+/* Tablet Breakpoint */
+
+@media only screen and (max-width: 1024px) {
+
+  #primary-header {
+
+    #primary-navigation {
+
+      li {
+        display: none !important;
+      }
+
+      li.primary-navigation-link {
+        display: block !important;
+      }
+    }
+
+    #quick-search {
+      display: none !important;
+    }
+
+    #icon-navigation .search-icon {
+      display: block;
+    }
+
+    #user-navigation {
+      .content-container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+
+        i.icon {
+          margin-right: 0 !important;
+        }
+
+        span.user-name {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  #primary-header {
+
+    aside {
+
+      .on-call .on-call-person {
+        display: none;
+      }
+
+      .external-links li {
+        display: none !important;
+
+        &.more-links {
+          display: flex !important;
+        }
+      }
+    }
+  }
+
+  #primary-footer .content {
+    flex-direction: column;
+    width: 100%;
+
+    .about {
+      max-width: 100%;
+    }
+
+    #primary-footer-navigation {
+      border-top: 1px solid #e2e2e2;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      width: 100%;
+    }
+  }
+}

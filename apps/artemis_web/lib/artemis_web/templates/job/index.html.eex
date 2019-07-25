@@ -26,10 +26,9 @@
       <%= render_search @conn %>
     <% end %>
 
-    <%= render_data_table_column_selector @conn, data_table_available_columns() %>
-
     <div class="table-actions">
-      <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
+      <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+      <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true, size: "medium") %>
     </div>
   </div>
 

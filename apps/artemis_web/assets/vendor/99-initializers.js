@@ -138,6 +138,25 @@ function initializeSidebars() {
 
     $('#sidebar-current-user').sidebar('hide')
   })
+
+  $('.open-sidebar-primary-navigation').click(function(event) {
+    if (event) {
+      event.preventDefault()
+    }
+
+    $('#sidebar-primary-navigation')
+      .sidebar('setting', 'dimPage', false)
+      .sidebar('setting', 'transition', 'overlay')
+      .sidebar('toggle')
+  })
+
+  $('.close-sidebar-primary-navigation').click(function(event) {
+    if (event) {
+      event.preventDefault()
+    }
+
+    $('#sidebar-primary-navigation').sidebar('hide')
+  })
 }
 
 function initializeTagForm() {

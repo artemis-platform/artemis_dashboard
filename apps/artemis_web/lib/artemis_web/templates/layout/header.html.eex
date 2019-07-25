@@ -19,7 +19,7 @@
                   <h3>Services</h3>
                   <p>Details of every service in the offering catalogue.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, nav_items, ["Jobs"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Jobs"]) %>
               </content>
               <footer></footer>
             </div>
@@ -37,7 +37,7 @@
                   <h3>On Call</h3>
                   <p>Tools to better understand and respond to the current status.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, nav_items, ["Incidents"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Incidents"]) %>
               </content>
               <footer></footer>
             </div>
@@ -55,7 +55,7 @@
                   <h3>Site</h3>
                   <p>Administrative tools to manage the site.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, nav_items, ["Users", "Roles", "Permissions", "Event Log", "Features"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Users", "Roles", "Permissions", "Event Log", "Features"]) %>
               </content>
               <footer></footer>
             </div>
@@ -68,25 +68,39 @@
             </a>
           </li>
         <% end %>
+        <li class="primary-navigation-link">
+          <a href="#open-sidebar-primary-navigation" class="open-sidebar-primary-navigation">
+            <i class="bars icon"></i>
+          </a>
+        </li>
       </ul>
     </nav>
 
-    <%= if active_feature?("global-search") do %>
-      <div id="quick-search">
-        <%= if current_user?(@conn) do %>
-          <form class="<%= search_class(@conn) %>" action="<%= Routes.search_path(@conn, :index) %>" method="get">
-            <div class="ui icon input">
-              <i class="search link icon"></i>
-              <input name="query" type="text" value="<%= Map.get(@conn.query_params, "query") %>" />
-            </div>
-          </form>
-        <% end %>
-      </div>
-    <% end %>
+    <div class="expanding-container">
+      <%= if active_feature?("global-search") do %>
+        <div id="quick-search">
+          <%= if current_user?(@conn) do %>
+            <form class="<%= search_class(@conn) %>" action="<%= Routes.search_path(@conn, :index) %>" method="get">
+              <div class="ui icon input">
+                <i class="search link icon"></i>
+                <input name="query" type="text" value="<%= Map.get(@conn.query_params, "query") %>" />
+              </div>
+            </form>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
 
     <%= if current_user?(@conn) do %>
       <nav id="icon-navigation">
         <ul>
+          <%= if active_feature?("global-search") do %>
+            <li class="search-icon">
+              <a title="Search" href="<%= Routes.search_path(@conn, :index) %>">
+                <i class="search link icon"></i>
+              </a>
+            </li>
+          <% end %>
           <li>
             <a title="Alerts" href="#">
               <i class="bullhorn icon"></i>
@@ -106,9 +120,11 @@
         <li>
           <%= if current_user?(@conn) do %>
             <a href="#open-sidebar-current-user" class="open-sidebar-current-user">
-              <span>
+              <span class="content-container">
                 <i class="user icon"></i>
-                <%= current_user(@conn).name %>
+                <span class="user-name">
+                  <%= current_user(@conn).name %>
+                </span>
               </span>
             </a>
           <% else %>
@@ -140,9 +156,9 @@
         <li>
           <%= link "PagerDuty", to: "https://artemis.pagerduty.com", target: "_blank" %>
         </li>
-        <li>
+        <li class="more-links">
           <i class="angle down icon"></i>
-          <a class="more-links" href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["links"]}}) %>">
+          <a href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["links"]}}) %>">
             More Links
           </a>
         </li>

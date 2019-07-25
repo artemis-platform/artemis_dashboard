@@ -60,11 +60,14 @@ body {
 
   section {
     display: flex;
+    justify-content: space-between;
     height: $height;
 
     #logo {
       background: $background;
       color: rgba(0, 0, 0, 0.87);
+      display: flex;
+      flex-shrink: 0;
       font-size: 15px;
       font-weight: 500;
       height: $height;
@@ -173,6 +176,18 @@ body {
               color: rgba(0, 0, 0, 0.7);
             }
           }
+
+          .primary-navigation-items{
+            flex-flow: row wrap;
+
+            article {
+              padding: 0 2rem;
+
+              h5 {
+                font-size: 15px;
+              }
+            }
+          }
         }
 
         footer {
@@ -181,72 +196,57 @@ body {
           height: 3px;
           width: 100%;
         }
-
-        article {
-          padding: 0 2rem;
-
-          h5 {
-            font-size: 15px;
-            font-weight: 600;
-            margin: 1rem 0 0.5rem 0;
-
-            &:first-child {
-              margin-top: 0;
-            }
-          }
-
-          ul {
-            margin: 0 0 0 20px !important;
-            padding: 0;
-
-            li {
-              padding: 0 0 0.25rem 0;
-            }
-          }
-        }
       }
     }
 
-    #quick-search {
+    .expanding-container {
       align-self: center;
       background: $background;
       display: flex;
       flex-grow: 1;
       height: $height;
-      justify-content: flex-end;
-      line-height: $height;
       padding: 0 1rem 0 2rem;
 
-      form {
-        width: 100%;
+      #quick-search {
+        align-self: center;
+        background: $background;
+        display: flex;
+        flex-grow: 1;
+        height: $height;
+        justify-content: flex-end;
+        line-height: $height;
 
-        div.input {
+        form {
           width: 100%;
 
-          input {
-            background: $background;
-            border-color: $background;
-            transition: all 0.2s;
+          div.input {
             width: 100%;
 
-            &:active,
-            &:focus {
-              background: #f0f0f4;
+            input {
+              background: $background;
+              border-color: $background;
+              transition: all 0.2s;
+              width: 100%;
+
+              &:active,
+              &:focus {
+                background: #f0f0f4;
+              }
+            }
+
+            i {
+              opacity: 1;
             }
           }
 
-          i {
-            opacity: 1;
+          &.active div.input input {
+            border-color: #e2e2e2 !important;
           }
         }
 
-        &.active div.input input {
-          border-color: #e2e2e2 !important;
+        &:hover input {
+          background: #f0f0f4 !important;
         }
-      }
-
-      &:hover input {
-        background: #f0f0f4 !important;
       }
     }
 
@@ -254,6 +254,7 @@ body {
 
       ul {
         background: $background;
+        display: flex;
         height: $height;
         line-height: $height;
         list-style: none;
@@ -320,7 +321,7 @@ body {
             height: $height;
             line-height: $height;
 
-            span {
+            .content-container {
               align-self: center;
               border-radius: 1.25rem;
               display: block;
@@ -334,7 +335,7 @@ body {
               }
             }
 
-            &:hover span {
+            &:hover .content-container {
               background: #333;
               color: #fff;
             }
@@ -444,13 +445,13 @@ body {
 
           a {
             display: block;
+          }
 
-            &.more-links {
-              color: rgba(0, 0, 0, 0.87);
+          &.more-links a {
+            color: rgba(0, 0, 0, 0.87);
 
-              &:hover {
-                color: $blue;
-              }
+            &:hover {
+              color: $blue;
             }
           }
         }
@@ -666,33 +667,8 @@ body.error-page {
 
     #primary-footer-navigation {
       display: flex;
-      flex-shrink: 0;
-      justify-content: space-between;
-      flex-direction: row;
-
-      .column {
-        padding: 0 2rem;
-      }
-
-      .section {
-
-        h5 {
-          font-weight: 600;
-          font-size: 14px;
-          margin: 24px 0 8px 0 !important;
-        }
-
-        &:first-child h5 {
-          margin-top: 0 !important;
-        }
-
-        ul {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          font-size: 14px;
-        }
-      }
+      flex-grow: 1;
+      max-height: 300px;
     }
   }
 

@@ -4,26 +4,38 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   import ArtemisWeb.Config.Navigation
 
   @doc """
-  Generates primary nav from nav items
+  Lists all primary navigation items
   """
-  def render_primary_nav(conn, user) do
-    nav_items = nav_items_for_current_user(user)
+  def render_primary_navigation_items(conn, user, options \\ []) do
+    items =
+      case Keyword.get(options, :items) do
+        nil -> nav_items_for_current_user(user)
+        items -> items
+      end
 
-    links =
-      Enum.map(nav_items, fn {section, items} ->
-        label = section
+    sections =
+      Enum.map(items, fn {section, items} ->
+        links =
+          Enum.map(items, fn item ->
+            label = Keyword.get(item, :label)
+            path = Keyword.get(item, :path)
 
-        path =
-          items
-          |> hd
-          |> Keyword.get(:path)
+            content_tag(:li) do
+              link(label, to: path.(conn))
+            end
+          end)
 
-        content_tag(:li) do
-          link(label, to: path.(conn))
+        content_tag(:article) do
+          [
+            content_tag(:h5, section),
+            content_tag(:ul, links)
+          ]
         end
       end)
 
-    content_tag(:ul, links)
+    content_tag(:nav, class: "primary-navigation-items") do
+      sections
+    end
   end
 
   @doc """
@@ -40,75 +52,17 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   @doc """
   Render the primary nav based on current users permissions
   """
-  def render_primary_nav_section(conn, nav_items, keys) do
+  def render_primary_nav_section(conn, user, nav_items, keys) do
     requested_keys = Enum.map(keys, &String.to_atom/1)
     allowed_keys = Keyword.keys(nav_items)
     section_keys = Enum.filter(requested_keys, &Enum.member?(allowed_keys, &1))
 
-    Enum.map(section_keys, fn section ->
-      entries = Keyword.get(nav_items, section)
-
-      links =
-        Enum.map(entries, fn item ->
-          label = Keyword.get(item, :label)
-          path = Keyword.get(item, :path)
-
-          content_tag(:li) do
-            link(label, to: path.(conn))
-          end
-        end)
-
-      content_tag(:article) do
-        [
-          content_tag(:h5, section),
-          content_tag(:ul, links)
-        ]
-      end
-    end)
-  end
-
-  @doc """
-  Generates footer nav from nav items
-  """
-  def render_footer_nav(conn, user) do
-    nav_items = nav_items_for_current_user(user)
-
-    sections =
-      Enum.map(nav_items, fn {section, items} ->
-        links =
-          Enum.map(items, fn item ->
-            label = Keyword.get(item, :label)
-            path = Keyword.get(item, :path)
-
-            content_tag(:li) do
-              link(label, to: path.(conn))
-            end
-          end)
-
-        content_tag(:div, class: "section") do
-          [
-            content_tag(:h5, section),
-            content_tag(:ul, links)
-          ]
-        end
+    filtered =
+      Enum.filter(nav_items, fn {key, _} ->
+        Enum.member?(section_keys, key)
       end)
 
-    case sections == [] do
-      true ->
-        nil
-
-      false ->
-        per_column =
-          (length(sections) / 3)
-          |> Float.ceil()
-          |> trunc()
-
-        chunked = Enum.chunk_every(sections, per_column)
-
-        Enum.map(chunked, fn sections ->
-          content_tag(:div, sections, class: "column")
-        end)
-    end
+    render_primary_navigation_items(conn, user, items: filtered)
   end
 
   @doc """

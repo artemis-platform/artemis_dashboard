@@ -11,6 +11,7 @@
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
     <%= if current_user?(@conn) do %>
       <%= render "sidebar_current_user.html", conn: @conn, user: current_user(@conn) %>
+      <%= render "sidebar_navigation.html", conn: @conn, user: current_user(@conn) %>
       <main role="main" class="container pusher">
         <%= render "header.html", conn: @conn, user: current_user(@conn) %>
         <%= render @view_module, @view_template, assigns %>
