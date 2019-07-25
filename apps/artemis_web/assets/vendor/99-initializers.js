@@ -1,22 +1,52 @@
-function initializeFilterFields() {
-  $('.filter-form .filter-multi-select').on('change', function(event) {
-    var currentQueryString = window.location.search.substring(1)
-    var currentParams = qs.parse(currentQueryString) || {}
-    var nextParams = currentParams
+// Helpers
+
+function getQueryParams() {
+  var currentQueryString = window.location.search.substring(1)
+  var currentParams = qs.parse(currentQueryString) || {}
+
+  return currentParams
+}
+
+function updateQueryParams(newParams) {
+  var currentParams = getQueryParams()
+  var encodingOptions = { arrayFormat: 'brackets', encodeValuesOnly: true }
+  var nextParams = $.merge(newParams, currentParams)
+  var nextQueryString = qs.stringify(nextParams, encodingOptions)
+
+  window.location = window.location.pathname + '?' + nextQueryString
+}
+
+// Initializers
+
+function initializeColumnField() {
+  $('select.data-table-columns').on('change', function(event) {
     var selected = $(this).select2('data')
-    var encodingOptions = { arrayFormat: 'brackets', encodeValuesOnly: true }
-    var tags = []
+    var columns = []
 
     selected.forEach(function(element) {
-      tags.push(element.id)
+      columns.push(element.id)
     })
 
-    nextParams.filters = currentParams.filters || {}
-    nextParams.filters.tags = tags
+    updateQueryParams({columns: columns})
+  })
+}
 
-    var nextQueryString = qs.stringify(nextParams, encodingOptions)
+function initializeFilterFields() {
+  $('.filter-form .filter-multi-select').on('change', function(event) {
+    var nextParams = getQueryParams()
+    var field = ($(this).attr('name') || '').replace('[]', '')
+    var selected = $(this).select2('data')
+    var encodingOptions = { arrayFormat: 'brackets', encodeValuesOnly: true }
+    var values = []
 
-    window.location = window.location.pathname + '?' + nextQueryString
+    selected.forEach(function(element) {
+      values.push(element.id)
+    })
+
+    nextParams.filters = nextParams.filters || {}
+    nextParams.filters[field] = values
+
+    updateQueryParams(nextParams)
   })
 }
 
@@ -53,7 +83,6 @@ function initializeMarkdownTextarea() {
 //   <%= select f, :example, [1, 2], class: "enhanced search" %>
 //
 function initializeSelect2() {
-
   $('select.enhanced').each(function() {
     var item = $(this)
     var classes = item.attr('class').split(' ')
@@ -196,6 +225,7 @@ function initializeWikiSidenav() {
 }
 
 $(document).ready(function() {
+  initializeColumnField()
   initializeFilterFields()
   initializeHighlightJs()
   initializeMarkdownTextarea()

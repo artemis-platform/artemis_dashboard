@@ -20,7 +20,7 @@
   <div class="table-header">
     <%= render_search @conn %>
     <div class="table-actions">
-      <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true) %>
+      <%= action("Export", to: export_path(@conn, :csv, page_size: 50000), class: "export", download: true) %>
     </div>
   </div>
 
@@ -28,7 +28,7 @@
     render_data_table(
       @conn,
       @permissions.entries,
-      allowed_columns: allowed_columns(),
+      allowed_columns: data_table_allowed_columns(),
       default_columns: ["name", "slug", "actions"]
     )
   %>

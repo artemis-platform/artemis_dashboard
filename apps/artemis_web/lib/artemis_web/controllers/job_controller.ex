@@ -18,7 +18,7 @@ defmodule ArtemisWeb.JobController do
       jobs = ListJobs.call(params, current_user(conn))
       search_enabled = Job.search_enabled?()
 
-      render(conn, "index.html", jobs: jobs, search_enabled: search_enabled)
+      render_format(conn, "index", jobs: jobs, search_enabled: search_enabled)
     end)
   end
 
