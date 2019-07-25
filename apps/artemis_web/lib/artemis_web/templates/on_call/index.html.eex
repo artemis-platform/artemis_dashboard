@@ -1,0 +1,18 @@
+<div id="content-header">
+  <header>
+    <h1>On Call</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <%= if has?(@conn, "incidents:list") do %>
+    <h3>Incident Management</h3>
+    <%= link "List Incidents", to: Routes.incident_path(@conn, :index) %>
+  <% end %>
+</div>

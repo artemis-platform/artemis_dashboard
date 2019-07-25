@@ -63,6 +63,7 @@ defmodule ArtemisWeb.Router do
         put "/tags", IncidentTagController, :update, as: :tag
       end
 
+      resources "/on-call", OnCallController, only: [:index]
       resources "/permissions", PermissionController
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]

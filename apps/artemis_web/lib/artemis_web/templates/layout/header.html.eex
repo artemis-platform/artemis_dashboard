@@ -25,7 +25,7 @@
             </div>
           </li>
         <% end %>
-        <%= if render_primary_nav_section?(nav_items, ["Incidents"]) do %>
+        <%= if render_primary_nav_section?(nav_items, ["On Call", "Incidents"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.incident_path(@conn, :index) %>">
               On Call
@@ -37,7 +37,7 @@
                   <h3>On Call</h3>
                   <p>Tools to better understand and respond to the current status.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, @user, nav_items, ["Incidents"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["On Call", "Incidents"]) %>
               </content>
               <footer></footer>
             </div>

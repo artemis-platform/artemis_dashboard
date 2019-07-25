@@ -5,12 +5,12 @@
     <%= if length(@people) > 0 do %>
       <%= Enum.map @people, fn (person) -> %>
         <li>
-          <%= link(person, to: Routes.incident_path(@conn, :index)) %>
+          <%= link(person, to: Routes.on_call_path(@conn, :index)) %>
         </li>
       <% end %>
     <% else %>
       <li>
-        <%= link("Unknown", to: Routes.incident_path(@conn, :index)) %>
+        <%= link("Unknown", to: Routes.on_call_path(@conn, :index)) %>
       </li>
     <% end %>
   </ul>

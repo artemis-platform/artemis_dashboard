@@ -45,6 +45,13 @@ defmodule ArtemisWeb.Config.Navigation do
           verify: &has?(&1, "incidents:list")
         ]
       ],
+      "On Call": [
+        [
+          label: "Overview",
+          path: &Routes.on_call_path(&1, :index),
+          verify: &has_any?(&1, ["incidents:list"])
+        ]
+      ],
       Permissions: [
         [
           label: "List Permissions",
