@@ -5,9 +5,14 @@ defmodule ArtemisWeb.JobLive do
 
   @impl true
   def mount(session, socket) do
-    assigns = assign(socket, :job, session.job)
+    assigns =
+      socket
+      |> assign(:job, session.job)
+      |> assign(:now, Timex.now())
 
     :ok = ArtemisPubSub.subscribe(Artemis.CloudantChange.topic())
+
+    schedule_update()
 
     {:ok, assigns}
   end
@@ -26,6 +31,14 @@ defmodule ArtemisWeb.JobLive do
     {:noreply, socket}
   end
 
+  def handle_info(:refresh, socket) do
+    socket = assign(socket, :now, Timex.now())
+
+    schedule_update()
+
+    {:noreply, socket}
+  end
+
   # Helpers
 
   defp update_if_match(socket, %{action: action, document: document, id: id, schema: schema}) do
@@ -37,5 +50,15 @@ defmodule ArtemisWeb.JobLive do
       match? && action == "update" -> assign(socket, :job, document)
       true -> socket
     end
+  end
+
+  defp schedule_update() do
+    milliseconds =
+      Timex.now()
+      |> DateTime.truncate(:millisecond)
+      |> Timex.format!("%L", :strftime)
+      |> String.to_integer()
+
+    Process.send_after(self(), :refresh, 1_000 - milliseconds)
   end
 end

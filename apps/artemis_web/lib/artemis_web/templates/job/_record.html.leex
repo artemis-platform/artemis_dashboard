@@ -17,6 +17,11 @@
   </li>
 
   <li>
+    <strong>Elapsed Time:</strong>
+    <%= @now && render_elapsed_time(@job) %>
+  </li>
+
+  <li>
     <strong>Raw JSON:</strong>
     <pre><code><%= Jason.encode!(@job.raw_data, pretty: true) %></code></pre>
   </li>
