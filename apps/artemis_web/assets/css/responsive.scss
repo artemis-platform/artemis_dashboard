@@ -68,4 +68,20 @@
       }
     }
   }
+
+  #primary-footer .content {
+    flex-direction: column;
+    width: 100%;
+
+    .about {
+      max-width: 100%;
+    }
+
+    #primary-footer-navigation {
+      border-top: 1px solid #e2e2e2;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      width: 100%;
+    }
+  }
 }
