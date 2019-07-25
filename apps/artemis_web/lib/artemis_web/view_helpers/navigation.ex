@@ -70,7 +70,7 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   @doc """
   Generates footer nav from nav items
   """
-  def render_footer_nav(conn, user) do
+  def render_footer_nav(conn, user, options \\ []) do
     nav_items = nav_items_for_current_user(user)
 
     sections =
@@ -98,8 +98,9 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
         nil
 
       false ->
+        columns = Keyword.get(options, :columns, 3)
         per_column =
-          (length(sections) / 3)
+          (length(sections) / columns)
           |> Float.ceil()
           |> trunc()
 

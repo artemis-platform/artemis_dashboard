@@ -2,13 +2,12 @@
   <div class="container content">
     <div class="about">
       <h3>Artemis Dashboard</h3>
-      <p><a target="_blank" href="https://github.com/artemis-platform/artemis_dashboard">Artemis Dashboard</a> is an example of a production ready operational dashboard built in Elixir and Phoenix Framework.</p>
-      <p>It's built on top of <a target="_blank" href="https://github.com/artemis-platform/artemis_platform">Artemis Platform</a>, which is a collection of enterprise patterns for building web applications in Elixir.</p>
-      <p>Learn more on <a target="_blank" href="https://github.com/artemis-platform/artemis_dashboard">GitHub</a>.</p>
+      <p>Nam consectetur, enim maximus elementum tempor, metus arcu facilisis velit, id interdum turpis arcu ut mi. Nam condimentum libero a tempor ultricies.</p>
+      <p>Aliquam iaculis efficitur porta. Aliquam gravida eleifend fermentum. Ut dignissim felis dolor.</p>
     </div>
 
     <nav id="primary-footer-navigation" role="navigation">
-      <%= render_footer_nav(@conn, @user) %>
+      <%= render_footer_nav(@conn, @user, columns: 5) %>
     </nav>
   </div>
 
