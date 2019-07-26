@@ -3,15 +3,20 @@ defmodule Artemis.Search do
 
   import Artemis.UserAccess
 
+  @moduledoc """
+  Search multiple resources for matching results
+
+  ## New Resources
+
+  To add a new resource, add an entry to the `get_searchable_resources/0`
+  function below. This ensures the data will be queried and included in the
+  results.
+
+  To display the results, update any related display code,
+  e.g.`ArtemisWeb.SearchView`.
+  """
+
   @default_page_size 5
-  @searchable_resources %{
-    "features" => [function: &Artemis.ListFeatures.call/2, permissions: "features:list"],
-    "incidents" => [function: &Artemis.ListIncidents.call/2, permissions: "incidents:list"],
-    "permissions" => [function: &Artemis.ListPermissions.call/2, permissions: "permissions:list"],
-    "roles" => [function: &Artemis.ListRoles.call/2, permissions: "roles:list"],
-    "users" => [function: &Artemis.ListUsers.call/2, permissions: "users:list"],
-    "wiki_pages" => [function: &Artemis.ListWikiPages.call/2, permissions: "wiki-pages:list"]
-  }
 
   def call(params, user) do
     params =
@@ -27,6 +32,57 @@ defmodule Artemis.Search do
     end
   end
 
+  # Config
+
+  def get_searchable_resources do
+    searchable_resources = %{
+      "features" => [
+        enabled: true,
+        function: &Artemis.ListFeatures.call/2,
+        permissions: "features:list"
+      ],
+      "incidents" => [
+        enabled: true,
+        function: &Artemis.ListIncidents.call/2,
+        permissions: "incidents:list"
+      ],
+      "jobs" => [
+        enabled: Artemis.Job.search_enabled?(),
+        function: &Artemis.ListJobs.call/2,
+        permissions: "jobs:list"
+      ],
+      "permissions" => [
+        enabled: true,
+        function: &Artemis.ListPermissions.call/2,
+        permissions: "permissions:list"
+      ],
+      "roles" => [
+        enabled: true,
+        function: &Artemis.ListRoles.call/2,
+        permissions: "roles:list"
+      ],
+      "users" => [
+        enabled: true,
+        function: &Artemis.ListUsers.call/2,
+        permissions: "users:list"
+      ],
+      "wiki_pages" => [
+        enabled: true,
+        function: &Artemis.ListWikiPages.call/2,
+        permissions: "wiki-pages:list"
+      ]
+    }
+
+    Enum.reduce(searchable_resources, %{}, fn {key, value}, acc ->
+      case Keyword.get(value, :enabled, false) do
+        true -> Map.put(acc, key, value)
+        false -> acc
+      end
+    end)
+  end
+
+  # Helpers
+
   defp search(params, user) do
     resources = filter_resources_by_user_permissions(params, user)
 
@@ -39,8 +95,9 @@ defmodule Artemis.Search do
   end
 
   defp filter_resources_by_user_permissions(params, user) do
-    requested_keys = Map.get(params, "resources", Map.keys(@searchable_resources))
-    requested_resources = Map.take(@searchable_resources, requested_keys)
+    searchable_resources = get_searchable_resources()
+    requested_keys = Map.get(params, "resources", Map.keys(searchable_resources))
+    requested_resources = Map.take(searchable_resources, requested_keys)
 
     Enum.filter(requested_resources, fn {_key, options} ->
       permissions = Keyword.get(options, :permissions)

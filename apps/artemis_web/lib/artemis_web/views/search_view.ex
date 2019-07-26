@@ -12,6 +12,14 @@ defmodule ArtemisWeb.SearchView do
       label: "Features",
       path: &Routes.feature_path/3
     ],
+    "incidents" => [
+      label: "Incidents",
+      path: &Routes.incident_path/3
+    ],
+    "jobs" => [
+      label: "Jobs",
+      path: &Routes.job_path/3
+    ],
     "permissions" => [
       label: "Permissions",
       path: &Routes.permission_path/3
@@ -76,6 +84,22 @@ defmodule ArtemisWeb.SearchView do
       title: data.slug,
       permission: "features:show",
       link: fn conn -> Routes.feature_path(conn, :show, data) end
+    }
+  end
+
+  defp search_entry(%Artemis.Incident{} = data) do
+    %{
+      title: data.title,
+      permission: "incidents:show",
+      link: fn conn -> Routes.incident_path(conn, :show, data) end
+    }
+  end
+
+  defp search_entry(%Artemis.Job{} = data) do
+    %{
+      title: data._id,
+      permission: "jobs:show",
+      link: fn conn -> Routes.job_path(conn, :show, data._id) end
     }
   end
 

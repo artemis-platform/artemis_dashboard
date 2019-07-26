@@ -4,17 +4,13 @@ defmodule ArtemisWeb.JobController do
   alias Artemis.CreateJob
   alias Artemis.DeleteJob
   alias Artemis.GetJob
-  alias Artemis.ListJobs
   alias Artemis.Job
+  alias Artemis.ListJobs
   alias Artemis.UpdateJob
 
   def index(conn, params) do
     authorize(conn, "jobs:list", fn ->
-      params =
-        params
-        |> add_cloudant_search_param(Job.search_fields())
-        |> Map.put(:paginate, true)
-
+      params = Map.put(params, :paginate, true)
       jobs = ListJobs.call(params, current_user(conn))
       search_enabled = Job.search_enabled?()
 
