@@ -26,7 +26,7 @@ vim .env
 
 Artemis runs a development webserver on a local port. The default port is specified in the `.env` file, but can be changed.
 
-For websocket support, Artemis must be reachable through local DNS at `https://artemis.dev`. A local DNS manager with SSL support like [Puma Dev](https://github.com/puma/puma-dev) makes this easy.
+For websocket support, Artemis must be reachable through local DNS at `https://artemis.test`. A local DNS manager with SSL support like [Puma Dev](https://github.com/puma/puma-dev) makes this easy.
 
 If using Puma Dev, this can be accomplished by creating a new puma dev config file:
 
