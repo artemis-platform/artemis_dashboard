@@ -8,10 +8,13 @@ defmodule Artemis.Job do
     field :_rev, :string
     field :cmd, :string
     field :first_run, :integer
+    field :instance_uuid, :string
     field :last_run, :integer
     field :name, :string
     field :raw_data, :map
     field :status, :string
+    field :task_id, :string
+    field :transaction_id, :string
     field :uuid, :string
   end
 
@@ -23,9 +26,12 @@ defmodule Artemis.Job do
       :cmd,
       :first_run,
       :last_run,
+      :instance_uuid,
       :name,
       :raw_data,
       :status,
+      :task_id,
+      :transaction_id,
       :uuid
     ]
 
@@ -41,7 +47,11 @@ defmodule Artemis.Job do
     ]
 
   def filter_fields,
-    do: []
+    do: [
+      :instance_uuid,
+      :task_id,
+      :transaction_id
+    ]
 
   def search_fields,
     do: [

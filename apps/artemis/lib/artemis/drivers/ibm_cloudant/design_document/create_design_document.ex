@@ -1,10 +1,10 @@
 defmodule Artemis.Drivers.IBMCloudant.CreateDesignDocument do
   alias Artemis.Drivers.IBMCloudant
 
-  def call(host, path, document) do
+  def call(host, path, document, body \\ %{}) do
     {:ok, _} =
       IBMCloudant.Request.call(%{
-        body: "{}",
+        body: Jason.encode!(body),
         host: host,
         method: :put,
         path: "#{path}/_design/#{document}"
