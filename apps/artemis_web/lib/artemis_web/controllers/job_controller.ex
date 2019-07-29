@@ -46,8 +46,9 @@ defmodule ArtemisWeb.JobController do
   def show(conn, %{"id" => id}) do
     authorize(conn, "jobs:show", fn ->
       job = GetJob.call!(id, current_user(conn))
+      related_jobs = get_related_jobs(job)
 
-      render(conn, "show.html", job: job)
+      render(conn, "show.html", job: job, related_jobs: related_jobs)
     end)
   rescue
     _ in Artemis.Context.Error -> render_not_found(conn)
@@ -86,5 +87,17 @@ defmodule ArtemisWeb.JobController do
       |> put_flash(:info, "Job deleted successfully.")
       |> redirect(to: Routes.job_path(conn, :index))
     end)
+  end
+
+  # Helpers
+
+  defp get_related_jobs(job) do
+    results = ListJobs.call(%{
+      filters: %{task_id: job.task_id},
+      paginate: false,
+      page_size: 1_000_000
+    })
+
+    Map.get(results, :entries, [])
   end
 end

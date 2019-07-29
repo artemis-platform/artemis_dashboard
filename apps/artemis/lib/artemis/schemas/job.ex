@@ -55,7 +55,9 @@ defmodule Artemis.Job do
 
   def index_fields,
     do: [
+      :first_run,
       :instance_uuid,
+      :last_run,
       :task_id,
       :transaction_id
     ]
