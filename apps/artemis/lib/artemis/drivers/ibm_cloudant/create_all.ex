@@ -45,8 +45,13 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
   defp create_global_change_databases(host_config) do
     Enum.map(@global_change_databases, fn database_name ->
       database_config = [name: database_name]
+      options = [
+        create_search: false,
+        create_query_indexes: false,
+        create_filter_views: false
+      ]
 
-      {:ok, _} = IBMCloudant.Create.call(host_config, database_config)
+      {:ok, _} = IBMCloudant.Create.call(host_config, database_config, options)
     end)
   end
 end

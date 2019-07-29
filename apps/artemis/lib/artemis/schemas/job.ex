@@ -7,6 +7,7 @@ defmodule Artemis.Job do
     field :_id, :string
     field :_rev, :string
     field :cmd, :string
+    field :deps, :string
     field :first_run, :integer
     field :instance_uuid, :string
     field :last_run, :integer
@@ -16,6 +17,7 @@ defmodule Artemis.Job do
     field :task_id, :string
     field :transaction_id, :string
     field :uuid, :string
+    field :zzdoc_type, :string
   end
 
   # Callbacks
@@ -32,7 +34,8 @@ defmodule Artemis.Job do
       :status,
       :task_id,
       :transaction_id,
-      :uuid
+      :uuid,
+      :zzdoc_type
     ]
 
   def required_fields,
@@ -55,19 +58,27 @@ defmodule Artemis.Job do
 
   def index_fields,
     do: [
+      :cmd,
+      :deps,
       :first_run,
       :instance_uuid,
       :last_run,
+      :name,
+      :status,
       :task_id,
-      :transaction_id
+      :transaction_id,
+      :uuid,
+      :zzdoc_type
     ]
 
   def search_fields,
     do: [
       :_id,
       :cmd,
+      :deps,
       :name,
       :status,
+      :task_id,
       :uuid
     ]
 

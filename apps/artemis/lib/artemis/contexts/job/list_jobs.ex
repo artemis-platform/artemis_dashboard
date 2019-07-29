@@ -5,7 +5,6 @@ defmodule Artemis.ListJobs do
   alias Artemis.Helpers.IBMCloudantSearch
   alias Artemis.Job
 
-  @default_order "slug"
   @default_page_size 25
 
   def call(params \\ %{}, _user) do
@@ -19,7 +18,6 @@ defmodule Artemis.ListJobs do
   defp default_params(params) do
     params
     |> Artemis.Helpers.keys_to_strings()
-    |> Map.put_new("order", @default_order)
     |> add_page_size_param()
   end
 
@@ -49,7 +47,7 @@ defmodule Artemis.ListJobs do
     cloudant_host = Job.get_cloudant_host()
     cloudant_path = Job.get_cloudant_path()
 
-    query_params = %{
+    base_query_params = %{
       execution_stats: true,
       limit: params["page_size"],
       selector: get_selector_param(params),
@@ -57,7 +55,7 @@ defmodule Artemis.ListJobs do
     }
 
     query_params =
-      query_params
+      base_query_params
       |> maybe_add_bookmark_param(params)
       |> maybe_add_sort_param(params)
 
@@ -117,6 +115,16 @@ defmodule Artemis.ListJobs do
   defp maybe_add_bookmark_param(body, %{"bookmark" => bookmark}), do: Map.put(body, :bookmark, bookmark)
   defp maybe_add_bookmark_param(body, _), do: body
 
+  defp maybe_add_sort_param(body, %{"order" => order}) do
+    param =
+      order
+      |> Artemis.Helpers.Order.get_order()
+      |> Enum.reduce([], fn {direction, key}, acc ->
+        acc ++ [%{key => direction}]
+      end)
+
+    Map.put(body, :sort, param)
+  end
   defp maybe_add_sort_param(body, _), do: body
 
   defp parse_response({:ok, body}, params) do
