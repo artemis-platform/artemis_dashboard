@@ -4,8 +4,8 @@ defmodule Artemis.Schema.Cloudant do
   """
 
   @callback filter_fields :: List.t()
+  @callback index_fields :: List.t()
   @callback search_fields :: List.t()
-  @callback sort_fields :: List.t()
 
   defmacro __using__(_options) do
     quote do

@@ -16,6 +16,7 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
   def call(host_config, database_config) do
     with {:ok, result} <- create_database(host_config, database_config),
          {:ok, _} <- IBMCloudant.CreateSearch.call(host_config, database_config),
+         {:ok, _} <- IBMCloudant.CreateQueryIndexes.call(host_config, database_config),
          {:ok, _} <- IBMCloudant.CreateFilterViews.call(host_config, database_config) do
       {:ok, result}
     else

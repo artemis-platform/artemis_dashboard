@@ -53,6 +53,13 @@ defmodule Artemis.Job do
       :transaction_id
     ]
 
+  def index_fields,
+    do: [
+      :instance_uuid,
+      :task_id,
+      :transaction_id
+    ]
+
   def search_fields,
     do: [
       :_id,
@@ -61,9 +68,6 @@ defmodule Artemis.Job do
       :status,
       :uuid
     ]
-
-  def sort_fields,
-    do: []
 
   # Changesets
 

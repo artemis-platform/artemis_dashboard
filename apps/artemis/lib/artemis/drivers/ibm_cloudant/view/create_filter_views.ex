@@ -6,7 +6,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateFilterViews do
 
   ## Warning!
 
-  Cloudant indexes are expensive to create. To avoid cascading updates, every
+  Views are expensive to create. To avoid cascading updates, every
   attempt is made to determine if the keys already exist.
 
   Do not "optimize" code by switching bitstring keys to atoms, etc, without
@@ -35,7 +35,18 @@ defmodule Artemis.Drivers.IBMCloudant.CreateFilterViews do
     cloudant_path = database_schema.get_cloudant_path()
     design_doc_name = get_design_doc_name(host_config)
 
-    {:ok, design_doc} = IBMCloudant.GetOrCreateDesignDocument.call(cloudant_host, cloudant_path, design_doc_name)
+    design_doc_body = %{
+      options: %{
+        partitioned: false
+      }
+    }
+
+    {:ok, design_doc} = IBMCloudant.GetOrCreateDesignDocument.call(
+      cloudant_host,
+      cloudant_path,
+      design_doc_name,
+      design_doc_body
+    )
 
     filter_fields = database_schema.filter_fields()
     filter_views = generate_filter_views(filter_fields)
