@@ -25,12 +25,12 @@
           last_week = Timex.shift(this_week, days: -7)
           next_week = Timex.shift(this_week, days: 7)
         %>
-        <%= filter_button(@conn, "All Dates", triggered_before: "", triggered_after: "") %>
+        <%= filter_button(@conn, "All Dates", triggered_before: nil, triggered_after: nil) %>
         <%= filter_button(@conn, "This Week", triggered_after: DateTime.to_iso8601(this_week), triggered_before: DateTime.to_iso8601(next_week)) %>
         <%= filter_button(@conn, "Last Week", triggered_after: DateTime.to_iso8601(last_week), triggered_before: DateTime.to_iso8601(this_week)) %>
       </div>
       <div class="ui basic buttons small">
-        <%= filter_button(@conn, "All Statuses", status: "") %>
+        <%= filter_button(@conn, "All Statuses", status: nil) %>
         <%= filter_button(@conn, "Resolved", status: "resolved") %>
         <%= filter_button(@conn, "Acknowledged", status: "acknowledged") %>
         <%= filter_button(@conn, "Triggered", status: "triggered") %>

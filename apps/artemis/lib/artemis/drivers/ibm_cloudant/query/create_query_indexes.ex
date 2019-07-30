@@ -3,7 +3,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
 
   @moduledoc """
   Creates query indexes
-  
+
   ## Warning!
 
   Indexes are expensive to create. Avoid cascading updates by only

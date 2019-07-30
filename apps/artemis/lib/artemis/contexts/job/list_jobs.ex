@@ -88,15 +88,16 @@ defmodule Artemis.ListJobs do
     })
   end
 
-  defp get_selector_param(params) do
-    select_all_selector = %{_id: %{"$gt": nil}}
-    filters = Map.get(params, "filters")
-
-    case Artemis.Helpers.present?(filters) do
-      true -> get_filter_selector(filters)
-      false -> select_all_selector
+  defp get_selector_param(%{"filters" => filters}) do
+    case filters == %{} do
+      true -> get_select_all_selector()
+      false -> get_filter_selector(filters)
     end
   end
+
+  defp get_selector_param(_), do: get_select_all_selector()
+
+  defp get_select_all_selector(), do: %{_id: %{"$gt": nil}}
 
   defp get_filter_selector(filters) do
     key =
@@ -125,6 +126,7 @@ defmodule Artemis.ListJobs do
 
     Map.put(body, :sort, param)
   end
+
   defp maybe_add_sort_param(body, _), do: body
 
   defp parse_response({:ok, body}, params) do

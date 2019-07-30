@@ -41,12 +41,13 @@ defmodule Artemis.Drivers.IBMCloudant.CreateFilterViews do
       }
     }
 
-    {:ok, design_doc} = IBMCloudant.GetOrCreateDesignDocument.call(
-      cloudant_host,
-      cloudant_path,
-      design_doc_name,
-      design_doc_body
-    )
+    {:ok, design_doc} =
+      IBMCloudant.GetOrCreateDesignDocument.call(
+        cloudant_host,
+        cloudant_path,
+        design_doc_name,
+        design_doc_body
+      )
 
     filter_fields = database_schema.filter_fields()
     filter_views = generate_filter_views(filter_fields)

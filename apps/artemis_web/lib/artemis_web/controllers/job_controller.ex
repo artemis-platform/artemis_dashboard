@@ -45,8 +45,9 @@ defmodule ArtemisWeb.JobController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "jobs:show", fn ->
-      job = GetJob.call!(id, current_user(conn))
-      related_jobs = get_related_jobs(job)
+      user = current_user(conn)
+      job = GetJob.call!(id, user)
+      related_jobs = get_related_jobs(job, user)
 
       render(conn, "show.html", job: job, related_jobs: related_jobs)
     end)
@@ -91,13 +92,17 @@ defmodule ArtemisWeb.JobController do
 
   # Helpers
 
-  defp get_related_jobs(job) do
-    results = ListJobs.call(%{
+  defp get_related_jobs(%{task_id: nil}, _), do: []
+
+  defp get_related_jobs(job, user) do
+    params = %{
       filters: %{task_id: job.task_id},
       paginate: false,
       page_size: 1_000_000
-    })
+    }
 
-    Map.get(results, :entries, [])
+    params
+    |> ListJobs.call(user)
+    |> Map.get(:entries, [])
   end
 end
