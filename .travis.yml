@@ -71,7 +71,9 @@ before_script:
 
 env:
   matrix:
-    - TEST="--include browser"
+    # Temporarily disabled browser tests due to issue with chromedriver
+    # - TEST="--include browser"
+    - TEST=""
     - TEST="formatter"
 
 script:
