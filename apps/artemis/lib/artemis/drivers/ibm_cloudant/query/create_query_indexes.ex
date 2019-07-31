@@ -22,10 +22,20 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
   def call(host_config, database_config) do
     database_schema = Keyword.fetch!(database_config, :schema)
 
-    get_or_create_query_indexes(host_config, database_schema)
+    case query_index_enabled_on_host?(host_config) do
+      true -> get_or_create_query_indexes(host_config, database_schema)
+      false -> {:ok, "Query indexes not enabled on host"}
+    end
   end
 
   # Helpers
+
+  defp query_index_enabled_on_host?(host_config) do
+    host_config
+    |> Keyword.fetch!(:query_index_enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
+  end
 
   defp get_or_create_query_indexes(host_config, database_schema) do
     cloudant_host = database_schema.get_cloudant_host()
@@ -81,7 +91,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
       type: "json"
     }
 
-    case Keyword.get(host_config, :query_index_include_partion_param) do
+    case Keyword.get(host_config, :query_index_include_partition_param) do
       "true" -> Map.put(params, :partitioned, false)
       _ -> params
     end
