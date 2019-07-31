@@ -57,9 +57,18 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
   end
 
   defp create_index(cloudant_host, cloudant_path, host_config, design_doc_name, index) do
+    {:ok, _} = create_index_record(cloudant_host, cloudant_path, host_config, design_doc_name, index)
+  rescue
+    _ in MatchError ->
+      :timer.sleep(100)
+
+      create_index_record(cloudant_host, cloudant_path, host_config, design_doc_name, index)
+  end
+
+  defp create_index_record(cloudant_host, cloudant_path, host_config, design_doc_name, index) do
     params = get_index_params(host_config, design_doc_name, index)
 
-    {:ok, _} = IBMCloudant.CreateIndex.call(cloudant_host, cloudant_path, params)
+    IBMCloudant.CreateIndex.call(cloudant_host, cloudant_path, params)
   end
 
   defp get_index_params(host_config, design_doc_name, field) do
