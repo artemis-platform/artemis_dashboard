@@ -37,7 +37,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
     Enum.map(index_fields, fn index ->
       case Enum.member?(existing_indexes, index) do
         true -> {:ok, "Index for #{index} already exists"}
-        false -> create_index(cloudant_host, cloudant_path, design_doc_name, index)
+        false -> create_index(cloudant_host, cloudant_path, host_config, design_doc_name, index)
       end
     end)
 
@@ -56,21 +56,25 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
     |> Enum.map(&Map.get(&1, "name"))
   end
 
-  defp create_index(cloudant_host, cloudant_path, design_doc_name, index) do
-    params = get_index_params(design_doc_name, index)
+  defp create_index(cloudant_host, cloudant_path, host_config, design_doc_name, index) do
+    params = get_index_params(host_config, design_doc_name, index)
 
     {:ok, _} = IBMCloudant.CreateIndex.call(cloudant_host, cloudant_path, params)
   end
 
-  defp get_index_params(design_doc_name, field) do
-    %{
+  defp get_index_params(host_config, design_doc_name, field) do
+    params = %{
       ddoc: design_doc_name,
       index: %{
         fields: [field]
       },
       name: field,
-      partitioned: false,
       type: "json"
     }
+
+    case Keyword.get(host_config, :query_index_include_partion_param) do
+      "true" -> Map.put(params, :partitioned, false)
+      _ -> params
+    end
   end
 end
