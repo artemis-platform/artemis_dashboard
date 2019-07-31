@@ -5,7 +5,6 @@ defmodule Artemis.ListJobs do
   alias Artemis.Helpers.IBMCloudantSearch
   alias Artemis.Job
 
-  @default_order "slug"
   @default_page_size 25
 
   def call(params \\ %{}, _user) do
@@ -19,7 +18,6 @@ defmodule Artemis.ListJobs do
   defp default_params(params) do
     params
     |> Artemis.Helpers.keys_to_strings()
-    |> Map.put_new("order", @default_order)
     |> add_page_size_param()
   end
 
@@ -48,16 +46,18 @@ defmodule Artemis.ListJobs do
   defp get_filtered_records(params) do
     cloudant_host = Job.get_cloudant_host()
     cloudant_path = Job.get_cloudant_path()
-    select_all_selector = %{_id: %{"$gt": nil}}
 
-    query_params = %{
+    base_query_params = %{
       execution_stats: true,
-      fields: ["_id", "name", "cmd", "status", "first_run"],
       limit: params["page_size"],
-      selector: select_all_selector
+      selector: get_selector_param(params),
+      use_index: ["query-indexes", "task_id"]
     }
 
-    query_params = maybe_add_bookmark(query_params, params)
+    query_params =
+      base_query_params
+      |> maybe_add_bookmark_param(params)
+      |> maybe_add_sort_param(params)
 
     IBMCloudant.Request.call(%{
       body: Jason.encode!(query_params),
@@ -78,7 +78,7 @@ defmodule Artemis.ListJobs do
       query: params["query"]
     }
 
-    query_params = maybe_add_bookmark(query_params, params)
+    query_params = maybe_add_bookmark_param(query_params, params)
 
     IBMCloudant.Request.call(%{
       host: cloudant_host,
@@ -88,8 +88,46 @@ defmodule Artemis.ListJobs do
     })
   end
 
-  defp maybe_add_bookmark(body, %{"bookmark" => bookmark}), do: Map.put(body, :bookmark, bookmark)
-  defp maybe_add_bookmark(body, _), do: body
+  defp get_selector_param(%{"filters" => filters}) do
+    case filters == %{} do
+      true -> get_select_all_selector()
+      false -> get_filter_selector(filters)
+    end
+  end
+
+  defp get_selector_param(_), do: get_select_all_selector()
+
+  defp get_select_all_selector(), do: %{_id: %{"$gt": nil}}
+
+  defp get_filter_selector(filters) do
+    key =
+      filters
+      |> Map.keys()
+      |> List.first()
+
+    value = Map.get(filters, key)
+
+    filter(key, value)
+  end
+
+  defp filter("first_run", value) when is_bitstring(value), do: filter("first_run", String.to_integer(value))
+  defp filter(key, value), do: %{key => %{"$eq" => value}}
+
+  defp maybe_add_bookmark_param(body, %{"bookmark" => bookmark}), do: Map.put(body, :bookmark, bookmark)
+  defp maybe_add_bookmark_param(body, _), do: body
+
+  defp maybe_add_sort_param(body, %{"order" => order}) do
+    param =
+      order
+      |> Artemis.Helpers.Order.get_order()
+      |> Enum.reduce([], fn {direction, key}, acc ->
+        acc ++ [%{key => direction}]
+      end)
+
+    Map.put(body, :sort, param)
+  end
+
+  defp maybe_add_sort_param(body, _), do: body
 
   defp parse_response({:ok, body}, params) do
     documents = parse_response_documents(body)

@@ -54,6 +54,9 @@ config :artemis, :ibm_cloudant,
       hostname: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_HOSTNAME"),
       protocol: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PROTOCOL"),
       create_change_databases: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_CREATE_CHANGE_DATABASES"),
+      query_index_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_QUERY_INDEX_ENABLED"),
+      query_index_include_partition_param:
+        System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_QUERY_INDEX_INCLUDE_PARTITION_PARAM"),
       search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED"),
       search_design_doc: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_DESIGN_DOC"),
       search_index: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_INDEX")

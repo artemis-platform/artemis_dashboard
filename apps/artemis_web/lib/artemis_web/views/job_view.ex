@@ -5,10 +5,16 @@ defmodule ArtemisWeb.JobView do
     [
       {"Actions", "actions"},
       {"Command", "command"},
+      {"Dependencies", "deps"},
+      {"Doc Type", "zzdoc_type"},
       {"First Run", "first_run"},
       {"ID", "id"},
+      {"Instance UUID", "instance_uuid"},
+      {"Last Run", "last_run"},
       {"Name", "name"},
-      {"Status", "status"}
+      {"Status", "status"},
+      {"Task ID", "task_id"},
+      {"UUID", "uuid"}
     ]
   end
 
@@ -21,14 +27,30 @@ defmodule ArtemisWeb.JobView do
       ],
       "command" => [
         label: fn _conn -> "Command" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "cmd", "Command")
+        end,
         value: fn _conn, row -> row.cmd end
+      ],
+      "deps" => [
+        label: fn _conn -> "Dependencies" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "deps", "Dependencies")
+        end,
+        value: fn _conn, row -> row.deps end
       ],
       "first_run" => [
         label: fn _conn -> "First Run" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "first_run", "First Run")
+        end,
         value: fn _conn, row -> row.first_run end
       ],
       "id" => [
         label: fn _conn -> "ID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "_id", "ID")
+        end,
         value: fn _conn, row -> row._id end,
         value_html: fn conn, row ->
           case has?(conn, "jobs:show") do
@@ -37,14 +59,55 @@ defmodule ArtemisWeb.JobView do
           end
         end
       ],
+      "instance_uuid" => [
+        label: fn _conn -> "Instance UUID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "instance_uuid", "Instance UUID")
+        end,
+        value: fn _conn, row -> row.instance_uuid end
+      ],
+      "last_run" => [
+        label: fn _conn -> "Last Run" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "last_run", "Last Run")
+        end,
+        value: fn _conn, row -> row.last_run end
+      ],
       "name" => [
         label: fn _conn -> "Name" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "name", "Name")
+        end,
         value: fn _conn, row -> row.name end
       ],
       "status" => [
         label: fn _conn -> "Status" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "status", "Status")
+        end,
         value: &status_row_value/2,
         value_html: &status_row_value_html/2
+      ],
+      "task_id" => [
+        label: fn _conn -> "Task ID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "task_id", "Task ID")
+        end,
+        value: fn _conn, row -> row.task_id end
+      ],
+      "uuid" => [
+        label: fn _conn -> "UUID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "uuid", "UUID")
+        end,
+        value: fn _conn, row -> row.uuid end
+      ],
+      "zzdoc_type" => [
+        label: fn _conn -> "Doc Type" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "zzdoc_type", "Doc Type")
+        end,
+        value: fn _conn, row -> row.zzdoc_type end
       ]
     }
   end

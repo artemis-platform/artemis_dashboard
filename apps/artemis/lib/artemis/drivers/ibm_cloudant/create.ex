@@ -13,9 +13,11 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
     call(host_config, database_config)
   end
 
-  def call(host_config, database_config) do
+  def call(host_config, database_config, options \\ []) do
     with {:ok, result} <- create_database(host_config, database_config),
-         {:ok, _} <- IBMCloudant.CreateSearch.call(host_config, database_config) do
+         {:ok, _} <- create_search(host_config, database_config, options),
+         {:ok, _} <- create_query_indexes(host_config, database_config, options),
+         {:ok, _} <- create_filter_views(host_config, database_config, options) do
       {:ok, result}
     else
       error -> error
@@ -43,4 +45,25 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
 
   defp parse_results({:error, %{"error" => "file_exists"}}), do: {:ok, "Database already exists"}
   defp parse_results(result), do: result
+
+  defp create_search(host_config, database_config, options) do
+    case Keyword.get(options, :create_search, true) do
+      true -> IBMCloudant.CreateSearch.call(host_config, database_config)
+      false -> {:ok, :skipped}
+    end
+  end
+
+  defp create_query_indexes(host_config, database_config, options) do
+    case Keyword.get(options, :create_query_indexes, true) do
+      true -> IBMCloudant.CreateQueryIndexes.call(host_config, database_config)
+      false -> {:ok, :skipped}
+    end
+  end
+
+  defp create_filter_views(host_config, database_config, options) do
+    case Keyword.get(options, :create_filter_views, true) do
+      true -> IBMCloudant.CreateFilterViews.call(host_config, database_config)
+      false -> {:ok, :skipped}
+    end
+  end
 end

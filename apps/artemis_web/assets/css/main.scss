@@ -28,6 +28,11 @@ ol {
   }
 }
 
+select[multiple] {
+  opacity: 0.1;
+  max-height: 1em !important;
+}
+
 
 /* === General Classes === */
 

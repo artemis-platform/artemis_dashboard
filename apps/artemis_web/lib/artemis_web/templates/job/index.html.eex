@@ -26,6 +26,12 @@
       <%= render_search @conn %>
     <% end %>
 
+    <div class="ui basic buttons small">
+      <%= filter_button(@conn, "All", zzdoc_type: nil) %>
+      <%= filter_button(@conn, "Jobs", zzdoc_type: "job") %>
+      <%= filter_button(@conn, "Tasks", zzdoc_type: "task") %>
+    </div>
+
     <div class="table-actions">
       <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
       <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true, size: "medium") %>
