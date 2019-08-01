@@ -15,7 +15,7 @@ defmodule Artemis.Worker.IBMCloudantMigrator do
   # Callbacks
 
   @impl true
-  def call(_data), do: IBMCloudant.CreateAll.call()
+  def call(_data, _config), do: IBMCloudant.CreateAll.call()
 
   # Helpers
 

@@ -20,8 +20,8 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   # Callbacks
 
   @impl true
-  def call(data) do
-    data = get_data_struct(data)
+  def call(data, config) do
+    data = get_data_struct(data, config)
     cloudant_host = data.schema.get_cloudant_host()
     cloudant_path = data.schema.get_cloudant_path()
     timeout = get_request_timeout()
@@ -145,12 +145,14 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     :ok = :hackney_pool.start_pool(@hackney_pool, options)
   end
 
-  defp get_data_struct(%Data{} = value), do: value
-  defp get_data_struct(map) when is_map(map), do: struct(Data, map)
-  defp get_data_struct(_), do: get_initial_data_struct()
+  defp get_data_struct(%Data{} = value, _config), do: value
+  defp get_data_struct(value, _config) when is_map(value), do: struct(Data, value)
+  defp get_data_struct(_, config), do: get_initial_data_struct(config)
 
-  defp get_initial_data_struct() do
-    struct(Data, schema: Artemis.Job)
+  defp get_initial_data_struct(config) do
+    schema = Keyword.fetch!(config, :schema)
+
+    struct(Data, schema: schema)
   end
 
   defp decode_data(data) do

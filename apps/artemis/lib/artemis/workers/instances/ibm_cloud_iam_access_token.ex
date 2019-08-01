@@ -10,7 +10,7 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
   # Callbacks
 
   @impl true
-  def call(_data) do
+  def call(_data, _config) do
     with {:ok, response} <- request_access_token(),
          {:ok, data} <- process_response(response) do
       {:ok, data}
