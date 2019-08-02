@@ -20,7 +20,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   # Callbacks
 
   @impl true
-  def call(data) do
+  def call(data, _config) do
     with user <- GetSystemUser.call!(),
          {:ok, escalation_policies} <- synchronize_escalation_policies(data),
          {:ok, on_calls} <- synchronize_on_calls(escalation_policies),

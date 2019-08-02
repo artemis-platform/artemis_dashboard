@@ -43,7 +43,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   # Callbacks
 
   @impl true
-  def call(data), do: fetch_data(data)
+  def call(data, _config), do: fetch_data(data)
 
   # Helpers
 

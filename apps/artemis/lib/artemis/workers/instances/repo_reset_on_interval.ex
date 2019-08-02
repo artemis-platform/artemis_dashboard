@@ -13,7 +13,7 @@ defmodule Artemis.Worker.RepoResetOnInterval do
   # Callbacks
 
   @impl true
-  def call(_data) do
+  def call(_data, _config) do
     with {:ok, _} <- DeleteAll.call(DeleteAll.verification_phrase()),
          {:ok, _} <- GenerateData.call(),
          {:ok, _} <- GenerateFillerData.call(GenerateFillerData.verification_phrase()) do

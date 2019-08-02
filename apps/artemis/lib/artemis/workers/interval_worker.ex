@@ -29,7 +29,7 @@ defmodule Artemis.IntervalWorker do
 
   """
 
-  @callback call(map()) :: {:ok, any()} | {:error, any()}
+  @callback call(map(), any()) :: {:ok, any()} | {:error, any()}
   @callback handle_info_callback(any(), any()) :: {:ok, any()} | {:error, any()}
 
   @optional_callbacks handle_info_callback: 2
@@ -63,42 +63,45 @@ defmodule Artemis.IntervalWorker do
       @default_interval 60_000
       @default_log_limit 500
 
-      def start_link(config \\ nil) do
+      def start_link(config \\ []) do
         initial_state = %State{
           config: config
         }
 
+        dynamic_name = Keyword.get(config, :name)
+        configured_name = get_name()
+
         options = [
-          name: get_name()
+          name: dynamic_name || configured_name
         ]
 
         GenServer.start_link(__MODULE__, initial_state, options)
       end
 
-      def get_name(), do: get_option(:name)
+      def get_name(name \\ nil), do: name || get_option(:name)
 
-      def get_config(), do: GenServer.call(get_name(), :config)
+      def get_config(name \\ nil), do: GenServer.call(get_name(name), :config)
 
-      def get_data(), do: GenServer.call(get_name(), :data)
+      def get_data(name \\ nil), do: GenServer.call(get_name(name), :data)
 
-      def get_log(), do: GenServer.call(get_name(), :log)
+      def get_log(name \\ nil), do: GenServer.call(get_name(name), :log)
 
       def get_options(), do: unquote(options)
 
       def get_option(key, default \\ nil), do: Keyword.get(get_options(), key, default)
 
-      def get_result(), do: GenServer.call(get_name(), :result)
+      def get_result(name \\ nil), do: GenServer.call(get_name(name), :result)
 
-      def get_state(), do: GenServer.call(get_name(), :state)
+      def get_state(name \\ nil), do: GenServer.call(get_name(name), :state)
 
-      def pause(), do: GenServer.call(get_name(), :pause)
+      def pause(name \\ nil), do: GenServer.call(get_name(name), :pause)
 
-      def resume(), do: GenServer.call(get_name(), :resume)
+      def resume(name \\ nil), do: GenServer.call(get_name(name), :resume)
 
-      def update(options \\ []) do
+      def update(options \\ [], name \\ nil) do
         case Keyword.get(options, :async) do
-          true -> Process.send(get_name(), :update, [])
-          _ -> GenServer.call(get_name(), :update)
+          true -> Process.send(get_name(name), :update, [])
+          _ -> GenServer.call(get_name(name), :update)
         end
       end
 
@@ -203,7 +206,7 @@ defmodule Artemis.IntervalWorker do
 
       defp update_state(state) do
         started_at = Timex.now()
-        result = call(state.data)
+        result = call(state.data, state.config)
         ended_at = Timex.now()
 
         state
