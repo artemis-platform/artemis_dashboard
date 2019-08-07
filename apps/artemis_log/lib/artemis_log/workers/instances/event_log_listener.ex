@@ -1,11 +1,10 @@
-defmodule ArtemisLog.Worker.Event do
+defmodule ArtemisLog.Worker.EventLogListener do
   use GenServer
 
   import ArtemisPubSub
 
   alias ArtemisLog.CreateEventLog
 
-  @subscribe_to_events Application.get_env(:artemis_log, :subscribe_to_events, true)
   @topic "private:artemis:events"
 
   def start_link() do
@@ -18,7 +17,7 @@ defmodule ArtemisLog.Worker.Event do
   # Callbacks
 
   def init(state) do
-    if @subscribe_to_events do
+    if enabled?() do
       :ok = subscribe(@topic)
     end
 
@@ -33,5 +32,16 @@ defmodule ArtemisLog.Worker.Event do
 
   def handle_info(_, state) do
     {:noreply, state}
+  end
+
+  # Helpers
+
+  defp enabled?() do
+    :artemis_log
+    |> Application.fetch_env!(:actions)
+    |> Keyword.fetch!(:subscribe_to_events)
+    |> Keyword.fetch!(:enabled)
+    |> String.downcase()
+    |> String.equivalent?("true")
   end
 end
