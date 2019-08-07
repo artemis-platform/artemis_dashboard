@@ -4,6 +4,7 @@ config :artemis,
   ecto_repos: [Artemis.Repo]
 
 config :artemis, :actions,
+  # NOTE: When adding action entries, also update `config/test.exs`
   ibm_cloud_iam_access_token: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUD_IAM_ACCESS_TOKEN_ENABLED")
   ],
