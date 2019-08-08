@@ -22,6 +22,19 @@ defmodule Artemis.UserTest do
     :wiki_revisions
   ]
 
+  describe "attributes - params" do
+    test "email is downcased" do
+      params = params_for(:user, email: "EXAMPLE@TEST.COM")
+
+      record =
+        %User{}
+        |> User.changeset(params)
+        |> Repo.insert!()
+
+      assert record.email == "example@test.com"
+    end
+  end
+
   describe "attributes - constraints" do
     test "email must be unique" do
       existing = insert(:user)
