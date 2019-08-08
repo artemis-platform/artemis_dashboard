@@ -109,6 +109,7 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "tags:list", name: "Tags - Global List", description: admin_only},
       %{slug: "tags:show", name: "Tags - Global Show", description: admin_only},
       %{slug: "tags:update", name: "Tags - Global Update", description: admin_only},
+      %{slug: "user-anonymizations:create", name: "User Anonymizations - Create"},
       %{slug: "user-impersonations:create", name: "User Impersonations - Create"},
       %{slug: "users:access:all", name: "Users - Access All", description: admin_only},
       %{slug: "users:access:self", name: "Users - Access Self"},
