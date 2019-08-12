@@ -7,6 +7,13 @@
     <nav id="primary-navigation" role="navigation">
       <% nav_items = nav_items_for_current_user(@user) %>
       <ul>
+        <%= if render_primary_nav_section?(nav_items, ["Customers"]) do %>
+          <li>
+            <a href="<%= Routes.customer_path(@conn, :index) %>">
+              Customers
+            </a>
+          </li>
+        <% end %>
         <%= if render_primary_nav_section?(nav_items, ["Jobs"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.job_path(@conn, :index) %>">

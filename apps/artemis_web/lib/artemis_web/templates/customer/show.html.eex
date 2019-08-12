@@ -1,0 +1,28 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @customer.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "customers:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.customer_path(@conn, :delete, @customer), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "customers:update") do %>
+        <%= action "Edit", to: Routes.customer_path(@conn, :edit, @customer), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <h2>Customer Notes</h2>
+
+  <%= raw @customer.notes_html %>
+</div>

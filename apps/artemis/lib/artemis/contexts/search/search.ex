@@ -36,6 +36,11 @@ defmodule Artemis.Search do
 
   def get_searchable_resources do
     searchable_resources = %{
+      "customers" => [
+        enabled: true,
+        function: &Artemis.ListCustomers.call/2,
+        permissions: "customers:list"
+      ],
       "features" => [
         enabled: true,
         function: &Artemis.ListFeatures.call/2,

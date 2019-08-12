@@ -1,0 +1,19 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "customer-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :name %>
+    <%= text_input f, :name, placeholder: "Name" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :notes %>
+    <%= textarea f, :notes, class: "markdown" %>
+  </div>
+
+  <div>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save", class: "ui button primary" %>
+  </div>
+<% end %>

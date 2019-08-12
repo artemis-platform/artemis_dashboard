@@ -25,6 +25,16 @@ defmodule Artemis.Factories do
     }
   end
 
+  def customer_factory do
+    notes = Faker.Lorem.paragraph()
+
+    %Artemis.Customer{
+      name: sequence(:name, &"#{Faker.Company.name()}-#{&1}"),
+      notes: notes,
+      notes_html: notes
+    }
+  end
+
   def feature_factory do
     %Artemis.Feature{
       active: false,

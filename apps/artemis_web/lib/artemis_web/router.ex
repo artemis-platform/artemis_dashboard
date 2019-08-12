@@ -54,6 +54,7 @@ defmodule ArtemisWeb.Router do
         put "/tags", WikiPageTagController, :update, as: :tag
       end
 
+      resources "/customers", CustomerController
       get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]
       resources "/features", FeatureController

@@ -12,6 +12,18 @@ defmodule ArtemisWeb.Config.Navigation do
   """
   def get_nav_items do
     Enum.reverse(
+      Customers: [
+        [
+          label: "List Customers",
+          path: &Routes.customer_path(&1, :index),
+          verify: &has?(&1, "customers:list")
+        ],
+        [
+          label: "Create New Customer",
+          path: &Routes.customer_path(&1, :new),
+          verify: &has?(&1, "customers:create")
+        ]
+      ],
       Documentation: [
         [
           label: "View Documentation",
