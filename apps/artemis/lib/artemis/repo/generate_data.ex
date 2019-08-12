@@ -67,6 +67,11 @@ defmodule Artemis.Repo.GenerateData do
     permissions = [
       %{slug: "comments:access:all", name: "Comments - Access All", description: admin_only},
       %{slug: "comments:access:self", name: "Comments - Access Self"},
+      %{slug: "customers:create", name: "Customers - Create"},
+      %{slug: "customers:delete", name: "Customers - Delete"},
+      %{slug: "customers:list", name: "Customers - List"},
+      %{slug: "customers:show", name: "Customers - Show"},
+      %{slug: "customers:update", name: "Customers - Update"},
       %{slug: "event-logs:access:all", name: "Event Logs - Access All", description: admin_only},
       %{slug: "event-logs:access:self", name: "Event Logs - Access Self"},
       %{slug: "event-logs:list", name: "Event Logs - List"},

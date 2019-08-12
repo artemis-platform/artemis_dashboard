@@ -4,6 +4,10 @@ defmodule ArtemisWeb.SearchView do
   alias ArtemisWeb.Router.Helpers, as: Routes
 
   @search_links %{
+    "customers" => [
+      label: "Customers",
+      path: &Routes.customer_path/3
+    ],
     "wiki_pages" => [
       label: "Documentation",
       path: &Routes.wiki_page_path/3

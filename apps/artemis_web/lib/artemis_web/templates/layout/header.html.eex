@@ -25,6 +25,13 @@
             </div>
           </li>
         <% end %>
+        <%= if render_primary_nav_section?(nav_items, ["Customers"]) do %>
+          <li class="with-dropdown">
+            <a href="<%= Routes.customer_path(@conn, :index) %>">
+              Customers
+            </a>
+          </li>
+        <% end %>
         <%= if render_primary_nav_section?(nav_items, ["On Call", "Incidents"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.incident_path(@conn, :index) %>">
