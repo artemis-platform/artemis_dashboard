@@ -107,13 +107,13 @@ body {
         color: #333;
         display: block;
         height: $height;
-        padding: 0 1.5rem 0 1.5rem;
+        padding: 0 1.25rem 0 1.25rem;
         line-height: $height;
         text-decoration: none;
       }
 
       & > ul > li.with-dropdown > a {
-        padding: 0 0.475rem 0 1.5rem;
+        padding: 0 0.325rem 0 1.25rem;
 
         i {
           font-size: 0.875rem;
