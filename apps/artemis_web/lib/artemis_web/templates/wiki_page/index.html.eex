@@ -17,34 +17,36 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <div class="data-table-filters">
-    <content>
-      <%= render_search @conn, placeholder: "Search Documentation", size: "full-width" %>
-      <div>
-        <%= render ArtemisWeb.TagView, "_resource_filter.html", assigns %>
-      </div>
-    </content>
-  </div>
+  <section>
+    <div class="data-table-filters">
+      <content>
+        <%= render_search @conn, placeholder: "Search Documentation", size: "full-width" %>
+        <div>
+          <%= render ArtemisWeb.TagView, "_resource_filter.html", assigns %>
+        </div>
+      </content>
+    </div>
 
-  <h2>Topics</h2>
+    <%= h2 "Topics" %>
 
-  <%= if length(@wiki_pages.entries) == 0 do %>
-    No records found
-  <% end %>
+    <%= if length(@wiki_pages.entries) == 0 do %>
+      No records found
+    <% end %>
 
-  <% sections = Enum.group_by(@wiki_pages.entries, &(&1.section)) %>
-  <%= Enum.map sections, fn ({section, entries}) -> %>
-    <h3><%= section %></h3>
+    <% sections = Enum.group_by(@wiki_pages.entries, &(&1.section)) %>
+    <%= Enum.map sections, fn ({section, entries}) -> %>
+      <h3><%= section %></h3>
 
-    <ul>
-      <% sorted = Enum.sort_by(entries, &(&1.weight)) %>
-      <%= Enum.map sorted, fn (entry) -> %>
-        <li>
-          <%= link entry.title, to: Routes.wiki_page_path(@conn, :show, entry, entry.slug) %>
-        </li>
-      <% end %>
-    </ul>
-  <% end %>
+      <ul>
+        <% sorted = Enum.sort_by(entries, &(&1.weight)) %>
+        <%= Enum.map sorted, fn (entry) -> %>
+          <li>
+            <%= link entry.title, to: Routes.wiki_page_path(@conn, :show, entry, entry.slug) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </section>
 
   <%= render_pagination @conn, @wiki_pages %>
 </div>

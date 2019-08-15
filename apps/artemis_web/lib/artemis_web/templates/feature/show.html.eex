@@ -22,22 +22,14 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <ul>
-
-    <li>
-      <strong>Name:</strong>
-      <%= @feature.name %>
-    </li>
-
-    <li>
-      <strong>Slug:</strong>
-      <%= @feature.slug %>
-    </li>
-
-    <li>
-      <strong>Active:</strong>
-      <%= @feature.active %>
-    </li>
-
-  </ul>
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @feature.name],
+        ["Slug", @feature.slug],
+        ["Active", @feature.active]
+      ])
+    %>
+  </section>
 </div>

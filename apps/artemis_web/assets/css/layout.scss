@@ -3,6 +3,21 @@ body {
   background: #fff;
 }
 
+#body h2 {
+  border-bottom: 2px solid $blue_muted;
+  font-size: 1.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+}
+
+#body h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding: 0 0 0.5rem 0;
+}
+
 /* === Login === */
 
 #login {
@@ -623,9 +638,25 @@ body.error-page {
 }
 
 #content {
-  background: #fff;
-  margin: 0;
   padding: 1.5rem 2rem 4rem 2rem;
+
+  section {
+    margin: 0 0 1rem 0;
+  }
+
+  &.pool {
+    background: #f2f2f6;
+    margin: 0;
+    padding: 2rem 2rem 1.5rem 2rem;
+
+    section {
+      background: #fff;
+      border: 1px solid #e2e2e2;
+      border-radius: 4px;
+      margin: 0 0 1rem 0;
+      padding: 1.25rem 2rem 1rem 2rem;
+    }
+  }
 }
 
 #primary-footer {

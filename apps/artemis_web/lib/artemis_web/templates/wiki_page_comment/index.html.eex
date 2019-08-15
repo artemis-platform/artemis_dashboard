@@ -1,4 +1,4 @@
-<h2>Comments</h2>
+<%= h3 "Comments" %>
 
 <%=
   if create_comments?(@conn) do
