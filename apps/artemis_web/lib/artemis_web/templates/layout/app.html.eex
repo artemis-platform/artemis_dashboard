@@ -7,7 +7,7 @@
     <title>Artemis</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
-  <body class="<%= if @conn.assigns[:error_page], do: "error-page" %>">
+  <body class="<%= if @conn.assigns[:error_page], do: "error-page" %>" id="body">
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
     <%= if current_user?(@conn) do %>
       <%= render "sidebar_current_user.html", conn: @conn, user: current_user(@conn) %>

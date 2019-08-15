@@ -22,33 +22,27 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <ul>
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @role.name],
+        ["Slug", @role.slug],
+        ["Description", @role.description]
+      ])
+    %>
+  </section>
 
-    <li>
-      <strong>Name:</strong>
-      <%= @role.name %>
-    </li>
+  <section>
+    <%= h3 "Permissions" %>
 
-    <li>
-      <strong>Slug:</strong>
-      <%= @role.slug %>
-    </li>
-
-    <li>
-      <strong>Description:</strong>
-      <%= @role.description %>
-    </li>
-
-  </ul>
-
-  <h4>Permissions</h4>
-
-  <ul>
-    <%= Enum.map @role.permissions, fn (permission) -> %>
-      <li>
-        <code><%= permission.slug %></code>
-        <%= permission.name %>
-      </li>
-    <% end %>
-  </ul>
+    <%=
+      render_data_table(
+        @conn,
+        @role.permissions,
+        allowed_columns: ArtemisWeb.PermissionView.data_table_allowed_columns(),
+        default_columns: ["slug", "name", "description"]
+      )
+    %>
+  </section>
 </div>

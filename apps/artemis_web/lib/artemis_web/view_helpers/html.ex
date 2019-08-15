@@ -1,6 +1,8 @@
 defmodule ArtemisWeb.ViewHelper.HTML do
   use Phoenix.HTML
 
+  import Phoenix.HTML.Tag
+
   @doc """
   Generates an action tag.
 
@@ -34,6 +36,30 @@ defmodule ArtemisWeb.ViewHelper.HTML do
       method == "get" && live? -> Phoenix.LiveView.live_link(label, tag_options)
       method == "get" -> link(label, tag_options)
       true -> button(label, tag_options)
+    end
+  end
+
+  @doc """
+  Render a H2 tag
+  """
+  def h2(label, options \\ []) do
+    slug = Artemis.Helpers.generate_slug(label)
+    id = "link-#{slug}"
+
+    content_tag(:div, class: "heading-container h2-container", id: id) do
+      content_tag(:h2, label)
+    end
+  end
+
+  @doc """
+  Render a H3 tag
+  """
+  def h3(label, options \\ []) do
+    slug = Artemis.Helpers.generate_slug(label)
+    id = "link-#{slug}"
+
+    content_tag(:div, class: "heading-container h3-container", id: id) do
+      content_tag(:h3, label)
     end
   end
 end

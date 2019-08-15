@@ -22,32 +22,20 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <ul>
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Action", @event_log.action],
+        ["User ID", @event_log.user_id],
+        ["User Name", @event_log.user_name],
+        ["Timestamp", @event_log.updated_at]
+      ])
+    %>
+  </section>
 
-    <li>
-      <strong>Action:</strong>
-      <%= @event_log.action %>
-    </li>
-
-    <li>
-      <strong>User ID:</strong>
-      <%= @event_log.user_id %>
-    </li>
-
-    <li>
-      <strong>User Name:</strong>
-      <%= @event_log.user_name %>
-    </li>
-
-    <li>
-      <strong>Timestamp</strong>
-      <%= @event_log.updated_at %>
-    </li>
-
-    <li>
-      <strong>Meta</strong>
-      <pre><code><%= Jason.encode!(@event_log.meta, pretty: true) %></code></pre>
-    </li>
-
-  </ul>
+  <section>
+    <%= h3 "Raw Data" %>
+    <pre><code><%= Jason.encode!(@event_log.meta, pretty: true) %></code></pre>
+  </section>
 </div>

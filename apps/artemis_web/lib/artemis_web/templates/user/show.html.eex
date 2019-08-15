@@ -31,35 +31,38 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <ul>
+  <section>
+    <%= h2 "Overview" %>
+    <%=
+      render_key_value_list([
+        ["Name", @user.name],
+        ["Email", @user.email],
+        ["First Name", @user.first_name],
+        ["Last Name", @user.last_name]
+      ])
+    %>
+  </section>
 
-    <li>
-      <strong>Name:</strong>
-      <%= @user.name %>
-    </li>
+  <section>
+    <%= h3 "Roles" %>
 
-    <li>
-      <strong>Email:</strong>
-      <%= @user.email %>
-    </li>
-  </ul>
+    <ul>
+      <%= Enum.map @user.roles, fn (role) -> %>
+        <li><%= role.name %></li>
+      <% end %>
+    </ul>
+  </section>
 
-  <h4>Roles</h4>
+  <section>
+    <%= h3 "Permissions" %>
 
-  <ul>
-    <%= Enum.map @user.roles, fn (role) -> %>
-      <li><%= role.name %></li>
-    <% end %>
-  </ul>
-
-  <h4>Permissions</h4>
-
-  <ul>
-    <%= Enum.map @user.permissions, fn (permission) -> %>
-      <li>
-        <code><%= permission.slug %></code>
-        <%= permission.name %>
-      </li>
-    <% end %>
-  </ul>
+    <%=
+      render_data_table(
+        @conn,
+        @user.permissions,
+        allowed_columns: ArtemisWeb.PermissionView.data_table_allowed_columns(),
+        default_columns: ["slug", "name", "description"]
+      )
+    %>
+  </section>
 </div>

@@ -22,7 +22,17 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <h2>Customer Notes</h2>
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @customer.name]
+      ])
+    %>
+  </section>
 
-  <%= raw @customer.notes_html %>
+  <section>
+    <%= h3 "Customer Notes" %>
+    <%= raw @customer.notes_html %>
+  </section>
 </div>

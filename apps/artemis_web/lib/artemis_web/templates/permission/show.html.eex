@@ -22,22 +22,14 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <ul>
-
-    <li>
-      <strong>Name:</strong>
-      <%= @permission.name %>
-    </li>
-
-    <li>
-      <strong>Slug:</strong>
-      <%= @permission.slug %>
-    </li>
-
-    <li>
-      <strong>Description:</strong>
-      <%= @permission.description %>
-    </li>
-
-  </ul>
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @permission.name],
+        ["Slug", @permission.slug],
+        ["Description", @permission.description]
+      ])
+    %>
+  </section>
 </div>

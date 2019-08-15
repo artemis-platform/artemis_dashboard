@@ -108,6 +108,7 @@ select[multiple] {
 }
 
 .data-table-filters {
+  margin-bottom: 1rem;
 
   content {
     display: flex;
@@ -299,6 +300,38 @@ select[multiple] {
       article {
         width: 100%;
       }
+    }
+  }
+}
+
+/* === Components - Key Value List === */
+
+ul.key-value-list {
+  align-items: flex-start;
+  display: flex;
+  flex-flow: column wrap;
+  flex-grow: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    flex-direction: space-between;
+    line-height: 1em;
+    margin: 0 0 0.75rem 0;
+    max-width: 30rem;
+    min-height: 1em;
+    width: 100%;
+
+    .key {
+      font-weight: 600;
+      margin-right: 1rem;
+      width: 8rem;
+    }
+
+    .value {
+      width: 100%;
     }
   }
 }
