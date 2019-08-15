@@ -58,9 +58,14 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
     section_keys = Enum.filter(requested_keys, &Enum.member?(allowed_keys, &1))
 
     filtered =
-      Enum.filter(nav_items, fn {key, _} ->
-        Enum.member?(section_keys, key)
+      section_keys
+      |> Enum.reduce([], fn section_key, acc ->
+        case Keyword.get(nav_items, section_key) do
+          nil -> acc
+          nav_item -> [{section_key, nav_item} | acc]
+        end
       end)
+      |> Enum.reverse()
 
     render_primary_navigation_items(conn, user, items: filtered)
   end
