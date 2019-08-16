@@ -582,3 +582,23 @@ ul.key-value-list {
     }
   }
 }
+
+/* === Components - Related Resources === */
+
+.related-resources {
+  margin: 1rem 0 2rem 0;
+
+  .data-table thead tr {
+    border-bottom: 1px solid #e2e2e2;
+  }
+
+  .data-table th {
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  .data-table td {
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+  }
+}

@@ -40,9 +40,26 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   end
 
   @doc """
+  Reload button
+  """
+  def render_reload_action(options \\ []) do
+    default_options = [
+      label: "Refresh",
+      onclick: "javascript:window.location.reload()",
+      size: "small",
+      to: "#action-reloading-page"
+    ]
+
+    options = Keyword.merge(default_options, options)
+    label = Keyword.get(options, :label)
+
+    action(label, options)
+  end
+
+  @doc """
   Render a H2 tag
   """
-  def h2(label, options \\ []) do
+  def h2(label, _options \\ []) do
     slug = Artemis.Helpers.generate_slug(label)
     id = "link-#{slug}"
 
@@ -54,7 +71,7 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   @doc """
   Render a H3 tag
   """
-  def h3(label, options \\ []) do
+  def h3(label, _options \\ []) do
     slug = Artemis.Helpers.generate_slug(label)
     id = "link-#{slug}"
 
