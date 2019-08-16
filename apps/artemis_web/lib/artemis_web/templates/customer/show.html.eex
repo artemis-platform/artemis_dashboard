@@ -36,16 +36,4 @@
     <%= h3 "Customer Notes" %>
     <%= raw @customer.notes_html %>
   </section>
-
-  <%=
-    Phoenix.LiveView.live_render(
-      @conn,
-      ArtemisWeb.EventLogLive,
-      session: %{
-        current_user: current_user(@conn),
-        resource_id: @customer.id,
-        resource_type: "Customer"
-      }
-    )
-  %>
 </div>

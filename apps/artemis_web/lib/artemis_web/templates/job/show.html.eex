@@ -21,6 +21,7 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Job", @job._id %>
 
   <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
 
