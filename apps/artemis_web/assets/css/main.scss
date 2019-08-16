@@ -33,7 +33,6 @@ select[multiple] {
   max-height: 1em !important;
 }
 
-
 /* === General Classes === */
 
 .label-with-errors {
@@ -210,6 +209,12 @@ select[multiple] {
       width: 200px;
     }
   }
+}
+
+/* === Components - Notifications === */
+
+.event-log-notification {
+  margin-bottom: 1rem !important;
 }
 
 /* === Components - Sidebars === */
@@ -580,5 +585,25 @@ ul.key-value-list {
       margin: 0;
       padding: 1rem 0 0 0;
     }
+  }
+}
+
+/* === Components - Related Resources === */
+
+.related-resources {
+  margin: 1rem 0 2rem 0;
+
+  .data-table thead tr {
+    border-bottom: 1px solid #e2e2e2;
+  }
+
+  .data-table th {
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  .data-table td {
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
   }
 }

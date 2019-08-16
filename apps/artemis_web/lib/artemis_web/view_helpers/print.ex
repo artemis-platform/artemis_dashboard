@@ -53,6 +53,25 @@ defmodule ArtemisWeb.ViewHelper.Print do
   end
 
   @doc """
+  Print time in human readable format with seconds
+  """
+  def render_time(value, format \\ "{h12}:{m}:{s}{am} {Zabbr}")
+
+  def render_time(nil, _format), do: nil
+
+  def render_time(value, format) when is_number(value) do
+    value
+    |> Timex.from_unix()
+    |> render_time(format)
+  end
+
+  def render_time(value, format) do
+    value
+    |> Timex.Timezone.convert("America/New_York")
+    |> Timex.format!(format)
+  end
+
+  @doc """
   Print date in relative time, e.g. "3 minutes ago"
   """
   def render_relative_time(value, format \\ "{relative}")

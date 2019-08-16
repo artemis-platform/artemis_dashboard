@@ -18,6 +18,7 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Incident", @incident.id %>
 
   <%= if @comment_changeset.action do %>
     <%= render_notification :error, body: "Error Saving Comment" %>

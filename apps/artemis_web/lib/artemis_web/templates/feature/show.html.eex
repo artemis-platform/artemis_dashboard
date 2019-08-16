@@ -21,6 +21,7 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Feature", @feature.id %>
 
   <section>
     <%= h2 "Details" %>

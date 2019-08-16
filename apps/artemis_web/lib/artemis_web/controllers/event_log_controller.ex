@@ -4,11 +4,24 @@ defmodule ArtemisWeb.EventLogController do
   alias ArtemisLog.GetEventLog
   alias ArtemisLog.ListEventLogs
 
+  @default_columns [
+    "resource_type",
+    "action",
+    "user_name",
+    "inserted_at",
+    "actions"
+  ]
+
   def index(conn, params) do
     authorize(conn, "event-logs:list", fn ->
       event_logs = ListEventLogs.call(params, current_user(conn))
 
-      render(conn, "index.html", event_logs: event_logs)
+      assigns = [
+        default_columns: @default_columns,
+        event_logs: event_logs
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

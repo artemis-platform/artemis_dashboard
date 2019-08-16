@@ -33,7 +33,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     updated_query_params = update_query_param(conn, value, delimiter)
     query_string = Plug.Conn.Query.encode(updated_query_params)
 
-    "#{conn.request_path}?#{query_string}"
+    "#{Map.get(conn, :request_path)}?#{query_string}"
   end
 
   defp update_query_param(conn, value, delimiter) do
@@ -189,7 +189,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   """
   def render_data_table(conn, data, options \\ []) do
-    format = Phoenix.Controller.get_format(conn)
+    format = get_request_format(conn)
     columns = get_data_table_columns(conn, options)
 
     params = [
@@ -199,6 +199,12 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     ]
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", params)
+  end
+
+  defp get_request_format(conn) do
+    Phoenix.Controller.get_format(conn)
+  rescue
+    _ -> :html
   end
 
   @doc """
@@ -225,7 +231,8 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   Parse query params and return requested data table columns
   """
   def parse_data_table_requested_columns(conn, options \\ []) do
-    conn.query_params
+    conn
+    |> Map.get(:query_params, %{})
     |> Map.get("columns")
     |> get_data_table_requested_columns(options)
   end

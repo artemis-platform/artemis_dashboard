@@ -17,39 +17,63 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <div class="table-header">
+    <%= render_search @conn %>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "action", "Action") %></th>
-        <th><%= sortable_table_header(@conn, "user_name", "User Name") %></th>
-        <th><%= sortable_table_header(@conn, "inserted_at", "Created On") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@event_logs.entries) %>
-      <%= for event_log <- @event_logs.entries do %>
-        <tr>
-          <td>
-            <%= if has?(@conn, "event-logs:show") do %>
-              <%= link event_log.action, to: Routes.event_log_path(@conn, :show, event_log) %>
-            <% else %>
-              <%= event_log.action %>
-            <% end %>
-          </td>
-          <td><%= event_log.user_name %></td>
-          <td><%= event_log.inserted_at %></td>
-          <td>
-            <%= if has?(@conn, "event-logs:show") do %>
-              <%= link "Show", to: Routes.event_log_path(@conn, :show, event_log) %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+    <div>
+      <%=
+        options = ArtemisLog.EventLog.unique_values_for(:action)
+
+        filter_multi_select(@conn, "Action", :action, options)
+      %>
+    </div>
+
+    <div>
+      <%=
+        options = ArtemisLog.EventLog.unique_values_for(:user_name)
+
+        filter_multi_select(@conn, "User Name", :user_name, options)
+      %>
+    </div>
+
+    <div>
+      <%=
+        options = ArtemisLog.EventLog.unique_values_for(:user_id)
+
+        filter_multi_select(@conn, "User ID", :user_id, options)
+      %>
+    </div>
+
+    <div>
+      <%=
+        options = ArtemisLog.EventLog.unique_values_for(:resource_type)
+
+        filter_multi_select(@conn, "Resource Type", :resource_type, options)
+      %>
+    </div>
+
+    <div>
+      <%=
+        options = ArtemisLog.EventLog.unique_values_for(:resource_id)
+
+        filter_multi_select(@conn, "Resource ID", :resource_id, options)
+      %>
+    </div>
+
+    <div class="table-actions">
+      <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+      <%= action("Export", to: export_path(@conn, :csv), class: "export", download: true, size: "medium") %>
+    </div>
+  </div>
+
+  <%=
+    render_data_table(
+      @conn,
+      @event_logs.entries,
+      allowed_columns: data_table_allowed_columns(),
+      default_columns: @default_columns
+    )
+  %>
 
   <%= render_pagination @conn, @event_logs %>
 </div>

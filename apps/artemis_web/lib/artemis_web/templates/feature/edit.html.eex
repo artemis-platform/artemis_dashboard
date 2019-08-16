@@ -10,5 +10,6 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Feature", @feature.id %>
   <%= render "form.html", Map.put(assigns, :action, Routes.feature_path(@conn, :update, @feature)) %>
 </div>
