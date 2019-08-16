@@ -29,6 +29,7 @@ defmodule ArtemisLog.CreateEventLog do
     |> Artemis.Helpers.module_name()
     |> Artemis.Helpers.to_string()
   end
+
   defp get_resource_type(_), do: nil
 
   defp get_resource_id(%{id: id}), do: Artemis.Helpers.to_string(id)

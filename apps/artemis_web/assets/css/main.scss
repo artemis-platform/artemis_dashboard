@@ -33,7 +33,6 @@ select[multiple] {
   max-height: 1em !important;
 }
 
-
 /* === General Classes === */
 
 .label-with-errors {
@@ -210,6 +209,12 @@ select[multiple] {
       width: 200px;
     }
   }
+}
+
+/* === Components - Notifications === */
+
+.event-log-notifications {
+  margin: 0 1rem 0 0;
 }
 
 /* === Components - Sidebars === */

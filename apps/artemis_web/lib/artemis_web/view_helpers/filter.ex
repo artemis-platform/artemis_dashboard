@@ -65,4 +65,15 @@ defmodule ArtemisWeb.ViewHelper.Filter do
 
     content_tag(:button, label, options)
   end
+
+  def filter_multi_select(conn, label, value, options) do
+    filter_assigns = %{
+      available: options,
+      conn: conn,
+      label: label,
+      value: Artemis.Helpers.to_string(value)
+    }
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "filter_multi_select.html", filter_assigns)
+  end
 end

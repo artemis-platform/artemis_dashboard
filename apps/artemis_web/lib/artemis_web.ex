@@ -100,6 +100,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.Cache
       import ArtemisWeb.ViewHelper.Conditionals
       import ArtemisWeb.ViewHelper.Errors
+      import ArtemisWeb.ViewHelper.Events
       import ArtemisWeb.ViewHelper.Filter
       import ArtemisWeb.ViewHelper.HTML
       import ArtemisWeb.ViewHelper.Navigation
