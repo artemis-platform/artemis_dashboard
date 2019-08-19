@@ -107,6 +107,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.Notifications
       import ArtemisWeb.ViewHelper.OnCall
       import ArtemisWeb.ViewHelper.Pagination
+      import ArtemisWeb.ViewHelper.Presence
       import ArtemisWeb.ViewHelper.Print
       import ArtemisWeb.ViewHelper.Search
       import ArtemisWeb.ViewHelper.Tables

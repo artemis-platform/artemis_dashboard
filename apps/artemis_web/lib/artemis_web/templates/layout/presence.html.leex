@@ -1,0 +1,7 @@
+<div class="presence">
+  <ul>
+    <%= Enum.map @users, fn user -> %>
+      <li><%= user.name %></li>
+    <% end %>
+  </ul>
+</div>
