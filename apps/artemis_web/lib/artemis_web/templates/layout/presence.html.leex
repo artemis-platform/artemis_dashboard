@@ -1,7 +1,9 @@
-<div class="presence">
-  <ul>
-    <%= Enum.map @users, fn user -> %>
-      <li><%= user.name %></li>
-    <% end %>
-  </ul>
+<div class="presence-dropdown-container">
+  <a href="#presence-users" class="dropdown simple ui">
+    <i class="users icon"></i>
+    <%= length(@users) %> Viewing
+    <div class="menu">
+      <%= render_presence_user_list(@users) %>
+    </div>
+  </a>
 </div>

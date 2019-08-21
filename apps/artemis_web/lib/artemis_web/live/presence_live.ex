@@ -18,7 +18,7 @@ defmodule ArtemisWeb.PresenceLive do
 
     ArtemisPubSub.subscribe(topic)
 
-    assigns = 
+    assigns =
       socket
       |> assign(:path, path)
       |> assign(:topic, topic)

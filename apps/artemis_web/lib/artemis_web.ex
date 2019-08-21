@@ -111,6 +111,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.Print
       import ArtemisWeb.ViewHelper.Search
       import ArtemisWeb.ViewHelper.Tables
+      import ArtemisWeb.ViewHelper.User
       import ArtemisWeb.ViewHelper.Values
 
       alias ArtemisWeb.Router.Helpers, as: Routes

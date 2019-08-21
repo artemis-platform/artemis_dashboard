@@ -31,6 +31,11 @@ function initializeColumnField() {
   })
 }
 
+function initializeDropdowns() {
+  $('.ui.dropdown.click').dropdown({on: 'click'})
+  $('.ui.dropdown.hover').dropdown({on: 'hover'})
+}
+
 function initializeFilterFields() {
   $('.filter-form .filter-multi-select').on('change', function(event) {
     var nextParams = getQueryParams()
@@ -245,6 +250,7 @@ function initializeWikiSidenav() {
 
 $(document).ready(function() {
   initializeColumnField()
+  // initializeDropdowns()
   initializeFilterFields()
   initializeHighlightJs()
   initializeMarkdownTextarea()
@@ -258,5 +264,6 @@ $(document).ready(function() {
 
   $(document).on("phx:update", function () {
     reinitializeHighlightJs()
+    // initializeDropdowns()
   })
 })
