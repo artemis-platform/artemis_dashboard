@@ -6,6 +6,7 @@
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
 </div>
 
 <div id="content">
