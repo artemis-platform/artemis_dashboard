@@ -250,7 +250,7 @@ function initializeWikiSidenav() {
 
 $(document).ready(function() {
   initializeColumnField()
-  // initializeDropdowns()
+  initializeDropdowns()
   initializeFilterFields()
   initializeHighlightJs()
   initializeMarkdownTextarea()

@@ -1,7 +1,10 @@
 defmodule ArtemisWeb.ViewHelper.Export do
   use Phoenix.HTML
 
-  import ArtemisWeb.ViewHelper.HTML
+  @doc """
+  Limit the number of records returned
+  """
+  def get_export_limit(), do: 10_000
 
   @doc """
   Render export actions dropdown
@@ -20,7 +23,7 @@ defmodule ArtemisWeb.ViewHelper.Export do
   """
   def render_export_current_columns_action(conn, _options) do
     path_params = %{
-      "page_size" => 50_000
+      "page_size" => get_export_limit()
     }
 
     path = export_path(conn, :csv, path_params)
@@ -47,7 +50,7 @@ defmodule ArtemisWeb.ViewHelper.Export do
 
     path_params = %{
       "columns" => columns,
-      "page_size" => 50_000
+      "page_size" => get_export_limit()
     }
 
     path = export_path(conn, :csv, path_params)
