@@ -3,6 +3,14 @@ defmodule ArtemisWeb.PermissionView do
 
   import ArtemisWeb.UserAccess
 
+  def data_table_available_columns() do
+    [
+      {"Actions", "actions"},
+      {"Name", "name"},
+      {"Slug", "slug"}
+    ]
+  end
+
   def data_table_allowed_columns() do
     %{
       "actions" => [

@@ -97,4 +97,11 @@ defmodule ArtemisWeb.ViewHelper.Print do
 
   defp pretty_print_value(value) when is_map(value), do: Jason.encode!(value, pretty: true)
   defp pretty_print_value(value), do: value
+
+  @doc """
+  Pretty prints number with commas
+  """
+  def pretty_print_number(number) do
+    Number.Delimit.number_to_delimited(number, precision: 0)
+  end
 end

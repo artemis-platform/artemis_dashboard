@@ -52,6 +52,7 @@ defmodule ArtemisWeb.MixProject do
       {:oauth2, "~> 0.9"},
       {:nimble_csv, "~> 0.5"},
       {:scrivener_html, "~> 1.8"},
+      {:number, "~> 1.0"},
       {:timex, "~> 3.0"},
       {:ueberauth, "~> 0.6"},
       {:ueberauth_github, "~> 0.7"},

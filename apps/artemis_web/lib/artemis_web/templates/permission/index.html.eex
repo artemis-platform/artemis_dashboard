@@ -21,7 +21,7 @@
   <div class="table-header">
     <%= render_search @conn %>
     <div class="table-actions">
-      <%= action("Export", to: export_path(@conn, :csv, page_size: 50000), class: "export", download: true) %>
+      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
     </div>
   </div>
 
