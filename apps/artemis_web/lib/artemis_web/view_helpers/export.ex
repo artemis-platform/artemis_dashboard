@@ -54,6 +54,7 @@ defmodule ArtemisWeb.ViewHelper.Export do
     }
 
     path = export_path(conn, :csv, path_params)
+
     link_options = [
       class: "export",
       download: true,
