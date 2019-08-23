@@ -1,0 +1,12 @@
+<div class="ui basic button export-dropdown">
+  <div class="ui simple dropdown item">
+    Export
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <div class="actions">
+        <%= render_export_current_columns_action(@conn, @options) %>
+        <%= render_export_all_columns_action(@conn, @options) %>
+      </div>
+    </div>
+  </div>
+</div>

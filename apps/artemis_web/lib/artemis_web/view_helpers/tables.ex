@@ -264,26 +264,6 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   end
 
   @doc """
-  Generates export link with specified format
-  """
-  def export_path(conn, format, params \\ []) do
-    additional_params =
-      params
-      |> Enum.into(%{})
-      |> Artemis.Helpers.keys_to_strings()
-
-    query_params =
-      conn
-      |> Map.get(:query_params, %{})
-      |> Map.put("_format", format)
-      |> Map.merge(additional_params)
-
-    query_string = Plug.Conn.Query.encode(query_params)
-
-    "#{conn.request_path}?#{query_string}"
-  end
-
-  @doc """
   Render a select box to allow users to choose custom columns
   """
   def render_data_table_column_selector(conn, available_columns) do

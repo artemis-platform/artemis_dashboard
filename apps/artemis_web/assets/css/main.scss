@@ -217,6 +217,26 @@ select[multiple] {
   margin-bottom: 1rem !important;
 }
 
+/* === Components - Export === */
+
+.export-dropdown {
+
+  .menu {
+    left: auto !important;
+    right: -1.5rem;
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1.5rem 0 1.5rem;
+
+      a {
+        padding-bottom: 1rem;
+      }
+    }
+  }
+}
+
 /* === Components - Sidebars === */
 
 #sidebar-current-user {
