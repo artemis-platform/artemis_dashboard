@@ -2,7 +2,6 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
     interval: 55 * 60 * 1000,
-    log_limit: 500,
     name: :ibm_cloud_iam_access_token
 
   alias Artemis.Drivers.IBMCloudIAM
