@@ -2,7 +2,6 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
     interval: 60_000,
-    log_limit: 500,
     name: :pager_duty_incident_synchronizer
 
   import Artemis.Helpers
