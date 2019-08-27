@@ -10,17 +10,18 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
 
   @impl true
   def call(_data, _config) do
-    GetAccessToken.call(get_api_key())
+    {:ok, get_tokens()}
   end
 
   # Functions
 
-  def get_token!() do
+  def get_token!(key) do
     data = get_data()
+    entry = Map.get(data, key)
 
-    case valid?(data) do
-      true -> Map.get(data, :token)
-      false -> update().data.token
+    case valid?(entry) do
+      true -> Map.get(entry, :token)
+      false -> update().entry.token
     end
   end
 
@@ -35,10 +36,18 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
     |> String.equivalent?("true")
   end
 
-  defp get_api_key() do
+  defp get_tokens() do
+    Enum.reduce(get_api_keys(), %{}, fn {key, value}, acc ->
+      {:ok, entry} = GetAccessToken.call(value)
+
+      Map.put(acc, key, entry)
+    end)
+  end
+
+  defp get_api_keys() do
     :artemis
     |> Application.fetch_env!(:ibm_cloud)
-    |> Keyword.fetch!(:iam_api_key)
+    |> Keyword.fetch!(:iam_api_keys)
   end
 
   defp valid?(%{meta: %{expiration: expiration}, token: token}) do
