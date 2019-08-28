@@ -4,29 +4,24 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
     interval: 55 * 60 * 1000,
     name: :ibm_cloud_iam_access_token
 
-  alias Artemis.Drivers.IBMCloudIAM
+  alias Artemis.Drivers.IBMCloudIAM.GetAccessToken
 
   # Callbacks
 
   @impl true
   def call(_data, _config) do
-    with {:ok, response} <- request_access_token(),
-         {:ok, data} <- process_response(response) do
-      {:ok, data}
-    else
-      {:error, error} -> {:error, error}
-      error -> {:error, error}
-    end
+    {:ok, get_tokens()}
   end
 
   # Functions
 
-  def get_token!() do
+  def get_token!(key) do
     data = get_data()
+    entry = Map.get(data, key)
 
-    case valid?(data) do
-      true -> Map.get(data, :token)
-      false -> update().data.token
+    case valid?(entry) do
+      true -> Map.get(entry, :token)
+      false -> update().entry.token
     end
   end
 
@@ -41,46 +36,19 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
     |> String.equivalent?("true")
   end
 
-  defp get_api_key() do
+  defp get_tokens() do
+    Enum.reduce(get_api_keys(), %{}, fn {key, value}, acc ->
+      {:ok, entry} = GetAccessToken.call(value)
+
+      Map.put(acc, key, entry)
+    end)
+  end
+
+  defp get_api_keys() do
     :artemis
     |> Application.fetch_env!(:ibm_cloud)
-    |> Keyword.fetch!(:iam_api_key)
+    |> Keyword.fetch!(:iam_api_keys)
   end
-
-  defp request_access_token() do
-    params = [
-      apikey: get_api_key(),
-      grant_type: "urn:ibm:params:oauth:grant-type:apikey"
-    ]
-
-    body = {:form, params}
-    headers = []
-    options = []
-
-    IBMCloudIAM.post("/identity/token", body, headers, options)
-  end
-
-  defp process_response(%{body: body, status_code: 200}) do
-    data = %{
-      token: Map.get(body, "access_token"),
-      meta: %{
-        access_token: Map.get(body, "access_token"),
-        expiration: Map.get(body, "expiration"),
-        expires_in: Map.get(body, "expires_in"),
-        refresh_token: Map.get(body, "refresh_token"),
-        scope: Map.get(body, "scope"),
-        token_type: Map.get(body, "token_type")
-      }
-    }
-
-    {:ok, data}
-  end
-
-  defp process_response(%{body: %{"errorCode" => code, "errorMessage" => message}}) do
-    {:error, "IBM Cloud IAM API error #{code}: #{message}"}
-  end
-
-  defp process_response(_), do: {:error, "Unknown error response from IBM Cloud IAM API"}
 
   defp valid?(%{meta: %{expiration: expiration}, token: token}) do
     now = DateTime.to_unix(DateTime.utc_now())

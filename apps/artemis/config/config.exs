@@ -42,13 +42,17 @@ config :artemis, :users,
   }
 
 config :artemis, :ibm_cloud,
-  iam_api_key: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_KEY"),
-  iam_api_url: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_URL")
+  iam_api_url: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_URL"),
+  iam_api_keys: [
+    ibm_cloud_iam_access_groups: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_KEY_IBM_CLOUD_IAM_ACCESS_GROUPS"),
+    ibm_cloudant_shared: System.get_env("ARTEMIS_IBM_CLOUD_IAM_API_KEY_IBM_CLOUDANT_SHARED")
+  ]
 
 config :artemis, :ibm_cloudant,
   hosts: [
     [
       name: :shared,
+      ibm_cloud_iam_api_key: :ibm_cloudant_shared,
       auth_type: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_AUTH_TYPE"),
       username: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_USERNAME"),
       password: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PASSWORD"),

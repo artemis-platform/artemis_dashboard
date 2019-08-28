@@ -104,8 +104,9 @@ defmodule Artemis.Drivers.IBMCloudant.Request do
     end
   end
 
-  defp add_ibm_cloud_iam_authorization_header(_host_config, headers) do
-    token = Artemis.Worker.IBMCloudIAMAccessToken.get_token!()
+  defp add_ibm_cloud_iam_authorization_header(host_config, headers) do
+    key = Keyword.fetch!(host_config, :ibm_cloud_iam_api_key)
+    token = Artemis.Worker.IBMCloudIAMAccessToken.get_token!(key)
 
     [Authorization: "Bearer #{token}"] ++ headers
   end
