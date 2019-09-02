@@ -47,6 +47,8 @@ defmodule Artemis.MixProject do
       {:slugger, "~> 0.3"},
       {:hashids, "~> 2.0"},
       {:timex, "~> 3.0"},
+      {:castore, "~> 0.1.0"},
+      {:mint, "~> 0.4.0"},
       {:earmark, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.3"},
       {:ex_machina, "~> 2.2"},
