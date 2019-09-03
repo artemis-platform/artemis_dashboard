@@ -25,13 +25,19 @@ defmodule Artemis.Drivers.IBMCloudant.RequestStream do
 
   # Helpers
 
-  defp get_connection(%{host: host}) do
-    host_config= IBMCloudant.Config.get_host_config_by!(name: host)
+  defp get_connection(%{host: host} = params) do
+    host_config = IBMCloudant.Config.get_host_config_by!(name: host)
     hostname = host_config[:hostname]
     protocol = String.to_atom(host_config[:protocol])
     port = Artemis.Helpers.to_integer(host_config[:port])
 
-    Mint.HTTP.connect(protocol, hostname, port, timeout: :infinity)
+    # Note: The default :active mode does not work correctly with the IBM
+    # Cloudant change endpoint. Using :passive mode and manually retrieving
+    # messages is the only reliable option when using Mint.
+    default_mode = :passive
+    mode = Map.get(params, :mode, default_mode)
+
+    Mint.HTTP.connect(protocol, hostname, port, mode: mode, timeout: :infinity)
   end
 
   defp get_request(conn, params) do

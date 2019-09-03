@@ -46,12 +46,35 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
         path: path
       })
 
+    process_messages_on_interval()
+
     {:ok, struct(data, connection: connection)}
   end
 
+  def process_messages_on_interval() do
+    Process.send_after(self(), :process_messages, 1_000)
+  end
+
   @impl true
-  def handle_info_callback(payload, state) do
-    {:noreply, process_payload(state, payload)}
+  @doc """
+  Manually retrieve messages when connection in :passive mode
+  """
+  def handle_info_callback(:process_messages, state) do
+    timeout = 15_000
+    payload = Mint.HTTP.recv(state.data.connection, 0, timeout)
+
+    state = process_payload(state, payload)
+
+    process_messages_on_interval()
+
+    {:noreply, state}
+  end
+
+  @doc """
+  Process messages sent when connection in :active mode
+  """
+  def handle_info_callback(stream, state) do
+    {:noreply, process_stream(state, stream)}
   end
 
   # Helpers
@@ -80,36 +103,34 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     struct(Data, schema: schema)
   end
 
-  defp process_payload(state, payload) do
-    case Mint.HTTP.stream(state.data.connection, payload) do
-      {:ok, connection, responses} ->
-        state = process_responses(state, responses)
-        data = struct(state.data, connection: connection)
+  defp process_stream(state, stream) do
+    payload = Mint.HTTP.stream(state.data.connection, stream)
 
-        Map.put(state, :data, data)
-
-      _ ->
-        state
-    end
+    process_payload(state, payload)
   end
+
+  defp process_payload(state, {:ok, connection, responses}) do
+    state = process_responses(state, responses)
+    data = struct(state.data, connection: connection)
+
+    Map.put(state, :data, data)
+  end
+
+  defp process_payload(state, _), do: state
 
   defp process_responses(state, responses) do
     Enum.reduce(responses, state, fn response, acc ->
-      case response do
-        {:data, _reference, chunk} ->
-          process_response(state, chunk)
-
-        {:done, _} ->
-          update(async: true)
-          acc
-
-        _ ->
-          acc
-      end
+      process_response(acc, response)
     end)
   end
 
-  defp process_response(state, chunk) do
+  defp process_response(state, {:data, _reference, chunk}) do
+    process_response_chunk(state, chunk)
+  end
+
+  defp process_response(state, _), do: state
+
+  defp process_response_chunk(state, chunk) do
     case decode_data(chunk) do
       nil ->
         state
