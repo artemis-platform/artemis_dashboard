@@ -14,8 +14,6 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     ]
   end
 
-  @hackney_pool :cloudant_change_watcher_pool
-
   # Callbacks
 
   @impl true
@@ -25,8 +23,6 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     cloudant_path = data.schema.get_cloudant_path()
     timeout = get_request_timeout()
 
-    ensure_connection_pool_available()
-
     query_params = [
       feed: "continuous",
       include_docs: true,
@@ -35,81 +31,50 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
       timeout: timeout
     ]
 
-    options = [
-      async: :once,
-      hackney: [pool: @hackney_pool],
-      recv_timeout: timeout,
-      stream_to: self(),
-      timeout: timeout
-    ]
-
-    if Artemis.Helpers.present?(data.connection) do
-      :hackney.stop_async(data.connection)
+    if data.connection do
+      {:ok, _} = Mint.HTTP.close(data.connection)
     end
 
-    {:ok, connection} =
-      IBMCloudant.Request.call(%{
+    query_string = Plug.Conn.Query.encode(query_params)
+    path = "/#{cloudant_path}/_changes?#{query_string}"
+    method = "GET"
+
+    {:ok, connection, _request_ref} =
+      IBMCloudant.RequestStream.call(%{
         host: cloudant_host,
-        method: :get,
-        options: options,
-        params: query_params,
-        path: "#{cloudant_path}/_changes"
+        method: method,
+        path: path
       })
+
+    process_messages_on_interval()
 
     {:ok, struct(data, connection: connection)}
   end
 
+  def process_messages_on_interval() do
+    Process.send_after(self(), :process_messages, 1_000)
+  end
+
   @impl true
-  def handle_info_callback(%HTTPoison.AsyncChunk{chunk: chunk}, state) when chunk == "\n" do
-    HTTPoison.stream_next(state.data.connection)
+  @doc """
+  Manually retrieve messages when connection in :passive mode
+  """
+  def handle_info_callback(:process_messages, state) do
+    timeout = 15_000
+    payload = Mint.HTTP.recv(state.data.connection, 0, timeout)
+
+    state = process_payload(state, payload)
+
+    process_messages_on_interval()
 
     {:noreply, state}
   end
 
-  def handle_info_callback(%HTTPoison.AsyncChunk{chunk: chunk}, state) do
-    decoded = decode_data(chunk)
-    sequence = Map.get(decoded, "seq")
-    state = store_last_sequence(state, sequence)
-
-    broadcast_cloudant_change(decoded, state.data.schema)
-
-    HTTPoison.stream_next(state.data.connection)
-
-    {:noreply, state}
-  end
-
-  def handle_info_callback(%HTTPoison.AsyncEnd{}, state) do
-    update(async: true)
-
-    {:noreply, state}
-  end
-
-  def handle_info_callback(%HTTPoison.AsyncHeaders{}, state) do
-    HTTPoison.stream_next(state.data.connection)
-
-    {:noreply, state}
-  end
-
-  def handle_info_callback(%HTTPoison.AsyncRedirect{}, state) do
-    HTTPoison.stream_next(state.data.connection)
-
-    {:noreply, state}
-  end
-
-  def handle_info_callback(%HTTPoison.AsyncResponse{}, state) do
-    HTTPoison.stream_next(state.data.connection)
-
-    {:noreply, state}
-  end
-
-  def handle_info_callback(%HTTPoison.AsyncStatus{}, state) do
-    HTTPoison.stream_next(state.data.connection)
-
-    {:noreply, state}
-  end
-
-  def handle_info_callback(_, state) do
-    {:noreply, state}
+  @doc """
+  Process messages sent when connection in :active mode
+  """
+  def handle_info_callback(stream, state) do
+    {:noreply, process_stream(state, stream)}
   end
 
   # Helpers
@@ -128,22 +93,6 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     60_000
   end
 
-  defp ensure_connection_pool_available do
-    case :hackney_pool.find_pool(@hackney_pool) do
-      :undefined -> start_connection_pool()
-      _ -> :ok
-    end
-  end
-
-  defp start_connection_pool do
-    options = [
-      timeout: get_request_timeout(),
-      max_connections: 10
-    ]
-
-    :ok = :hackney_pool.start_pool(@hackney_pool, options)
-  end
-
   defp get_data_struct(%Data{} = value, _config), do: value
   defp get_data_struct(value, _config) when is_map(value), do: struct(Data, value)
   defp get_data_struct(_, config), do: get_initial_data_struct(config)
@@ -152,6 +101,47 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
     schema = Keyword.fetch!(config, :schema)
 
     struct(Data, schema: schema)
+  end
+
+  defp process_stream(state, stream) do
+    payload = Mint.HTTP.stream(state.data.connection, stream)
+
+    process_payload(state, payload)
+  end
+
+  defp process_payload(state, {:ok, connection, responses}) do
+    state = process_responses(state, responses)
+    data = struct(state.data, connection: connection)
+
+    Map.put(state, :data, data)
+  end
+
+  defp process_payload(state, _), do: state
+
+  defp process_responses(state, responses) do
+    Enum.reduce(responses, state, fn response, acc ->
+      process_response(acc, response)
+    end)
+  end
+
+  defp process_response(state, {:data, _reference, chunk}) do
+    process_response_chunk(state, chunk)
+  end
+
+  defp process_response(state, _), do: state
+
+  defp process_response_chunk(state, chunk) do
+    case decode_data(chunk) do
+      nil ->
+        state
+
+      decoded ->
+        sequence = Map.get(decoded, "seq")
+
+        broadcast_cloudant_change(decoded, state.data.schema)
+
+        store_last_sequence(state, sequence)
+    end
   end
 
   defp decode_data(data) do
