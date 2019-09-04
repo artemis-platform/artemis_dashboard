@@ -1,9 +1,9 @@
 defmodule ArtemisWeb.PresenceLive do
   use ArtemisWeb.LiveView
 
-  alias ArtemisPubSub.Presence
+  import ArtemisWeb.Helpers.Presence
 
-  def get_topic(path), do: "artemis-web:presence:#{path}"
+  alias ArtemisPubSub.Presence
 
   # LiveView Callbacks
 
@@ -11,19 +11,20 @@ defmodule ArtemisWeb.PresenceLive do
   def mount(session, socket) do
     user = session.current_user
     path = session.request_path
-    topic = get_topic(path)
-    payload = get_presence_payload(user)
+    id = "user:#{user.id}:path:#{path}"
+    topic = get_presence_topic()
+    payload = get_presence_payload(path, user)
 
-    Presence.track(self(), topic, user.id, payload)
+    Presence.track(self(), topic, id, payload)
 
     ArtemisPubSub.subscribe(topic)
 
     assigns =
       socket
+      |> assign(:current_path, filter_presences_by(:path, path))
       |> assign(:path, path)
-      |> assign(:topic, topic)
+      |> assign(:total, total_unique_presences())
       |> assign(:user, user)
-      |> assign(:users, list_presences(topic))
 
     {:ok, assigns}
   end
@@ -37,40 +38,11 @@ defmodule ArtemisWeb.PresenceLive do
 
   @impl true
   def handle_info(%{event: "presence_diff"}, socket) do
-    topic = Map.get(socket.assigns, :topic)
-    assigns = assign(socket, :users, list_presences(topic))
+    assigns =
+      socket
+      |> assign(:current_path, filter_presences_by(:path, socket.assigns.path))
+      |> assign(:total, total_unique_presences())
 
     {:noreply, assigns}
   end
-
-  # Helpers
-
-  defp get_presence_payload(user) do
-    %{
-      id: user.id,
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      name: user.name
-    }
-  end
-
-  def list_presences(topic) do
-    topic
-    |> Presence.list()
-    |> Enum.map(fn {_user_id, data} ->
-      List.first(data[:metas])
-    end)
-  end
-
-  # def update_presence(pid, topic, key, payload) do
-  #   metas =
-  #     topic
-  #     |> ArtemisWeb.Presence.get_by_key(key)
-  #     |> Keyword.get(:metas)
-  #     |> List.first()
-  #     |> Map.merge(payload)
-
-  #   ArtemisWeb.Presence.update(pid, topic, key, metas)
-  # end
 end

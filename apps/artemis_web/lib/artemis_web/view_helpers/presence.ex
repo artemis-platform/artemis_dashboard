@@ -20,17 +20,4 @@ defmodule ArtemisWeb.ViewHelper.Presence do
       )
     end
   end
-
-  @doc """
-  Render a list of presence users
-  """
-  def render_presence_user_list(users) do
-    content_tag(:ul, class: "presence-users") do
-      Enum.map(users, fn user ->
-        content_tag(:li) do
-          user.name
-        end
-      end)
-    end
-  end
 end

@@ -1,9 +1,19 @@
 <div class="presence-dropdown-container">
-  <a href="#presence-users" class="dropdown simple ui">
+  <a href="#presence-users" class="ui dropdown hover ui">
     <i class="users icon"></i>
-    <%= length(@users) %> Viewing
+    <%= length(@current_path) %> Viewing
     <div class="menu">
-      <%= render_presence_user_list(@users) %>
+      <div class="header">
+        Viewing Current Page
+      </div>
+      <%= Enum.map @current_path, fn user -> %>
+        <div class="item">
+          <%= user.name %>
+        </div>
+      <% end %>
+      <div class="header">
+        Total Online <%= @total %>
+      </div>
     </div>
   </a>
 </div>

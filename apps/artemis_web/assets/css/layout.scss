@@ -644,37 +644,21 @@ body.error-page {
     .presence-dropdown-container {
       align-items: center;
       display: flex;
-      font-size: 12px;
       height: $height;
       justify-content: flex-end;
       margin: 0;
 
       a.dropdown {
         align-self: center;
+        align-items: center;
         color: #333;
         display: flex;
-        height: 1.25rem;
+        height: 100%;
 
         .icon {
           font-size: 1rem;
+          height: 1.25rem;
           margin: 0 0.75rem 0 0;
-        }
-
-        .menu {
-          padding: 1rem 2rem 0.5rem 2rem;
-          right: 0;
-          left: auto;
-
-          ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-
-            li {
-              display: block;
-              margin-bottom: 0.5rem;
-            }
-          }
         }
       }
     }
