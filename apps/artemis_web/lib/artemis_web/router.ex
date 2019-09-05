@@ -22,7 +22,6 @@ defmodule ArtemisWeb.Router do
     plug Guardian.Plug.VerifyHeader
     plug Guardian.Plug.VerifySession
     plug Guardian.Plug.LoadResource, allow_blank: true
-    plug ArtemisWeb.Plug.BroadcastRequest
   end
 
   pipeline :require_auth do
@@ -57,6 +56,7 @@ defmodule ArtemisWeb.Router do
       resources "/customers", CustomerController
       get "/docs/:id/:slug", WikiPageController, :show
       resources "/event-logs", EventLogController, only: [:index, :show]
+      resources "/http-request-logs", HttpRequestLogController, only: [:index, :show]
       resources "/features", FeatureController
 
       resources "/incidents", IncidentController, only: [:index, :show, :delete] do
@@ -68,6 +68,7 @@ defmodule ArtemisWeb.Router do
       resources "/permissions", PermissionController
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]
+      resources "/sessions", SessionController, only: [:index, :show]
       resources "/jobs", JobController
       resources "/tags", TagController
 

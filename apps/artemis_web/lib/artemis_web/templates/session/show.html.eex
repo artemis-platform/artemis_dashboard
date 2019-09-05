@@ -1,0 +1,18 @@
+<div id="content-header">
+  <header>
+    <h1>
+      Session <%= @session_id %>
+    </h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <%= render_session_timeline(@event_logs, @http_request_logs) %>
+</div>
