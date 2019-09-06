@@ -33,6 +33,20 @@ defmodule ArtemisWeb.SessionView do
     render_time_duration(first, last)
   end
 
+  def render_session_start(session_entries) do
+    session_entries
+    |> List.first()
+    |> Map.get(:inserted_at)
+    |> render_date_time()
+  end
+
+  def render_session_last(session_entries) do
+    session_entries
+    |> List.last()
+    |> Map.get(:inserted_at)
+    |> render_date_time()
+  end
+
   def render_session_timeline(conn, session_entries) do
     content_tag(:ul, class: "timeline") do
       render_session_timeline_entries(conn, session_entries)

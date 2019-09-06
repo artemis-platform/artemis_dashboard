@@ -19,8 +19,10 @@
     <%=
       render_key_value_list([
         ["User", render_session_user_link(@conn, @session_entries)],
-        ["Session Entries", length(@session_entries)],
-        ["Session Duration", render_session_duration(@session_entries)]
+        ["Entry Count", length(@session_entries)],
+        ["Duration", render_session_duration(@session_entries)],
+        ["First Entry", render_session_start(@session_entries)],
+        ["Last Entry", render_session_last(@session_entries)]
       ])
     %>
   </section>
