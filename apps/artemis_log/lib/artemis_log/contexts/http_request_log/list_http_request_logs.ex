@@ -2,6 +2,7 @@ defmodule ArtemisLog.ListHttpRequestLogs do
   use ArtemisLog.Context
 
   import Ecto.Query
+  import ArtemisLog.Helpers.Distinct
   import ArtemisLog.Helpers.Filter
 
   alias ArtemisLog.HttpRequestLog
@@ -17,6 +18,7 @@ defmodule ArtemisLog.ListHttpRequestLogs do
     HttpRequestLog
     |> filter_query(params, user)
     |> order_query(params)
+    |> distinct_query(params)
     |> restrict_access(user)
     |> get_records(params)
   end

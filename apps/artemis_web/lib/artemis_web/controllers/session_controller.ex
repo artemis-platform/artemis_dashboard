@@ -8,15 +8,9 @@ defmodule ArtemisWeb.SessionController do
     authorize(conn, "sessions:list", fn ->
       params = get_index_params(params)
       user = current_user(conn)
-      event_logs = ListEventLogs.call(params, user)
-      http_request_logs = ListHttpRequestLogs.call(params, user)
+      event_logs_by_session_id = ListEventLogs.call(params, user)
 
-      assigns = [
-        event_logs: event_logs,
-        http_request_logs: http_request_logs
-      ]
-
-      render(conn, "index.html", assigns)
+      render(conn, "index.html", event_logs_by_session_id: event_logs_by_session_id)
     end)
   end
 
@@ -44,7 +38,8 @@ defmodule ArtemisWeb.SessionController do
 
   defp get_index_params(params) do
     default_params = %{
-      "page_size" => "5"
+      "distinct" => "session_id",
+      "page_size" => "10"
     }
 
     Map.merge(default_params, params)

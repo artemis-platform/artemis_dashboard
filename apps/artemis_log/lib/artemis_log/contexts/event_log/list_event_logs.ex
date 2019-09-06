@@ -1,6 +1,7 @@
 defmodule ArtemisLog.ListEventLogs do
   use ArtemisLog.Context
 
+  import ArtemisLog.Helpers.Distinct
   import ArtemisLog.Helpers.Filter
   import ArtemisLog.Helpers.Search
   import Ecto.Query
@@ -19,6 +20,7 @@ defmodule ArtemisLog.ListEventLogs do
     |> filter_query(params, user)
     |> search_filter(params)
     |> order_query(params)
+    |> distinct_query(params)
     |> restrict_access(user)
     |> get_records(params)
   end

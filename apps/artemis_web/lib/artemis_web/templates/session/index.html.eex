@@ -12,7 +12,7 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= h3 "Recent HTTP Request Logs" %>
+  <%= h3 "Recent Sessions" %>
 
   <div class="table-header">
     <%= render_search @conn %>
@@ -29,48 +29,13 @@
   <%=
     render_data_table(
       @conn,
-      @http_request_logs.entries,
-      allowed_columns: ArtemisWeb.HttpRequestLogView.data_table_allowed_columns(),
-      default_columns: [
-        "session_id",
-        "id",
-        "path",
-        "user_name",
-        "inserted_at"
-      ]
-    )
-  %>
-
-  <%= render_pagination @conn, @http_request_logs %>
-
-  <%= h3 "Recent Event Logs" %>
-
-  <div class="table-header">
-    <%= render_search @conn %>
-
-    <div>
-      <%=
-        options = ArtemisLog.EventLog.unique_values_for(:session_id)
-
-        filter_multi_select(@conn, "Session ID", :session_id, options)
-      %>
-    </div>
-  </div>
-
-  <%=
-    render_data_table(
-      @conn,
-      @event_logs.entries,
+      @event_logs_by_session_id.entries,
       allowed_columns: ArtemisWeb.EventLogView.data_table_allowed_columns(),
       default_columns: [
         "session_id",
-        "action",
-        "resource_type",
         "user_name",
         "inserted_at"
       ]
     )
   %>
-
-  <%= render_pagination @conn, @event_logs %>
 </div>
