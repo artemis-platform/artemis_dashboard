@@ -4,13 +4,20 @@ defmodule ArtemisWeb.ViewHelper.Breadcrumbs do
   @doc """
   Generates breadcrumbs from current URL
   """
-  def render_breadcrumbs(conn) do
-    path_sections =
-      conn
-      |> Map.get(:request_path)
-      |> String.split("/", trim: true)
+  def render_breadcrumbs(conn) when is_map(conn) do
+    conn
+    |> Map.get(:request_path)
+    |> render_breadcrumbs()
+  end
 
-    breadcrumbs = get_root_breadcrumb() ++ get_breadcrumbs(path_sections)
+  def render_breadcrumbs(path) when is_bitstring(path) do
+    path
+    |> String.split("/", trim: true)
+    |> render_breadcrumbs()
+  end
+
+  def render_breadcrumbs(sections) when is_list(sections) do
+    breadcrumbs = get_root_breadcrumb() ++ get_breadcrumbs(sections)
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "breadcrumbs.html", breadcrumbs: breadcrumbs)
   end

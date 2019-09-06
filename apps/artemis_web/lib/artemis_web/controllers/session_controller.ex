@@ -27,9 +27,12 @@ defmodule ArtemisWeb.SessionController do
       event_logs = ListEventLogs.call(params, user)
       http_request_logs = ListHttpRequestLogs.call(params, user)
 
+      combined = event_logs ++ http_request_logs
+      sorted = Enum.sort_by(combined, & &1.inserted_at)
+      session_entries = Enum.reverse(sorted)
+
       assigns = [
-        event_logs: event_logs,
-        http_request_logs: http_request_logs,
+        session_entries: session_entries,
         session_id: id
       ]
 

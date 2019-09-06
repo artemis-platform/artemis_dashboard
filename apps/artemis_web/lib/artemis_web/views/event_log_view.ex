@@ -62,7 +62,7 @@ defmodule ArtemisWeb.EventLogView do
         end,
         value: fn _conn, row -> row.session_id end,
         value_html: fn conn, row ->
-          case has?(conn, "sessions:show") do
+          case has?(conn, "sessions:show") && Artemis.Helpers.present?(row.session_id) do
             true -> link(row.session_id, to: Routes.session_path(conn, :show, row.session_id))
             false -> row.session_id
           end

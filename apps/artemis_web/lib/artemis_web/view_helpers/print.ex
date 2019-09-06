@@ -87,6 +87,20 @@ defmodule ArtemisWeb.ViewHelper.Print do
   end
 
   @doc """
+  Returns a humanized value of elapsed time between two dates
+  """
+  def render_time_duration(first, second) do
+    diff_in_seconds =
+      second
+      |> Timex.diff(first)
+      |> div(1_000_000)
+
+    duration = Timex.Duration.from_seconds(diff_in_seconds)
+
+    Timex.Format.Duration.Formatters.Humanized.format(duration)
+  end
+
+  @doc """
   Encodes JSON compatable data into a pretty printed string
   """
   def pretty_print_json_into_textarea(form, key) do
