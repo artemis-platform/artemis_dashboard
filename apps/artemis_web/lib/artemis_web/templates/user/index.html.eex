@@ -18,45 +18,21 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <div class="table-header">
+    <%= render_search @conn %>
+    <div class="table-actions">
+      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+    </div>
+  </div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "name", "Name") %></th>
-        <th><%= sortable_table_header(@conn, "email", "Email") %></th>
-        <th><%= sortable_table_header(@conn, "last_log_in_at", "Last Login") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@users.entries) %>
-      <%= for user <- @users.entries do %>
-        <tr>
-          <td>
-            <%= if has?(@conn, "users:show") do %>
-              <%= link user.name, to: Routes.user_path(@conn, :show, user) %>
-            <% else %>
-              <%= user.name %>
-            <% end %>
-          </td>
-          <td><%= user.email %></td>
-          <td><%= user.last_log_in_at %></td>
-          <td>
-            <%= if has?(@conn, "users:show") do %>
-              <%= link "Show", to: Routes.user_path(@conn, :show, user) %>
-            <% end %>
-            <%= if has?(@conn, "users:edit") do %>
-              <%= link "Edit", to: Routes.user_path(@conn, :edit, user) %>
-            <% end %>
-            <%= if has?(@conn, "users:delete") do %>
-              <%= link "Delete", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"] %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <%=
+    render_data_table(
+      @conn,
+      @users.entries,
+      allowed_columns: data_table_allowed_columns(),
+      default_columns: ["name", "email", "last_log_in_at", "actions"]
+    )
+  %>
 
   <%= render_pagination @conn, @users %>
 </div>
