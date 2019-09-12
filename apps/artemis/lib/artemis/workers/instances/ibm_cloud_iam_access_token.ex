@@ -21,7 +21,7 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
 
     case valid?(entry) do
       true -> Map.get(entry, :token)
-      false -> update().entry.token
+      false -> update().data[key].token
     end
   end
 
