@@ -36,6 +36,19 @@
   </section>
 
   <section>
+    <%= h3 "Users" %>
+
+    <%=
+      render_data_table(
+        @conn,
+        @role.users,
+        allowed_columns: ArtemisWeb.UserView.data_table_allowed_columns(),
+        default_columns: ["name", "email"]
+      )
+    %>
+  </section>
+
+  <section>
     <%= h3 "Permissions" %>
 
     <%=

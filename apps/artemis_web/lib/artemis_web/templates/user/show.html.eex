@@ -50,7 +50,7 @@
 
     <ul>
       <%= Enum.map @user.roles, fn (role) -> %>
-        <li><%= role.name %></li>
+        <li><%= link role.name, to: Routes.role_path(@conn, :show, role) %></li>
       <% end %>
     </ul>
   </section>
