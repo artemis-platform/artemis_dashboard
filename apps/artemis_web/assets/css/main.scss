@@ -397,6 +397,10 @@ ul.timeline {
       width: 3px;
     }
 
+    &:last-child::before {
+      width: 0px;
+    }
+
     .entry {
       display: flex;
       margin: 0;

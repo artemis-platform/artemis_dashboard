@@ -3,6 +3,69 @@ defmodule ArtemisWeb.SessionView do
 
   use Phoenix.HTML
 
+  def data_table_available_columns() do
+    [
+      {"Actions", "actions"},
+      {"Created At", "inserted_at"},
+      {"Session ID", "session_id"},
+      {"User ID", "user_id"},
+      {"User Name", "user_name"}
+    ]
+  end
+
+  def data_table_allowed_columns() do
+    %{
+      "actions" => [
+        label: fn _conn -> nil end,
+        value: fn _conn, _row -> nil end,
+        value_html: &data_table_actions_column_html/2
+      ],
+      "inserted_at" => [
+        label: fn _conn -> "Created At" end,
+        value: fn _conn, row -> row.inserted_at end
+      ],
+      "session_id" => [
+        label: fn _conn -> "Session ID" end,
+        value: fn _conn, row -> row.session_id end,
+        value_html: fn conn, row ->
+          case has?(conn, "sessions:show") && Artemis.Helpers.present?(row.session_id) do
+            true -> link(row.session_id, to: Routes.session_path(conn, :show, row.session_id))
+            false -> row.session_id
+          end
+        end
+      ],
+      "user_id" => [
+        label: fn _conn -> "User ID" end,
+        value: fn _conn, row -> row.user_id end
+      ],
+      "user_name" => [
+        label: fn _conn -> "User Name" end,
+        value: fn _conn, row -> row.user_name end
+      ]
+    }
+  end
+
+  defp data_table_actions_column_html(conn, row) do
+    allowed_actions = [
+      [
+        verify: has?(conn, "sessions:show"),
+        link: link("Show", to: Routes.session_path(conn, :show, row.session_id))
+      ]
+    ]
+
+    Enum.reduce(allowed_actions, [], fn action, acc ->
+      case Keyword.get(action, :verify) do
+        true ->
+          item = content_tag(:div, Keyword.get(action, :link))
+
+          [acc | item]
+
+        _ ->
+          acc
+      end
+    end)
+  end
+
   def render_session_user_name(session_entries) do
     session_entries
     |> List.first()

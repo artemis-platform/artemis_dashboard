@@ -30,8 +30,9 @@ defmodule ArtemisWeb.SessionPageTest do
       {:ok, event_log: event_log}
     end
 
-    test "list of records" do
+    test "list of records", %{event_log: event_log} do
       assert page_title() == "Artemis"
+      assert visible?(event_log.session_id)
       assert visible?("Sessions")
     end
   end

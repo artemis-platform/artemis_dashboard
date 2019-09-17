@@ -37,8 +37,11 @@ defmodule Artemis.GetSystemUser do
     User
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(email: system_user.email)
-    |> Map.put(:session_id, nil)
+    |> nil_session_id()
   end
+
+  defp nil_session_id(record) when is_map(record), do: Map.put(record, :session_id, nil)
+  defp nil_session_id(record), do: record
 
   # Callbacks
 
