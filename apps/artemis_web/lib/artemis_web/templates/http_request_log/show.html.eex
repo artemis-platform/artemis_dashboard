@@ -1,0 +1,35 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= "HTTP Request Log - #{@http_request_log.id}" %>
+    </h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      session_id = case @http_request_log.session_id do
+        nil -> nil
+        id -> link id, to: Routes.session_path(@conn, :show, id)
+      end
+
+      render_key_value_list([
+        ["User ID", @http_request_log.user_id],
+        ["User Name", @http_request_log.user_name],
+        ["Session ID", session_id],
+        ["Path", @http_request_log.path],
+        ["Query String", @http_request_log.query_string],
+        ["Timestamp", @http_request_log.updated_at]
+      ])
+    %>
+  </section>
+</div>

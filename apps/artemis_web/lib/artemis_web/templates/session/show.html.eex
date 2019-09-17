@@ -1,0 +1,34 @@
+<div id="content-header">
+  <header>
+    <h1>
+      Session <%= String.slice(@session_id, 0, 8) %> by <%= render_session_user_name(@session_entries) %>
+    </h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["User", render_session_user_link(@conn, @session_entries)],
+        ["Entry Count", length(@session_entries)],
+        ["Duration", render_session_duration(@session_entries)],
+        ["First Entry", render_session_start(@session_entries)],
+        ["Last Entry", render_session_last(@session_entries)]
+      ])
+    %>
+  </section>
+
+  <section>
+    <%= h2 "Timeline" %>
+    <%= render_session_timeline @conn, @session_entries %>
+  </section>
+</div>

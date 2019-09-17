@@ -1,0 +1,46 @@
+<div id="content-header">
+  <header>
+    <h1>Sessions</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <%= h3 "Live Sessions" %>
+
+  <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.SessionLive %>
+
+  <%= h3 "Recent Sessions" %>
+
+  <div class="table-header">
+    <%= render_search @conn %>
+
+    <div>
+      <%=
+        options = ArtemisLog.EventLog.unique_values_for(:session_id)
+
+        filter_multi_select(@conn, "Session ID", :session_id, options)
+      %>
+    </div>
+  </div>
+
+  <%=
+    render_data_table(
+      @conn,
+      @sessions.entries,
+      allowed_columns: data_table_allowed_columns(),
+      default_columns: [
+        "session_id",
+        "user_name",
+        "inserted_at",
+        "actions"
+      ]
+    )
+  %>
+</div>

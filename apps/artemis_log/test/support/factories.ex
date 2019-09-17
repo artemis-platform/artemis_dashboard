@@ -7,6 +7,7 @@ defmodule ArtemisLog.Factories do
     %ArtemisLog.EventLog{
       action: Faker.Internet.slug(),
       meta: %{test: "data"},
+      session_id: Faker.UUID.v4(),
       user_id: 1,
       user_name: Faker.Name.name()
     }

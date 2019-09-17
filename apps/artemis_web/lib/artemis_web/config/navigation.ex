@@ -33,7 +33,7 @@ defmodule ArtemisWeb.Config.Navigation do
       ],
       "Event Log": [
         [
-          label: "View Event Log",
+          label: "View Event Logs",
           path: &Routes.event_log_path(&1, :index),
           verify: &has?(&1, "event-logs:list")
         ]
@@ -48,6 +48,13 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "Create New Feature",
           path: &Routes.feature_path(&1, :new),
           verify: &has?(&1, "features:create")
+        ]
+      ],
+      "HTTP Request Logs": [
+        [
+          label: "View HTTP Request Logs",
+          path: &Routes.http_request_log_path(&1, :index),
+          verify: &has?(&1, "http-request-logs:list")
         ]
       ],
       Incidents: [
@@ -98,6 +105,13 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "Create New Job",
           path: &Routes.job_path(&1, :new),
           verify: &has?(&1, "jobs:create")
+        ]
+      ],
+      Sessions: [
+        [
+          label: "View Sessions",
+          path: &Routes.session_path(&1, :index),
+          verify: &has?(&1, "sessions:list")
         ]
       ],
       Tags: [

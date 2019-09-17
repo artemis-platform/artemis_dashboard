@@ -19,7 +19,10 @@ config :artemis_web, ArtemisWeb.Guardian,
   verify_issuer: true,
   secret_key: System.get_env("ARTEMIS_GUARDIAN_KEY")
 
-config :artemis_web, ArtemisWeb.ViewHelper.Breadcrumbs, custom_titles: %{}
+config :artemis_web, ArtemisWeb.ViewHelper.Breadcrumbs,
+  custom_titles: %{
+    "http-request-logs" => "HTTP Request Logs"
+  }
 
 config :scrivener_html,
   routes_helper: ArtemisWeb.Router.Helpers,

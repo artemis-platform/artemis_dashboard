@@ -11,7 +11,6 @@ use Mix.Config
 config :logger, level: :info
 
 config :artemis, :actions,
-  ibm_cloud_iam_access_token: [enabled: "false"],
   ibm_cloudant_change_listener: [enabled: "false"],
   ibm_cloudant_migrator: [enabled: "false"],
   pager_duty_synchronize_incidents: [enabled: "false"],

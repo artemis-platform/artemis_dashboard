@@ -1,0 +1,24 @@
+<div class="entry entry-http-request-log <%= @class %>">
+  <div class="icon-container">
+    <div class="icon-background <%= @color %>">
+      <%= if @icon do %>
+        <i class="ui icon <%= @icon %>"></i>
+      <% end %>
+    </div>
+  </div>
+  <div class="body">
+    <div class="header">
+      <span class="time">
+        <%= render_time(@entry.inserted_at, "{h12}:{m}{am} {Zabbr}") %>
+      </span>
+    </div>
+    <div class="content">
+      <%= @summary %> <code><%= @entry.path %></code>
+    </div>
+    <div class="footer">
+      <span class="link">
+        <%= link "View Details", to: Routes.http_request_log_path(@conn, :show, @entry) %>
+      </span>
+    </div>
+  </div>
+</div>

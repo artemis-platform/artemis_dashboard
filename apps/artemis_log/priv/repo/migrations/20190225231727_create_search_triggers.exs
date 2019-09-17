@@ -26,6 +26,7 @@ defmodule ArtemisLog.Repo.Migrations.CreateSearchTriggers do
             'pg_catalog.english',
             coalesce(new.action, ' ') || ' ' ||
             coalesce(new.resource_type, ' ') || ' ' ||
+            coalesce(new.session_id, ' ') || ' ' ||
             coalesce(new.user_name, ' ')
           );
         return new;

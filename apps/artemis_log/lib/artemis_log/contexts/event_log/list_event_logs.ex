@@ -1,6 +1,7 @@
 defmodule ArtemisLog.ListEventLogs do
   use ArtemisLog.Context
 
+  import ArtemisLog.Helpers.Distinct
   import ArtemisLog.Helpers.Filter
   import ArtemisLog.Helpers.Search
   import Ecto.Query
@@ -19,6 +20,7 @@ defmodule ArtemisLog.ListEventLogs do
     |> filter_query(params, user)
     |> search_filter(params)
     |> order_query(params)
+    |> distinct_query(params)
     |> restrict_access(user)
     |> get_records(params)
   end
@@ -30,14 +32,6 @@ defmodule ArtemisLog.ListEventLogs do
     |> Map.put_new("page", Map.get(params, "page_number", 1))
     |> Map.put_new("page_size", @default_page_size)
     |> Map.put_new("paginate", @default_paginate)
-  end
-
-  defp restrict_access(query, user) do
-    cond do
-      has?(user, "event-logs:access:all") -> query
-      has?(user, "event-logs:access:self") -> where(query, [el], el.user_id == ^user.id)
-      true -> where(query, [el], is_nil(el.id))
-    end
   end
 
   defp filter_query(query, %{"filters" => filters}, _user) when is_map(filters) do
@@ -57,6 +51,14 @@ defmodule ArtemisLog.ListEventLogs do
   defp filter(query, "user_id", value), do: where(query, [el], el.user_id in ^split(value))
   defp filter(query, "user_name", value), do: where(query, [el], el.user_name in ^split(value))
   defp filter(query, _key, _value), do: query
+
+  defp restrict_access(query, user) do
+    cond do
+      has?(user, "event-logs:access:all") -> query
+      has?(user, "event-logs:access:self") -> where(query, [el], el.user_id == ^user.id)
+      true -> where(query, [el], is_nil(el.id))
+    end
+  end
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, params)
   defp get_records(query, _params), do: Repo.all(query)
