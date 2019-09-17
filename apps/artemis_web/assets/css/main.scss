@@ -502,6 +502,23 @@ ul.timeline {
   }
 }
 
+/* === Components - Live Sessions === */
+
+.sessions-live {
+
+  ul.user-sessions {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: flex;
+      margin: 0 0.5rem 0 0;
+    }
+  }
+}
+
 /* === Components - Comments === */
 
 .comment {

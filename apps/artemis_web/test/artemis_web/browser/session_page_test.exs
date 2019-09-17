@@ -49,8 +49,6 @@ defmodule ArtemisWeb.SessionPageTest do
     end
 
     test "record details", %{event_log: event_log} do
-      assert visible?(event_log.action)
-      assert visible?(event_log.user_id)
       assert visible?(event_log.user_name)
     end
   end

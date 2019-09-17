@@ -12,6 +12,10 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
+  <%= h3 "Live Sessions" %>
+
+  <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.SessionLive %>
+
   <%= h3 "Recent Sessions" %>
 
   <div class="table-header">

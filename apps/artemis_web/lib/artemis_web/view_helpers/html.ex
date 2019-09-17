@@ -59,24 +59,48 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   @doc """
   Render a H2 tag
   """
-  def h2(label, _options \\ []) do
+  def h2(label, options \\ []) do
     slug = Artemis.Helpers.generate_slug(label)
     id = "link-#{slug}"
 
     content_tag(:div, class: "heading-container h2-container", id: id) do
-      content_tag(:h2, label)
+      content_tag(:h2, label, options)
     end
   end
 
   @doc """
   Render a H3 tag
   """
-  def h3(label, _options \\ []) do
+  def h3(label, options \\ []) do
     slug = Artemis.Helpers.generate_slug(label)
     id = "link-#{slug}"
 
     content_tag(:div, class: "heading-container h3-container", id: id) do
-      content_tag(:h3, label)
+      content_tag(:h3, label, options)
+    end
+  end
+
+  @doc """
+  Render a H4 tag
+  """
+  def h4(label, options \\ []) do
+    slug = Artemis.Helpers.generate_slug(label)
+    id = "link-#{slug}"
+
+    content_tag(:div, class: "heading-container h4-container", id: id) do
+      content_tag(:h4, label, options)
+    end
+  end
+
+  @doc """
+  Render a H5 tag
+  """
+  def h5(label, options \\ []) do
+    slug = Artemis.Helpers.generate_slug(label)
+    id = "link-#{slug}"
+
+    content_tag(:div, class: "heading-container h5-container", id: id) do
+      content_tag(:h5, label, options)
     end
   end
 end

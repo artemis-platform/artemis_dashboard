@@ -1,0 +1,37 @@
+<table class="data-table sessions-live">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Total Viewing</th>
+      <th>User Sessions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% by_path = Enum.group_by(@presences, &(&1.path)) %>
+    <%= Enum.map by_path, fn {path, entries} -> %>
+      <tr>
+        <td>
+          <a href="<%= path %>">
+            <%= path %>
+          </a>
+        </td>
+        <td>
+          <%= length(entries) %>
+        </td>
+        <td>
+          <ul class="user-sessions">
+            <%= Enum.map entries, fn entry -> %>
+              <li>
+                <%= if entry.session_id do %>
+                  <%= link entry.name, to: Routes.session_path(@socket, :show, entry.session_id) %>
+                <% else %>
+                  <%= entry.name %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -18,6 +18,7 @@ defmodule ArtemisWeb.Helpers.Presence do
       last_name: user.last_name,
       name: user.name,
       path: path,
+      session_id: user.session_id,
       user_id: user.id
     }
   end
