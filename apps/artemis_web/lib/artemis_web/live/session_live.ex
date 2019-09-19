@@ -3,12 +3,10 @@ defmodule ArtemisWeb.SessionLive do
 
   import ArtemisWeb.Helpers.Presence
 
-  alias ArtemisPubSub.Presence
-
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
+  def mount(_session, socket) do
     ArtemisPubSub.subscribe(get_presence_topic())
 
     assigns = assign(socket, :presences, list_all_presences())

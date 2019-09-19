@@ -21,18 +21,19 @@ defmodule ArtemisWeb.ViewHelper.Export do
   @doc """
   Render export current columns action
   """
-  def render_export_current_columns_action(conn, _options) do
+  def render_export_current_columns_action(conn, options) do
     path_params = %{
       "page_size" => get_export_limit()
     }
 
-    path = export_path(conn, :csv, path_params)
+    base_path = Keyword.get(options, :path, conn.request_path)
+    export_path = get_export_path(conn, base_path, :csv, path_params)
 
     link_options = [
       class: "export",
       download: true,
       size: "medium",
-      to: path
+      to: export_path
     ]
 
     link("Export Current Columns", link_options)
@@ -53,13 +54,14 @@ defmodule ArtemisWeb.ViewHelper.Export do
       "page_size" => get_export_limit()
     }
 
-    path = export_path(conn, :csv, path_params)
+    base_path = Keyword.get(options, :path, conn.request_path)
+    export_path = get_export_path(conn, base_path, :csv, path_params)
 
     link_options = [
       class: "export",
       download: true,
       size: "medium",
-      to: path
+      to: export_path
     ]
 
     link("Export All Columns", link_options)
@@ -68,7 +70,7 @@ defmodule ArtemisWeb.ViewHelper.Export do
   @doc """
   Export path helper
   """
-  def export_path(conn, format, params \\ []) do
+  def get_export_path(conn, path, format, params \\ []) do
     additional_params =
       params
       |> Enum.into(%{})
@@ -82,6 +84,6 @@ defmodule ArtemisWeb.ViewHelper.Export do
 
     query_string = Plug.Conn.Query.encode(query_params)
 
-    "#{conn.request_path}?#{query_string}"
+    "#{path}?#{query_string}"
   end
 end
