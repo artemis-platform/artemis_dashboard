@@ -37,6 +37,8 @@ defmodule ArtemisWeb do
         render(conn, "#{filename}.#{format}", params)
       end
 
+      defp render_format_headers(conn, "csv"), do: render_format_headers(conn, :csv)
+
       defp render_format_headers(conn, :csv) do
         filename = Regex.replace(~r/[^a-z0-9_-]+/, conn.request_path, "")
 
