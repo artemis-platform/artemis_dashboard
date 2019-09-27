@@ -199,8 +199,8 @@ defmodule Artemis.IntervalWorker do
 
           false ->
             # Make an asynchronous call instead of a blocking synchronous one.
-            # Important to prevent loading delays on application start.
-            Map.put(state, :timer, schedule_update(10))
+            # Prevents loading delays on application start.
+            Map.put(state, :timer, schedule_update(5_000))
         end
       end
 

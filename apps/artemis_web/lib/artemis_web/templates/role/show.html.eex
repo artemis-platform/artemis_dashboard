@@ -38,6 +38,8 @@
   <section>
     <%= h3 "Users" %>
 
+    Total Users: <%= @role.user_count %>
+
     <%=
       render_data_table(
         @conn,
