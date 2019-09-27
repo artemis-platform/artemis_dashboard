@@ -180,7 +180,7 @@ defmodule Artemis.IntervalWorker do
       end
 
       def handle_info_callback(_, state) do
-        {:no_reply, state}
+        {:noreply, state}
       end
 
       # Callback Helpers

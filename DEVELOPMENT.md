@@ -32,7 +32,8 @@ If using Puma Dev, this can be accomplished by creating a new puma dev config fi
 
 ```
 source .env
-echo $ARTEMIS_PORT > ~/.puma-dev/artemis
+echo $ARTEMIS_WEB_PORT > ~/.puma-dev/artemis
+echo $ARTEMIS_API_PORT > ~/.puma-dev/artemis-api
 ```
 
 ## Docker Environment
@@ -50,19 +51,19 @@ bin/docker-dev/up
 
 Artemis requires a specific version of Elixir. The version is always specified in `.env.example`.
 
-An Elixir version manager like [`kiex`](https://github.com/taylor/kiex) can make it easy to manage multiple Elixir versions in the same development environment.
+An Elixir version manager like [`asdf`](https://github.com/asdf-vm/asdf) for [`elixir`](https://github.com/asdf-vm/asdf-elixir) or [`kiex`](https://github.com/taylor/kiex) can make it easy to manage multiple Elixir versions in the same development environment.
 
 ### Node
 
 Artemis requires a specific version of NodeJS. The version is always specified in `.env.example`.
 
-A Node version manager like [`nvm`](https://github.com/creationix/nvm) can make it easy to manage multiple Node versions in the same development environment.
+A Node version manager like [`asdf`](https://github.com/asdf-vm/asdf) for [`node`](https://github.com/asdf-vm/asdf-nodejs) or [`nvm`](https://github.com/creationix/nvm) can make it easy to manage multiple Node versions in the same development environment.
 
 ### PostgreSQL
 
 Artemis requires PostgreSQL >= 9.6.
 
-Alternatively, it can be installed locally on the command-line using `brew install postgresql` or with a standalone application like [Postico](https://eggerapps.at/postico/).
+It can be run inside a docker container or installed locally on the command-line using `brew install postgresql` or with a standalone application like [Postico](https://eggerapps.at/postico/).
 
 ### Browser Testing
 
