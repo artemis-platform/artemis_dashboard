@@ -46,7 +46,11 @@ defmodule Artemis.Repo.GenerateData do
     roles = [
       %{slug: "default", name: "Default"},
       %{slug: "site-developer", name: "Site Developer"},
-      %{slug: "system-user", name: "System User", description: "WARNING. For the non-human privileged system user only."}
+      %{
+        slug: "system-user",
+        name: "System User",
+        description: "WARNING. For the non-human privileged system user only."
+      }
     ]
 
     Enum.map(roles, fn params ->
