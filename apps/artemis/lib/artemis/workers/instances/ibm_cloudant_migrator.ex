@@ -2,6 +2,7 @@ defmodule Artemis.Worker.IBMCloudantMigrator do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
     interval: 24 * 60 * 60 * 1000,
+    delayed_start: 5_000,
     name: :ibm_cloudant_migrator
 
   alias Artemis.Drivers.IBMCloudant

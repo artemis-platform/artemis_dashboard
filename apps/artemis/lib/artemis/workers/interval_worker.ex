@@ -193,15 +193,12 @@ defmodule Artemis.IntervalWorker do
       end
 
       defp schedule_or_execute_initial_call(state) do
-        case get_option(:delayed_start, false) do
-          true ->
-            Map.put(state, :timer, schedule_update())
+        # Call immediately use an asynchronous call instead of synchronous
+        # one to prevent loading delays on application start
+        default_interval = 10
+        interval = get_option(:delayed_start, default_interval)
 
-          false ->
-            # Make an asynchronous call instead of a blocking synchronous one.
-            # Prevents loading delays on application start.
-            Map.put(state, :timer, schedule_update(5_000))
-        end
+        Map.put(state, :timer, schedule_update(interval))
       end
 
       defp update_state(state) do

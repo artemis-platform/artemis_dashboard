@@ -2,6 +2,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
     interval: get_request_timeout() - 5_000,
+    delayed_start: 5_000,
     name: :ibm_cloudant_change_listener
 
   alias Artemis.Drivers.IBMCloudant
