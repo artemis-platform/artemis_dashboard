@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+
+set -a
+source .env
+set +a
+
+mix do \
+  ecto.create --quiet -r Artemis.Repo, \
+  ecto.migrate -r Artemis.Repo
+
+mix do \
+  ecto.create --quiet -r ArtemisLog.Repo, \
+  ecto.migrate -r ArtemisLog.Repo
+
+mix run apps/artemis/priv/repo/seeds.exs

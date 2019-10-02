@@ -1,8 +1,7 @@
 #!/bin/bash
 
 cd /app/source
-  mix ecto.create --quiet
-  mix ecto.migrate
-  mix run apps/artemis/priv/repo/seeds.exs
+
+bin/local/setup-database
 
 /app/release/bin/artemis foreground

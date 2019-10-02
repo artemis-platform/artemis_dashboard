@@ -4,4 +4,8 @@ set -a
 source .env
 set +a
 
-MIX_ENV=test mix do ecto.drop, ecto.create
+MIX_ENV=test mix do ecto.drop -r Artemis.Repo
+MIX_ENV=test mix do ecto.drop -r ArtemisLog.Repo
+
+MIX_ENV=test mix do ecto.create -r Artemis.Repo
+MIX_ENV=test mix do ecto.create -r ArtemisLog.Repo
