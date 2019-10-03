@@ -22,7 +22,7 @@ defmodule Artemis.GetPermissionTest do
       assert GetPermission.call(permission.id, Mock.system_user()) == permission
     end
 
-    test "finds user keyword list", %{permission: permission} do
+    test "finds record by keyword list", %{permission: permission} do
       assert GetPermission.call([name: permission.name, slug: permission.slug], Mock.system_user()) == permission
     end
   end

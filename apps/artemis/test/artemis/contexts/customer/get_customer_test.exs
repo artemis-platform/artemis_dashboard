@@ -22,7 +22,7 @@ defmodule Artemis.GetCustomerTest do
       assert GetCustomer.call(customer.id, Mock.system_user()) == customer
     end
 
-    test "finds user keyword list", %{customer: customer} do
+    test "finds record by keyword list", %{customer: customer} do
       assert GetCustomer.call([name: customer.name], Mock.system_user()) == customer
     end
   end

@@ -22,7 +22,7 @@ defmodule Artemis.GetIncidentTest do
       assert GetIncident.call(incident.id, Mock.system_user()).id == incident.id
     end
 
-    test "finds user keyword list", %{incident: incident} do
+    test "finds record by keyword list", %{incident: incident} do
       assert GetIncident.call([source_uid: incident.source_uid, title: incident.title], Mock.system_user()).id ==
                incident.id
     end

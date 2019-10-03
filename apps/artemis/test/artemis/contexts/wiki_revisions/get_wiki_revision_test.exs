@@ -22,7 +22,7 @@ defmodule Artemis.GetWikiRevisionTest do
       assert GetWikiRevision.call(wiki_revision.id, Mock.system_user()).id == wiki_revision.id
     end
 
-    test "finds user keyword list", %{wiki_revision: wiki_revision} do
+    test "finds record by keyword list", %{wiki_revision: wiki_revision} do
       assert GetWikiRevision.call([title: wiki_revision.title, slug: wiki_revision.slug], Mock.system_user()).id ==
                wiki_revision.id
     end
