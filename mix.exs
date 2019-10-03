@@ -46,7 +46,15 @@ defmodule Artemis.Umbrella.MixProject do
       # ensures all applications are independent and self sufficient
       #
       # For futher discussion see: https://elixirforum.com/t/mix-test-in-an-umbrella/10771
-      test: ["cmd mix test --color"]
+      test: ["cmd mix test --color"],
+      # Only run ecto mix tasks against databases actively managed by this
+      # application.
+      #
+      # Minimizes the chances of accidentally modifying databases managed and
+      # configured by other applications.
+      "ecto.create": ["ecto.create -r Artemis.Repo -r ArtemisLog.Repo"],
+      "ecto.drop": ["ecto.drop -r Artemis.Repo -r ArtemisLog.Repo"],
+      "ecto.migrate": ["ecto.migrate -r Artemis.Repo -r ArtemisLog.Repo"]
     ]
   end
 end
