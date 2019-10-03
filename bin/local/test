@@ -12,6 +12,4 @@ if [ ! -z "$2" ]; then
   TEST_PATH="$2"
 fi
 
-bin/local/setup-database
-
-MIX_ENV=test mix cmd ${APP} mix test --color ${TEST_PATH}
+MIX_ENV=test mix do ecto.create --quiet, ecto.migrate, cmd ${APP} mix test --color ${TEST_PATH}

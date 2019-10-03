@@ -4,7 +4,5 @@ set -a
 source .env
 set +a
 
-mix do ecto.drop -r Artemis.Repo
-mix do ecto.drop -r ArtemisLog.Repo
-
-bin/local/setup-database
+mix do ecto.drop, ecto.create, ecto.migrate && \
+mix run apps/artemis/priv/repo/seeds.exs
