@@ -22,7 +22,7 @@ defmodule Artemis.GetAuthProviderTest do
       assert GetAuthProvider.call(auth_provider.id, Mock.system_user()) == auth_provider
     end
 
-    test "finds user keyword list", %{auth_provider: auth_provider} do
+    test "finds record by keyword list", %{auth_provider: auth_provider} do
       assert GetAuthProvider.call([type: auth_provider.type, uid: auth_provider.uid], Mock.system_user()) ==
                auth_provider
     end

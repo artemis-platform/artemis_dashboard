@@ -47,7 +47,7 @@ defmodule Artemis.GetUserTest do
       assert GetUser.call(user.id, Mock.system_user()) == user
     end
 
-    test "finds user keyword list", %{user: user} do
+    test "finds record by keyword list", %{user: user} do
       assert GetUser.call([email: user.email, name: user.name], Mock.system_user()) == user
     end
 

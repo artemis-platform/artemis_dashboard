@@ -22,7 +22,7 @@ defmodule Artemis.GetFeatureTest do
       assert GetFeature.call(feature.id, Mock.system_user()) == feature
     end
 
-    test "finds user keyword list", %{feature: feature} do
+    test "finds record by keyword list", %{feature: feature} do
       assert GetFeature.call([name: feature.name, slug: feature.slug], Mock.system_user()) == feature
     end
   end

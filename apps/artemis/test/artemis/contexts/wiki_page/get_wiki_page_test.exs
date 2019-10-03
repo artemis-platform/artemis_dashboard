@@ -22,7 +22,7 @@ defmodule Artemis.GetWikiPageTest do
       assert GetWikiPage.call(wiki_page.id, Mock.system_user()).id == wiki_page.id
     end
 
-    test "finds user keyword list", %{wiki_page: wiki_page} do
+    test "finds record by keyword list", %{wiki_page: wiki_page} do
       assert GetWikiPage.call([title: wiki_page.title, slug: wiki_page.slug], Mock.system_user()).id == wiki_page.id
     end
   end
