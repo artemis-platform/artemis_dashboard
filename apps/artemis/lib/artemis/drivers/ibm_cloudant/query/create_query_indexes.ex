@@ -10,8 +10,6 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
   adding new indexes as needed.
   """
 
-  @default_design_doc "query-indexes"
-
   def call(schema) do
     database_config = IBMCloudant.Config.get_database_config_by!(schema: schema)
     host_config = IBMCloudant.Config.get_host_config_by!(name: database_config[:host])
@@ -40,7 +38,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
   defp get_or_create_query_indexes(host_config, database_schema) do
     cloudant_host = database_schema.get_cloudant_host()
     cloudant_path = database_schema.get_cloudant_path()
-    design_doc_name = get_design_doc_name(host_config)
+    design_doc_name = database_schema.get_cloudant_query_index_design_doc_name()
     existing_indexes = get_existing_index_names(cloudant_host, cloudant_path)
     index_fields = Enum.map(database_schema.index_fields(), &Atom.to_string(&1))
 
@@ -52,10 +50,6 @@ defmodule Artemis.Drivers.IBMCloudant.CreateQueryIndexes do
     end)
 
     {:ok, true}
-  end
-
-  defp get_design_doc_name(host_config) do
-    Keyword.get(host_config, :index_design_doc, @default_design_doc)
   end
 
   defp get_existing_index_names(cloudant_host, cloudant_path) do

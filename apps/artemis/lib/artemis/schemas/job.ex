@@ -82,6 +82,9 @@ defmodule Artemis.Job do
       :uuid
     ]
 
+  def custom_views,
+    do: %{}
+
   # Changesets
 
   def changeset(struct, params \\ %{}) do
