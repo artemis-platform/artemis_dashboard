@@ -2,8 +2,8 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
   alias Artemis.Drivers.IBMCloudant
 
   @moduledoc """
-  Creates IBM Cloudant instances and ensures databases and indexes (filter,
-  search, sort) exist. Will create any that are missing.
+  Creates IBM Cloudant instances and ensures databases and indexes (custom,
+  filter, search, sort) exist. Will create any that are missing.
 
   Is idempotent.
   """
@@ -49,6 +49,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateAll do
       options = [
         create_search: false,
         create_query_indexes: false,
+        create_custom_views: false,
         create_filter_views: false
       ]
 

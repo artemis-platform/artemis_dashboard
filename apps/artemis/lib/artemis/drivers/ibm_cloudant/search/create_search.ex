@@ -8,9 +8,6 @@ defmodule Artemis.Drivers.IBMCloudant.CreateSearch do
   See https://cloud.ibm.com/docs/services/Cloudant?topic=cloudant-design-documents#indexes-design-docs
   """
 
-  @default_design_doc "text-search"
-  @default_index "text-search-index"
-
   def call(schema) do
     database_config = IBMCloudant.Config.get_database_config_by!(schema: schema)
     host_config = IBMCloudant.Config.get_host_config_by!(name: database_config[:host])
@@ -40,9 +37,14 @@ defmodule Artemis.Drivers.IBMCloudant.CreateSearch do
     cloudant_host = database_schema.get_cloudant_host()
     cloudant_path = database_schema.get_cloudant_path()
     search_fields = database_schema.search_fields()
-    options = get_options(host_config)
+    options = get_options(host_config, database_schema)
 
-    {:ok, document} = IBMCloudant.GetOrCreateDesignDocument.call(cloudant_host, cloudant_path, options[:design_doc])
+    {:ok, document} =
+      IBMCloudant.GetOrCreateDesignDocument.call(
+        cloudant_host,
+        cloudant_path,
+        options[:design_doc]
+      )
 
     current_indexes = Map.get(document, "indexes", %{})
     current_index_key = Keyword.get(options, :index)
@@ -55,10 +57,10 @@ defmodule Artemis.Drivers.IBMCloudant.CreateSearch do
     end
   end
 
-  defp get_options(host_config) do
+  defp get_options(host_config, database_schema) do
     [
-      design_doc: Keyword.get(host_config, :search_design_doc, @default_design_doc),
-      index: Keyword.get(host_config, :search_index, @default_index)
+      design_doc: database_schema.get_cloudant_search_design_doc_name(),
+      index: Keyword.fetch!(host_config, :search_index)
     ]
   end
 

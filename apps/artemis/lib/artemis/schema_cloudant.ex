@@ -3,6 +3,7 @@ defmodule Artemis.Schema.Cloudant do
   Adds Cloudant specific schema functions
   """
 
+  @callback custom_views :: Map.t()
   @callback filter_fields :: List.t()
   @callback index_fields :: List.t()
   @callback search_fields :: List.t()
@@ -70,19 +71,51 @@ defmodule Artemis.Schema.Cloudant do
       def get_cloudant_host() do
         __MODULE__
         |> get_cloudant_database_config()
-        |> Keyword.get(:host)
+        |> Keyword.fetch!(:host)
       end
 
       def get_cloudant_path() do
         __MODULE__
         |> get_cloudant_database_config()
-        |> Keyword.get(:name)
+        |> Keyword.fetch!(:name)
+      end
+
+      def get_cloudant_query_index_design_doc_name() do
+        database = get_cloudant_database_config(__MODULE__)
+        host = get_cloudant_host_config(database[:host])
+        design_doc_base = host[:query_index_design_doc_base]
+
+        get_cloudant_design_doc(design_doc_base)
+      end
+
+      def get_cloudant_search_design_doc_name() do
+        database = get_cloudant_database_config(__MODULE__)
+        host = get_cloudant_host_config(database[:host])
+        design_doc_base = host[:search_design_doc_base]
+
+        get_cloudant_design_doc(design_doc_base)
+      end
+
+      def get_cloudant_view_custom_design_doc_name() do
+        database = get_cloudant_database_config(__MODULE__)
+        host = get_cloudant_host_config(database[:host])
+        design_doc_base = host[:view_custom_design_doc_base]
+
+        get_cloudant_design_doc(design_doc_base)
+      end
+
+      def get_cloudant_view_filter_design_doc_name() do
+        database = get_cloudant_database_config(__MODULE__)
+        host = get_cloudant_host_config(database[:host])
+        design_doc_base = host[:view_filter_design_doc_base]
+
+        get_cloudant_design_doc(design_doc_base)
       end
 
       def get_cloudant_search_path() do
         database = get_cloudant_database_config(__MODULE__)
         host = get_cloudant_host_config(database[:host])
-        design_doc = host[:search_design_doc]
+        design_doc = get_cloudant_search_design_doc_name()
         index = host[:search_index]
         base_path = get_cloudant_path()
 
@@ -114,6 +147,10 @@ defmodule Artemis.Schema.Cloudant do
 
       defp get_cloudant_host_config(host_name) do
         IBMCloudant.Config.get_host_config_by!(name: host_name)
+      end
+
+      defp get_cloudant_design_doc(base) do
+        Artemis.Helpers.dashcase(__MODULE__) <> "-" <> base
       end
     end
   end

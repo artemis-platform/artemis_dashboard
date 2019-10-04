@@ -90,6 +90,34 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
+  Returns a snakecase string. Example:
+      Input: Artemis.HelloWorld
+      Ouput: "hello_world"
+  """
+  def snakecase(value) when is_atom(value) do
+    value
+    |> Atom.to_string()
+    |> String.split(".")
+    |> List.last()
+    |> snakecase()
+  end
+
+  def snakecase(value) when is_bitstring(value) do
+    Macro.underscore(value)
+  end
+
+  @doc """
+  Returns a dashcase string. Example:
+      Input: Artemis.HelloWorld
+      Ouput: "hello-world"
+  """
+  def dashcase(value) do
+    value
+    |> snakecase()
+    |> String.replace("_", "-")
+  end
+
+  @doc """
   Returns a simplified module name. Example:
 
       Input: Elixir.MyApp.MyModule

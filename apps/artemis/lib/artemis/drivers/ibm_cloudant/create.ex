@@ -17,6 +17,7 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
     with {:ok, result} <- create_database(host_config, database_config),
          {:ok, _} <- create_search(host_config, database_config, options),
          {:ok, _} <- create_query_indexes(host_config, database_config, options),
+         {:ok, _} <- create_custom_views(host_config, database_config, options),
          {:ok, _} <- create_filter_views(host_config, database_config, options) do
       {:ok, result}
     else
@@ -56,6 +57,13 @@ defmodule Artemis.Drivers.IBMCloudant.Create do
   defp create_query_indexes(host_config, database_config, options) do
     case Keyword.get(options, :create_query_indexes, true) do
       true -> IBMCloudant.CreateQueryIndexes.call(host_config, database_config)
+      false -> {:ok, :skipped}
+    end
+  end
+
+  defp create_custom_views(host_config, database_config, options) do
+    case Keyword.get(options, :create_custom_views, true) do
+      true -> IBMCloudant.CreateCustomViews.call(host_config, database_config)
       false -> {:ok, :skipped}
     end
   end
