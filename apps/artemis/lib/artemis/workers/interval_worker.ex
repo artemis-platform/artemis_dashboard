@@ -18,7 +18,7 @@ defmodule Artemis.IntervalWorker do
     :enabled - Optional. If set to false, starts in paused state.
     :interval - Optional. Interval between calls.
     :log_limit - Optional. Number of log entries to keep.
-    :delayed_start - Optional. Wait until timer expires for initial call.
+    :delayed_start - Optional. Integer. Time to wait for initial call.
 
   For example:
 
