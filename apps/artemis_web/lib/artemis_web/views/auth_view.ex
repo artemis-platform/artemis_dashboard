@@ -5,6 +5,10 @@ defmodule ArtemisWeb.AuthView do
     state = Map.get(conn.query_params, "redirect")
 
     available_providers = %{
+      "github" => %{
+        title: "Log in with GitHub",
+        link: Routes.auth_path(conn, :request, "github", state: state)
+      },
       "system_user" => %{
         title: "Log in as System User",
         link: Routes.auth_path(conn, :callback, "system_user", state: state)
