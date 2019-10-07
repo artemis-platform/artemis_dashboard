@@ -7,7 +7,7 @@
     <ul class="providers">
       <%= for provider <- list_auth_providers(@conn) do %>
         <li>
-          <%= action provider.title, to: provider.link, color: Map.get(provider, :color, "gray"), size: "medium" %>
+          <%= action provider.title, to: provider.link, color: "gray", size: "medium" %>
         </li>
       <% end %>
     </ul>
