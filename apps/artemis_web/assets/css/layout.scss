@@ -22,6 +22,7 @@ body {
 
 #login {
   align-items: center;
+  background: linear-gradient(100deg, #7e3fa4, #b62779);
   display: flex;
   height: 100vh;
   justify-content: center;
@@ -32,12 +33,16 @@ body {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    margin-top: -5%;
     padding: 2rem;
 
     h1 {
+      color: #fff;
       font-size: 3rem;
       font-weight: 300;
       margin: 0 0 1rem 0;
+      padding: 0 1rem 0 0;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.08);
 
       .emphasis {
         font-weight: 600;
@@ -58,6 +63,16 @@ body {
 
       li {
         margin: 0 0 0.5rem 0;
+
+        .ui.button {
+          background: rgba(0, 0, 0, 0.37);
+          color: #fff;
+
+          &:hover {
+            background: #fff;
+            color: #333;
+          }
+        }
       }
     }
   }
