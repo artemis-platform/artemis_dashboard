@@ -1,0 +1,8 @@
+<div id="chart-<%= @chart_id %>"></div>
+
+<script>
+  var chart_selector = document.querySelector("#chart-<%= @chart_id %>");
+  var chart = new ApexCharts(chart_selector, <%= @chart_options %>);
+
+  chart.render();
+</script>

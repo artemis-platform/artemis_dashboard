@@ -6,6 +6,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "apexcharts": "^3.8.6",
     "child-replace-with-polyfill": "^1.0.1",
     "formdata-polyfill": "^3.0.18",
     "highlight.js": "^9.15.6",
