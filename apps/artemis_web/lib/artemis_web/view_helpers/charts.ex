@@ -39,24 +39,39 @@ defmodule ArtemisWeb.ViewHelper.Charts do
         defaultLocale: "en",
         fontFamily: "Muli, Lato, Helvetica Neue, Arial, Helvetica, sans-serif",
         height: "100%",
-        locales: [%{
-          name: "en",
-          options: %{
-            months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            shortDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-            toolbar: %{
-              download: "Download SVG",
-              selection: "Selection",
-              selectionZoom: "Selection Zoom",
-              zoomIn: "Zoom In",
-              zoomOut: "Zoom Out",
-              pan: "Panning",
-              reset: "Reset Zoom"
+        locales: [
+          %{
+            name: "en",
+            options: %{
+              months: [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"
+              ],
+              shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+              days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              shortDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+              toolbar: %{
+                download: "Download SVG",
+                selection: "Selection",
+                selectionZoom: "Selection Zoom",
+                zoomIn: "Zoom In",
+                zoomOut: "Zoom Out",
+                pan: "Panning",
+                reset: "Reset Zoom"
+              }
             }
           }
-        }],
+        ],
         parentHeightOffset: 0,
         sparkline: %{
           enabled: false
@@ -73,7 +88,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
             reset: true,
             customIcons: []
           },
-          autoSelected: "zoom" 
+          autoSelected: "zoom"
         },
         width: "100%"
       },
@@ -83,12 +98,13 @@ defmodule ArtemisWeb.ViewHelper.Charts do
         showForNullSeries: true,
         showForZeroSeries: true,
         position: "bottom",
-        horizontalAlign: "center", 
+        horizontalAlign: "center",
         fontFamily: "Muli, Lato, Helvetica Neue, Arial, Helvetica, sans-serif",
-        fontSize: "14px",
+        fontSize: "14px"
       },
       markers: %{
-        size: 0, # To make visible, change to `5`
+        # To make visible, change to `5`
+        size: 0,
         strokeColors: "#fff",
         strokeWidth: 2,
         strokeOpacity: 0.9,
@@ -96,13 +112,14 @@ defmodule ArtemisWeb.ViewHelper.Charts do
         shape: "circle",
         radius: 2,
         hover: %{
-          size: 0, # If marker is always visible, change to `7`
+          # If marker is always visible, change to `7`
+          size: 0,
           sizeOffset: 3
         }
       },
       theme: %{
-        mode: "light", 
-        palette: "palette10", 
+        mode: "light",
+        palette: "palette10",
         monochrome: %{
           enabled: false,
           color: "#255aee",
