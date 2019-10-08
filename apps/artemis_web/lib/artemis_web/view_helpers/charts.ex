@@ -42,7 +42,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
   defp decode_raw_javascript_functions(input) do
     regex = ~r/:\"raw_javascript_function\((.*?)\)\"/
 
-    Regex.replace(regex, input, fn (_, capture) ->
+    Regex.replace(regex, input, fn _, capture ->
       ": " <> Macro.unescape_string(capture)
     end)
   end
