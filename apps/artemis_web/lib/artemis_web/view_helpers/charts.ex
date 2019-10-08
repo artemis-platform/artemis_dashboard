@@ -2,6 +2,24 @@ defmodule ArtemisWeb.ViewHelper.Charts do
   use Phoenix.HTML
 
   @doc """
+  Include raw javascript function in javascript chart options:
+
+      %{
+        formatter: raw_javascript_function(""
+          function (value) {
+            console.log(value);
+
+            return value + "%";
+          }
+        "")
+      }
+
+  """
+  def raw_javascript_function(text) do
+    "raw_javascript_function(#{text})"
+  end
+
+  @doc """
   Render javascript chart
   """
   def render_chart(chart_options \\ %{}) do
@@ -17,7 +35,16 @@ defmodule ArtemisWeb.ViewHelper.Charts do
     get_default_chart_options()
     |> Artemis.Helpers.deep_merge(passed_options)
     |> Jason.encode!()
+    |> decode_raw_javascript_functions()
     |> raw()
+  end
+
+  defp decode_raw_javascript_functions(input) do
+    regex = ~r/:\"raw_javascript_function\((.*?)\)\"/
+
+    Regex.replace(regex, input, fn _, capture ->
+      ": " <> Macro.unescape_string(capture)
+    end)
   end
 
   defp get_default_chart_options() do
