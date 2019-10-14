@@ -33,6 +33,14 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
+  Detect if the first map is a subset of the second
+
+      Input: %{one: 1}, %{one: 1, two: 2}
+      Output: true
+  """
+  def subset?(first, second), do: Enum.all?(first, &(&1 in second))
+
+  @doc """
   Renames a key in a map. If the key does not exist, original map is returned.
   """
   def rename_key(map, current_key, new_key) when is_map(map) do

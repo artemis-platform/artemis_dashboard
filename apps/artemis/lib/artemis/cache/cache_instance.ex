@@ -46,6 +46,7 @@ defmodule Artemis.CacheInstance do
       cachex_instance_name: get_cachex_instance_name(module),
       cachex_options: Keyword.get(options, :cachex_options, []),
       cache_server_name: get_cache_server_name(module),
+      cache_reset_on_cloudant_changes: Keyword.get(options, :cache_reset_on_cloudant_changes, []),
       cache_reset_on_events: Keyword.get(options, :cache_reset_on_events, [])
     }
 
@@ -164,15 +165,17 @@ defmodule Artemis.CacheInstance do
   end
 
   @impl true
+  def handle_info(%{event: _, payload: payload}, state) do
+    case matches_any?(state.cache_reset_on_cloudant_changes, payload) do
+      true -> reset_cache(state, payload)
+      false -> {:noreply, state}
+    end
+  end
+
   def handle_info(%{event: event}, state) do
     case Enum.member?(state.cache_reset_on_events, event) do
-      true ->
-        Logger.debug("#{state.cachex_instance_name}: Cache reset by event #{event}")
-
-        {:stop, :normal, state}
-
-      false ->
-        {:noreply, state}
+      true -> reset_cache(state, event)
+      false -> {:noreply, state}
     end
   end
 
@@ -205,4 +208,14 @@ defmodule Artemis.CacheInstance do
   end
 
   defp convert_expiration_option(options), do: options
+
+  defp matches_any?(items, target) do
+    Enum.any?(items, &Artemis.Helpers.subset?(&1, target))
+  end
+
+  defp reset_cache(state, event) do
+    Logger.debug("#{state.cachex_instance_name}: Cache reset by event #{event}")
+
+    {:stop, :normal, state}
+  end
 end

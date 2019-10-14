@@ -1,6 +1,8 @@
 defmodule ArtemisWeb.JobLive do
   use ArtemisWeb.LiveView
 
+  @schema Artemis.Job
+
   # LiveView Callbacks
 
   @impl true
@@ -10,7 +12,7 @@ defmodule ArtemisWeb.JobLive do
       |> assign(:job, session.job)
       |> assign(:now, Timex.now())
 
-    :ok = ArtemisPubSub.subscribe(Artemis.CloudantChange.topic())
+    :ok = ArtemisPubSub.subscribe(Artemis.CloudantChange.topic(@schema))
 
     schedule_update()
 
@@ -25,7 +27,7 @@ defmodule ArtemisWeb.JobLive do
   # GenServer Callbacks
 
   @impl true
-  def handle_info(%{event: "cloudant-change", payload: payload}, socket) do
+  def handle_info(%{payload: payload}, socket) do
     socket = update_if_match(socket, payload)
 
     {:noreply, socket}
