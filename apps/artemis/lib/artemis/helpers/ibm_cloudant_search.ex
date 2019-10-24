@@ -43,6 +43,8 @@ defmodule Artemis.Helpers.IBMCloudantSearch do
 
     key_sections =
       Enum.map(keys_with_default, fn key ->
+        key = if is_tuple(key), do: elem(key, 0), else: key
+
         tokens = Enum.map(words, &"#{key}:#{&1}")
         joined = Enum.join(tokens, " AND ")
 
