@@ -1,4 +1,4 @@
-<div id="chart-<%= @chart_id %>"></div>
+<div id="chart-<%= @chart_id %>" class="chart"></div>
 
 <script>
   var chart_selector = document.querySelector("#chart-<%= @chart_id %>");

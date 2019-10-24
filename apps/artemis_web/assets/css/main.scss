@@ -7,6 +7,14 @@ table th a {
   width: 100%;
 }
 
+pre {
+  overflow-x: auto;
+
+  code {
+    color: #666;
+  }
+}
+
 ul {
   list-style: disc;
   padding: 0 0 0 1.5rem;
@@ -309,6 +317,35 @@ select[multiple] {
   }
 }
 
+/* === Components - Charts === */
+
+.chart-container {
+  height: 20rem;
+  width: 20rem;
+
+  .apexcharts-legend-text {
+    font-weight: 600;
+  }
+
+  .apexcharts-datalabel-label {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .apexcharts-datalabel-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &.donut-chart-container {
+    margin: 0 -2rem -4rem -2.25rem;
+  }
+
+  &.radial-chart-container {
+    margin: 0 -1.75rem -4rem -2.25rem;
+  }
+}
+
 /* === Components - Key Value List === */
 
 ul.key-value-list {
@@ -332,7 +369,7 @@ ul.key-value-list {
     .key {
       font-weight: 600;
       margin-right: 1rem;
-      width: 8rem;
+      width: 9rem;
     }
 
     .value {
@@ -354,9 +391,29 @@ ul.key-value-list {
   padding: 0.5rem 0.5rem;
   text-transform: uppercase;
 
+  &.pink {
+    border-color: #e03997;
+    color: #e03997;
+  }
+
+  &.purple {
+    border-color: #a333c8;
+    color: #a333c8;
+  }
+
+  &.violet {
+    border-color: #6435c9;
+    color: #6435c9;
+  }
+
   &.blue {
     border-color: $status_blue;
     color: $status_blue;
+  }
+
+  &.teal {
+    border-color: #00b5ad;
+    color: #00b5ad;
   }
 
   &.green {
@@ -364,9 +421,19 @@ ul.key-value-list {
     color: $status_green;
   }
 
+  &.olive {
+    border-color: #b5cc18;
+    color: #b5cc18;
+  }
+
   &.yellow {
     border-color: $status_yellow;
     color: $status_yellow;
+  }
+
+  &.orange {
+    border-color: #f2711c;
+    color: #f2711c;
   }
 
   &.red {
@@ -561,17 +628,31 @@ ul.timeline {
   }
 }
 
-/* === Components - Tags === */
+/* === Components - Inline Fields === */
+.ui.form .inline-fields {
+  display: flex;
+  justify-content: space-between;
 
-.resource-tags {
+  .field {
+    margin-right: 1rem;
+    width: 100%;
+  }
+
+  .field:last-child {
+    margin-right: 0;
+    width: 100%;
+  }
+}
+
+/* === Components - Inline Form === */
+
+.inline-form {
   margin: 0 0 0.5rem 0;
 
-  .list {
+  .value {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    font-size: 0.875rem;
-    font-weight: 600;
 
     .label {
       margin: 0 0.5rem 0 0;

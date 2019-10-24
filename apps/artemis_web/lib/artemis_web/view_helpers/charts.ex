@@ -20,19 +20,10 @@ defmodule ArtemisWeb.ViewHelper.Charts do
   end
 
   @doc """
-  Render javascript chart
+  Return a JavaScript compatible data type
   """
-  def render_chart(chart_options \\ %{}) do
-    assigns = [
-      chart_id: Artemis.Helpers.UUID.call(),
-      chart_options: get_encoded_chart_options(chart_options)
-    ]
-
-    Phoenix.View.render(ArtemisWeb.LayoutView, "chart.html", assigns)
-  end
-
-  defp get_encoded_chart_options(passed_options) do
-    get_default_chart_options()
+  def get_encoded_chart_options(passed_options) do
+    get_global_chart_options()
     |> Artemis.Helpers.deep_merge(passed_options)
     |> Jason.encode!()
     |> decode_raw_javascript_functions()
@@ -47,7 +38,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
     end)
   end
 
-  defp get_default_chart_options() do
+  defp get_global_chart_options() do
     %{
       chart: %{
         animations: %{
@@ -153,6 +144,296 @@ defmodule ArtemisWeb.ViewHelper.Charts do
           shadeTo: "light",
           shadeIntensity: 0.65
         }
+      }
+    }
+  end
+
+  @doc """
+  Return common chart options for a specific chart types
+  """
+  def get_chart_type_options(:donut) do
+    %{
+      chart: %{
+        type: "donut",
+        toolbar: %{
+          show: false
+        }
+      },
+      plotOptions: %{
+        pie: %{
+          customScale: 1,
+          offsetX: 0,
+          offsetY: 0,
+          expandOnClick: true,
+          dataLabels: %{
+            show: false,
+            offset: 0,
+            minAngleToShowLabel: 15
+          },
+          donut: %{
+            size: "50%",
+            labels: %{
+              show: true,
+              name: %{
+                show: true,
+                fontSize: "22px",
+                color: nil,
+                offsetY: -6
+              },
+              total: %{
+                show: true,
+                label: "Total"
+              },
+              value: %{
+                show: true,
+                fontSize: "16px",
+                color: nil,
+                offsetY: 0
+              }
+            }
+          }
+        }
+      },
+      dataLabels: %{
+        enabled: true,
+        style: %{
+          colors: ["rgba(255, 255, 255, 0.9)"]
+        },
+        formatter:
+          raw_javascript_function("""
+            function (percent, opts) {
+              var index = opts.seriesIndex
+              var name = opts.w.globals.seriesNames[index]
+              var value = opts.w.globals.seriesTotals[index]
+
+              return name
+            }
+          """)
+      },
+      legend: %{
+        show: false,
+        fontSize: "14px",
+        textAnchor: "end",
+        position: "bottom",
+        horizontalAlign: "left",
+        labels: %{
+          useSeriesColors: true
+        },
+        markers: %{
+          size: 0
+        },
+        itemMargin: %{
+          horizontal: 1,
+          vertical: 2
+        }
+      },
+      labels: [],
+      series: [],
+      theme: %{
+        mode: "light"
+      },
+      tooltip: %{
+        enabled: false
+      }
+    }
+  end
+
+  def get_chart_type_options(:donut_thin) do
+    %{
+      chart: %{
+        type: "donut",
+        toolbar: %{
+          show: false
+        }
+      },
+      colors: [],
+      dataLabels: %{
+        enabled: false
+      },
+      legend: %{
+        show: false,
+        fontSize: "14px",
+        textAnchor: "end",
+        position: "bottom",
+        horizontalAlign: "left",
+        labels: %{
+          useSeriesColors: true
+        },
+        markers: %{
+          size: 0
+        },
+        itemMargin: %{
+          horizontal: 1,
+          vertical: 2
+        }
+      },
+      labels: [],
+      plotOptions: %{
+        pie: %{
+          customScale: 1,
+          offsetX: 0,
+          offsetY: 0,
+          expandOnClick: true,
+          dataLabels: %{
+            show: false
+          },
+          donut: %{
+            size: "80%",
+            labels: %{
+              show: true,
+              name: %{
+                show: true,
+                fontSize: "22px",
+                color: nil,
+                offsetY: -6
+              },
+              total: %{
+                show: true,
+                label: "Total"
+              },
+              value: %{
+                show: true,
+                fontSize: "16px",
+                color: nil,
+                offsetY: 0
+              }
+            }
+          }
+        }
+      },
+      series: [],
+      stroke: %{
+        show: true,
+        colors: ["#fff"],
+        width: 2
+      },
+      theme: %{
+        mode: "light"
+      },
+      tooltip: %{
+        enabled: false
+      }
+    }
+  end
+
+  def get_chart_type_options(:radial) do
+    %{
+      chart: %{
+        type: "radialBar",
+        toolbar: %{
+          show: false
+        }
+      },
+      labels: [],
+      legend: %{
+        show: true,
+        floating: true,
+        fontSize: "14px",
+        position: "left",
+        offsetX: 120,
+        offsetY: 136,
+        textAnchor: "end",
+        labels: %{
+          useSeriesColors: true
+        },
+        markers: %{
+          size: 0
+        },
+        itemMargin: %{
+          horizontal: 0.5,
+          vertical: 0
+        },
+        onItemClick: %{
+          toggleDataSeries: false
+        }
+      },
+      plotOptions: %{
+        radialBar: %{
+          inverseOrder: true,
+          offsetX: 0,
+          offsetY: -32,
+          startAngle: -180,
+          endAngle: 90,
+          hollow: %{
+            margin: 5,
+            size: "40%",
+            background: "transparent"
+          },
+          track: %{
+            show: true,
+            background: "#ddd",
+            strokeWidth: "97%",
+            opacity: 0.8,
+            margin: 5,
+            dropShadow: %{
+              enabled: false,
+              top: 0,
+              left: 0,
+              blur: 3,
+              opacity: 0.5
+            }
+          },
+          dataLabels: %{
+            name: %{
+              show: true,
+              color: nil,
+              offsetY: -6
+            },
+            total: %{
+              show: true,
+              color: nil,
+              label: "Total",
+              formatter:
+                raw_javascript_function("""
+                  function (w) {
+                    var names = w.globals.seriesNames
+                    var values = w.globals.seriesTotals
+                    var total = 0
+
+                    for(var i = 0; i < names.length; i++) {
+                      var name = names[i]
+                      var value = values[i]
+
+                      if (value > 0) {
+                        total += Number(name.split(' ')[0])
+                      }
+                    }
+
+                    return total;
+                  }
+                """)
+            },
+            value: %{
+              show: true,
+              color: nil,
+              offsetY: 0,
+              formatter:
+                raw_javascript_function("""
+                  function (value, w) {
+                    var values = w.globals.seriesTotals
+                    var names = w.globals.seriesNames
+                    var index
+
+                    for(var i = 0; i < values.length; i++) {
+                      if (values[i] == value) {
+                        index = i;
+                      }
+                    }
+
+                    if (index === undefined) {
+                      return value
+                    } else {
+                      return names[index].split(' ')[0]
+                    }
+                  }
+                """)
+            }
+          }
+        }
+      },
+      series: [],
+      theme: %{
+        mode: "light"
       }
     }
   end
