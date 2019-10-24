@@ -12,12 +12,12 @@ defmodule Artemis.CloudantChange do
     ]
   end
 
-  def topic, do: "private:artemis:cloudant-changes"
+  def topic(schema), do: "private:artemis:cloudant-changes:#{Artemis.Helpers.dashcase(schema)}"
 
-  def broadcast(%{id: _, schema: _} = data) do
+  def broadcast(%{id: _, schema: schema} = data) do
     payload = struct(Data, data)
 
-    :ok = ArtemisPubSub.broadcast(topic(), "cloudant-change", payload)
+    :ok = ArtemisPubSub.broadcast(topic(schema), payload.action, payload)
 
     data
   end
