@@ -67,14 +67,7 @@ defmodule Artemis.Drivers.IBMCloudant.CreateSearch do
   defp generate_search_index(fields) do
     fields_without_default = List.delete(fields, :_id)
 
-    clauses =
-      Enum.map(fields_without_default, fn field ->
-        """
-          if (typeof(doc.#{field}) !== 'undefined') {
-            index("#{field}", doc.#{field});
-          }
-        """
-      end)
+    clauses = Enum.map(fields_without_default, &generate_search_index_clause/1)
 
     """
     function (doc) {
@@ -87,6 +80,24 @@ defmodule Artemis.Drivers.IBMCloudant.CreateSearch do
 
       #{Enum.join(clauses, "\n")}
     }
+    """
+  end
+
+  defp generate_search_index_clause({field, :array}) do
+    """
+      if (typeof(doc.#{field}) !== 'undefined') {
+        for (var i in doc.#{field}) {
+          index("#{field}", doc.#{field}[i], {"store": true});
+        }
+      }
+    """
+  end
+
+  defp generate_search_index_clause(field) do
+    """
+      if (typeof(doc.#{field}) !== 'undefined') {
+        index("#{field}", doc.#{field});
+      }
     """
   end
 
