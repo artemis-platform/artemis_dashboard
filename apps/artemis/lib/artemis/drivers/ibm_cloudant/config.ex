@@ -6,17 +6,23 @@ defmodule Artemis.Drivers.IBMCloudant.Config do
       hosts: [
         [
           name: :shared,
+          ibm_cloud_iam_api_key: :ibm_cloudant_shared,
           auth_type: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_AUTH_TYPE"),
           username: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_USERNAME"),
           password: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PASSWORD"),
           hostname: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_HOSTNAME"),
           protocol: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PROTOCOL"),
+          port: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_PORT"),
           create_change_databases: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_CREATE_CHANGE_DATABASES"),
           query_index_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_QUERY_INDEX_ENABLED"),
-          query_index_include_partition_param: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_QUERY_INDEX_INCLUDE_PARTITION_PARAM"),
+          query_index_design_doc_base: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_QUERY_INDEX_DESIGN_DOC_BASE"),
+          query_index_include_partition_param:
+            System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_QUERY_INDEX_INCLUDE_PARTITION_PARAM"),
           search_enabled: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_ENABLED"),
           search_design_doc_base: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_DESIGN_DOC_BASE"),
-          search_index: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_INDEX")
+          search_index: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_SEARCH_INDEX"),
+          view_custom_design_doc_base: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_VIEW_CUSTOM_DESIGN_DOC_BASE"),
+          view_filter_design_doc_base: System.get_env("ARTEMIS_IBM_CLOUDANT_SHARED_VIEW_FILTER_DESIGN_DOC_BASE")
         ]
       ],
       databases: [

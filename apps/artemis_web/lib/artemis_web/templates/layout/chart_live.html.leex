@@ -1,0 +1,16 @@
+<div
+  id="chart-container-<%= @chart_id %>"
+  class="chart-container donut-chart-container"
+  phx-hook="ApexCharts"
+  phx-socket-id="<%= @socket.id %>"
+  chart-updates="<%= Jason.encode!(@chart_data) %>"
+>
+  <div id="chart-<%= @chart_id %>" class="chart" phx-update="ignore"></div>
+
+  <script>
+    var chart_selector = document.querySelector("#chart-<%= @chart_id %>");
+    var chart = new ApexCharts(chart_selector, <%= get_encoded_chart_options(@chart_options) %>);
+
+    window.ApexChartHelpers.register_instance("<%= @socket.id %>", chart);
+  </script>
+</div>

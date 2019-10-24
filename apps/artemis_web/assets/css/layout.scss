@@ -3,9 +3,18 @@ body {
   background: #fff;
 }
 
+div,
+section,
+article,
+content,
+pre,
+code {
+  min-width: 0;
+}
+
 #body h2 {
-  border-bottom: 2px solid $blue_muted;
-  font-size: 1.875rem;
+  border-bottom: 2px solid $purple_muted;
+  font-size: 1.625rem;
   font-weight: 500;
   margin-bottom: 1.25rem;
   padding-bottom: 0.75rem;
@@ -13,7 +22,7 @@ body {
 
 #body h3 {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 1rem;
   padding: 0 0 0.5rem 0;
 }
@@ -38,14 +47,19 @@ body {
 
     h1 {
       color: #fff;
-      font-size: 3rem;
+      font-size: 4.25rem;
       font-weight: 300;
-      margin: 0 0 1rem 0;
+      margin: 0 0 1.25rem 0;
       padding: 0 1rem 0 0;
       text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.08);
 
       .emphasis {
         font-weight: 600;
+      }
+
+      .icon {
+        font-size: 0.875em;
+        margin-right: 0.125em;
       }
     }
 
@@ -78,7 +92,6 @@ body {
   }
 }
 
-
 /* === Header === */
 
 #primary-header {
@@ -86,7 +99,6 @@ body {
   $background: #fff;
   $height: if(topbar, 4rem, 5rem);
   $logo_width: 210px;
-
 
   section {
     display: flex;
@@ -99,7 +111,7 @@ body {
       display: flex;
       flex-shrink: 0;
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       height: $height;
       line-height: $height;
       padding: 0 0 0 2rem;
@@ -555,6 +567,40 @@ body.error-page {
       }
     }
   }
+
+  article.statistics {
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 -1rem 0;
+    padding: 2rem 0 1rem 0;
+
+    section {
+
+      h4 {
+        color: #826de6;
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin: 0 0 -1.5rem 0;
+        text-align: center;
+      }
+
+      .chart-container {
+
+        .apexcharts-legend-text {
+          text-shadow: 0px 1px 1px #181818;
+        }
+
+        .apexcharts-datalabel-label {
+          fill: #bbb;
+        }
+
+        .apexcharts-datalabel-value {
+          fill: #fff;
+        }
+      }
+    }
+  }
 }
 
 #content-navigation {
@@ -700,6 +746,36 @@ body.error-page {
       padding: 1.25rem 2rem 1rem 2rem;
     }
   }
+
+  .page {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &>aside,
+    &>content {
+      &>section {
+        margin-top: 2rem;
+      }
+
+      &>section:first-child {
+        margin-top: 0;
+      }
+    }
+
+    &>content {
+      width: 100%;
+    }
+
+    &>aside.right {
+      margin-left: 2rem;
+      min-width: 480px;
+
+      section h2 {
+        border-color: $blue_muted !important;
+      }
+    }
+  }
 }
 
 #primary-footer {
@@ -753,5 +829,9 @@ body.error-page {
     justify-content: space-between;
     font-size: 0.875rem;
     padding: 2rem 2rem;
+
+    & > div {
+      display: flex;
+    }
   }
 }

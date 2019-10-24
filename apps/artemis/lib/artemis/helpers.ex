@@ -38,6 +38,8 @@ defmodule Artemis.Helpers do
       Input: %{one: 1}, %{one: 1, two: 2}
       Output: true
   """
+  def subset?(first, %_{} = second), do: subset?(first, Map.from_struct(second))
+
   def subset?(first, second), do: Enum.all?(first, &(&1 in second))
 
   @doc """
@@ -99,6 +101,7 @@ defmodule Artemis.Helpers do
 
   @doc """
   Returns a snakecase string. Example:
+
       Input: Artemis.HelloWorld
       Ouput: "hello_world"
   """
@@ -116,6 +119,7 @@ defmodule Artemis.Helpers do
 
   @doc """
   Returns a dashcase string. Example:
+
       Input: Artemis.HelloWorld
       Ouput: "hello-world"
   """

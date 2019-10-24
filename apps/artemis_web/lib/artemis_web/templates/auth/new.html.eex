@@ -1,8 +1,7 @@
 <main role="main" id="login">
   <section>
     <h1>
-      <i class="fire icon"></i>
-      Artemis Dashboard
+      <i class="map marker alternate icon"></i>Atlas
     </h1>
     <ul class="providers">
       <%= for provider <- list_auth_providers(@conn) do %>
