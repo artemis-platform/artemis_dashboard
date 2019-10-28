@@ -9,13 +9,15 @@ defmodule ArtemisWeb.ViewHelper.Pagination do
   def render_pagination(conn, %Scrivener.Page{} = data, options) do
     total_pages = Map.get(data, :total_pages, 1)
     args = Keyword.get(options, :args, [])
+    params = Keyword.get(options, :params, [])
 
-    params =
-      options
-      |> Keyword.get(:params, conn.query_params)
+    query_params =
+      conn.query_params
       |> Artemis.Helpers.keys_to_atoms()
       |> Map.delete(:page)
       |> Enum.into([])
+
+    params = Keyword.merge(query_params, params)
 
     assigns = [
       args: args,

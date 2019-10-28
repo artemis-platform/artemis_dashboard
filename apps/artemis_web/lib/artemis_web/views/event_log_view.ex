@@ -1,6 +1,18 @@
 defmodule ArtemisWeb.EventLogView do
   use ArtemisWeb, :view
 
+  def render_event_log_table(conn, event_logs, options \\ []) do
+    assigns = [
+      allowed_columns: Keyword.get(options, :allowed_columns),
+      conn: conn,
+      default_columns: Keyword.get(options, :default_columns, []),
+      event_logs: event_logs,
+      pagination_options: Keyword.get(options, :pagination_options, [])
+    ]
+
+    render("_table.html", assigns)
+  end
+
   def data_table_available_columns() do
     [
       {"Actions", "actions"},
@@ -14,7 +26,7 @@ defmodule ArtemisWeb.EventLogView do
     ]
   end
 
-  def data_table_allowed_columns() do
+  def data_table_allowed_columns(options \\ []) do
     %{
       "actions" => [
         label: fn _conn -> nil end,
@@ -29,7 +41,7 @@ defmodule ArtemisWeb.EventLogView do
         value: fn _conn, row -> row.action end,
         value_html: fn conn, row ->
           case has?(conn, "event-logs:show") do
-            true -> link(row.action, to: Routes.event_log_path(conn, :show, row.id))
+            true -> data_table_action_column_html_link(conn, row, options)
             false -> row.action
           end
         end
@@ -104,5 +116,13 @@ defmodule ArtemisWeb.EventLogView do
           acc
       end
     end)
+  end
+
+  defp data_table_action_column_html_link(conn, row, to: to) do
+    link(row.action, to: to.(conn, row.id))
+  end
+
+  defp data_table_action_column_html_link(conn, row, _) do
+    link(row.action, to: Routes.event_log_path(conn, :show, row.id))
   end
 end

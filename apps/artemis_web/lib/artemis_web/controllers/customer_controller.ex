@@ -1,5 +1,8 @@
 defmodule ArtemisWeb.CustomerController do
   use ArtemisWeb, :controller
+  use ArtemisWeb.Controller.ResourceEventLogs,
+    resource_name: "Customer",
+    resource_type: Artemis.Customer
 
   alias Artemis.CreateCustomer
   alias Artemis.Customer
