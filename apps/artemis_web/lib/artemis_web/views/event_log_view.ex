@@ -1,7 +1,7 @@
 defmodule ArtemisWeb.EventLogView do
   use ArtemisWeb, :view
 
-  def render_event_log_table(conn, event_logs, options \\ []) do
+  def render_event_log_list(conn, event_logs, options \\ []) do
     assigns = [
       allowed_columns: Keyword.get(options, :allowed_columns),
       conn: conn,
@@ -10,7 +10,7 @@ defmodule ArtemisWeb.EventLogView do
       pagination_options: Keyword.get(options, :pagination_options, [])
     ]
 
-    render("_table.html", assigns)
+    render("_list.html", assigns)
   end
 
   def data_table_available_columns() do

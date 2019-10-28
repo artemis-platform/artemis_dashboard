@@ -19,7 +19,7 @@
   <%= render_flash_notifications @conn %>
 
   <%=
-    render_event_log_table(
+    render_event_log_list(
       @conn,
       @event_logs,
       allowed_columns: data_table_allowed_columns(),

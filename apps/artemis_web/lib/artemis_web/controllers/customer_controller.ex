@@ -117,7 +117,15 @@ defmodule ArtemisWeb.CustomerController do
         pagination_options: pagination_options
       ]
 
-      render_format(conn, "index/event_log_list", assigns)
+      case get_format(conn) do
+        "csv" ->
+          conn
+          |> put_view(ArtemisWeb.EventLogView)
+          |> render_format("index", assigns)
+
+        _ ->
+          render(conn, "index/event_log_list.html", assigns)
+      end
     end)
   end
 
@@ -159,7 +167,15 @@ defmodule ArtemisWeb.CustomerController do
         pagination_options: pagination_options
       ]
 
-      render_format(conn, "show/event_log_list", assigns)
+      case get_format(conn) do
+        "csv" ->
+          conn
+          |> put_view(ArtemisWeb.EventLogView)
+          |> render_format("index", assigns)
+
+        _ ->
+          render(conn, "show/event_log_list.html", assigns)
+      end
     end)
   end
 
