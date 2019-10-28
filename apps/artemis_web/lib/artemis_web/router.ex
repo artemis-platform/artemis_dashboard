@@ -56,8 +56,8 @@ defmodule ArtemisWeb.Router do
       get "/customers/event-logs", CustomerController, :index_event_log_list
       get "/customers/event-logs/:id", CustomerController, :index_event_log_details
       resources "/customers", CustomerController do
-        get "/event-logs", CustomerController, :show_event_log_list
-        get "/event-logs/:id", CustomerController, :show_event_log_details
+        get "/event-logs", CustomerController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", CustomerController, :show_event_log_details, as: :event_log
       end
 
       get "/docs/:id/:slug", WikiPageController, :show

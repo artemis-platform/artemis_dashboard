@@ -91,59 +91,22 @@ defmodule ArtemisWeb.CustomerController do
 
   def index_event_log_list(conn, params) do
     authorize(conn, "customers:list", fn ->
-      user = current_user(conn)
-      resource_type = "Customer"
-
-      resource_id =
-        Enum.find_value(params, fn {key, value} ->
-          case String.match?(key, ~r/.*_id$/) do
-            false -> nil
-            true -> value
-          end
-        end)
-
-      default_columns =
-        case resource_id do
-          nil -> ["action", "resource_id", "user_name", "inserted_at"]
-          _ -> ["action", "user_name", "inserted_at"]
-        end
-
-      resource_type_filter = %{"filters" => %{"resource_type" => resource_type}}
-
-      resource_id_filter =
-        case resource_id do
-          nil -> %{}
-          value -> %{"filters" => %{"resource_id" => value}}
-        end
-
-      event_log_params =
-        params
-        |> Artemis.Helpers.deep_merge(resource_type_filter)
-        |> Artemis.Helpers.deep_merge(resource_id_filter)
-        # TODO: temporary for debugging, remove.
-        |> Artemis.Helpers.deep_merge(%{"page_size" => "1"})
-
-      event_logs = ArtemisLog.ListEventLogs.call(event_log_params, user)
+      event_log_filters = %{"resource_type" => "Customer"}
+      event_log_params = Artemis.Helpers.deep_merge(params, %{"filters" => event_log_filters})
+      event_logs = ArtemisLog.ListEventLogs.call(event_log_params, current_user(conn))
 
       allowed_column_options = [
         to: fn conn, id ->
-          case resource_id do
-            nil -> ArtemisWeb.Router.Helpers.customer_path(conn, :index_event_log_details, id)
-            _ -> ArtemisWeb.Router.Helpers.customer_customer_path(conn, :index_event_log_details, resource_id, id)
-          end
+          ArtemisWeb.Router.Helpers.customer_path(conn, :index_event_log_details, id)
         end
       ]
 
       allowed_columns = ArtemisWeb.EventLogView.data_table_allowed_columns(allowed_column_options)
+      default_columns = ["action", "resource_id", "user_name", "inserted_at"]
 
       pagination_options = [
         action: :index_event_log_list,
-        path: case resource_id do
-          nil -> &ArtemisWeb.Router.Helpers.customer_path/3
-          _ -> fn conn, page, options ->
-            ArtemisWeb.Router.Helpers.customer_customer_path(conn, page, resource_id, options)
-          end
-        end
+        path: &ArtemisWeb.Router.Helpers.customer_path/3
       ]
 
       assigns = [
@@ -151,8 +114,7 @@ defmodule ArtemisWeb.CustomerController do
         conn: conn,
         default_columns: default_columns,
         event_logs: event_logs,
-        pagination_options: pagination_options,
-        resource_type: resource_type
+        pagination_options: pagination_options
       ]
 
       render_format(conn, "index/event_log_list", assigns)
@@ -160,65 +122,32 @@ defmodule ArtemisWeb.CustomerController do
   end
 
   def index_event_log_details(conn, _params) do
-    authorize(conn, "customers:show", fn ->
+    authorize(conn, "customers:list", fn ->
       render(conn, "index/event_log_details.html")
     end)
   end
 
   def show_event_log_list(conn, params) do
-    authorize(conn, "customers:list", fn ->
-      user = current_user(conn)
-      resource_type = "Customer"
+    authorize(conn, "customers:show", fn ->
+      resource_id = Map.get(params, "customer_id")
 
-      resource_id =
-        Enum.find_value(params, fn {key, value} ->
-          case String.match?(key, ~r/.*_id$/) do
-            false -> nil
-            true -> value
-          end
-        end)
-
-      default_columns =
-        case resource_id do
-          nil -> ["action", "resource_id", "user_name", "inserted_at"]
-          _ -> ["action", "user_name", "inserted_at"]
-        end
-
-      resource_type_filter = %{"filters" => %{"resource_type" => resource_type}}
-
-      resource_id_filter =
-        case resource_id do
-          nil -> %{}
-          value -> %{"filters" => %{"resource_id" => value}}
-        end
-
-      event_log_params =
-        params
-        |> Artemis.Helpers.deep_merge(resource_type_filter)
-        |> Artemis.Helpers.deep_merge(resource_id_filter)
-        # TODO: temporary for debugging, remove.
-        |> Artemis.Helpers.deep_merge(%{"page_size" => "1"})
-
-      event_logs = ArtemisLog.ListEventLogs.call(event_log_params, user)
+      event_log_filters = %{"resource_type" => "Customer", "resource_id" => resource_id}
+      event_log_params = Artemis.Helpers.deep_merge(params, %{"filters" => event_log_filters})
+      event_logs = ArtemisLog.ListEventLogs.call(event_log_params, current_user(conn))
 
       allowed_column_options = [
         to: fn conn, id ->
-          case resource_id do
-            nil -> ArtemisWeb.Router.Helpers.customer_path(conn, :show_event_log_details, id)
-            _ -> ArtemisWeb.Router.Helpers.customer_customer_path(conn, :show_event_log_details, resource_id, id)
-          end
+          ArtemisWeb.Router.Helpers.customer_event_log_path(conn, :show_event_log_details, resource_id, id)
         end
       ]
 
       allowed_columns = ArtemisWeb.EventLogView.data_table_allowed_columns(allowed_column_options)
+      default_columns = ["action", "user_name", "inserted_at"]
 
       pagination_options = [
         action: :show_event_log_list,
-        path: case resource_id do
-          nil -> &ArtemisWeb.Router.Helpers.customer_path/3
-          _ -> fn conn, page, options ->
-            ArtemisWeb.Router.Helpers.customer_customer_path(conn, page, resource_id, options)
-          end
+        path: fn conn, page, options ->
+          ArtemisWeb.Router.Helpers.customer_event_log_path(conn, page, resource_id, options)
         end
       ]
 
@@ -227,8 +156,7 @@ defmodule ArtemisWeb.CustomerController do
         conn: conn,
         default_columns: default_columns,
         event_logs: event_logs,
-        pagination_options: pagination_options,
-        resource_type: resource_type
+        pagination_options: pagination_options
       ]
 
       render_format(conn, "show/event_log_list", assigns)
