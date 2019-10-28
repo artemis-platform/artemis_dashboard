@@ -1,6 +1,12 @@
 <div id="content-header">
   <header>
-    <h1><%= @resource_name %> Event Logs</h1>
+    <h1>Customers - Event Logs</h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "customers:create") do %>
+        <%= action "New", to: Routes.customer_path(@conn, :new), color: "blue" %>
+      <% end %>
+    </div>
   </header>
 </div>
 

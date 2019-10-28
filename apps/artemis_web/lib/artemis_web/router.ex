@@ -53,11 +53,11 @@ defmodule ArtemisWeb.Router do
         put "/tags", WikiPageTagController, :update, as: :tag
       end
 
-      get "/customers/event-logs", CustomerController, :event_log_index
-      get "/customers/event-logs/:id", CustomerController, :event_log_show
+      get "/customers/event-logs", CustomerController, :index_event_log_list
+      get "/customers/event-logs/:id", CustomerController, :index_event_log_details
       resources "/customers", CustomerController do
-        get "/event-logs", CustomerController, :event_log_index
-        get "/event-logs/:id", CustomerController, :event_log_show
+        get "/event-logs", CustomerController, :show_event_log_list
+        get "/event-logs/:id", CustomerController, :show_event_log_details
       end
 
       get "/docs/:id/:slug", WikiPageController, :show
