@@ -92,29 +92,50 @@ defmodule ArtemisWeb.CustomerController do
 
   def index_event_log_list(conn, params) do
     authorize(conn, "customers:list", fn ->
-      assigns = get_assigns_for_index_event_log_list(conn, params)
+      options = [
+        path: &ArtemisWeb.Router.Helpers.customer_path/3,
+        resource_type: "Customer"
+      ]
+
+      assigns = get_assigns_for_index_event_log_list(conn, params, options)
 
       render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
     end)
   end
 
-  def index_event_log_details(conn, _params) do
+  def index_event_log_details(conn, %{"id" => id}) do
     authorize(conn, "customers:list", fn ->
-      render(conn, "index/event_log_details.html")
+      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
+
+      render(conn, "index/event_log_details.html", event_log: event_log)
     end)
   end
 
   def show_event_log_list(conn, params) do
     authorize(conn, "customers:show", fn ->
-      assigns = get_assigns_for_show_event_log_list(conn, params)
+      customer_id = Map.get(params, "customer_id")
+      customer = GetCustomer.call!(customer_id, current_user(conn))
+
+      options = [
+        path: &ArtemisWeb.Router.Helpers.customer_event_log_path/4,
+        resource_id: customer_id,
+        resource_type: "Customer"
+      ]
+
+      assigns =
+        conn
+        |> get_assigns_for_show_event_log_list(params, options)
+        |> Keyword.put(:customer, customer)
 
       render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
     end)
   end
 
-  def show_event_log_details(conn, _params) do
+  def show_event_log_details(conn, %{"id" => id}) do
     authorize(conn, "customers:show", fn ->
-      render(conn, "show/event_log_details.html")
+      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
+
+      render(conn, "show/event_log_details.html", event_log: event_log)
     end)
   end
 end

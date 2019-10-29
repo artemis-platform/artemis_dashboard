@@ -26,7 +26,7 @@ defmodule ArtemisWeb.EventLogNotificationsLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(ArtemisWeb.EventLogView, "_notifications.html", assigns)
+    Phoenix.View.render(ArtemisWeb.LayoutView, "event_log_notifications.html", assigns)
   end
 
   # GenServer Callbacks
@@ -44,11 +44,18 @@ defmodule ArtemisWeb.EventLogNotificationsLive do
 
   defp update_if_match(socket, %{resource_id: resource_id, resource_type: resource_type} = data) do
     resource_type_match? = Artemis.Helpers.to_string(resource_type) == socket.assigns.resource_type
-    resource_id_match? = Artemis.Helpers.to_string(resource_id) == socket.assigns.resource_id
 
-    case resource_type_match? && resource_id_match? do
+    case resource_type_match? && resource_id_match?(socket, resource_id) do
       true -> update_socket(socket, data)
       false -> socket
+    end
+  end
+
+  defp resource_id_match?(socket, resource_id) do
+    if Artemis.Helpers.present?(socket.assigns.resource_id) do
+      Artemis.Helpers.to_string(resource_id) == socket.assigns.resource_id
+    else
+      true
     end
   end
 

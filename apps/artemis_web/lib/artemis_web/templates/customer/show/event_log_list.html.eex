@@ -1,10 +1,15 @@
 <div id="content-header">
   <header>
-    <h1>Customer - Event Logs</h1>
+    <h1>
+      <%= @customer.name %>
+    </h1>
 
     <div class="actions">
-      <%= if has?(@conn, "customers:create") do %>
-        <%= action "New", to: Routes.customer_path(@conn, :new), color: "blue" %>
+      <%= if has?(@conn, "customers:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.customer_path(@conn, :delete, @customer), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "customers:update") do %>
+        <%= action "Edit", to: Routes.customer_path(@conn, :edit, @customer), color: "green" %>
       <% end %>
     </div>
   </header>
@@ -17,9 +22,10 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Customer", @customer.id %>
 
   <%=
-    ArtemisWeb.EventLogView.render_event_log_list(
+    render_event_log_list(
       @conn,
       @event_logs,
       allowed_columns: @allowed_columns,

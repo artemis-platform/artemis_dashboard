@@ -17,15 +17,19 @@ defmodule ArtemisWeb.Controller.EventLogs do
 
       # Helpers - Assigns
 
-      defp get_assigns_for_index_event_log_list(conn, params) do
-        event_log_filters = %{"resource_type" => "Customer"}
+      defp get_assigns_for_index_event_log_list(conn, params, options) do
+        path = Keyword.get(options, :path)
+        resource_type = Keyword.get(options, :resource_type)
+
+        event_log_filters = %{
+          "resource_type" => resource_type
+        }
+
         event_log_params = Artemis.Helpers.deep_merge(params, %{"filters" => event_log_filters})
         event_logs = ArtemisLog.ListEventLogs.call(event_log_params, current_user(conn))
 
         allowed_column_options = [
-          to: fn conn, id ->
-            ArtemisWeb.Router.Helpers.customer_path(conn, :index_event_log_details, id)
-          end
+          to: fn conn, id -> path.(conn, :index_event_log_details, id) end
         ]
 
         allowed_columns = ArtemisWeb.EventLogView.data_table_allowed_columns(allowed_column_options)
@@ -33,7 +37,7 @@ defmodule ArtemisWeb.Controller.EventLogs do
 
         pagination_options = [
           action: :index_event_log_list,
-          path: &ArtemisWeb.Router.Helpers.customer_path/3
+          path: path
         ]
 
         assigns = [
@@ -45,17 +49,21 @@ defmodule ArtemisWeb.Controller.EventLogs do
         ]
       end
 
-      defp get_assigns_for_show_event_log_list(conn, params) do
-        resource_id = Map.get(params, "customer_id")
+      defp get_assigns_for_show_event_log_list(conn, params, options) do
+        path = Keyword.get(options, :path)
+        resource_id = Keyword.get(options, :resource_id)
+        resource_type = Keyword.get(options, :resource_type)
 
-        event_log_filters = %{"resource_type" => "Customer", "resource_id" => resource_id}
+        event_log_filters = %{
+          "resource_id" => resource_id,
+          "resource_type" => resource_type
+        }
+
         event_log_params = Artemis.Helpers.deep_merge(params, %{"filters" => event_log_filters})
         event_logs = ArtemisLog.ListEventLogs.call(event_log_params, current_user(conn))
 
         allowed_column_options = [
-          to: fn conn, id ->
-            ArtemisWeb.Router.Helpers.customer_event_log_path(conn, :show_event_log_details, resource_id, id)
-          end
+          to: fn conn, id -> path.(conn, :show_event_log_details, resource_id, id) end
         ]
 
         allowed_columns = ArtemisWeb.EventLogView.data_table_allowed_columns(allowed_column_options)
@@ -63,9 +71,7 @@ defmodule ArtemisWeb.Controller.EventLogs do
 
         pagination_options = [
           action: :show_event_log_list,
-          path: fn conn, page, options ->
-            ArtemisWeb.Router.Helpers.customer_event_log_path(conn, page, resource_id, options)
-          end
+          path: fn conn, page, options -> path.(conn, page, resource_id, options) end
         ]
 
         [
