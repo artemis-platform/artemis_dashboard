@@ -1,14 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>Customers</h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "customers:create") do %>
-        <%= action "New", to: Routes.customer_path(@conn, :new), color: "blue" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -19,41 +9,43 @@
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Customer" %>
 
-  <%= render_search @conn %>
+  <section>
+    <%= render_search @conn %>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "name", "Name") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@customers.entries) %>
-      <%= for customer <- @customers.entries do %>
+    <table class="data-table">
+      <thead>
         <tr>
-          <td>
-            <%= if has?(@conn, "customers:show") do %>
-              <%= link customer.name, to: Routes.customer_path(@conn, :show, customer) %>
-            <% else %>
-              <%= customer.name %>
-            <% end %>
-          </td>
-          <td>
-            <%= if has?(@conn, "customers:show") do %>
-              <%= link "Show", to: Routes.customer_path(@conn, :show, customer) %>
-            <% end %>
-            <%= if has?(@conn, "customers:update") do %>
-              <%= link "Edit", to: Routes.customer_path(@conn, :edit, customer) %>
-            <% end %>
-            <%= if has?(@conn, "customers:delete") do %>
-              <%= link "Delete", to: Routes.customer_path(@conn, :delete, customer), method: :delete, data: [confirm: "Are you sure?"] %>
-            <% end %>
-          </td>
+          <th><%= sortable_table_header(@conn, "name", "Name") %></th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <%= render_table_row_if_empty(@customers.entries) %>
+        <%= for customer <- @customers.entries do %>
+          <tr>
+            <td>
+              <%= if has?(@conn, "customers:show") do %>
+                <%= link customer.name, to: Routes.customer_path(@conn, :show, customer) %>
+              <% else %>
+                <%= customer.name %>
+              <% end %>
+            </td>
+            <td>
+              <%= if has?(@conn, "customers:show") do %>
+                <%= link "Show", to: Routes.customer_path(@conn, :show, customer) %>
+              <% end %>
+              <%= if has?(@conn, "customers:update") do %>
+                <%= link "Edit", to: Routes.customer_path(@conn, :edit, customer) %>
+              <% end %>
+              <%= if has?(@conn, "customers:delete") do %>
+                <%= link "Delete", to: Routes.customer_path(@conn, :delete, customer), method: :delete, data: [confirm: "Are you sure?"] %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
 
   <%= render_pagination @conn, @customers %>
 </div>

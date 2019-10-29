@@ -24,5 +24,7 @@
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Customer", @customer.id %>
 
-  <%= render_event_log_details @conn, @event_log %>
+  <section>
+    <%= render_event_log_details @conn, @event_log %>
+  </section>
 </div>

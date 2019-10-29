@@ -1,14 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>Customers</h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "customers:create") do %>
-        <%= action "New", to: Routes.customer_path(@conn, :new), color: "blue" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -19,13 +9,15 @@
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Customer" %>
 
-  <%=
-    render_event_log_list(
-      @conn,
-      @event_logs,
-      allowed_columns: @allowed_columns,
-      default_columns: @default_columns,
-      pagination_options: @pagination_options
-    )
-  %>
+  <section>
+    <%=
+      render_event_log_list(
+        @conn,
+        @event_logs,
+        allowed_columns: @allowed_columns,
+        default_columns: @default_columns,
+        pagination_options: @pagination_options
+      )
+    %>
+  </section>
 </div>
