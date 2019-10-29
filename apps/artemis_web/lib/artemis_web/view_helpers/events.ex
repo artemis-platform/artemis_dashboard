@@ -34,4 +34,16 @@ defmodule ArtemisWeb.ViewHelper.Events do
 
     Phoenix.View.render(ArtemisWeb.EventLogView, "_list.html", assigns)
   end
+
+  @doc """
+  Render event log details
+  """
+  def render_event_log_details(conn, event_log) do
+    assigns = [
+      conn: conn,
+      event_log: event_log
+    ]
+
+    Phoenix.View.render(ArtemisWeb.EventLogView, "_record.html", assigns)
+  end
 end

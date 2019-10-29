@@ -18,5 +18,5 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  Hello World!
+  <%= render_event_log_details @conn, @event_log %>
 </div>

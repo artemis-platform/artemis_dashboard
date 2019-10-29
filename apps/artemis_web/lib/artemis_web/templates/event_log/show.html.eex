@@ -14,28 +14,5 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <section>
-    <%= h2 "Details" %>
-    <%=
-      session_id = case @event_log.session_id do
-        nil -> nil
-        id -> link id, to: Routes.session_path(@conn, :show, id)
-      end
-
-      render_key_value_list([
-        ["Action", @event_log.action],
-        ["User ID", @event_log.user_id],
-        ["User Name", @event_log.user_name],
-        ["Resource ID", @event_log.resource_id],
-        ["Resource Type", @event_log.resource_type],
-        ["Session ID", session_id],
-        ["Timestamp", @event_log.updated_at]
-      ])
-    %>
-  </section>
-
-  <section>
-    <%= h3 "Raw Data" %>
-    <pre><code><%= Jason.encode!(@event_log.meta, pretty: true) %></code></pre>
-  </section>
+  <%= render_event_log_details @conn, @event_log %>
 </div>

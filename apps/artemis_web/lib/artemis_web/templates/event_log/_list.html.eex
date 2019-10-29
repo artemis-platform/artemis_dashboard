@@ -17,13 +17,13 @@
       %>
     </div>
 
-    <div>
-      <%=
-        options = ArtemisLog.EventLog.unique_values_for(:user_id)
+    <%# <div> %>
+    <%#   <%= %>
+    <%#     options = ArtemisLog.EventLog.unique_values_for(:user_id) %>
 
-        filter_multi_select(@conn, "User ID", :user_id, options)
-      %>
-    </div>
+    <%#     filter_multi_select(@conn, "User ID", :user_id, options) %>
+    <%#   %1> %>
+    <%# </div> %>
 
     <div>
       <%=
@@ -61,4 +61,3 @@
 
     render_pagination @conn, @event_logs, params: pagination_options
   %>
-

@@ -131,11 +131,20 @@ defmodule ArtemisWeb.CustomerController do
     end)
   end
 
-  def show_event_log_details(conn, %{"id" => id}) do
+  def show_event_log_details(conn, params) do
     authorize(conn, "customers:show", fn ->
-      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
+      customer_id = Map.get(params, "customer_id")
+      customer = GetCustomer.call!(customer_id, current_user(conn))
 
-      render(conn, "show/event_log_details.html", event_log: event_log)
+      event_log_id = Map.get(params, "id")
+      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
+
+      assigns = [
+        customer: customer,
+        event_log: event_log
+      ]
+
+      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end
