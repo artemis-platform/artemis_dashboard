@@ -9,7 +9,7 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   def render_primary_navigation_items(conn, user, options \\ []) do
     items =
       case Keyword.get(options, :items) do
-        nil -> nav_items_for_current_user(user)
+        nil -> primary_nav_items_for_current_user(user)
         items -> items
       end
 
@@ -71,11 +71,11 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   end
 
   @doc """
-  Filter nav items by current users permissions
+  Filter primary nav items by current users permissions
   """
-  def nav_items_for_current_user(nil), do: []
+  def primary_nav_items_for_current_user(nil), do: []
 
-  def nav_items_for_current_user(user) do
+  def primary_nav_items_for_current_user(user) do
     Enum.reduce(get_nav_items(), [], fn {section, potential_items}, acc ->
       verified_items =
         Enum.filter(potential_items, fn item ->
@@ -89,5 +89,48 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
         false -> [{section, verified_items} | acc]
       end
     end)
+  end
+
+  @doc """
+  Lists all secondary navigation
+  """
+  def render_secondary_navigation(conn, user, items) do
+    verified_items =
+      Enum.filter(items, fn item ->
+        verify = Keyword.get(item, :verify)
+
+        verify.(user)
+      end)
+
+    request_path =
+      conn.request_path
+      |> String.trim()
+      |> String.trim_trailing("/")
+
+    entries =
+      Enum.map(verified_items, fn item ->
+        label = Keyword.get(item, :label)
+        path = Keyword.get(item, :path)
+        to = path.(conn)
+        active? = to == request_path
+        class = if active?, do: "selected", else: nil
+
+        content_tag(:li) do
+          link(label, class: class, to: to)
+        end
+      end)
+
+    icon =
+      content_tag(:li, class: "icon") do
+        content_tag(:i, class: "bars icon") do
+          nil
+        end
+      end
+
+    content_tag(:nav, class: "secondary-navigation-items") do
+      content_tag(:ul) do
+        [icon | entries]
+      end
+    end
   end
 end

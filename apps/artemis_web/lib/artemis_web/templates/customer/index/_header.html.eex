@@ -9,21 +9,24 @@
     </div>
   </header>
 
-  <nav>
-    <ul>
-      <li class="icon">
-        <i class="bars icon"></i>
-      </li>
-      <li>
-        <a class="selected" href="/customers">
-          Overview
-        </a>
-      </li>
-      <li>
-        <a href="/customers/event-logs">
-          Event Logs
-        </a>
-      </li>
-    </ul>
-  </nav>
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.customer_path(&1, :index),
+        verify: &has?(&1, "customers:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.customer_path(&1, :index_event_log_list),
+        verify: &has?(&1, "customers:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
 </div>
