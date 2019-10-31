@@ -12,5 +12,8 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Permission", @permission.id %>
-  <%= render "form.html", Map.put(assigns, :action, Routes.permission_path(@conn, :update, @permission)) %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.permission_path(@conn, :update, @permission)) %>
+  </section>
 </div>

@@ -22,31 +22,33 @@
     <%= render_cloudant_search_limit_notification @conn %>
   <% end %>
 
-  <div class="table-header">
-    <%= if @search_enabled do %>
-      <%= render_search @conn %>
-    <% end %>
+  <section>
+    <div class="table-header">
+      <%= if @search_enabled do %>
+        <%= render_search @conn %>
+      <% end %>
 
-    <div class="ui basic buttons small">
-      <%= filter_button(@conn, "All", zzdoc_type: nil) %>
-      <%= filter_button(@conn, "Jobs", zzdoc_type: "job") %>
-      <%= filter_button(@conn, "Tasks", zzdoc_type: "task") %>
+      <div class="ui basic buttons small">
+        <%= filter_button(@conn, "All", zzdoc_type: nil) %>
+        <%= filter_button(@conn, "Jobs", zzdoc_type: "job") %>
+        <%= filter_button(@conn, "Tasks", zzdoc_type: "task") %>
+      </div>
+
+      <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
     </div>
 
-    <div class="table-actions">
-      <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
-      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
-    </div>
-  </div>
+    <%=
+      render_data_table(
+        @conn,
+        @jobs.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["id", "name", "command", "status", "first_run", "actions"]
+      )
+    %>
 
-  <%=
-    render_data_table(
-      @conn,
-      @jobs.entries,
-      allowed_columns: data_table_allowed_columns(),
-      default_columns: ["id", "name", "command", "status", "first_run", "actions"]
-    )
-  %>
-
-  <%= render_pagination @conn, @jobs %>
+    <%= render_pagination @conn, @jobs %>
+  </section>
 </div>

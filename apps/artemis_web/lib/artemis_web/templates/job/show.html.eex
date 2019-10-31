@@ -24,15 +24,19 @@
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Job", @job._id %>
 
-  <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
+  <section>
+    <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
+  </section>
 
-  <h3>Related Jobs</h3>
-  <ul>
-    <%= Enum.map @related_jobs, fn related_job -> %>
-      <li>
-        <%= link related_job._id, to: Routes.job_path(@conn, :show, related_job._id) %>
-        <%= related_job.status %>
-      </li>
-    <% end %>
-  </ul>
+  <section>
+    <h3>Related Jobs</h3>
+    <ul>
+      <%= Enum.map @related_jobs, fn related_job -> %>
+        <li>
+          <%= link related_job._id, to: Routes.job_path(@conn, :show, related_job._id) %>
+          <%= related_job.status %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
 </div>

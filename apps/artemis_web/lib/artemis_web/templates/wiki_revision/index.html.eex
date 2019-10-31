@@ -12,40 +12,42 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <section>
+    <%= render_search @conn %>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "title", "Title") %></th>
-        <th><%= sortable_table_header(@conn, "inserted_at", "Created On") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@wiki_revisions.entries) %>
-      <%= for wiki_revision <- @wiki_revisions.entries do %>
+    <table class="data-table">
+      <thead>
         <tr>
-          <td>
-            <%= if has?(@conn, "wiki-revisions:show") do %>
-              <%= link wiki_revision.title, to: Routes.wiki_page_revision_path(@conn, :show, @wiki_page, wiki_revision) %>
-            <% else %>
-              <%= wiki_revision.title %>
-            <% end %>
-          </td>
-          <td><%= render_date_time(wiki_revision.inserted_at) %></td>
-          <td>
-            <%= if has?(@conn, "wiki-revisions:show") do %>
-              <%= link "Show", to: Routes.wiki_page_revision_path(@conn, :show, @wiki_page, wiki_revision) %>
-            <% end %>
-            <%= if has?(@conn, "wiki-revisions:delete") do %>
-              <%= link "Delete", to: Routes.wiki_page_revision_path(@conn, :delete, @wiki_page, wiki_revision), method: :delete, data: [confirm: "Are you sure?"] %>
-            <% end %>
-          </td>
+          <th><%= sortable_table_header(@conn, "title", "Title") %></th>
+          <th><%= sortable_table_header(@conn, "inserted_at", "Created On") %></th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <%= render_table_row_if_empty(@wiki_revisions.entries) %>
+        <%= for wiki_revision <- @wiki_revisions.entries do %>
+          <tr>
+            <td>
+              <%= if has?(@conn, "wiki-revisions:show") do %>
+                <%= link wiki_revision.title, to: Routes.wiki_page_revision_path(@conn, :show, @wiki_page, wiki_revision) %>
+              <% else %>
+                <%= wiki_revision.title %>
+              <% end %>
+            </td>
+            <td><%= render_date_time(wiki_revision.inserted_at) %></td>
+            <td>
+              <%= if has?(@conn, "wiki-revisions:show") do %>
+                <%= link "Show", to: Routes.wiki_page_revision_path(@conn, :show, @wiki_page, wiki_revision) %>
+              <% end %>
+              <%= if has?(@conn, "wiki-revisions:delete") do %>
+                <%= link "Delete", to: Routes.wiki_page_revision_path(@conn, :delete, @wiki_page, wiki_revision), method: :delete, data: [confirm: "Are you sure?"] %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-  <%= render_pagination @conn, @wiki_revisions %>
+    <%= render_pagination @conn, @wiki_revisions %>
+  </section>
 </div>

@@ -18,21 +18,23 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <div class="table-header">
-    <%= render_search @conn %>
-    <div class="table-actions">
-      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+  <section>
+    <div class="table-header">
+      <%= render_search @conn %>
+      <div class="table-actions">
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
     </div>
-  </div>
 
-  <%=
-    render_data_table(
-      @conn,
-      @users.entries,
-      allowed_columns: data_table_allowed_columns(),
-      default_columns: ["name", "email", "last_log_in_at", "actions"]
-    )
-  %>
+    <%=
+      render_data_table(
+        @conn,
+        @users.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "email", "last_log_in_at", "actions"]
+      )
+    %>
 
-  <%= render_pagination @conn, @users %>
+    <%= render_pagination @conn, @users %>
+  </section>
 </div>

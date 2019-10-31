@@ -12,5 +12,8 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Tag", @tag.id %>
-  <%= render "form.html", Map.put(assigns, :action, Routes.tag_path(@conn, :update, @tag)) %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.tag_path(@conn, :update, @tag)) %>
+  </section>
 </div>

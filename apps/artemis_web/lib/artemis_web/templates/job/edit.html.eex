@@ -13,12 +13,14 @@
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Job", @job._id %>
 
-  <%=
-    form_assigns =
-      assigns
-      |> Map.put(:action, Routes.job_path(@conn, :update, @job._id))
-      |> Map.put(:method, "put")
+  <section>
+    <%=
+      form_assigns =
+        assigns
+        |> Map.put(:action, Routes.job_path(@conn, :update, @job._id))
+        |> Map.put(:method, "put")
 
-    render "form.html", form_assigns
-  %>
+      render "form.html", form_assigns
+    %>
+  </section>
 </div>

@@ -12,10 +12,11 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%=
-    form_assigns = Map.put(assigns, :action, Routes.job_path(@conn, :create))
+  <section>
+    <%=
+      form_assigns = Map.put(assigns, :action, Routes.job_path(@conn, :create))
 
-    render "form.html", form_assigns
-  %>
+      render "form.html", form_assigns
+    %>
+  </section>
 </div>
-

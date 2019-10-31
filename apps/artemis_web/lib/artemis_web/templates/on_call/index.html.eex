@@ -13,7 +13,9 @@
   <%= render_flash_notifications @conn %>
 
   <%= if has?(@conn, "incidents:list") do %>
-    <h3>Incident Management</h3>
-    <%= link "List Incidents", to: Routes.incident_path(@conn, :index) %>
+    <section>
+      <h3>Incident Management</h3>
+      <%= link "List Incidents", to: Routes.incident_path(@conn, :index) %>
+    </section>
   <% end %>
 </div>

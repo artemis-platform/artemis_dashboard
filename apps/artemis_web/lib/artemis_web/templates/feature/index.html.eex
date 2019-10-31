@@ -18,47 +18,49 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <section>
+    <%= render_search @conn %>
 
-  <%= render_cache_meta_data @cache %>
+    <%= render_cache_meta_data @cache %>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
-        <th><%= sortable_table_header(@conn, "name", "Name") %></th>
-        <th><%= sortable_table_header(@conn, "active", "Status") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@features.entries) %>
-      <%= for feature <- @features.entries do %>
+    <table class="data-table">
+      <thead>
         <tr>
-          <td>
-            <%= if has?(@conn, "features:show") do %>
-              <%= link feature.slug, to: Routes.feature_path(@conn, :show, feature) %>
-            <% else %>
-              <%= feature.slug %>
-            <% end %>
-          </td>
-          <td><%= feature.name %></td>
-          <td><%= if feature.active, do: "Active", else: "Inactive" %></td>
-          <td>
-            <%= if has?(@conn, "features:show") do %>
-              <%= link "Show", to: Routes.feature_path(@conn, :show, feature) %>
-            <% end %>
-            <%= if has?(@conn, "features:update") do %>
-              <%= link "Edit", to: Routes.feature_path(@conn, :edit, feature) %>
-            <% end %>
-            <%= if has?(@conn, "features:delete") do %>
-              <%= link "Delete", to: Routes.feature_path(@conn, :delete, feature), method: :delete, data: [confirm: "Are you sure?"] %>
-            <% end %>
-          </td>
+          <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
+          <th><%= sortable_table_header(@conn, "name", "Name") %></th>
+          <th><%= sortable_table_header(@conn, "active", "Status") %></th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <%= render_table_row_if_empty(@features.entries) %>
+        <%= for feature <- @features.entries do %>
+          <tr>
+            <td>
+              <%= if has?(@conn, "features:show") do %>
+                <%= link feature.slug, to: Routes.feature_path(@conn, :show, feature) %>
+              <% else %>
+                <%= feature.slug %>
+              <% end %>
+            </td>
+            <td><%= feature.name %></td>
+            <td><%= if feature.active, do: "Active", else: "Inactive" %></td>
+            <td>
+              <%= if has?(@conn, "features:show") do %>
+                <%= link "Show", to: Routes.feature_path(@conn, :show, feature) %>
+              <% end %>
+              <%= if has?(@conn, "features:update") do %>
+                <%= link "Edit", to: Routes.feature_path(@conn, :edit, feature) %>
+              <% end %>
+              <%= if has?(@conn, "features:delete") do %>
+                <%= link "Delete", to: Routes.feature_path(@conn, :delete, feature), method: :delete, data: [confirm: "Are you sure?"] %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-  <%= render_pagination @conn, @features %>
+    <%= render_pagination @conn, @features %>
+  </section>
 </div>
