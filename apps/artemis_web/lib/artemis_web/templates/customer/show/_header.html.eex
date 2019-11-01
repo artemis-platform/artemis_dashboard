@@ -1,0 +1,37 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @customer.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "customers:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.customer_path(@conn, :delete, @customer), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "customers:update") do %>
+        <%= action "Edit", to: Routes.customer_path(@conn, :edit, @customer), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.customer_path(&1, :index),
+        verify: &has?(&1, "customers:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.customer_path(&1, :index_event_log_list),
+        verify: &has?(&1, "customers:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>
