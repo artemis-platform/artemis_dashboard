@@ -1,0 +1,34 @@
+<div id="content-header">
+  <header>
+    <h1>Roles</h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "roles:create") do %>
+        <%= action "New", to: Routes.role_path(@conn, :new), color: "blue" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.role_path(&1, :index),
+        path_match_type: :exact,
+        verify: &has?(&1, "roles:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.role_path(&1, :index_event_log_list),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "roles:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

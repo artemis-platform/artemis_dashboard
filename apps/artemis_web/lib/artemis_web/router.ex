@@ -107,7 +107,16 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", PermissionController, :show_event_log_details, as: :event_log
       end
 
-      resources "/roles", RoleController
+      # Roles
+
+      get "/roles/event-logs", RoleController, :index_event_log_list
+      get "/roles/event-logs/:id", RoleController, :index_event_log_details
+
+      resources "/roles", RoleController do
+        get "/event-logs", RoleController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", RoleController, :show_event_log_details, as: :event_log
+      end
+
       resources "/search", SearchController, only: [:index]
       resources "/sessions", SessionController, only: [:index, :show]
 

@@ -1,14 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>Roles</h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "roles:create") do %>
-        <%= action "New", to: Routes.role_path(@conn, :new), color: "blue" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>

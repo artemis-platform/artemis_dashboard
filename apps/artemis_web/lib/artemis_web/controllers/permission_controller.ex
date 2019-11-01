@@ -140,8 +140,8 @@ defmodule ArtemisWeb.PermissionController do
       event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
 
       assigns = [
-        permission: permission,
-        event_log: event_log
+        event_log: event_log,
+        permission: permission
       ]
 
       render(conn, "show/event_log_details.html", assigns)
