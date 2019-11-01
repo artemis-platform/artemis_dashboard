@@ -1,5 +1,6 @@
 defmodule ArtemisWeb.FeatureController do
   use ArtemisWeb, :controller
+  use ArtemisWeb.Controller.Behaviour.EventLogs
 
   alias Artemis.CreateFeature
   alias Artemis.Feature
@@ -84,6 +85,66 @@ defmodule ArtemisWeb.FeatureController do
       conn
       |> put_flash(:info, "Feature deleted successfully.")
       |> redirect(to: Routes.feature_path(conn, :index))
+    end)
+  end
+
+  # Callbacks - Event Logs
+
+  def index_event_log_list(conn, params) do
+    authorize(conn, "features:list", fn ->
+      options = [
+        path: &ArtemisWeb.Router.Helpers.feature_path/3,
+        resource_type: "Feature"
+      ]
+
+      assigns = get_assigns_for_index_event_log_list(conn, params, options)
+
+      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
+    end)
+  end
+
+  def index_event_log_details(conn, %{"id" => id}) do
+    authorize(conn, "features:list", fn ->
+      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
+
+      render(conn, "index/event_log_details.html", event_log: event_log)
+    end)
+  end
+
+  def show_event_log_list(conn, params) do
+    authorize(conn, "features:show", fn ->
+      feature_id = Map.get(params, "feature_id")
+      feature = GetFeature.call!(feature_id, current_user(conn))
+
+      options = [
+        path: &ArtemisWeb.Router.Helpers.feature_event_log_path/4,
+        resource_id: feature_id,
+        resource_type: "Feature"
+      ]
+
+      assigns =
+        conn
+        |> get_assigns_for_show_event_log_list(params, options)
+        |> Keyword.put(:feature, feature)
+
+      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
+    end)
+  end
+
+  def show_event_log_details(conn, params) do
+    authorize(conn, "features:show", fn ->
+      feature_id = Map.get(params, "feature_id")
+      feature = GetFeature.call!(feature_id, current_user(conn))
+
+      event_log_id = Map.get(params, "id")
+      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
+
+      assigns = [
+        event_log: event_log,
+        feature: feature
+      ]
+
+      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end

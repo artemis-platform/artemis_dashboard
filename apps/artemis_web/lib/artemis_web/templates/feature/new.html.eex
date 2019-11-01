@@ -11,5 +11,8 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
-  <%= render "form.html", Map.put(assigns, :action, Routes.feature_path(@conn, :create)) %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.feature_path(@conn, :create)) %>
+  </section>
 </div>

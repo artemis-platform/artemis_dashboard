@@ -1,19 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>
-      Job Details
-    </h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "jobs:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.job_path(@conn, :delete, @job._id), data: [confirm: "Confirm Delete"] %>
-      <% end %>
-      <%= if has?(@conn, "jobs:update") do %>
-        <%= action "Edit", to: Routes.job_path(@conn, :edit, @job._id), color: "green" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "show/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -24,15 +9,19 @@
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Job", @job._id %>
 
-  <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
+  <section>
+    <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
+  </section>
 
-  <h3>Related Jobs</h3>
-  <ul>
-    <%= Enum.map @related_jobs, fn related_job -> %>
-      <li>
-        <%= link related_job._id, to: Routes.job_path(@conn, :show, related_job._id) %>
-        <%= related_job.status %>
-      </li>
-    <% end %>
-  </ul>
+  <section>
+    <h3>Related Jobs</h3>
+    <ul>
+      <%= Enum.map @related_jobs, fn related_job -> %>
+        <li>
+          <%= link related_job._id, to: Routes.job_path(@conn, :show, related_job._id) %>
+          <%= related_job.status %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
 </div>

@@ -74,10 +74,22 @@ defmodule ArtemisLog.ListSessions do
 
   defp group_query(query, _params) do
     query
-    |> select([q], %{session_id: q.session_id, user_name: max(q.user_name), inserted_at: max(q.inserted_at)})
+    |> select_fields()
     |> group_by([:session_id])
     |> order_by([q], desc: max(q.inserted_at))
     |> where([q], not is_nil(q.session_id))
+  end
+
+  defp select_fields(query) do
+    select(
+      query,
+      [q],
+      %{
+        inserted_at: max(q.inserted_at),
+        session_id: q.session_id,
+        user_name: max(q.user_name)
+      }
+    )
   end
 
   defp restrict_access(query, user) do

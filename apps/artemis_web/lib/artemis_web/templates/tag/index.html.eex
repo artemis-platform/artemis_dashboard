@@ -1,14 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>Tags</h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "tags:create") do %>
-        <%= action "New", to: Routes.tag_path(@conn, :new), color: "blue" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -18,45 +8,47 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= render_search @conn %>
+  <section>
+    <%= render_search @conn %>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
-        <th><%= sortable_table_header(@conn, "name", "Name") %></th>
-        <th><%= sortable_table_header(@conn, "type", "Type") %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render_table_row_if_empty(@tags.entries) %>
-      <%= for tag <- @tags.entries do %>
+    <table class="data-table">
+      <thead>
         <tr>
-          <td>
-            <%= if has?(@conn, "tags:show") do %>
-              <%= link tag.slug, to: Routes.tag_path(@conn, :show, tag) %>
-            <% else %>
-              <%= tag.slug %>
-            <% end %>
-          </td>
-          <td><%= tag.name %></td>
-          <td><%= tag.type %></td>
-          <td>
-            <%= if has?(@conn, "tags:show") do %>
-              <%= link "Show", to: Routes.tag_path(@conn, :show, tag) %>
-            <% end %>
-            <%= if has?(@conn, "tags:update") do %>
-              <%= link "Edit", to: Routes.tag_path(@conn, :edit, tag) %>
-            <% end %>
-            <%= if has?(@conn, "tags:delete") do %>
-              <%= link "Delete", to: Routes.tag_path(@conn, :delete, tag), method: :delete, data: [confirm: "Are you sure?"] %>
-            <% end %>
-          </td>
+          <th><%= sortable_table_header(@conn, "slug", "Slug") %></th>
+          <th><%= sortable_table_header(@conn, "name", "Name") %></th>
+          <th><%= sortable_table_header(@conn, "type", "Type") %></th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <%= render_table_row_if_empty(@tags.entries) %>
+        <%= for tag <- @tags.entries do %>
+          <tr>
+            <td>
+              <%= if has?(@conn, "tags:show") do %>
+                <%= link tag.slug, to: Routes.tag_path(@conn, :show, tag) %>
+              <% else %>
+                <%= tag.slug %>
+              <% end %>
+            </td>
+            <td><%= tag.name %></td>
+            <td><%= tag.type %></td>
+            <td>
+              <%= if has?(@conn, "tags:show") do %>
+                <%= link "Show", to: Routes.tag_path(@conn, :show, tag) %>
+              <% end %>
+              <%= if has?(@conn, "tags:update") do %>
+                <%= link "Edit", to: Routes.tag_path(@conn, :edit, tag) %>
+              <% end %>
+              <%= if has?(@conn, "tags:delete") do %>
+                <%= link "Delete", to: Routes.tag_path(@conn, :delete, tag), method: :delete, data: [confirm: "Are you sure?"] %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-  <%= render_pagination @conn, @tags %>
+    <%= render_pagination @conn, @tags %>
+  </section>
 </div>

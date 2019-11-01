@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @role.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "roles:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.role_path(@conn, :delete, @role), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "roles:update") do %>
+        <%= action "Edit", to: Routes.role_path(@conn, :edit, @role), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.role_path(&1, :show, @role),
+        path_match_type: :exact,
+        verify: &has?(&1, "roles:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.role_event_log_path(&1, :show_event_log_list, @role),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "roles:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

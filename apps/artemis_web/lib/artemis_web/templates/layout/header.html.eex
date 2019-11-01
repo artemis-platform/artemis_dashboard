@@ -5,7 +5,7 @@
       Artemis Dashboard
     </a>
     <nav id="primary-navigation" role="navigation">
-      <% nav_items = nav_items_for_current_user(@user) %>
+      <% nav_items = primary_nav_items_for_current_user(@user) %>
       <ul>
         <%= if render_primary_nav_section?(nav_items, ["Customers"]) do %>
           <li>
@@ -50,7 +50,7 @@
             </div>
           </li>
         <% end %>
-        <%= if render_primary_nav_section?(nav_items, ["Users", "Roles", "Permissions", "Features", "Event Logs", "HTTP Request Logs", "Sessions"]) do %>
+        <%= if render_primary_nav_section?(nav_items, ["Users", "Roles", "Permissions", "Features", "Event Logs", "HTTP Request Logs", "Sessions", "Tags"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.user_path(@conn, :index) %>">
               Admin
@@ -62,7 +62,7 @@
                   <h3>Admin</h3>
                   <p>Administrative tools to manage the site.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, @user, nav_items, ["Users", "Roles", "Permissions", "Features", "Event Log", "HTTP Request Logs", "Sessions"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Users", "Roles", "Permissions", "Features", "Event Log", "HTTP Request Logs", "Sessions", "Tags"]) %>
               </content>
               <footer></footer>
             </div>

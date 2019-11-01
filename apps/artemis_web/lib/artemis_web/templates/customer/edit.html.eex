@@ -12,5 +12,8 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Customer", @customer.id %>
-  <%= render "form.html", Map.put(assigns, :action, Routes.customer_path(@conn, :update, @customer)) %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.customer_path(@conn, :update, @customer)) %>
+  </section>
 </div>

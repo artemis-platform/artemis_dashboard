@@ -1,0 +1,23 @@
+<%= render "index/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Feature" %>
+
+  <section>
+    <%=
+      render_event_log_list(
+        @conn,
+        @event_logs,
+        allowed_columns: @allowed_columns,
+        default_columns: @default_columns,
+        pagination_options: @pagination_options
+      )
+    %>
+  </section>
+</div>

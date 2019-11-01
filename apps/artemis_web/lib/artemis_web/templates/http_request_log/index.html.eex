@@ -18,55 +18,57 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <div class="table-header">
-    <%= render_search @conn %>
+  <section>
+    <div class="table-header">
+      <%= render_search @conn %>
 
-    <div>
-      <%=
-        options = ArtemisLog.HttpRequestLog.unique_values_for(:user_name)
+      <div>
+        <%=
+          options = ArtemisLog.HttpRequestLog.unique_values_for(:user_name)
 
-        filter_multi_select(@conn, "User Name", :user_name, options)
-      %>
+          filter_multi_select(@conn, "User Name", :user_name, options)
+        %>
+      </div>
+
+      <div>
+        <%=
+          options = ArtemisLog.HttpRequestLog.unique_values_for(:user_id)
+
+          filter_multi_select(@conn, "User ID", :user_id, options)
+        %>
+      </div>
+
+      <div>
+        <%=
+          options = ArtemisLog.HttpRequestLog.unique_values_for(:session_id)
+
+          filter_multi_select(@conn, "Session ID", :session_id, options)
+        %>
+      </div>
+
+      <div>
+        <%=
+          options = ArtemisLog.HttpRequestLog.unique_values_for(:path)
+
+          filter_multi_select(@conn, "Path", :path, options)
+        %>
+      </div>
+
+      <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
     </div>
 
-    <div>
-      <%=
-        options = ArtemisLog.HttpRequestLog.unique_values_for(:user_id)
+    <%=
+      render_data_table(
+        @conn,
+        @http_request_logs.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: @default_columns
+      )
+    %>
 
-        filter_multi_select(@conn, "User ID", :user_id, options)
-      %>
-    </div>
-
-    <div>
-      <%=
-        options = ArtemisLog.HttpRequestLog.unique_values_for(:session_id)
-
-        filter_multi_select(@conn, "Session ID", :session_id, options)
-      %>
-    </div>
-
-    <div>
-      <%=
-        options = ArtemisLog.HttpRequestLog.unique_values_for(:path)
-
-        filter_multi_select(@conn, "Path", :path, options)
-      %>
-    </div>
-
-    <div class="table-actions">
-      <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
-      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
-    </div>
-  </div>
-
-  <%=
-    render_data_table(
-      @conn,
-      @http_request_logs.entries,
-      allowed_columns: data_table_allowed_columns(),
-      default_columns: @default_columns
-    )
-  %>
-
-  <%= render_pagination @conn, @http_request_logs %>
+    <%= render_pagination @conn, @http_request_logs %>
+  </section>
 </div>

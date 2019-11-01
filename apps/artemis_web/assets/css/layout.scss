@@ -601,57 +601,84 @@ body.error-page {
       }
     }
   }
-}
 
-#content-navigation {
-  $height: 3.5rem;
+  
+  article.statistics {
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 -1rem 0;
 
-  background: #fff;
-  border-bottom: 1px solid #e2e2e2;
-  display: flex;
-  justify-content: flex-start;
-  padding: 0 2rem;
+    section {
+      .apexcharts-legend-text {
+        text-shadow: 0px 1px 1px #181818;
+      }
+
+      .apexcharts-datalabel-label {
+        fill: #bbb;
+      }
+
+      .apexcharts-datalabel-value {
+        fill: #fff;
+      }
+    }
+  }
 
   nav {
-    background: #fff;
-    border-left: 1px solid #e2e2e2;
+    $height: 3.75rem;
+
+    background: #141618;
     height: $height;
-    padding-left: 2rem;
-    width: 100%;
+    margin: 2rem -2rem -2rem -2rem;
+    width: 100vw;
 
     ul {
       display: flex;
-      font-size: 13px;
-      font-weight: 600;
-      height: $height;
+      height: 100%;
+      justify-content: flex-start;
       list-style: none;
-      line-height: $height;
       margin: 0;
-      padding: 0;
+      padding: 0 2rem;
 
       li {
-        margin: 0 2rem 0 0;
-      }
+        align-self: center;
+        color: #888;
+        display: flex;
+        height: 100%;
+        line-height: $height;
 
-      a {
-        border-bottom: 2px solid #fff;
-        color: #333;
-
-        &:hover {
-          color: $blue;
+        &.icon {
+          margin-right: 1.5rem;
         }
 
-        &.active {
-          border-bottom-color: $purple;
+        a {
+          color: #888;
+          display: block;
+          font-weight: 600;
+          height: 100%;
+          margin: 0 1.5rem 0 0;
 
           &:hover {
-            color: #333;
-            border-bottom-color: $blue;
+            color: #fff;
+          }
+
+          &.selected {
+            color: #fff;
           }
         }
       }
     }
   }
+}
+
+#content-navigation {
+  $height: 4rem;
+
+  background: $content_background;
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 2.25rem;
+  margin: 0 0 -2rem 0;
 
   .breadcrumbs {
     font-size: 13px;
@@ -684,12 +711,16 @@ body.error-page {
 
       a {
         align-self: center;
-        color: #333;
+        color: #666;
         display: inline-block;
         font-weight: 600;
 
         &:hover {
           color: $blue;
+        }
+
+        .icon {
+          margin-right: 0.5rem;
         }
       }
     }
@@ -710,10 +741,11 @@ body.error-page {
       margin: 0;
 
       a.dropdown {
-        align-self: center;
         align-items: center;
-        color: #333;
+        align-self: center;
+        color: #666;
         display: flex;
+        font-size: 13px;
         height: 100%;
 
         .icon {
@@ -727,7 +759,16 @@ body.error-page {
 }
 
 #content {
-  padding: 1.5rem 2rem 4rem 2rem;
+  background: $content_background;
+  padding: 2rem 2rem 1rem 2rem;
+
+  &>section {
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    margin: 0 0 1rem 0;
+    padding: 2rem;
+  }
 
   section {
     margin: 0 0 1rem 0;

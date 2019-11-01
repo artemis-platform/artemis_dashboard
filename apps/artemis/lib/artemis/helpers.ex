@@ -154,6 +154,7 @@ defmodule Artemis.Helpers do
   @doc """
   Converts an atom or integer to a bitstring
   """
+  def to_string(value) when is_nil(value), do: ""
   def to_string(value) when is_atom(value), do: Atom.to_string(value)
   def to_string(value) when is_integer(value), do: Integer.to_string(value)
   def to_string(value), do: value

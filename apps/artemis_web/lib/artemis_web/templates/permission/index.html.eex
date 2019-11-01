@@ -1,14 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>Permissions</h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "permissions:create") do %>
-        <%= action "New", to: Routes.permission_path(@conn, :new), color: "blue" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -18,21 +8,23 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <div class="table-header">
-    <%= render_search @conn %>
-    <div class="table-actions">
-      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+  <section>
+    <div class="table-header">
+      <%= render_search @conn %>
+      <div class="table-actions">
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
     </div>
-  </div>
 
-  <%=
-    render_data_table(
-      @conn,
-      @permissions.entries,
-      allowed_columns: data_table_allowed_columns(),
-      default_columns: ["name", "slug", "actions"]
-    )
-  %>
+    <%=
+      render_data_table(
+        @conn,
+        @permissions.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "slug", "actions"]
+      )
+    %>
 
-  <%= render_pagination @conn, @permissions %>
+    <%= render_pagination @conn, @permissions %>
+  </section>
 </div>

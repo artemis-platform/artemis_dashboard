@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @feature.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "features:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.feature_path(@conn, :delete, @feature), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "features:update") do %>
+        <%= action "Edit", to: Routes.feature_path(@conn, :edit, @feature), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.feature_path(&1, :show, @feature),
+        path_match_type: :exact,
+        verify: &has?(&1, "features:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.feature_event_log_path(&1, :show_event_log_list, @feature),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "features:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

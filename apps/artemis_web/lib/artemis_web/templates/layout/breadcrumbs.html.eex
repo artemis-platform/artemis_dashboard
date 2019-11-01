@@ -1,7 +1,12 @@
 <ul class="breadcrumbs">
  <%= for [title, key] <- @breadcrumbs do %>
     <li>
-      <%= link title, to: key, class: "section" %>
+      <a href="<%= key %>" class="section">
+        <%= if key == "/" do %>
+          <i class="home icon"></i>
+        <% end %>
+        <%= title %>
+      </a>
     </li>
   <% end %>
 </ul>

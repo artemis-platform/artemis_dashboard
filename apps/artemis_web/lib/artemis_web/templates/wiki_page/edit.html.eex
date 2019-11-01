@@ -12,5 +12,8 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "WikiPage", @wiki_page.id %>
-  <%= render "form.html", Map.put(assigns, :action, Routes.wiki_page_path(@conn, :update, @wiki_page)) %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.wiki_page_path(@conn, :update, @wiki_page)) %>
+  </section>
 </div>

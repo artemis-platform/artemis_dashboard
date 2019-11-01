@@ -1,5 +1,6 @@
 defmodule ArtemisWeb.UserController do
   use ArtemisWeb, :controller
+  use ArtemisWeb.Controller.Behaviour.EventLogs
 
   alias Artemis.CreateUser
   alias Artemis.User
@@ -104,6 +105,66 @@ defmodule ArtemisWeb.UserController do
           |> put_flash(:error, "Cannot delete own user")
           |> redirect(to: Routes.user_path(conn, :show, user))
       end
+    end)
+  end
+
+  # Callbacks - Event Logs
+
+  def index_event_log_list(conn, params) do
+    authorize(conn, "users:list", fn ->
+      options = [
+        path: &ArtemisWeb.Router.Helpers.user_path/3,
+        resource_type: "User"
+      ]
+
+      assigns = get_assigns_for_index_event_log_list(conn, params, options)
+
+      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
+    end)
+  end
+
+  def index_event_log_details(conn, %{"id" => id}) do
+    authorize(conn, "users:list", fn ->
+      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
+
+      render(conn, "index/event_log_details.html", event_log: event_log)
+    end)
+  end
+
+  def show_event_log_list(conn, params) do
+    authorize(conn, "users:show", fn ->
+      user_id = Map.get(params, "user_id")
+      user = GetUser.call!(user_id, current_user(conn))
+
+      options = [
+        path: &ArtemisWeb.Router.Helpers.user_event_log_path/4,
+        resource_id: user_id,
+        resource_type: "User"
+      ]
+
+      assigns =
+        conn
+        |> get_assigns_for_show_event_log_list(params, options)
+        |> Keyword.put(:user, user)
+
+      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
+    end)
+  end
+
+  def show_event_log_details(conn, params) do
+    authorize(conn, "users:show", fn ->
+      user_id = Map.get(params, "user_id")
+      user = GetUser.call!(user_id, current_user(conn))
+
+      event_log_id = Map.get(params, "id")
+      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
+
+      assigns = [
+        user: user,
+        event_log: event_log
+      ]
+
+      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end
