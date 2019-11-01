@@ -137,9 +137,14 @@ defmodule ArtemisWeb.Router do
 
       # Users
 
+      get "/users/event-logs", UserController, :index_event_log_list
+      get "/users/event-logs/:id", UserController, :index_event_log_details
+
       resources "/users", UserController do
         resources "/anonymization", UserAnonymizationController, as: "anonymization", only: [:create]
         resources "/impersonation", UserImpersonationController, as: "impersonation", only: [:create]
+        get "/event-logs", UserController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", UserController, :show_event_log_details, as: :event_log
       end
     end
   end

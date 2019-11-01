@@ -1,0 +1,48 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @user.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "users:delete") && current_user(@conn).id != @user.id do %>
+        <%= action "Delete", method: "delete", to: Routes.user_path(@conn, :delete, @user), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "user-anonymizations:create") && current_user(@conn).id != @user.id do %>
+        <%= action "Anonymize", method: "post", to: Routes.user_anonymization_path(@conn, :create, @user), data: [confirm: "Confirm Anonymization"] %>
+      <% end %>
+      <%= if has?(@conn, "user-impersonations:create") && current_user?(@conn) && current_user(@conn).id != @user.id do %>
+        <%= action "Impersonate", method: "post", to: Routes.user_impersonation_path(@conn, :create, @user) %>
+      <% end %>
+      <%= if has?(@conn, "users:update") do %>
+        <%= action "Edit", to: Routes.user_path(@conn, :edit, @user), color: "green" %>
+      <% end %>
+      <%= if current_user?(@conn) && current_user(@conn).id == @user.id do %>
+        <%= action "Log Out", method: "delete", to: Routes.auth_path(@conn, :delete), color: "blue", data: [confirm: "Log Out?"] %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.user_path(&1, :show, @user),
+        path_match_type: :exact,
+        verify: &has?(&1, "users:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.user_event_log_path(&1, :show_event_log_list, @user),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "users:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>
