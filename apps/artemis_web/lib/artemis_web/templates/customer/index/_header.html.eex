@@ -14,11 +14,13 @@
       [
         label: "Overview",
         path: &Routes.customer_path(&1, :index),
+        path_match_type: :exact,
         verify: &has?(&1, "customers:list")
       ],
       [
         label: "Event Logs",
         path: &Routes.customer_path(&1, :index_event_log_list),
+        path_match_type: :starts_with,
         verify: &has?(&1, "customers:list")
       ]
     ]

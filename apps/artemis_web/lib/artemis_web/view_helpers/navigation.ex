@@ -111,8 +111,15 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
       Enum.map(verified_items, fn item ->
         label = Keyword.get(item, :label)
         path = Keyword.get(item, :path)
+        path_match_type = Keyword.get(item, :path_match_type)
         to = path.(conn)
-        active? = to == request_path
+
+        active? =
+          case path_match_type do
+            :starts_with -> String.starts_with?(request_path, to)
+            _ -> to == request_path
+          end
+
         class = if active?, do: "selected", else: nil
 
         content_tag(:li) do
