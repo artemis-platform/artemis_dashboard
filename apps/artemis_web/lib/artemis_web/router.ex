@@ -47,11 +47,7 @@ defmodule ArtemisWeb.Router do
 
       get "/", HomeController, :index
 
-      resources "/docs", WikiPageController do
-        resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
-        resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
-        put "/tags", WikiPageTagController, :update, as: :tag
-      end
+      # Customers
 
       get "/customers/event-logs", CustomerController, :index_event_log_list
       get "/customers/event-logs/:id", CustomerController, :index_event_log_details
@@ -61,10 +57,28 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", CustomerController, :show_event_log_details, as: :event_log
       end
 
+      # Docs
+
+      resources "/docs", WikiPageController do
+        resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
+        put "/tags", WikiPageTagController, :update, as: :tag
+      end
+
       get "/docs/:id/:slug", WikiPageController, :show
+
       resources "/event-logs", EventLogController, only: [:index, :show]
       resources "/http-request-logs", HttpRequestLogController, only: [:index, :show]
-      resources "/features", FeatureController
+
+      # Features
+
+      get "/features/event-logs", FeatureController, :index_event_log_list
+      get "/features/event-logs/:id", FeatureController, :index_event_log_details
+
+      resources "/features", FeatureController do
+        get "/event-logs", FeatureController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", FeatureController, :show_event_log_details, as: :event_log
+      end
 
       resources "/incidents", IncidentController, only: [:index, :show, :delete] do
         resources "/comments", IncidentCommentController, only: [:create, :edit, :update, :delete], name: :comment
@@ -76,7 +90,17 @@ defmodule ArtemisWeb.Router do
       resources "/roles", RoleController
       resources "/search", SearchController, only: [:index]
       resources "/sessions", SessionController, only: [:index, :show]
-      resources "/jobs", JobController
+
+      # Jobs
+
+      get "/jobs/event-logs", JobController, :index_event_log_list
+      get "/jobs/event-logs/:id", JobController, :index_event_log_details
+
+      resources "/jobs", JobController do
+        get "/event-logs", JobController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", JobController, :show_event_log_details, as: :event_log
+      end
+
       resources "/tags", TagController
 
       resources "/users", UserController do

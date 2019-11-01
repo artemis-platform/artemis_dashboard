@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.Controller.EventLogs do
+defmodule ArtemisWeb.Controller.Behaviour.EventLogs do
   @moduledoc """
   Functions to show Event Logs related to the resource type and the resource
   instance.
@@ -11,9 +11,9 @@ defmodule ArtemisWeb.Controller.EventLogs do
 
   defmacro __using__(_options) do
     quote do
-      import ArtemisWeb.Controller.EventLogs
+      import ArtemisWeb.Controller.Behaviour.EventLogs
 
-      @behaviour ArtemisWeb.Controller.EventLogs
+      @behaviour ArtemisWeb.Controller.Behaviour.EventLogs
 
       # Helpers - Assigns
 
@@ -104,7 +104,7 @@ defmodule ArtemisWeb.Controller.EventLogs do
 
       # Allow defined `@callback`s to be overwritten
 
-      defoverridable ArtemisWeb.Controller.EventLogs
+      defoverridable ArtemisWeb.Controller.Behaviour.EventLogs
     end
   end
 end
