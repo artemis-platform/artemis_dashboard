@@ -117,10 +117,25 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", RoleController, :show_event_log_details, as: :event_log
       end
 
+      # Search
+
       resources "/search", SearchController, only: [:index]
+
+      # Sessions
+
       resources "/sessions", SessionController, only: [:index, :show]
 
-      resources "/tags", TagController
+      # Tags
+
+      get "/tags/event-logs", TagController, :index_event_log_list
+      get "/tags/event-logs/:id", TagController, :index_event_log_details
+
+      resources "/tags", TagController do
+        get "/event-logs", TagController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", TagController, :show_event_log_details, as: :event_log
+      end
+
+      # Users
 
       resources "/users", UserController do
         resources "/anonymization", UserAnonymizationController, as: "anonymization", only: [:create]

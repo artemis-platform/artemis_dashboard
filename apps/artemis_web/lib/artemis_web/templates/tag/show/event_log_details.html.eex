@@ -10,13 +10,6 @@
   <%= render_event_log_notifications @conn, "Tag", @tag.id %>
 
   <section>
-    <%= h2 "Details" %>
-    <%=
-      render_key_value_list([
-        ["Type", @tag.type],
-        ["Name", @tag.name],
-        ["Slug", @tag.slug]
-      ])
-    %>
+    <%= render_event_log_details @conn, @event_log %>
   </section>
 </div>

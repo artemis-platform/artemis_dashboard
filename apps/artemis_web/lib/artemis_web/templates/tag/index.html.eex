@@ -1,14 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>Tags</h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "tags:create") do %>
-        <%= action "New", to: Routes.tag_path(@conn, :new), color: "blue" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
