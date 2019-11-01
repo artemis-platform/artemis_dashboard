@@ -21,7 +21,7 @@ defmodule ArtemisWeb.JobLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(ArtemisWeb.JobView, "_record.html", assigns)
+    Phoenix.View.render(ArtemisWeb.JobView, "show/_record.html", assigns)
   end
 
   # GenServer Callbacks

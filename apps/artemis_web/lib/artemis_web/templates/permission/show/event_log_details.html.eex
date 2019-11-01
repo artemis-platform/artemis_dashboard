@@ -10,13 +10,6 @@
   <%= render_event_log_notifications @conn, "Permission", @permission.id %>
 
   <section>
-    <%= h2 "Details" %>
-    <%=
-      render_key_value_list([
-        ["Name", @permission.name],
-        ["Slug", @permission.slug],
-        ["Description", @permission.description]
-      ])
-    %>
+    <%= render_event_log_details @conn, @event_log %>
   </section>
 </div>

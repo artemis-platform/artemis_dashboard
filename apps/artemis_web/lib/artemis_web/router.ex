@@ -85,12 +85,6 @@ defmodule ArtemisWeb.Router do
         put "/tags", IncidentTagController, :update, as: :tag
       end
 
-      resources "/on-call", OnCallController, only: [:index]
-      resources "/permissions", PermissionController
-      resources "/roles", RoleController
-      resources "/search", SearchController, only: [:index]
-      resources "/sessions", SessionController, only: [:index, :show]
-
       # Jobs
 
       get "/jobs/event-logs", JobController, :index_event_log_list
@@ -100,6 +94,22 @@ defmodule ArtemisWeb.Router do
         get "/event-logs", JobController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", JobController, :show_event_log_details, as: :event_log
       end
+
+      resources "/on-call", OnCallController, only: [:index]
+
+      # Permissions
+
+      get "/permissions/event-logs", PermissionController, :index_event_log_list
+      get "/permissions/event-logs/:id", PermissionController, :index_event_log_details
+
+      resources "/permissions", PermissionController do
+        get "/event-logs", PermissionController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", PermissionController, :show_event_log_details, as: :event_log
+      end
+
+      resources "/roles", RoleController
+      resources "/search", SearchController, only: [:index]
+      resources "/sessions", SessionController, only: [:index, :show]
 
       resources "/tags", TagController
 
