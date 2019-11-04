@@ -57,6 +57,27 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   end
 
   @doc """
+  """
+  def delete_confirmation(label, to, options \\ []) do
+    color = Keyword.get(options, :color) || "basic"
+    size = Keyword.get(options, :size, "small")
+
+    button_options =
+      options
+      |> Keyword.delete(:to)
+      |> Keyword.put(:class, "button ui confirmation #{size} #{color}")
+      |> Keyword.put(:to, "#delete-confirmation")
+
+    assigns = [
+      button_label: label,
+      button_options: button_options,
+      to: to
+    ]
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "delete_confirmation.html", assigns)
+  end
+
+  @doc """
   Render a H2 tag
   """
   def h2(label, options \\ []) do
