@@ -1,7 +1,6 @@
 <div class="field reason-field">
   <label for="reason">
-    TODO
-    Reason <span style="font-weight: 500; color: #888;">Optional</span>
+    Reason <span class="description">Optional</span>
   </label>
   <%= if assigns[:form_instance] do %>
     <%= text_input assigns[:form_instance], :reason, placeholder: "Reason for Change (Optional)" %>

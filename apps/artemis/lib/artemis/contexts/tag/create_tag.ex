@@ -18,7 +18,7 @@ defmodule Artemis.CreateTag do
       params
       |> insert_record
       |> update_associations(params)
-      |> Event.broadcast("tag:created", user)
+      |> Event.broadcast("tag:created", params, user)
     end)
   end
 

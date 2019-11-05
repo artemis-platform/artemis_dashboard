@@ -20,7 +20,7 @@ defmodule Artemis.UpdateJob do
     |> update_record(params)
     |> parse_response()
     |> get_updated_record(user)
-    |> Event.broadcast("job:updated", user)
+    |> Event.broadcast("job:updated", params, user)
   end
 
   defp update_params(params) do

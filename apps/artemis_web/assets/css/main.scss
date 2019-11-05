@@ -628,7 +628,18 @@ ul.timeline {
   }
 }
 
+/* === Components - Forms === */
+
+.ui.form {
+
+  .field label .description {
+    color: #888;
+    font-weight: 500;
+  }
+}
+
 /* === Components - Inline Fields === */
+
 .ui.form .inline-fields {
   display: flex;
   justify-content: space-between;

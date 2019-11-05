@@ -15,7 +15,7 @@ defmodule Artemis.CreateFeature do
     with_transaction(fn ->
       params
       |> insert_record
-      |> Event.broadcast("feature:created", user)
+      |> Event.broadcast("feature:created", params, user)
     end)
   end
 

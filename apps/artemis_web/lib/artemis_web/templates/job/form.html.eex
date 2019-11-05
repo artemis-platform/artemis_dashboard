@@ -4,6 +4,8 @@
     <%= textarea f, :raw_data, value: pretty_print_json_into_textarea(f, :raw_data) %>
   </div>
 
+  <%= reason_field f %>
+
   <div>
     <%= if @changeset.action do %>
       <%= render_notification :error, body: "Error Submitting Form" %>

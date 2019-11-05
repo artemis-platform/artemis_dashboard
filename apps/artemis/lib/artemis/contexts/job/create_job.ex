@@ -25,7 +25,7 @@ defmodule Artemis.CreateJob do
     |> insert_record()
     |> parse_response()
     |> get_record(user)
-    |> Event.broadcast("job:created", user)
+    |> Event.broadcast("job:created", params, user)
   end
 
   defp create_params(params) do

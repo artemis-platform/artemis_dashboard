@@ -17,7 +17,7 @@ defmodule Artemis.UpdateFeature do
       id
       |> get_record(user)
       |> update_record(params)
-      |> Event.broadcast("feature:updated", user)
+      |> Event.broadcast("feature:updated", params, user)
     end)
   end
 

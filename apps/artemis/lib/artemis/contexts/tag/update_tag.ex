@@ -20,7 +20,7 @@ defmodule Artemis.UpdateTag do
       |> get_record(user)
       |> update_record(params)
       |> update_associations(params)
-      |> Event.broadcast("tag:updated", user)
+      |> Event.broadcast("tag:updated", params, user)
     end)
   end
 

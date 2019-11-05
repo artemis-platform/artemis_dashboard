@@ -19,7 +19,7 @@ defmodule Artemis.CreateUser do
       params
       |> insert_record()
       |> update_associations(params)
-      |> Event.broadcast("user:created", user)
+      |> Event.broadcast("user:created", params, user)
     end)
   end
 
