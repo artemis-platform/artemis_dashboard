@@ -6,12 +6,7 @@
   </div>
   <div class="content">
     <%= form_tag @to, method: :delete, class: "ui form", id: "delete-confirmation-form" do %>
-      <div class="field">
-        <label for="reason" class="label-with-errors">
-          Reason <span style="font-weight: 500; color: #888;">Optional</span>
-        </label>
-        <input name="reason" type="text" placeholder="Reason for Change (Optional)"/>
-      </div>
+      <%= reason_field nil %>
     <% end %>
   </div>
   <div class="actions">

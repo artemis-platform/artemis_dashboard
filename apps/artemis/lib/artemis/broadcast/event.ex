@@ -5,6 +5,10 @@ defmodule Artemis.Event do
 
   @broadcast_topic "private:artemis:events"
 
+  @whitelisted_meta_keys [
+    "reason"
+  ]
+
   def get_broadcast_topic, do: @broadcast_topic
 
   def broadcast(result, event, meta \\ %{}, user)
@@ -12,7 +16,7 @@ defmodule Artemis.Event do
   def broadcast({:ok, data} = result, event, meta, user) do
     payload = %{
       data: data,
-      meta: meta,
+      meta: get_whitelisted_meta(meta),
       user: user
     }
 
@@ -27,5 +31,13 @@ defmodule Artemis.Event do
 
   def broadcast(data, event, meta, user) do
     broadcast({:ok, data}, event, meta, user)
+  end
+
+  # Helpers
+
+  defp get_whitelisted_meta(meta) do
+    meta
+    |> Artemis.Helpers.keys_to_strings()
+    |> Map.take(@whitelisted_meta_keys)
   end
 end

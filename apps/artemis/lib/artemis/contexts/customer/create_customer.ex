@@ -16,7 +16,7 @@ defmodule Artemis.CreateCustomer do
     with_transaction(fn ->
       params
       |> insert_record
-      |> Event.broadcast("customer:created", user)
+      |> Event.broadcast("customer:created", params, user)
     end)
   end
 

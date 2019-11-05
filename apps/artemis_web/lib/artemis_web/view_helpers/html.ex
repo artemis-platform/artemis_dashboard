@@ -124,4 +124,15 @@ defmodule ArtemisWeb.ViewHelper.HTML do
       content_tag(:h5, label, options)
     end
   end
+
+  @doc """
+  Render a text input form field to capture the reason for an action
+  """
+  def reason_field(form_instance) do
+    assigns = [
+      form_instance: form_instance
+    ]
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "reason_field.html", assigns)
+  end
 end
