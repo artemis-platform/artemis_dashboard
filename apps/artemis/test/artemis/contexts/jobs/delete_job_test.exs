@@ -65,7 +65,7 @@ defmodule Artemis.DeleteJobTest do
       {:ok, job} = DeleteJob.call(cloudant_insert(:job), Mock.system_user())
 
       assert_received %Phoenix.Socket.Broadcast{
-        event: "jobs:deleted",
+        event: "job:deleted",
         payload: %{
           data: ^job
         }

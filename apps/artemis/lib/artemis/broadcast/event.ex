@@ -35,9 +35,23 @@ defmodule Artemis.Event do
 
   # Helpers
 
-  defp get_whitelisted_meta(meta) do
+  defp get_whitelisted_meta(meta) when is_list(meta) do
+    case Keyword.keyword?(meta) do
+      true ->
+        meta
+        |> Enum.into(%{})
+        |> get_whitelisted_meta()
+
+      false ->
+        nil
+    end
+  end
+
+  defp get_whitelisted_meta(meta) when is_map(meta) do
     meta
     |> Artemis.Helpers.keys_to_strings()
     |> Map.take(@whitelisted_meta_keys)
   end
+
+  defp get_whitelisted_meta(_meta), do: nil
 end
