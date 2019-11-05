@@ -18,7 +18,7 @@ defmodule Artemis.CreateManyIncidents do
     with_transaction(fn ->
       params
       |> insert_records
-      |> Event.broadcast("incidents:created:many", params, user)
+      |> Event.broadcast("incident:created:many", user)
     end)
   end
 
