@@ -57,6 +57,7 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   end
 
   @doc """
+  Render modal to confirm delete action
   """
   def delete_confirmation(label, to, options \\ []) do
     color = Keyword.get(options, :color) || "basic"
@@ -74,7 +75,7 @@ defmodule ArtemisWeb.ViewHelper.HTML do
       to: to
     ]
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "delete_confirmation.html", assigns)
+    Phoenix.View.render(ArtemisWeb.LayoutView, "confirmation_delete.html", assigns)
   end
 
   @doc """
