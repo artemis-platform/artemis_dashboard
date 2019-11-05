@@ -20,5 +20,5 @@
 
   <section>
     <%= h3 "Raw Data" %>
-    <pre><code><%= Jason.encode!(@event_log.meta, pretty: true) %></code></pre>
+    <pre><code><%= Jason.encode!(@event_log.data, pretty: true) %></code></pre>
   </section>
