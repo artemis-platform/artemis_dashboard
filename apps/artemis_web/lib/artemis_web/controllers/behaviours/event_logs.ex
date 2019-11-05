@@ -33,7 +33,7 @@ defmodule ArtemisWeb.Controller.Behaviour.EventLogs do
         ]
 
         allowed_columns = ArtemisWeb.EventLogView.data_table_allowed_columns(allowed_column_options)
-        default_columns = ["action", "resource_id", "user_name", "inserted_at"]
+        default_columns = ["action", "resource_id", "user_name", "reason", "inserted_at"]
 
         pagination_options = [
           action: :index_event_log_list,
@@ -67,7 +67,7 @@ defmodule ArtemisWeb.Controller.Behaviour.EventLogs do
         ]
 
         allowed_columns = ArtemisWeb.EventLogView.data_table_allowed_columns(allowed_column_options)
-        default_columns = ["action", "user_name", "inserted_at"]
+        default_columns = ["action", "user_name", "reason", "inserted_at"]
 
         pagination_options = [
           action: :show_event_log_list,

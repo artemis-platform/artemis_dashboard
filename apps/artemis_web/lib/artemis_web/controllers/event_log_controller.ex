@@ -8,6 +8,7 @@ defmodule ArtemisWeb.EventLogController do
     "resource_type",
     "action",
     "user_name",
+    "reason",
     "inserted_at",
     "actions"
   ]

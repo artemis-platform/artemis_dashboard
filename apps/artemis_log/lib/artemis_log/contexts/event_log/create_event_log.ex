@@ -33,7 +33,7 @@ defmodule ArtemisLog.CreateEventLog do
     |> Artemis.Helpers.to_string()
   end
 
-  def get_resource_type(event, _data, _meta) do
+  def get_resource_type(event, _data, _meta) when is_bitstring(event) do
     event
     |> String.split(":")
     |> List.first()
@@ -42,6 +42,8 @@ defmodule ArtemisLog.CreateEventLog do
     |> Artemis.Helpers.titlecase()
     |> String.replace(" ", "")
   end
+
+  def get_resource_type(_event, _data, _meta), do: nil
 
   defp get_resource_id(%{id: id}), do: Artemis.Helpers.to_string(id)
   defp get_resource_id(%{_id: id}), do: Artemis.Helpers.to_string(id)
