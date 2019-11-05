@@ -38,10 +38,17 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
 
   defp get_tokens() do
     Enum.reduce(get_api_keys(), %{}, fn {key, value}, acc ->
-      {:ok, entry} = GetAccessToken.call(value)
+      entry = get_token(value)
 
       Map.put(acc, key, entry)
     end)
+  end
+
+  defp get_token(value) do
+    case GetAccessToken.call(value) do
+      {:ok, data} -> data
+      _ -> nil
+    end
   end
 
   defp get_api_keys() do
