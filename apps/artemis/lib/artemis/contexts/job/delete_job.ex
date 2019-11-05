@@ -17,7 +17,7 @@ defmodule Artemis.DeleteJob do
     |> get_record(user)
     |> delete_record()
     |> parse_response()
-    |> Event.broadcast("jobs:deleted", params, user)
+    |> Event.broadcast("job:deleted", params, user)
   end
 
   def get_record(%{_id: id}, user), do: get_record(id, user)

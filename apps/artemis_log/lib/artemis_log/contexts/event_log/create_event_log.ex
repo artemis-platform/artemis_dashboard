@@ -18,23 +18,35 @@ defmodule ArtemisLog.CreateEventLog do
       data: Filter.call(data),
       meta: meta,
       resource_id: get_resource_id(data),
-      resource_type: get_resource_type(data),
+      resource_type: get_resource_type(event, data, meta),
       session_id: user && Map.get(user, :session_id),
       user_id: user && Map.get(user, :id),
       user_name: user && Map.get(user, :name)
     }
   end
 
-  defp get_resource_type(%{__struct__: struct}) do
+  def get_resource_type(_event, _data, %{"resource_type" => resource_type}), do: resource_type
+
+  def get_resource_type(_event, %{__struct__: struct}, _meta) do
     struct
     |> Artemis.Helpers.module_name()
     |> Artemis.Helpers.to_string()
   end
 
-  defp get_resource_type(_), do: nil
+  def get_resource_type(event, _data, _meta) do
+    event
+    |> String.split(":")
+    |> List.first()
+    |> Artemis.Helpers.dashcase()
+    |> String.replace("-", " ")
+    |> Artemis.Helpers.titlecase()
+    |> String.replace(" ", "")
+  end
 
   defp get_resource_id(%{id: id}), do: Artemis.Helpers.to_string(id)
   defp get_resource_id(%{_id: id}), do: Artemis.Helpers.to_string(id)
+  defp get_resource_id(%{"id" => id}), do: Artemis.Helpers.to_string(id)
+  defp get_resource_id(%{"_id" => id}), do: Artemis.Helpers.to_string(id)
   defp get_resource_id(_), do: nil
 
   defp insert_record(params) do
