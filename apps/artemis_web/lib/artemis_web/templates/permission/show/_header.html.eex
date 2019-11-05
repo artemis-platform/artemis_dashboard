@@ -6,7 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "permissions:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.permission_path(@conn, :delete, @permission), data: [confirm: "Confirm Delete"] %>
+        <%= delete_confirmation "Delete", Routes.permission_path(@conn, :delete, @permission) %>
       <% end %>
       <%= if has?(@conn, "permissions:update") do %>
         <%= action "Edit", to: Routes.permission_path(@conn, :edit, @permission), color: "green" %>

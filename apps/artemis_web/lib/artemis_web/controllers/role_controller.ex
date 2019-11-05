@@ -87,9 +87,9 @@ defmodule ArtemisWeb.RoleController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "roles:delete", fn ->
-      {:ok, _role} = DeleteRole.call(id, current_user(conn))
+      {:ok, _role} = DeleteRole.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Role deleted successfully.")

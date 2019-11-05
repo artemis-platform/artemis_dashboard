@@ -19,7 +19,7 @@ defmodule Artemis.UpdateIncident do
       |> get_record(user)
       |> update_record(params)
       |> update_associations(params)
-      |> Event.broadcast("incident:updated", user)
+      |> Event.broadcast("incident:updated", params, user)
     end)
   end
 

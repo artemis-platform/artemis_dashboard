@@ -78,9 +78,9 @@ defmodule ArtemisWeb.TagController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "tags:delete", fn ->
-      {:ok, _tag} = DeleteTag.call(id, current_user(conn))
+      {:ok, _tag} = DeleteTag.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Tag deleted successfully.")

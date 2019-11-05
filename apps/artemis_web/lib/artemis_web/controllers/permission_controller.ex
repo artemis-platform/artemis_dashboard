@@ -78,9 +78,9 @@ defmodule ArtemisWeb.PermissionController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "permissions:delete", fn ->
-      {:ok, _permission} = DeletePermission.call(id, current_user(conn))
+      {:ok, _permission} = DeletePermission.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Permission deleted successfully.")
