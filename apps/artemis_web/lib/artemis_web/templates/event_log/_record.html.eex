@@ -8,6 +8,7 @@
 
       render_key_value_list([
         ["Action", @event_log.action],
+        ["Reason", Artemis.Helpers.deep_get(@event_log, [:meta, "reason"])],
         ["User ID", @event_log.user_id],
         ["User Name", @event_log.user_name],
         ["Resource ID", @event_log.resource_id],
@@ -20,5 +21,10 @@
 
   <section>
     <%= h3 "Raw Data" %>
+    <pre><code><%= Jason.encode!(@event_log.data, pretty: true) %></code></pre>
+  </section>
+
+  <section>
+    <%= h3 "Additional Data" %>
     <pre><code><%= Jason.encode!(@event_log.meta, pretty: true) %></code></pre>
   </section>

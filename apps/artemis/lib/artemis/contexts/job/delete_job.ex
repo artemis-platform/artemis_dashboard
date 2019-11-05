@@ -5,19 +5,19 @@ defmodule Artemis.DeleteJob do
   alias Artemis.GetJob
   alias Artemis.Job
 
-  def call!(id, user) do
-    case call(id, user) do
+  def call!(id, params \\ %{}, user) do
+    case call(id, params, user) do
       {:error, _} -> raise(Artemis.Context.Error, "Error deleting job")
       {:ok, result} -> result
     end
   end
 
-  def call(id, user) do
+  def call(id, params \\ %{}, user) do
     id
     |> get_record(user)
     |> delete_record()
     |> parse_response()
-    |> Event.broadcast("jobs:deleted", user)
+    |> Event.broadcast("job:deleted", params, user)
   end
 
   def get_record(%{_id: id}, user), do: get_record(id, user)

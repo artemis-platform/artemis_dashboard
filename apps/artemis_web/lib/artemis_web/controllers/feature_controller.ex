@@ -78,9 +78,9 @@ defmodule ArtemisWeb.FeatureController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "features:delete", fn ->
-      {:ok, _feature} = DeleteFeature.call(id, current_user(conn))
+      {:ok, _feature} = DeleteFeature.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Feature deleted successfully.")

@@ -19,7 +19,7 @@ defmodule Artemis.UpdateUser do
       |> get_record(user)
       |> update_record(params)
       |> update_associations(params)
-      |> Event.broadcast("user:updated", user)
+      |> Event.broadcast("user:updated", params, user)
     end)
   end
 

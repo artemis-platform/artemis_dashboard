@@ -31,6 +31,25 @@ function initializeColumnField() {
   })
 }
 
+function initializeConfirmation() {
+  var settings = {
+    closable: false,
+    transition: 'fade',
+    duration: 100,
+    onDeny: function() {
+
+    },
+    onApprove : function() {
+      return false
+    }
+  }
+
+  $('.ui.confirmation').on('click', function(event) {
+    event.preventDefault()
+    $('.confirmation-content').modal(settings).modal('show')
+  })
+}
+
 function initializeDropdowns() {
   $('.ui.dropdown.click').dropdown({on: 'click'})
   $('.ui.dropdown.hover').dropdown({on: 'hover'})
@@ -206,9 +225,9 @@ function initializeWikiSidenav() {
 
   $('#wiki-page aside nav.page-sections').append(nav)
 
-	$('#wiki-page .ui.sticky').sticky({
-	  offset: 28,
-	  bottomOffset: 0,
+  $('#wiki-page .ui.sticky').sticky({
+    offset: 28,
+    bottomOffset: 0,
     context: '#wiki-page'
   })
 
@@ -250,6 +269,7 @@ function initializeWikiSidenav() {
 
 $(document).ready(function() {
   initializeColumnField()
+  initializeConfirmation()
   initializeDropdowns()
   initializeFilterFields()
   initializeHighlightJs()
@@ -259,11 +279,4 @@ $(document).ready(function() {
   initializeSearchSubmit()
   initializeTagForm()
   initializeWikiSidenav()
-
-  // Reinitialize after LiveView Updates
-
-  $(document).on("phx:update", function () {
-    reinitializeHighlightJs()
-    // initializeDropdowns()
-  })
 })

@@ -57,6 +57,27 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   end
 
   @doc """
+  """
+  def delete_confirmation(label, to, options \\ []) do
+    color = Keyword.get(options, :color) || "basic"
+    size = Keyword.get(options, :size, "small")
+
+    button_options =
+      options
+      |> Keyword.delete(:to)
+      |> Keyword.put(:class, "button ui confirmation #{size} #{color}")
+      |> Keyword.put(:to, "#delete-confirmation")
+
+    assigns = [
+      button_label: label,
+      button_options: button_options,
+      to: to
+    ]
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "delete_confirmation.html", assigns)
+  end
+
+  @doc """
   Render a H2 tag
   """
   def h2(label, options \\ []) do
@@ -102,5 +123,16 @@ defmodule ArtemisWeb.ViewHelper.HTML do
     content_tag(:div, class: "heading-container h5-container", id: id) do
       content_tag(:h5, label, options)
     end
+  end
+
+  @doc """
+  Render a text input form field to capture the reason for an action
+  """
+  def reason_field(form_instance) do
+    assigns = [
+      form_instance: form_instance
+    ]
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "reason_field.html", assigns)
   end
 end

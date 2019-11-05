@@ -6,7 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "incidents:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.incident_path(@conn, :delete, @incident), data: [confirm: "Confirm Delete"] %>
+        <%= delete_confirmation "Delete", Routes.incident_path(@conn, :delete, @incident) %>
       <% end %>
     </div>
   </header>

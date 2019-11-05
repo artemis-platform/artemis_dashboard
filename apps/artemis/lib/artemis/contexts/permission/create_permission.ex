@@ -15,7 +15,7 @@ defmodule Artemis.CreatePermission do
     with_transaction(fn ->
       params
       |> insert_record
-      |> Event.broadcast("permission:created", user)
+      |> Event.broadcast("permission:created", params, user)
     end)
   end
 

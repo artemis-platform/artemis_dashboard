@@ -43,9 +43,9 @@ defmodule ArtemisWeb.IncidentController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "incidents:delete", fn ->
-      {:ok, _incident} = DeleteIncident.call(id, current_user(conn))
+      {:ok, _incident} = DeleteIncident.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Incident deleted successfully.")

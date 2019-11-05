@@ -6,7 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "users:delete") && current_user(@conn).id != @user.id do %>
-        <%= action "Delete", method: "delete", to: Routes.user_path(@conn, :delete, @user), data: [confirm: "Confirm Delete"] %>
+        <%= delete_confirmation "Delete", Routes.user_path(@conn, :delete, @user) %>
       <% end %>
       <%= if has?(@conn, "user-anonymizations:create") && current_user(@conn).id != @user.id do %>
         <%= action "Anonymize", method: "post", to: Routes.user_anonymization_path(@conn, :create, @user), data: [confirm: "Confirm Anonymization"] %>

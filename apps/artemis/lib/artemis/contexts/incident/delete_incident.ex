@@ -5,20 +5,20 @@ defmodule Artemis.DeleteIncident do
   alias Artemis.GetIncident
   alias Artemis.Repo
 
-  def call!(id, user) do
-    case call(id, user) do
+  def call!(id, params \\ %{}, user) do
+    case call(id, params, user) do
       {:error, _} -> raise(Artemis.Context.Error, "Error deleting incident")
       {:ok, result} -> result
     end
   end
 
-  def call(id, user) do
+  def call(id, params \\ %{}, user) do
     with_transaction(fn ->
       id
       |> get_record(user)
       |> DeleteManyAssociatedComments.call(user)
       |> delete_record
-      |> Event.broadcast("incident:deleted", user)
+      |> Event.broadcast("incident:deleted", params, user)
     end)
   end
 

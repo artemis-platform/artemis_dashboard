@@ -6,7 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "jobs:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.job_path(@conn, :delete, @job._id), data: [confirm: "Confirm Delete"] %>
+        <%= delete_confirmation "Delete", Routes.job_path(@conn, :delete, @job._id) %>
       <% end %>
       <%= if has?(@conn, "jobs:update") do %>
         <%= action "Edit", to: Routes.job_path(@conn, :edit, @job._id), color: "green" %>

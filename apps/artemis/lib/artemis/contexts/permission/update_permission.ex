@@ -17,7 +17,7 @@ defmodule Artemis.UpdatePermission do
       id
       |> get_record(user)
       |> update_record(params)
-      |> Event.broadcast("permission:updated", user)
+      |> Event.broadcast("permission:updated", params, user)
     end)
   end
 

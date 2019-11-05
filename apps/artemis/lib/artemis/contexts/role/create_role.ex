@@ -17,7 +17,7 @@ defmodule Artemis.CreateRole do
       params
       |> insert_record
       |> update_associations(params)
-      |> Event.broadcast("role:created", user)
+      |> Event.broadcast("role:created", params, user)
     end)
   end
 

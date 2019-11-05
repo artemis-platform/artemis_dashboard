@@ -18,7 +18,7 @@ defmodule Artemis.UpdateCustomer do
       id
       |> get_record(user)
       |> update_record(params)
-      |> Event.broadcast("customer:updated", user)
+      |> Event.broadcast("customer:updated", params, user)
     end)
   end
 

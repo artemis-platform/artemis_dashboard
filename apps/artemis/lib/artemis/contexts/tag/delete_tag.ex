@@ -4,18 +4,18 @@ defmodule Artemis.DeleteTag do
   alias Artemis.GetTag
   alias Artemis.Repo
 
-  def call!(id, user) do
-    case call(id, user) do
+  def call!(id, params \\ %{}, user) do
+    case call(id, params, user) do
       {:error, _} -> raise(Artemis.Context.Error, "Error deleting tag")
       {:ok, result} -> result
     end
   end
 
-  def call(id, user) do
+  def call(id, params \\ %{}, user) do
     id
     |> get_record(user)
     |> delete_record
-    |> Event.broadcast("tag:deleted", user)
+    |> Event.broadcast("tag:deleted", params, user)
   end
 
   def get_record(%{id: id}, user), do: get_record(id, user)

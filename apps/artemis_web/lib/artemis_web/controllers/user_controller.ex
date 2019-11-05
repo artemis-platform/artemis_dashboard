@@ -87,14 +87,14 @@ defmodule ArtemisWeb.UserController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "users:delete", fn ->
       user = current_user(conn)
       record = GetUser.call!(id, user)
 
       case record.id == user.id do
         false ->
-          {:ok, _} = DeleteUser.call(id, user)
+          {:ok, _} = DeleteUser.call(id, params, user)
 
           conn
           |> put_flash(:info, "User deleted successfully.")

@@ -81,9 +81,9 @@ defmodule ArtemisWeb.JobController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "jobs:delete", fn ->
-      {:ok, _job} = DeleteJob.call(id, current_user(conn))
+      {:ok, _job} = DeleteJob.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Job deleted successfully.")

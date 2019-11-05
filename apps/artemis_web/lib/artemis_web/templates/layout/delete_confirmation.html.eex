@@ -1,0 +1,16 @@
+<%= link @button_label, @button_options %>
+
+<div class="ui modal tiny confirmation-content">
+  <div class="header">
+    Confirm Delete
+  </div>
+  <div class="content">
+    <%= form_tag @to, method: :delete, class: "ui form", id: "delete-confirmation-form" do %>
+      <%= reason_field nil %>
+    <% end %>
+  </div>
+  <div class="actions">
+    <%= link "Cancel", class: "ui button cancel", to: "#" %>
+    <%= submit "Delete", class: "ui button ok red", form: "delete-confirmation-form" %>
+  </div>
+</div>

@@ -78,9 +78,9 @@ defmodule ArtemisWeb.CustomerController do
     end)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = params) do
     authorize(conn, "customers:delete", fn ->
-      {:ok, _customer} = DeleteCustomer.call(id, current_user(conn))
+      {:ok, _customer} = DeleteCustomer.call(id, params, current_user(conn))
 
       conn
       |> put_flash(:info, "Customer deleted successfully.")

@@ -6,6 +6,7 @@ defmodule ArtemisWeb.EventLogView do
       {"Actions", "actions"},
       {"Action", "action"},
       {"Created At", "inserted_at"},
+      {"Reason", "reason"},
       {"Resource ID", "resource_id"},
       {"Resource Type", "resource_type"},
       {"Session ID", "session_id"},
@@ -40,6 +41,12 @@ defmodule ArtemisWeb.EventLogView do
           sortable_table_header(conn, "inserted_at", "Created At")
         end,
         value: fn _conn, row -> row.inserted_at end
+      ],
+      "reason" => [
+        label: fn _conn -> "Reason" end,
+        value: fn _conn, row ->
+          Artemis.Helpers.deep_get(row, [:meta, "reason"])
+        end
       ],
       "resource_id" => [
         label: fn _conn -> "Resource ID" end,

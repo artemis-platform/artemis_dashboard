@@ -6,7 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "roles:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.role_path(@conn, :delete, @role), data: [confirm: "Confirm Delete"] %>
+        <%= delete_confirmation "Delete", Routes.role_path(@conn, :delete, @role) %>
       <% end %>
       <%= if has?(@conn, "roles:update") do %>
         <%= action "Edit", to: Routes.role_path(@conn, :edit, @role), color: "green" %>

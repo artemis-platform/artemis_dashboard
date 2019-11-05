@@ -1,6 +1,8 @@
 defmodule Artemis.Drivers.IBMCloudIAM.GetAccessToken do
   alias Artemis.Drivers.IBMCloudIAM
 
+  require Logger
+
   def call(api_key) do
     with {:ok, response} <- request_access_token(api_key),
          {:ok, data} <- process_response(response) do
@@ -42,9 +44,15 @@ defmodule Artemis.Drivers.IBMCloudIAM.GetAccessToken do
     {:ok, data}
   end
 
-  defp process_response(%{body: %{"errorCode" => code, "errorMessage" => message}}) do
+  defp process_response(%{body: %{"errorCode" => code, "errorMessage" => message}} = response) do
+    Logger.info("Error calling IBM Cloud IAM API:" <> inspect(response))
+
     {:error, "IBM Cloud IAM API error #{code}: #{message}"}
   end
 
-  defp process_response(_), do: {:error, "Unknown error response from IBM Cloud IAM API"}
+  defp process_response(response) do
+    Logger.info("Error calling IBM Cloud IAM API:" <> inspect(response))
+
+    {:error, "Unknown error response from IBM Cloud IAM API"}
+  end
 end

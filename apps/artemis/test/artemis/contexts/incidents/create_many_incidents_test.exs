@@ -179,7 +179,7 @@ defmodule Artemis.CreateManyIncidentsTest do
       {:ok, result} = CreateManyIncidents.call(params_for(:incident), Mock.system_user())
 
       assert_received %Phoenix.Socket.Broadcast{
-        event: "incidents:created:many",
+        event: "incident:created:many",
         payload: %{
           data: ^result
         }

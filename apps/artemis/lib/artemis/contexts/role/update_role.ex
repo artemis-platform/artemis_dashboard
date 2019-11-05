@@ -19,7 +19,7 @@ defmodule Artemis.UpdateRole do
       |> get_record(user)
       |> update_record(params)
       |> update_associations(params)
-      |> Event.broadcast("role:updated", user)
+      |> Event.broadcast("role:updated", params, user)
     end)
   end
 
