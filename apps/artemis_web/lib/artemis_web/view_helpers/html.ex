@@ -68,7 +68,7 @@ defmodule ArtemisWeb.ViewHelper.HTML do
       options
       |> Keyword.delete(:to)
       |> Keyword.put(:class, "button ui #{size} #{color} modal-trigger")
-      |> Keyword.put(:data, [target: "##{modal_id}"])
+      |> Keyword.put(:data, target: "##{modal_id}")
       |> Keyword.put(:to, "#delete-confirmation")
 
     assigns = [
