@@ -6,10 +6,7 @@
 
     <div class="actions">
       <%= if has?(@conn, "customers:delete") do %>
-        <%= delete_confirmation "Confirm", Routes.customer_path(@conn, :delete, @customer) %>
-      <% end %>
-      <%= if has?(@conn, "customers:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.customer_path(@conn, :delete, @customer), data: [confirm: "Confirm Delete"] %>
+        <%= delete_confirmation "Delete", Routes.customer_path(@conn, :delete, @customer) %>
       <% end %>
       <%= if has?(@conn, "customers:update") do %>
         <%= action "Edit", to: Routes.customer_path(@conn, :edit, @customer), color: "green" %>

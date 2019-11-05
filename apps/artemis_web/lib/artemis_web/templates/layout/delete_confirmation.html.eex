@@ -2,13 +2,20 @@
 
 <div class="ui modal tiny confirmation-content">
   <div class="header">
-    Confirm Action
+    Confirm Delete
   </div>
   <div class="content">
-  	Confirm Delete
+    <%= form_tag @to, method: :delete, class: "ui form", id: "delete-confirmation-form" do %>
+      <div class="field">
+        <label for="reason" class="label-with-errors">
+          Reason <span style="font-weight: 500; color: #888;">Optional</span>
+        </label>
+        <input name="reason" type="text" placeholder="Reason for Change (Optional)"/>
+      </div>
+    <% end %>
   </div>
   <div class="actions">
     <%= link "Cancel", class: "ui button cancel", to: "#" %>
-    <%= button "Delete", class: "ui button ok red", method: :delete, to: @to %>
+    <%= submit "Delete", class: "ui button ok red", form: "delete-confirmation-form" %>
   </div>
 </div>
