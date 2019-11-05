@@ -17,7 +17,7 @@ defmodule ArtemisLog.CreateEventLog do
       action: event,
       data: Filter.call(data),
       meta: meta,
-      resource_id: get_resource_id(data),
+      resource_id: get_resource_id(data, meta),
       resource_type: get_resource_type(event, data, meta),
       session_id: user && Map.get(user, :session_id),
       user_id: user && Map.get(user, :id),
@@ -25,15 +25,15 @@ defmodule ArtemisLog.CreateEventLog do
     }
   end
 
-  def get_resource_type(_event, _data, %{"resource_type" => resource_type}), do: resource_type
+  defp get_resource_type(_event, _data, %{"resource_type" => resource_type}), do: resource_type
 
-  def get_resource_type(_event, %{__struct__: struct}, _meta) do
+  defp get_resource_type(_event, %{__struct__: struct}, _meta) do
     struct
     |> Artemis.Helpers.module_name()
     |> Artemis.Helpers.to_string()
   end
 
-  def get_resource_type(event, _data, _meta) when is_bitstring(event) do
+  defp get_resource_type(event, _data, _meta) when is_bitstring(event) do
     event
     |> String.split(":")
     |> List.first()
@@ -43,13 +43,14 @@ defmodule ArtemisLog.CreateEventLog do
     |> String.replace(" ", "")
   end
 
-  def get_resource_type(_event, _data, _meta), do: nil
+  defp get_resource_type(_event, _data, _meta), do: nil
 
-  defp get_resource_id(%{id: id}), do: Artemis.Helpers.to_string(id)
-  defp get_resource_id(%{_id: id}), do: Artemis.Helpers.to_string(id)
-  defp get_resource_id(%{"id" => id}), do: Artemis.Helpers.to_string(id)
-  defp get_resource_id(%{"_id" => id}), do: Artemis.Helpers.to_string(id)
-  defp get_resource_id(_), do: nil
+  defp get_resource_id(_data, %{"resource_id" => resource_id}), do: resource_id
+  defp get_resource_id(%{id: id}, _meta), do: Artemis.Helpers.to_string(id)
+  defp get_resource_id(%{_id: id}, _meta), do: Artemis.Helpers.to_string(id)
+  defp get_resource_id(%{"id" => id}, _meta), do: Artemis.Helpers.to_string(id)
+  defp get_resource_id(%{"_id" => id}, _meta), do: Artemis.Helpers.to_string(id)
+  defp get_resource_id(_, _), do: nil
 
   defp insert_record(params) do
     %EventLog{}
