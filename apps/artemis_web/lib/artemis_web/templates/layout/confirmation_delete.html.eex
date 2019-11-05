@@ -1,6 +1,6 @@
 <%= link @button_label, @button_options %>
 
-<div class="ui modal tiny confirmation-content">
+<div class="ui modal tiny" id="<%= @modal_id %>">
   <div class="header">
     Confirm Delete
   </div>
