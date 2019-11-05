@@ -3,7 +3,13 @@
     Reason <span class="description">Optional</span>
   </label>
   <%= if assigns[:form_instance] do %>
-    <%= text_input assigns[:form_instance], :reason, placeholder: "Reason for Change (Optional)" %>
+    <%=
+      text_input(
+        assigns[:form_instance],
+        :reason,
+        placeholder: "Reason for Change (Optional)"
+      )
+    %>
   <% else %>
     <input name="reason" type="text" placeholder="Reason for Change (Optional)"/>
   <% end %>
