@@ -31,25 +31,6 @@ function initializeColumnField() {
   })
 }
 
-function initializeConfirmation() {
-  var settings = {
-    closable: false,
-    transition: 'fade',
-    duration: 100,
-    onDeny: function() {
-
-    },
-    onApprove : function() {
-      return false
-    }
-  }
-
-  $('.ui.confirmation').on('click', function(event) {
-    event.preventDefault()
-    $('.confirmation-content').modal(settings).modal('show')
-  })
-}
-
 function initializeDropdowns() {
   $('.ui.dropdown.click').dropdown({on: 'click'})
   $('.ui.dropdown.hover').dropdown({on: 'hover'})
@@ -91,6 +72,28 @@ function initializeMarkdownTextarea() {
       showIcons: ['strikethrough', 'code', 'table', 'redo', 'heading', 'undo', 'heading-1', 'heading-2', 'heading-3', 'heading-4', 'heading-5', 'clean-block', 'horizontal-rule'],
       status: false
     });
+  })
+}
+
+function initializeModals() {
+  var settings = {
+    closable: false,
+    transition: 'fade',
+    duration: 100,
+    onDeny: function() {
+
+    },
+    onApprove : function() {
+      return false
+    }
+  }
+
+  $('.modal-trigger').on('click', function(event) {
+    event.preventDefault()
+
+    var target = $(this).data('target')
+
+    $(target).modal(settings).modal('show')
   })
 }
 
@@ -269,11 +272,11 @@ function initializeWikiSidenav() {
 
 $(document).ready(function() {
   initializeColumnField()
-  initializeConfirmation()
   initializeDropdowns()
   initializeFilterFields()
   initializeHighlightJs()
   initializeMarkdownTextarea()
+  initializeModals()
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()

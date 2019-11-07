@@ -57,24 +57,28 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   end
 
   @doc """
+  Render modal to confirm delete action
   """
   def delete_confirmation(label, to, options \\ []) do
     color = Keyword.get(options, :color) || "basic"
     size = Keyword.get(options, :size, "small")
+    modal_id = "modal-id-#{Artemis.Helpers.UUID.call()}"
 
     button_options =
       options
       |> Keyword.delete(:to)
-      |> Keyword.put(:class, "button ui confirmation #{size} #{color}")
+      |> Keyword.put(:class, "button ui #{size} #{color} modal-trigger")
+      |> Keyword.put(:data, target: "##{modal_id}")
       |> Keyword.put(:to, "#delete-confirmation")
 
     assigns = [
       button_label: label,
       button_options: button_options,
+      modal_id: modal_id,
       to: to
     ]
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "delete_confirmation.html", assigns)
+    Phoenix.View.render(ArtemisWeb.LayoutView, "confirmation_delete.html", assigns)
   end
 
   @doc """

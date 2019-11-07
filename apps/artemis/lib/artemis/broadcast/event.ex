@@ -6,7 +6,9 @@ defmodule Artemis.Event do
   @broadcast_topic "private:artemis:events"
 
   @whitelisted_meta_keys [
-    "reason"
+    "reason",
+    "resource_id",
+    "resource_type"
   ]
 
   def get_broadcast_topic, do: @broadcast_topic
