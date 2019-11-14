@@ -146,6 +146,35 @@ function initializeSearchSubmit() {
   })
 }
 
+function initializeSelectTableRow() {
+  $('.data-table .select-all-rows').each(function() {
+    var input = $(this)
+    var table = input.closest('table')
+    var rows = table.find('.select-row')
+
+    input.click(function(event) {
+      var checked = $(this).prop('checked')
+
+      rows.each(function(index) {
+        $(this).prop('checked', checked)
+      })
+    })
+  })
+
+  $('.data-table .select-row').each(function() {
+    var input = $(this)
+    var row = input.closest('tr')
+
+    row.click(function(event) {
+      var is_row_background = (event.target.nodeName === 'TD')
+
+      if(is_row_background) {
+        input.prop('checked', !input.prop('checked'))
+      }
+    })
+  })
+}
+
 function initializeSidebars() {
   $('.open-sidebar-current-user').click(function(event) {
     if (event) {
@@ -238,7 +267,7 @@ function initializeWikiSidenav() {
   var highlightReadAheadBuffer = 16
   var highlightSections = $('#wiki-page aside nav.page-sections ul li')
 
-  var updateHighlight = function () { 
+  var updateHighlight = function () {
     var windowPosition = window.pageYOffset + highlightReadAheadBuffer
     var windowIsAtBottom = (window.innerHeight + window.pageYOffset) >= document.body.scrollHeight
     var highlightNext = 0
@@ -280,6 +309,7 @@ $(document).ready(function() {
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()
+  initializeSelectTableRow()
   initializeTagForm()
   initializeWikiSidenav()
 })

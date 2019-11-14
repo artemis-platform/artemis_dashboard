@@ -1,6 +1,8 @@
 defmodule ArtemisWeb.ViewHelper.Tables do
   use Phoenix.HTML
 
+  import Phoenix.HTML.Tag
+
   @default_delimiter ","
 
   @doc """
@@ -224,7 +226,23 @@ defmodule ArtemisWeb.ViewHelper.Tables do
         end
       end)
 
-    Enum.reverse(filtered)
+    columns = Enum.reverse(filtered)
+
+    # TODO only add if passed option
+    checkbox_column = [
+      label: nil,
+      label_html: fn _conn ->
+        tag(:input, class: "ui checkbox select-all-rows", type: "checkbox", name: "id-toggle")
+      end,
+      value: nil,
+      value_html: fn _conn, row ->
+        value = Map.get(row, :_id, Map.get(row, :id))
+
+        tag(:input, class: "ui checkbox select-row", type: "checkbox", name: "id[]", value: value)
+      end
+    ]
+
+    [checkbox_column | columns]
   end
 
   @doc """

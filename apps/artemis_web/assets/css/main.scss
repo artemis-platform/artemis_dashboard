@@ -112,6 +112,10 @@ select[multiple] {
       }
     }
   }
+
+  input[type="checkbox"] {
+    margin-top: 0.125rem;
+  }
 }
 
 .data-table-filters {

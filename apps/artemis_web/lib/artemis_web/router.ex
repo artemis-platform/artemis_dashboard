@@ -137,6 +137,7 @@ defmodule ArtemisWeb.Router do
 
       # Users
 
+      post "/users/bulk-actions", UserController, :index_bulk_actions
       get "/users/event-logs", UserController, :index_event_log_list
       get "/users/event-logs/:id", UserController, :index_event_log_details
 

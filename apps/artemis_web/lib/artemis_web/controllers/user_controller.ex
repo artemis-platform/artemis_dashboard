@@ -1,6 +1,7 @@
 defmodule ArtemisWeb.UserController do
   use ArtemisWeb, :controller
   use ArtemisWeb.Controller.Behaviour.EventLogs
+  use ArtemisWeb.Controller.Behaviour.BulkActions
 
   alias Artemis.CreateUser
   alias Artemis.User
@@ -106,6 +107,71 @@ defmodule ArtemisWeb.UserController do
           |> redirect(to: Routes.user_path(conn, :show, user))
       end
     end)
+  end
+
+  # Callbacks - Bulk Actions
+
+  # TODO
+  # Create a generic way to call an existing context many times
+  # Use it to wrap existing cloudant contexts for bulk actions
+  def call_many(records, function, options \\ []) do
+    initial = %{
+      halted?: false,
+      error_log: []
+    }
+
+    halt_on_error? = Keyword.get(options, :halt_on_error, false)
+
+    Enum.reduce_while(records, initial, fn record, acc ->
+      result =
+        try do
+          function.(record)
+        rescue
+          error -> {:error, error}
+        end
+
+      error? = is_tuple(result) && elem(result, 0) == :error
+      halt? = error? && halt_on_error?
+
+      updated_error_log =
+        case error? do
+          true -> [result | acc.error_log]
+          false -> acc.error_log
+        end
+
+      acc =
+        acc
+        |> Map.put(:halted?, halt?)
+        |> Map.put(:error_log, updated_error_log)
+
+      case halt? do
+        true -> {:halt, acc}
+        false -> {:cont, acc}
+      end
+    end)
+  end
+
+  def index_bulk_actions(conn, params) do
+    ids = ["1", "101", "102"]
+    action = Map.get(params, "action")
+    user = current_user(conn)
+
+    # TODO: permissions for each action
+    # - Define in View
+    # - Call from controller
+    # - Call each action
+
+    action_lookup = %{
+      "delete" => fn ids -> call_many(ids, &GetUser.call!(&1, user)) end
+    }
+
+    bulk_action = Map.get(action_lookup, action)
+
+    IO.inspect(bulk_action.(ids))
+
+    conn
+    |> put_flash(:info, "Completed bulk action successfully")
+    |> redirect(to: Routes.user_path(conn, :index))
   end
 
   # Callbacks - Event Logs

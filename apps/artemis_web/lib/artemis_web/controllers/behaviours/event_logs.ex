@@ -2,6 +2,25 @@ defmodule ArtemisWeb.Controller.Behaviour.EventLogs do
   @moduledoc """
   Functions to show Event Logs related to the resource type and the resource
   instance.
+
+  ## Routing Requests
+
+  The suggested way to route requests is by defining four new routes.
+
+  Given a typical resource:
+
+      resources "/permissions", PermissionController
+
+  Add the following routes:
+
+      get "/permissions/event-logs", PermissionController, :index_event_log_list
+      get "/permissions/event-logs/:id", PermissionController, :index_event_log_details
+
+      resources "/permissions", PermissionController do
+        get "/event-logs", PermissionController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", PermissionController, :show_event_log_details, as: :event_log
+      end
+
   """
 
   @callback index_event_log_list(map(), map()) :: any()
