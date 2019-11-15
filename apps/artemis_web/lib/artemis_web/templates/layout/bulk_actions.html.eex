@@ -5,10 +5,11 @@
     Bulk Actions
   </div>
   <div class="content">
-    <%= form_tag @to, method: :post, class: "ui form", id: "bulk-actions-form" do %>
+    <% form_id = "bulk-actions-form-#{Artemis.Helpers.UUID.call()}" %>
+    <%= form_tag @to, method: :post, class: "ui form bulk-actions-form", id: form_id do %>
       <div class="field reason-field">
         <label>Selected Fields</label>
-        53 Selected Entries
+        <div class="bulk-actions-selected"></div>
       </div>
 
       <div class="field reason-field">
@@ -36,6 +37,6 @@
   </div>
   <div class="actions">
     <%= link "Cancel", class: "ui button cancel", to: "#" %>
-    <%= submit "Submit", class: "ui button ok blue", form: "bulk-actions-form" %>
+    <%= submit "Submit", class: "ui button ok blue", form: form_id %>
   </div>
 </div>

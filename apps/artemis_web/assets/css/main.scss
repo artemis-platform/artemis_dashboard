@@ -137,6 +137,13 @@ select[multiple] {
   }
 }
 
+.bulk-actions-form {
+
+  .extra-fields > * {
+    display: none;
+  }
+}
+
 .cache-meta-data {
   display: none;
 }

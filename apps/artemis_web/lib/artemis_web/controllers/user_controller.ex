@@ -18,7 +18,12 @@ defmodule ArtemisWeb.UserController do
       params = Map.put(params, :paginate, true)
       users = ListUsers.call(params, current_user(conn))
 
-      render(conn, "index.html", users: users)
+      # TODO: pass data to bulk actions param
+      bulk_actions_data = [
+        roles: Artemis.Role.unique_values_for(:name)
+      ]
+
+      render(conn, "index.html", bulk_actions_data: bulk_actions_data, users: users)
     end)
   end
 

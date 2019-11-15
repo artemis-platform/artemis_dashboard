@@ -67,7 +67,7 @@ defmodule ArtemisWeb.ViewHelper.HTML do
 
     button_options =
       []
-      |> Keyword.put(:class, "button ui #{size} #{color} modal-trigger")
+      |> Keyword.put(:class, "button ui #{size} #{color} modal-trigger bulk-actions-button")
       |> Keyword.put(:data, target: "##{modal_id}")
       |> Keyword.put(:to, "#bulk-actions")
 
