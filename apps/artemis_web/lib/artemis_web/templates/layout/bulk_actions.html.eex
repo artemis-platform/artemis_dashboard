@@ -6,28 +6,31 @@
   </div>
   <div class="content">
     <%= form_tag @to, method: :post, class: "ui form", id: "bulk-actions-form" do %>
-      <strong>Selected Fields</strong>
-      <br/>
-      53 Selected Entries
-      <br/>
-      <strong>Select Action</strong>
-      <select class="enhanced" placeholder="Select Action" name="action">
-        <option value=""></option>
-        <option value="restart">Restart</option>
-        <option value="delete">Delete</option>
-        <%# <option>Restart Job</option> %>
-        <%# <option>Archive Job</option> %>
-        <%# <option>Delete</option> %>
-        <%# <option>Acknowledge Incident</option> %>
-        <%# <option>Resolve Incident</option> %>
-        <%# <option>-- Complex</option> %>
-        <%# <option>Add Tag</option> %>
-        <%# <option>Add Role</option> %>
-        <%# <option>Delete Role</option> %>
-        <%# <option>Update Status</option> %>
-        <%# <option>Bulk Cloudant Migration</option> %>
-      </select>
-      <br/>
+      <div class="field reason-field">
+        <label>Selected Fields</label>
+        53 Selected Entries
+      </div>
+
+      <div class="field reason-field">
+        <label for="bulk_action">Select Bulk Action</label>
+        <select class="enhanced" placeholder="Select Bulk Action" name="bulk_action">
+          <option value="">&nbsp;</option>
+          <%= Enum.map Enum.reverse(@allowed_bulk_actions), fn bulk_action -> %>
+            <option value="<%= bulk_action.key %>"><%= bulk_action.label %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="extra-fields">
+        <%= Enum.map @allowed_bulk_actions, fn bulk_action -> %>
+          <%= if bulk_action.extra_fields do %>
+            <div class="extra-field extra-field-<%= bulk_action.key %>">
+              <%= bulk_action.extra_fields.() %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
       <%= reason_field nil %>
     <% end %>
   </div>

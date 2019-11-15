@@ -6,6 +6,67 @@ defmodule ArtemisWeb.UserView do
 
   alias Artemis.UserRole
 
+  # Bulk Actions
+
+  # TODO: move into behaviour
+  defmodule BulkAction do
+    defstruct [:action, :authorize, :extra_fields, :key, :label]
+  end
+
+  def available_bulk_actions() do
+    # TODO: how to pass data into `extra_fields`?
+    [
+      %BulkAction{
+        # TODO call correct context
+        action: &Artemis.GetUser.call_many(&1, &2),
+        authorize: &has_all?(&1, ["users:access:all", "users:update"]),
+        # TODO finish
+        extra_fields: fn -> content_tag(:div, "hello world") end,
+        key: "add-role",
+        label: "Add Role"
+      },
+      %BulkAction{
+        # TODO call correct context
+        action: &Artemis.GetUser.call_many(&1, &2),
+        authorize: &has_all?(&1, ["users:access:all", "users:update"]),
+        # TODO finish
+        extra_fields: fn -> content_tag(:div, "hello world") end,
+        key: "remove-role",
+        label: "Remove Role"
+      },
+      %BulkAction{
+        # TODO call correct context
+        action: &Artemis.GetUser.call_many(&1, &2),
+        authorize: &has?(&1, "users:delete"),
+        key: "delete",
+        label: "Delete User"
+      }
+    ]
+  end
+
+  def allowed_bulk_actions(user) do
+    Enum.reduce(available_bulk_actions(), [], fn entry, acc ->
+      case entry.authorize.(user) do
+        true -> [entry | acc]
+        false -> acc
+      end
+    end)
+  end
+
+  def get_bulk_action(key, user) do
+    match =
+      Enum.find(available_bulk_actions(), fn entry ->
+        entry.key == key && entry.authorize.(user)
+      end)
+
+    case match do
+      nil -> fn _, _ -> {:error, "Bulk action #{key} not found"} end
+      _ -> match.action
+    end
+  end
+
+  # Data Table
+
   def data_table_available_columns() do
     [
       {"Actions", "actions"},

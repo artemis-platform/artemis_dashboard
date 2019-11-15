@@ -13,7 +13,13 @@
     <div class="table-header">
       <%= render_search @conn %>
       <div class="table-actions">
-        <%= render_bulk_actions "Bulk Actions", Routes.user_path(@conn, :index_bulk_actions) %>
+        <%=
+          render_bulk_actions(
+            "Bulk Actions",
+            Routes.user_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: allowed_bulk_actions(current_user(@conn))
+          )
+        %>
 
         <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
       </div>

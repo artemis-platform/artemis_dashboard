@@ -111,67 +111,44 @@ defmodule ArtemisWeb.UserController do
 
   # Callbacks - Bulk Actions
 
-  # TODO
-  # Create a generic way to call an existing context many times
-  # Use it to wrap existing cloudant contexts for bulk actions
-  def call_many(records, function, options \\ []) do
-    initial = %{
-      halted?: false,
-      error_log: []
-    }
+  # TODO: preserve query_params
 
-    halt_on_error? = Keyword.get(options, :halt_on_error, false)
+  # TODO:
+  # Solve for complex case when custom fields need to be toggled based on selection
+  # - Maybe solve using jQuery with HTML and attribute fields?
 
-    Enum.reduce_while(records, initial, fn record, acc ->
-      result =
-        try do
-          function.(record)
-        rescue
-          error -> {:error, error}
-        end
-
-      error? = is_tuple(result) && elem(result, 0) == :error
-      halt? = error? && halt_on_error?
-
-      updated_error_log =
-        case error? do
-          true -> [result | acc.error_log]
-          false -> acc.error_log
-        end
-
-      acc =
-        acc
-        |> Map.put(:halted?, halt?)
-        |> Map.put(:error_log, updated_error_log)
-
-      case halt? do
-        true -> {:halt, acc}
-        false -> {:cont, acc}
-      end
-    end)
-  end
+  # TODO:
+  # Show total selected count using jQuery
+  # Make button blue when items are selected
 
   def index_bulk_actions(conn, params) do
-    ids = ["1", "101", "102"]
-    action = Map.get(params, "action")
-    user = current_user(conn)
+    authorize(conn, "users:list", fn ->
+      ids = Map.get(params, "ids") || []
+      key = Map.get(params, "bulk_action")
+      user = current_user(conn)
 
-    # TODO: permissions for each action
-    # - Define in View
-    # - Call from controller
-    # - Call each action
+      bulk_action = ArtemisWeb.UserView.get_bulk_action(key, user)
+      result = bulk_action.(ids, [params, user])
+      success? = is_map(result) && length(result.errors) == 0
 
-    action_lookup = %{
-      "delete" => fn ids -> call_many(ids, &GetUser.call!(&1, user)) end
-    }
+      case success? do
+        true ->
+          conn
+          |> put_flash(:info, "Successfully completed bulk #{key} action on #{length(result.data)} records")
+          |> redirect(to: Routes.user_path(conn, :index))
 
-    bulk_action = Map.get(action_lookup, action)
+        false ->
+          error_message =
+            case result do
+              {:error, message} -> message
+              _ -> "Error completing bulk #{key} action. Failed on #{length(result.errors)} of #{length(ids)} records."
+            end
 
-    IO.inspect(bulk_action.(ids))
-
-    conn
-    |> put_flash(:info, "Completed bulk action successfully")
-    |> redirect(to: Routes.user_path(conn, :index))
+          conn
+          |> put_flash(:error, error_message)
+          |> redirect(to: Routes.user_path(conn, :index))
+      end
+    end)
   end
 
   # Callbacks - Event Logs
