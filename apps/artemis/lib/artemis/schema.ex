@@ -14,16 +14,6 @@ defmodule Artemis.Schema do
       alias Artemis.Repo
       alias Artemis.Schema
 
-      def unique_values_for(field) do
-        __MODULE__
-        |> select(^[field])
-        |> distinct(^field)
-        |> order_by(asc: ^field)
-        |> Repo.all()
-        |> Enum.map(&Map.get(&1, field))
-        |> Enum.reject(&is_nil(&1))
-      end
-
       @behaviour Artemis.Schema
     end
   end

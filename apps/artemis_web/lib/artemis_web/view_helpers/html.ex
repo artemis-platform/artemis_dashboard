@@ -57,32 +57,6 @@ defmodule ArtemisWeb.ViewHelper.HTML do
   end
 
   @doc """
-  Render modal for bulk actions
-  """
-  def render_bulk_actions(label, to, options \\ []) do
-    allowed_bulk_actions = Keyword.get(options, :allowed_bulk_actions)
-    color = Keyword.get(options, :color) || "basic"
-    size = Keyword.get(options, :size, "medium")
-    modal_id = "modal-id-#{Artemis.Helpers.UUID.call()}"
-
-    button_options =
-      []
-      |> Keyword.put(:class, "button ui #{size} #{color} modal-trigger bulk-actions-button")
-      |> Keyword.put(:data, target: "##{modal_id}")
-      |> Keyword.put(:to, "#bulk-actions")
-
-    assigns = [
-      allowed_bulk_actions: allowed_bulk_actions,
-      button_label: label,
-      button_options: button_options,
-      modal_id: modal_id,
-      to: to
-    ]
-
-    Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
-  end
-
-  @doc """
   Render modal to confirm delete action
   """
   def delete_confirmation(label, to, options \\ []) do

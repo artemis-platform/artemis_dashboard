@@ -1,5 +1,6 @@
 defmodule Artemis.AuthProvider do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "auth_providers" do
     field :data, :map

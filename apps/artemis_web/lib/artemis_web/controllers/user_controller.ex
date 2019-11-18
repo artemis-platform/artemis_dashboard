@@ -18,12 +18,7 @@ defmodule ArtemisWeb.UserController do
       params = Map.put(params, :paginate, true)
       users = ListUsers.call(params, current_user(conn))
 
-      # TODO: pass data to bulk actions param
-      bulk_actions_data = [
-        roles: Artemis.Role.unique_values_for(:name)
-      ]
-
-      render(conn, "index.html", bulk_actions_data: bulk_actions_data, users: users)
+      render(conn, "index.html", users: users)
     end)
   end
 
@@ -118,13 +113,7 @@ defmodule ArtemisWeb.UserController do
 
   # TODO: preserve query_params
 
-  # TODO:
-  # Solve for complex case when custom fields need to be toggled based on selection
-  # - Maybe solve using jQuery with HTML and attribute fields?
-
-  # TODO:
-  # Show total selected count using jQuery
-  # Make button blue when items are selected
+  # TODO: add `selectable` option to all existing data_table entries
 
   def index_bulk_actions(conn, params) do
     authorize(conn, "users:list", fn ->
@@ -134,23 +123,19 @@ defmodule ArtemisWeb.UserController do
 
       bulk_action = ArtemisWeb.UserView.get_bulk_action(key, user)
       result = bulk_action.(ids, [params, user])
-      success? = is_map(result) && length(result.errors) == 0
+      total_errors = length(result.errors)
 
-      case success? do
+      case total_errors == 0 do
         true ->
           conn
           |> put_flash(:info, "Successfully completed bulk #{key} action on #{length(result.data)} records")
           |> redirect(to: Routes.user_path(conn, :index))
 
         false ->
-          error_message =
-            case result do
-              {:error, message} -> message
-              _ -> "Error completing bulk #{key} action. Failed on #{length(result.errors)} of #{length(ids)} records."
-            end
+          message = "Error completing bulk #{key} action. Failed on #{total_errors} of #{length(ids)} records."
 
           conn
-          |> put_flash(:error, error_message)
+          |> put_flash(:error, message)
           |> redirect(to: Routes.user_path(conn, :index))
       end
     end)

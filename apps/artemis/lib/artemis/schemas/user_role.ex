@@ -1,5 +1,6 @@
 defmodule Artemis.UserRole do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "user_roles" do
     belongs_to :created_by, Artemis.User, foreign_key: :created_by_id

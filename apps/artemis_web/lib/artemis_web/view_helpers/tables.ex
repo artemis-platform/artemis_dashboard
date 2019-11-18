@@ -88,7 +88,8 @@ defmodule ArtemisWeb.ViewHelper.Tables do
         @conn,
         @customers,
         allowed_columns: allowed_columns(),
-        default_columns: ["name", "slug", "actions"]
+        default_columns: ["name", "slug", "actions"],
+        selectable: true
       )
     %>
 
@@ -96,6 +97,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
     allowed_columns: map of allowed columns
     default_columns: list of strings
+    selectable: include checkbox for bulk actions
 
   ## Features
 
@@ -197,7 +199,8 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     params = [
       columns: columns,
       conn: conn,
-      data: data
+      data: data,
+      selectable: Keyword.get(options, :selectable)
     ]
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", params)
@@ -215,6 +218,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   Returns a map of matching keys in `allowed_columns`.
   """
   def get_data_table_columns(conn, options) do
+    selectable? = Keyword.get(options, :selectable, false)
     allowed_columns = Keyword.get(options, :allowed_columns, [])
     requested_columns = parse_data_table_requested_columns(conn, options)
 
@@ -228,8 +232,14 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
     columns = Enum.reverse(filtered)
 
-    # TODO only add if passed option
-    checkbox_column = [
+    case selectable? do
+      true -> [get_checkbox_column() | columns]
+      false -> columns
+    end
+  end
+
+  defp get_checkbox_column() do
+    [
       label: nil,
       label_html: fn _conn ->
         tag(:input, class: "ui checkbox select-all-rows", type: "checkbox", name: "id-toggle")
@@ -241,8 +251,6 @@ defmodule ArtemisWeb.ViewHelper.Tables do
         tag(:input, class: "ui checkbox select-row", type: "checkbox", name: "id[]", value: value)
       end
     ]
-
-    [checkbox_column | columns]
   end
 
   @doc """

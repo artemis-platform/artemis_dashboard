@@ -1,5 +1,6 @@
 defmodule Artemis.Customer do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "customers" do
     field :name, :string

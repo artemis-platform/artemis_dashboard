@@ -1,5 +1,6 @@
 defmodule Artemis.WikiPage do
   use Artemis.Schema
+  use Artemis.Schema.SQL
   use Assoc.Schema, repo: Artemis.Repo
 
   schema "wiki_pages" do

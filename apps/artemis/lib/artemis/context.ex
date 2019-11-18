@@ -3,6 +3,11 @@ defmodule Artemis.Context do
     defexception message: "Context Error"
   end
 
+  defmodule BulkActionResult do
+    defstruct data: [],
+              errors: []
+  end
+
   defmacro __using__(_options) do
     quote do
       import Artemis.Context
@@ -25,14 +30,9 @@ defmodule Artemis.Context do
       """
       @spec call_many(List.t(), List.t(), List.t()) :: any()
       def call_many(records, params, options \\ []) do
-        initial = %{
-          data: [],
-          errors: []
-        }
-
         halt_on_error? = Keyword.get(options, :halt_on_error, false)
 
-        Enum.reduce_while(records, initial, fn record, acc ->
+        Enum.reduce_while(records, %BulkActionResult{}, fn record, acc ->
           result =
             try do
               apply(__MODULE__, :call, [record | params])
@@ -46,7 +46,7 @@ defmodule Artemis.Context do
           updated_data =
             case error? do
               true -> acc.data
-              false -> [result | acc.data]
+              false -> [{record, result} | acc.data]
             end
 
           updated_errors =

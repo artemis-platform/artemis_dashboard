@@ -100,6 +100,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.Guardian.Helpers
       import ArtemisWeb.UserAccess
       import ArtemisWeb.ViewHelper.Breadcrumbs
+      import ArtemisWeb.ViewHelper.BulkActions
       import ArtemisWeb.ViewHelper.Cache
       import ArtemisWeb.ViewHelper.Charts
       import ArtemisWeb.ViewHelper.Conditionals
@@ -120,6 +121,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.Values
 
       alias ArtemisWeb.Router.Helpers, as: Routes
+      alias ArtemisWeb.ViewHelper.BulkActions.BulkAction
     end
   end
 
