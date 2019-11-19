@@ -1,5 +1,6 @@
 defmodule Artemis.Permission do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "permissions" do
     field :description, :string

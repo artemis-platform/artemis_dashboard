@@ -5,12 +5,13 @@
     Confirm Delete
   </div>
   <div class="content">
-    <%= form_tag @to, method: :delete, class: "ui form", id: "delete-confirmation-form" do %>
+    <% form_id = "delete-confirmation-form-#{Artemis.Helpers.UUID.call()}" %>
+    <%= form_tag @to, method: :delete, class: "ui form", id: form_id do %>
       <%= reason_field nil %>
     <% end %>
   </div>
   <div class="actions">
     <%= link "Cancel", class: "ui button cancel", to: "#" %>
-    <%= submit "Delete", class: "ui button ok red", form: "delete-confirmation-form" %>
+    <%= submit "Delete", class: "ui button ok red", form: form_id %>
   </div>
 </div>

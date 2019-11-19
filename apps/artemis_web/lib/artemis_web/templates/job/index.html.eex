@@ -36,7 +36,8 @@
         @conn,
         @jobs.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["id", "name", "command", "status", "first_run", "actions"]
+        default_columns: ["id", "name", "command", "status", "first_run", "actions"],
+        selectable: true
       )
     %>
 

@@ -1,5 +1,6 @@
 defmodule Artemis.Feature do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "features" do
     field :active, :boolean, default: false

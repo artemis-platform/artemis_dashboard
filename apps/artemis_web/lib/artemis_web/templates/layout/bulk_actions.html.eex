@@ -1,0 +1,44 @@
+<%= link @button_label, @button_options %>
+
+<div class="ui modal small" id="<%= @modal_id %>">
+  <div class="header">
+    Bulk Actions
+  </div>
+  <div class="content">
+    <% form_id = "bulk-actions-form-#{Artemis.Helpers.UUID.call()}" %>
+    <%= form_tag @to, method: :post, class: "ui form bulk-actions-form", id: form_id do %>
+      <input type="hidden" name="return_path" value="<%= @return_path %>" />
+
+      <div class="field reason-field">
+        <label>Selected Fields</label>
+        <div class="bulk-actions-selected"></div>
+      </div>
+
+      <div class="field reason-field">
+        <label for="bulk_action">Select Bulk Action</label>
+        <select class="enhanced" placeholder="Select Bulk Action" name="bulk_action">
+          <option value="">&nbsp;</option>
+          <%= Enum.map Enum.reverse(@allowed_bulk_actions), fn bulk_action -> %>
+            <option value="<%= bulk_action.key %>"><%= bulk_action.label %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="extra-fields">
+        <%= Enum.map @allowed_bulk_actions, fn bulk_action -> %>
+          <%= if bulk_action.extra_fields do %>
+            <div class="extra-field extra-field-<%= bulk_action.key %>">
+              <%= bulk_action.extra_fields.(@extra_fields_data) %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%= reason_field nil %>
+    <% end %>
+  </div>
+  <div class="actions">
+    <%= link "Cancel", class: "ui button cancel", to: "#" %>
+    <%= submit "Submit", class: "ui button ok blue", form: form_id %>
+  </div>
+</div>

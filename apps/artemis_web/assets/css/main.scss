@@ -112,6 +112,10 @@ select[multiple] {
       }
     }
   }
+
+  input[type="checkbox"] {
+    margin-top: 0.125rem;
+  }
 }
 
 .data-table-filters {
@@ -130,6 +134,13 @@ select[multiple] {
 
   .buttons {
     max-height: 36px;
+  }
+}
+
+.bulk-actions-form {
+
+  .extra-fields > * {
+    display: none;
   }
 }
 
@@ -635,6 +646,10 @@ ul.timeline {
   .field label .description {
     color: #888;
     font-weight: 500;
+  }
+
+  .field:last-child {
+    margin-top: 1rem;
   }
 }
 

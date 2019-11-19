@@ -1,5 +1,6 @@
 defmodule Artemis.WikiRevision do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "wiki_revisions" do
     field :body, :string

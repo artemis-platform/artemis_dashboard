@@ -146,6 +146,92 @@ function initializeSearchSubmit() {
   })
 }
 
+function initializeSelectTableRow() {
+  var update_bulk_actions_button = function(table) {
+    var button = table.closest('section').find('.bulk-actions-button')
+    var selected = table.find('.select-row:checked')
+    var ids = selected.map(function() { return this.value }).get()
+    var total = selected.length
+
+    if (total > 0) {
+      button.addClass('blue').removeClass('basic')
+      button.text('Bulk Actions (' + total + ')')
+    } else {
+      button.addClass('basic').removeClass('blue')
+      button.text('Bulk Actions')
+    }
+
+    var modal = $(button.data('target'))
+    var form = modal.find('.bulk-actions-selected')
+    var pluralized = total === 1 ? 'record' : 'records'
+    var total_text = '<span class="selected-count">' + total + ' ' + pluralized + ' selected</span>'
+    var hidden_fields = $.map(ids, function(id) {
+      return '<input type="hidden" name="ids[]" value="' + id + '" />'
+    }).join('')
+
+    form
+      .empty()
+      .append(total_text)
+      .append(hidden_fields)
+  }
+
+  // Select many rows
+
+  $('.data-table .select-all-rows').each(function() {
+    var input = $(this)
+    var table = input.closest('table')
+    var rows = table.find('.select-row')
+
+    update_bulk_actions_button(table)
+
+    input.click(function(event) {
+      var checked = $(this).prop('checked')
+
+      rows.each(function(index) {
+        $(this).prop('checked', checked)
+      })
+
+      update_bulk_actions_button(table)
+    })
+  })
+
+  // Select an individual row
+
+  $('.data-table .select-row').each(function() {
+    var input = $(this)
+    var table = input.closest('table')
+    var row = input.closest('tr')
+
+    row.click(function(event) {
+      var is_row_background = (event.target.nodeName === 'TD')
+
+      if (is_row_background) {
+        input.prop('checked', !input.prop('checked'))
+      }
+
+      update_bulk_actions_button(table)
+    })
+  })
+
+  // Show any extra form fields in the modal specific to
+  // the selected bulk action
+
+  $('.bulk-actions-form').each(function() {
+    var form = $(this)
+    var select = form.find('select[name=bulk_action]')
+    var extra_fields = form.find('.extra-fields')
+
+    select.change(function(event) {
+      var value = $(this).val()
+      var all_fields = extra_fields.find('.extra-field')
+      var selected_field = extra_fields.find('.extra-field-' + value)
+
+      all_fields.hide()
+      selected_field.show()
+    })
+  })
+}
+
 function initializeSidebars() {
   $('.open-sidebar-current-user').click(function(event) {
     if (event) {
@@ -238,7 +324,7 @@ function initializeWikiSidenav() {
   var highlightReadAheadBuffer = 16
   var highlightSections = $('#wiki-page aside nav.page-sections ul li')
 
-  var updateHighlight = function () { 
+  var updateHighlight = function () {
     var windowPosition = window.pageYOffset + highlightReadAheadBuffer
     var windowIsAtBottom = (window.innerHeight + window.pageYOffset) >= document.body.scrollHeight
     var highlightNext = 0
@@ -280,6 +366,7 @@ $(document).ready(function() {
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()
+  initializeSelectTableRow()
   initializeTagForm()
   initializeWikiSidenav()
 })

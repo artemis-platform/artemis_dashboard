@@ -1,5 +1,6 @@
 defmodule Artemis.UserRole do
   use Artemis.Schema
+  use Artemis.Schema.SQL
 
   schema "user_roles" do
     belongs_to :created_by, Artemis.User, foreign_key: :created_by_id
@@ -20,7 +21,12 @@ defmodule Artemis.UserRole do
 
   def required_fields, do: []
 
-  def event_log_fields, do: []
+  def event_log_fields,
+    do: [
+      :created_by_id,
+      :role_id,
+      :user_id
+    ]
 
   # Changesets
 

@@ -13,6 +13,18 @@
     <div class="table-header">
       <%= render_search @conn %>
       <div class="table-actions">
+        <%=
+          render_bulk_actions(
+            @conn,
+            "Bulk Actions",
+            Routes.user_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: allowed_bulk_actions(current_user(@conn)),
+            extra_fields_data: [
+              roles: Artemis.Role.select_values_for(:name)
+            ]
+          )
+        %>
+
         <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
       </div>
     </div>
@@ -22,7 +34,8 @@
         @conn,
         @users.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["name", "email", "last_log_in_at", "actions"]
+        default_columns: ["name", "email", "roles", "last_log_in_at", "actions"],
+        selectable: true
       )
     %>
 
