@@ -29,11 +29,10 @@ defmodule ArtemisWeb.UserView do
         label: "Remove Role"
       },
       %BulkAction{
-        # TODO call correct context
-        action: &Artemis.GetUser.call_many(&1, &2),
+        action: &Artemis.DeleteUser.call_many(&1, &2),
         authorize: &has?(&1, "users:delete"),
         key: "delete",
-        label: "Delete User"
+        label: "Delete Users"
       }
     ]
   end
@@ -48,8 +47,8 @@ defmodule ArtemisWeb.UserView do
   end
 
   def get_bulk_action(key, user) do
-    Enum.find(available_bulk_actions(), fn entry ->
-      entry.key == key && entry.authorize.(user)
+    Enum.find_value(available_bulk_actions(), fn entry ->
+      entry.key == key && entry.authorize.(user) && entry.action
     end)
   end
 

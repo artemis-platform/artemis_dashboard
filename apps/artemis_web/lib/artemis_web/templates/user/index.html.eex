@@ -15,6 +15,7 @@
       <div class="table-actions">
         <%=
           render_bulk_actions(
+            @conn,
             "Bulk Actions",
             Routes.user_path(@conn, :index_bulk_actions),
             allowed_bulk_actions: allowed_bulk_actions(current_user(@conn)),

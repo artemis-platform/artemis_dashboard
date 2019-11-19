@@ -7,6 +7,8 @@
   <div class="content">
     <% form_id = "bulk-actions-form-#{Artemis.Helpers.UUID.call()}" %>
     <%= form_tag @to, method: :post, class: "ui form bulk-actions-form", id: form_id do %>
+      <input type="hidden" name="return_path" value="<%= @return_path %>" />
+
       <div class="field reason-field">
         <label>Selected Fields</label>
         <div class="bulk-actions-selected"></div>

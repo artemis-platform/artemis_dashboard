@@ -8,7 +8,7 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
   @doc """
   Render modal for bulk actions
   """
-  def render_bulk_actions(label, to, options \\ []) do
+  def render_bulk_actions(conn, label, to, options \\ []) do
     allowed_bulk_actions = Keyword.get(options, :allowed_bulk_actions)
     extra_fields_data = Keyword.get(options, :extra_fields_data)
     color = Keyword.get(options, :color) || "basic"
@@ -21,12 +21,16 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
       |> Keyword.put(:data, target: "##{modal_id}")
       |> Keyword.put(:to, "#bulk-actions")
 
+    current_path = "#{conn.request_path}?#{conn.query_string}"
+    return_path = Keyword.get(options, :return_path, current_path)
+
     assigns = [
       allowed_bulk_actions: allowed_bulk_actions,
-      extra_fields_data: extra_fields_data,
       button_label: label,
       button_options: button_options,
+      extra_fields_data: extra_fields_data,
       modal_id: modal_id,
+      return_path: return_path,
       to: to
     ]
 

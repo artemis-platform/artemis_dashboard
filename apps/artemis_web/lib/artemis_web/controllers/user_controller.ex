@@ -1,7 +1,7 @@
 defmodule ArtemisWeb.UserController do
   use ArtemisWeb, :controller
-  use ArtemisWeb.Controller.Behaviour.EventLogs
   use ArtemisWeb.Controller.Behaviour.BulkActions
+  use ArtemisWeb.Controller.Behaviour.EventLogs
 
   alias Artemis.CreateUser
   alias Artemis.User
@@ -111,15 +111,15 @@ defmodule ArtemisWeb.UserController do
 
   # Callbacks - Bulk Actions
 
-  # TODO: preserve query_params
-
   # TODO: add `selectable` option to all existing data_table entries
+  # TODO: add `bulk_actions` endpoint to controllers
 
   def index_bulk_actions(conn, params) do
     authorize(conn, "users:list", fn ->
       ids = Map.get(params, "ids") || []
       key = Map.get(params, "bulk_action")
       user = current_user(conn)
+      return_path = Map.get(params, "return_path", Routes.user_path(conn, :index))
 
       bulk_action = ArtemisWeb.UserView.get_bulk_action(key, user)
       result = bulk_action.(ids, [params, user])
@@ -129,14 +129,14 @@ defmodule ArtemisWeb.UserController do
         true ->
           conn
           |> put_flash(:info, "Successfully completed bulk #{key} action on #{length(result.data)} records")
-          |> redirect(to: Routes.user_path(conn, :index))
+          |> redirect(to: return_path)
 
         false ->
           message = "Error completing bulk #{key} action. Failed on #{total_errors} of #{length(ids)} records."
 
           conn
           |> put_flash(:error, message)
-          |> redirect(to: Routes.user_path(conn, :index))
+          |> redirect(to: return_path)
       end
     end)
   end
