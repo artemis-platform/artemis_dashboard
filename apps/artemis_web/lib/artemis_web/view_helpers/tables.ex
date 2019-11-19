@@ -240,11 +240,11 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp get_checkbox_column() do
     [
-      label: nil,
+      label: fn _conn -> nil end,
       label_html: fn _conn ->
         tag(:input, class: "ui checkbox select-all-rows", type: "checkbox", name: "id-toggle")
       end,
-      value: nil,
+      value: fn _conn, _row -> nil end,
       value_html: fn _conn, row ->
         value = Map.get(row, :_id, Map.get(row, :id))
 

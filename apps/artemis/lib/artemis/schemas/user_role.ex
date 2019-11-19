@@ -21,7 +21,12 @@ defmodule Artemis.UserRole do
 
   def required_fields, do: []
 
-  def event_log_fields, do: []
+  def event_log_fields,
+    do: [
+      :created_by_id,
+      :role_id,
+      :user_id
+    ]
 
   # Changesets
 

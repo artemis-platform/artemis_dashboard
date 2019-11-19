@@ -15,7 +15,11 @@ defmodule ArtemisWeb.UserController do
 
   def index(conn, params) do
     authorize(conn, "users:list", fn ->
-      params = Map.put(params, :paginate, true)
+      params =
+        params
+        |> Map.put(:paginate, true)
+        |> Map.put(:preload, [:roles])
+
       users = ListUsers.call(params, current_user(conn))
 
       render(conn, "index.html", users: users)

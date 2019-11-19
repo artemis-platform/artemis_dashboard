@@ -11,18 +11,26 @@ defmodule ArtemisWeb.UserView do
   def available_bulk_actions() do
     [
       %BulkAction{
-        # TODO call correct context
-        action: &Artemis.GetUser.call_many(&1, &2),
+        action: fn ids, [request_params, user] ->
+          role_id = Map.get(request_params, "add_role_id")
+          params = [role_id, request_params, user]
+
+          Artemis.GetOrCreateUserRole.call_many(ids, params)
+        end,
         authorize: &has_all?(&1, ["users:access:all", "users:update"]),
-        extra_fields: &render_extra_field_roles(&1),
+        extra_fields: &render_extra_fields_add_role(&1),
         key: "add-role",
         label: "Add Role"
       },
       %BulkAction{
-        # TODO call correct context
-        action: &Artemis.GetUser.call_many(&1, &2),
+        action: fn ids, [request_params, user] ->
+          role_id = Map.get(request_params, "remove_role_id")
+          params = [role_id, request_params, user]
+
+          Artemis.GetAndDeleteUserRole.call_many(ids, params)
+        end,
         authorize: &has_all?(&1, ["users:access:all", "users:update"]),
-        extra_fields: &render_extra_field_roles(&1),
+        extra_fields: &render_extra_fields_remove_role(&1),
         key: "remove-role",
         label: "Remove Role"
       },
@@ -50,12 +58,20 @@ defmodule ArtemisWeb.UserView do
     end)
   end
 
-  defp render_extra_field_roles(data) do
+  defp render_extra_fields_add_role(data) do
+    render_extra_field_select_role(data, "add_role_id")
+  end
+
+  defp render_extra_fields_remove_role(data) do
+    render_extra_field_select_role(data, "remove_role_id")
+  end
+
+  defp render_extra_field_select_role(data, name) do
     roles = Keyword.get(data, :roles)
     label_tag = content_tag(:label, "Roles")
 
     select_tag =
-      content_tag(:select, class: "enhanced", name: "roles", placeholder: "Roles") do
+      content_tag(:select, class: "enhanced", name: name, placeholder: "Roles") do
         Enum.map(roles, fn [value, label] ->
           content_tag(:option, value: value) do
             label
@@ -77,7 +93,8 @@ defmodule ArtemisWeb.UserView do
       {"First Name", "first_name"},
       {"Last Login", "last_log_in_at"},
       {"Last Name", "last_name"},
-      {"Name", "name"}
+      {"Name", "name"},
+      {"Roles", "roles"}
     ]
   end
 
@@ -124,6 +141,19 @@ defmodule ArtemisWeb.UserView do
         value: fn _conn, row -> row.name end,
         value_html: fn conn, row ->
           link(row.name, to: Routes.user_path(conn, :show, row))
+        end
+      ],
+      "roles" => [
+        label: fn _conn -> "Roles" end,
+        value: fn _conn, row ->
+          row.roles
+          |> Enum.map(&Map.get(&1, :name))
+          |> Enum.join("\n")
+        end,
+        value_html: fn _conn, row ->
+          Enum.map(row.roles, fn role ->
+            content_tag(:div, role.name)
+          end)
         end
       ]
     }
