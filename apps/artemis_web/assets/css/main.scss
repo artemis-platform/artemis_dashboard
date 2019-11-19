@@ -647,6 +647,10 @@ ul.timeline {
     color: #888;
     font-weight: 500;
   }
+
+  .field:last-child {
+    margin-top: 1rem;
+  }
 }
 
 /* === Components - Inline Fields === */

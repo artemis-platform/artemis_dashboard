@@ -14,8 +14,7 @@ defmodule ArtemisWeb.UserView do
         # TODO call correct context
         action: &Artemis.GetUser.call_many(&1, &2),
         authorize: &has_all?(&1, ["users:access:all", "users:update"]),
-        # TODO finish
-        extra_fields: fn _extra_fields_data -> content_tag(:div, "hello world") end,
+        extra_fields: &render_extra_field_roles(&1),
         key: "add-role",
         label: "Add Role"
       },
@@ -23,8 +22,7 @@ defmodule ArtemisWeb.UserView do
         # TODO call correct context
         action: &Artemis.GetUser.call_many(&1, &2),
         authorize: &has_all?(&1, ["users:access:all", "users:update"]),
-        # TODO finish
-        extra_fields: fn _extra_fields_data -> content_tag(:div, "hello world") end,
+        extra_fields: &render_extra_field_roles(&1),
         key: "remove-role",
         label: "Remove Role"
       },
@@ -50,6 +48,24 @@ defmodule ArtemisWeb.UserView do
     Enum.find_value(available_bulk_actions(), fn entry ->
       entry.key == key && entry.authorize.(user) && entry.action
     end)
+  end
+
+  defp render_extra_field_roles(data) do
+    roles = Keyword.get(data, :roles)
+    label_tag = content_tag(:label, "Roles")
+
+    select_tag =
+      content_tag(:select, class: "enhanced", name: "roles", placeholder: "Roles") do
+        Enum.map(roles, fn [value, label] ->
+          content_tag(:option, value: value) do
+            label
+          end
+        end)
+      end
+
+    content_tag(:div, class: "field") do
+      [label_tag, select_tag]
+    end
   end
 
   # Data Table
