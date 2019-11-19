@@ -3,6 +3,36 @@ defmodule ArtemisWeb.PermissionView do
 
   import ArtemisWeb.UserAccess
 
+  # Bulk Actions
+
+  def available_bulk_actions() do
+    [
+      %BulkAction{
+        action: &Artemis.DeletePermission.call_many(&1, &2),
+        authorize: &has?(&1, "permissions:delete"),
+        key: "delete",
+        label: "Delete Permissions"
+      }
+    ]
+  end
+
+  def allowed_bulk_actions(user) do
+    Enum.reduce(available_bulk_actions(), [], fn entry, acc ->
+      case entry.authorize.(user) do
+        true -> [entry | acc]
+        false -> acc
+      end
+    end)
+  end
+
+  def get_bulk_action(key, user) do
+    Enum.find_value(available_bulk_actions(), fn entry ->
+      entry.key == key && entry.authorize.(user) && entry.action
+    end)
+  end
+
+  # Data Table
+
   def data_table_available_columns() do
     [
       {"Actions", "actions"},

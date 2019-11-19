@@ -99,6 +99,7 @@ defmodule ArtemisWeb.Router do
 
       # Permissions
 
+      post "/permissions/bulk-actions", PermissionController, :index_bulk_actions
       get "/permissions/event-logs", PermissionController, :index_event_log_list
       get "/permissions/event-logs/:id", PermissionController, :index_event_log_details
 

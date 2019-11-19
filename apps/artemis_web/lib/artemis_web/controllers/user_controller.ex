@@ -111,9 +111,6 @@ defmodule ArtemisWeb.UserController do
 
   # Callbacks - Bulk Actions
 
-  # TODO: add `selectable` option to all existing data_table entries
-  # TODO: add `bulk_actions` endpoint to controllers
-
   def index_bulk_actions(conn, params) do
     authorize(conn, "users:list", fn ->
       ids = Map.get(params, "ids") || []
