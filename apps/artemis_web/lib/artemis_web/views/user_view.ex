@@ -37,6 +37,7 @@ defmodule ArtemisWeb.UserView do
       %BulkAction{
         action: &Artemis.DeleteUser.call_many(&1, &2),
         authorize: &has?(&1, "users:delete"),
+        extra_fields: &render_extra_fields_delete_warning(&1),
         key: "delete",
         label: "Delete Users"
       }

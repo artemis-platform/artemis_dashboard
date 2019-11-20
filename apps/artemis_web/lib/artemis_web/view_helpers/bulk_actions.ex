@@ -39,4 +39,15 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
       false -> nil
     end
   end
+
+  @doc """
+  Render a reusable warning for bulk delete actions
+  """
+  def render_extra_fields_delete_warning(_extra_fields_data) do
+    ArtemisWeb.ViewHelper.Notifications.render_notification(
+      :error,
+      header: "Warning",
+      body: "The selected action will bulk delete multiple records. Proceed with caution!"
+    )
+  end
 end
