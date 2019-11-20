@@ -13,6 +13,53 @@ defmodule Artemis.Helpers.BulkAction do
     halt_on_error: boolean (default false)
       When true, execution will stop after first failure.
 
+  ## Example Usage
+
+  The function can be passed as a `do` block:
+
+    BulkAction.call([1,2,3]) do
+      fn (item) -> item + 1 end
+    end
+
+    => %BulkAction.Result{
+      data: [{3, 4}, {2, 3}, {1, 2}],
+      errors: []
+    }
+
+  Or under the `action` key:
+
+    BulkAction.call([1,2,3], action: fn (item) -> item + 1 end)
+
+    => %BulkAction.Result{
+      data: [{3, 4}, {2, 3}, {1, 2}],
+      errors: []
+    }
+
+  Additional parameters can be passed as a list as an optional second argument:
+
+    BulkAction.call([1,2,3], [8, 20]) do
+      fn (item, add_by, multiply_by) -> (item + add_by) * multiply_by
+    end
+
+    => %BulkAction.Result{
+      data: [{3, 220}, {2, 200}, {1, 180}],
+      errors: []
+    }
+
+  The second argument changes the arity of the action function.
+
+  ## Return Value
+
+  Returns a struct:
+
+      %Artemis.Helpers.BulkAction{
+        data: [],
+        errors: []
+      }
+
+  Where `data` is a keyword list of successful results and `errors` is a list
+  of errors.
+
   """
 
   @spec call(function(), List.t(), List.t()) :: any()
@@ -39,7 +86,7 @@ defmodule Artemis.Helpers.BulkAction do
 
       updated_errors =
         case error? do
-          true -> [result | acc.errors]
+          true -> [{record, result} | acc.errors]
           false -> acc.errors
         end
 
