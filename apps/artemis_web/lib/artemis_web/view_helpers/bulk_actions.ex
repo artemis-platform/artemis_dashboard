@@ -47,7 +47,7 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
     ArtemisWeb.ViewHelper.Notifications.render_notification(
       :error,
       header: "Warning",
-      body: "The selected action will bulk delete multiple records. Proceed with caution!"
+      body: "The selected action will bulk delete multiple records."
     )
   end
 end

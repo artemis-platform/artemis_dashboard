@@ -17,6 +17,8 @@
       <div class="field reason-field">
         <label for="bulk_action">Select Bulk Action</label>
         <select class="enhanced" placeholder="Select Bulk Action" name="bulk_action">
+          <% # Note: Select2 needs two empty options fields to guarantee placeholder will be shown %>
+          <option value="">&nbsp;</option>
           <option value="">&nbsp;</option>
           <%= Enum.map Enum.reverse(@allowed_bulk_actions), fn bulk_action -> %>
             <option value="<%= bulk_action.key %>"><%= bulk_action.label %></option>
