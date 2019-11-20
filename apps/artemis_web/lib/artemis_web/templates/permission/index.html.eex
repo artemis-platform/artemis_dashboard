@@ -18,7 +18,7 @@
             @conn,
             "Bulk Actions",
             Routes.permission_path(@conn, :index_bulk_actions),
-            allowed_bulk_actions: allowed_bulk_actions(current_user(@conn))
+            allowed_bulk_actions: @allowed_bulk_actions,
           )
         %>
 
@@ -32,7 +32,7 @@
         @permissions.entries,
         allowed_columns: data_table_allowed_columns(),
         default_columns: ["name", "slug", "actions"],
-        selectable: true
+        selectable: length(@allowed_bulk_actions) > 0
       )
     %>
 

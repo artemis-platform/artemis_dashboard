@@ -148,12 +148,14 @@ defmodule ArtemisWeb.UserView do
         value: fn _conn, row ->
           row.roles
           |> Enum.map(&Map.get(&1, :name))
+          |> Enum.sort()
           |> Enum.join("\n")
         end,
         value_html: fn _conn, row ->
-          Enum.map(row.roles, fn role ->
-            content_tag(:div, role.name)
-          end)
+          row.roles
+          |> Enum.map(&Map.get(&1, :name))
+          |> Enum.sort()
+          |> Enum.map(&content_tag(:div, &1))
         end
       ]
     }

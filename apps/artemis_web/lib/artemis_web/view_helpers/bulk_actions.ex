@@ -34,6 +34,9 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
       to: to
     ]
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
+    case length(allowed_bulk_actions) > 0 do
+      true -> Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
+      false -> nil
+    end
   end
 end
