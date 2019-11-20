@@ -15,21 +15,18 @@ defmodule Artemis.Context do
       alias Artemis.Event
 
       @doc """
-      Iterates over a list of records and executes `__MODULE__.call()` on each.
-
-      Options include:
-
-        halt_on_error: boolean (default false)
-          When true, execution will stop after first failure.
-
+      Wrapper around `Artemis.Helpers.BulkAction.call`. Iterates over a list of
+      records and executes `__MODULE__.call()` on each.
       """
       @spec call_many(List.t(), List.t(), List.t()) :: any()
       def call_many(records, params, options \\ []) do
-        Artemis.Helpers.BulkAction.call(records) do
-          fn record ->
-            apply(__MODULE__, :call, [record | params])
-          end
+        action = fn record ->
+          apply(__MODULE__, :call, [record | params])
         end
+
+        options = Keyword.put(options, :action, action)
+
+        Artemis.Helpers.BulkAction.call(records, options)
       end
     end
   end
