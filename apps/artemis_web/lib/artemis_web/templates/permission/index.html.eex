@@ -18,7 +18,7 @@
             @conn,
             "Bulk Actions",
             Routes.permission_path(@conn, :index_bulk_actions),
-            allowed_bulk_actions: @allowed_bulk_actions,
+            allowed_bulk_actions: @allowed_bulk_actions
           )
         %>
 
