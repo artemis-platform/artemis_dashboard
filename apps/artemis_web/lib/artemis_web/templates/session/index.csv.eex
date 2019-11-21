@@ -1,0 +1,12 @@
+<%=
+  render_data_table(
+    @conn,
+    @sessions.entries,
+    allowed_columns: data_table_allowed_columns(),
+    default_columns: [
+      "session_id",
+      "user_name",
+      "inserted_at"
+    ]
+  )
+%>

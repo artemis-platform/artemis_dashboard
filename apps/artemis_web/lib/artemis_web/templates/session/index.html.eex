@@ -24,12 +24,14 @@
     <div class="table-header">
       <%= render_search @conn %>
 
-      <div>
+      <div class="table-actions">
         <%=
           options = ArtemisLog.EventLog.unique_values_for(:session_id)
 
           filter_multi_select(@conn, "Session ID", :session_id, options)
         %>
+
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
       </div>
     </div>
 

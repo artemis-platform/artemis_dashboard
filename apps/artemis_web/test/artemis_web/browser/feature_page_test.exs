@@ -89,7 +89,7 @@ defmodule ArtemisWeb.FeaturePageTest do
     end
 
     test "record details", %{feature: feature} do
-      click_link(feature.slug)
+      click_link(feature.name)
 
       assert visible?(feature.name)
       assert visible?(feature.slug)
@@ -109,7 +109,7 @@ defmodule ArtemisWeb.FeaturePageTest do
     end
 
     test "successfully updates record", %{feature: feature} do
-      click_link(feature.slug)
+      click_link(feature.name)
       click_link("Edit")
 
       fill_inputs("#feature-form", %{
@@ -136,12 +136,12 @@ defmodule ArtemisWeb.FeaturePageTest do
 
     @tag :uses_browser_alert_box
     # test "deletes record and redirects to index", %{feature: feature} do
-    #   click_link(feature.slug)
+    #   click_link(feature.name)
     #   click_button("Delete")
     #   accept_dialog()
 
     #   assert current_url() == @url
-    #   assert not visible?(feature.slug)
+    #   assert not visible?(feature.name)
     # end
   end
 end
