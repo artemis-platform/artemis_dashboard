@@ -10,42 +10,22 @@
   <%= render_event_log_notifications @conn, "Customer" %>
 
   <section>
-    <%= render_search @conn %>
+    <div class="table-header">
+      <%= render_search @conn %>
+      <div class="table-actions">
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
+    </div>
 
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th><%= sortable_table_header(@conn, "name", "Name") %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render_table_row_if_empty(@customers.entries) %>
-        <%= for customer <- @customers.entries do %>
-          <tr>
-            <td>
-              <%= if has?(@conn, "customers:show") do %>
-                <%= link customer.name, to: Routes.customer_path(@conn, :show, customer) %>
-              <% else %>
-                <%= customer.name %>
-              <% end %>
-            </td>
-            <td>
-              <%= if has?(@conn, "customers:show") do %>
-                <%= link "Show", to: Routes.customer_path(@conn, :show, customer) %>
-              <% end %>
-              <%= if has?(@conn, "customers:update") do %>
-                <%= link "Edit", to: Routes.customer_path(@conn, :edit, customer) %>
-              <% end %>
-              <%= if has?(@conn, "customers:delete") do %>
-                <%= link "Delete", to: Routes.customer_path(@conn, :delete, customer), method: :delete, data: [confirm: "Are you sure?"] %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%=
+      render_data_table(
+        @conn,
+        @customers.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "actions"]
+      )
+    %>
+
+    <%= render_pagination @conn, @customers %>
   </section>
-
-  <%= render_pagination @conn, @customers %>
 </div>

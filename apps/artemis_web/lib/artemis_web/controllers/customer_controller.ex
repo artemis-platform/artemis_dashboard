@@ -14,9 +14,14 @@ defmodule ArtemisWeb.CustomerController do
   def index(conn, params) do
     authorize(conn, "customers:list", fn ->
       params = Map.put(params, :paginate, true)
-      customers = ListCustomers.call(params, current_user(conn))
+      user = current_user(conn)
+      customers = ListCustomers.call(params, user)
 
-      render(conn, "index.html", customers: customers)
+      assigns = [
+        customers: customers
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

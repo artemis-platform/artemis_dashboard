@@ -150,7 +150,7 @@ defmodule ArtemisWeb.UserView do
           row.roles
           |> Enum.map(&Map.get(&1, :name))
           |> Enum.sort()
-          |> Enum.join("\n")
+          |> Enum.join(", ")
         end,
         value_html: fn _conn, row ->
           row.roles
