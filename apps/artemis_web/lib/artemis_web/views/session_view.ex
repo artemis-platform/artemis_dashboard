@@ -36,11 +36,11 @@ defmodule ArtemisWeb.SessionView do
       ],
       "user_id" => [
         label: fn _conn -> "User ID" end,
-        value: fn _conn, row -> row.user_id end
+        value: fn _conn, row -> Map.get(row, :user_id) end
       ],
       "user_name" => [
         label: fn _conn -> "User Name" end,
-        value: fn _conn, row -> row.user_name end
+        value: fn _conn, row -> Map.get(row, :user_name) end
       ]
     }
   end

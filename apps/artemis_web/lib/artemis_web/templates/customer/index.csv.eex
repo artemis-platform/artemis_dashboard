@@ -1,0 +1,8 @@
+<%=
+  render_data_table(
+    @conn,
+    @customers.entries,
+    allowed_columns: data_table_allowed_columns(),
+    default_columns: ["name"]
+  )
+%>

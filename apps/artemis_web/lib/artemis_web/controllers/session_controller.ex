@@ -10,7 +10,11 @@ defmodule ArtemisWeb.SessionController do
       user = current_user(conn)
       sessions = ListSessions.call(params, user)
 
-      render(conn, "index.html", sessions: sessions)
+      assigns = [
+        sessions: sessions
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

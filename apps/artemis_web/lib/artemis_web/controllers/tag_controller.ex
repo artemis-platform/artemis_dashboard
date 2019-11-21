@@ -13,10 +13,15 @@ defmodule ArtemisWeb.TagController do
 
   def index(conn, params) do
     authorize(conn, "tags:list", fn ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      tags = ListTags.call(params, current_user(conn))
+      tags = ListTags.call(params, user)
 
-      render(conn, "index.html", tags: tags)
+      assigns = [
+        tags: tags
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 
