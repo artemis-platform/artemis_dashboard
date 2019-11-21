@@ -14,10 +14,17 @@ defmodule ArtemisWeb.PermissionController do
 
   def index(conn, params) do
     authorize(conn, "permissions:list", fn ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      permissions = ListPermissions.call(params, current_user(conn))
+      permissions = ListPermissions.call(params, user)
+      allowed_bulk_actions = ArtemisWeb.PermissionView.allowed_bulk_actions(user)
 
-      render_format(conn, "index", permissions: permissions)
+      assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
+        permissions: permissions
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

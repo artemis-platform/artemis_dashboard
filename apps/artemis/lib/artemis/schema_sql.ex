@@ -17,7 +17,7 @@ defmodule Artemis.Schema.SQL do
         |> Enum.reject(&is_nil(&1))
       end
 
-      def select_values_for(label, value \\ :id) do
+      def unique_select_values_for(label, value \\ :id) do
         __MODULE__
         |> select(^[label, value])
         |> distinct(^label)

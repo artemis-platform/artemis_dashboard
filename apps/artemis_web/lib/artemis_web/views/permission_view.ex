@@ -10,6 +10,7 @@ defmodule ArtemisWeb.PermissionView do
       %BulkAction{
         action: &Artemis.DeletePermission.call_many(&1, &2),
         authorize: &has?(&1, "permissions:delete"),
+        extra_fields: &render_extra_fields_delete_warning(&1),
         key: "delete",
         label: "Delete Permissions"
       }

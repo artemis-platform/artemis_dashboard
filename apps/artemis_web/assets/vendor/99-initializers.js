@@ -163,8 +163,8 @@ function initializeSelectTableRow() {
 
     var modal = $(button.data('target'))
     var form = modal.find('.bulk-actions-selected')
-    var pluralized = total === 1 ? 'record' : 'records'
-    var total_text = '<span class="selected-count">' + total + ' ' + pluralized + ' selected</span>'
+    var pluralized = total === 1 ? 'Record' : 'Records'
+    var total_text = '<span class="selected-count">' + total + ' ' + pluralized + ' Selected</span>'
     var hidden_fields = $.map(ids, function(id) {
       return '<input type="hidden" name="ids[]" value="' + id + '" />'
     }).join('')

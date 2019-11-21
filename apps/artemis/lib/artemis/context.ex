@@ -3,11 +3,6 @@ defmodule Artemis.Context do
     defexception message: "Context Error"
   end
 
-  defmodule BulkActionResult do
-    defstruct data: [],
-              errors: []
-  end
-
   defmacro __using__(_options) do
     quote do
       import Artemis.Context
@@ -20,51 +15,18 @@ defmodule Artemis.Context do
       alias Artemis.Event
 
       @doc """
-      Iterates over a list of records and executes `call` on each.
-
-      Options include:
-
-        halt_on_error: boolean (default false)
-          When true, execution will stop after first failure.
-
+      Wrapper around `Artemis.Helpers.BulkAction.call`. Iterates over a list of
+      records and executes `__MODULE__.call()` on each.
       """
       @spec call_many(List.t(), List.t(), List.t()) :: any()
       def call_many(records, params, options \\ []) do
-        halt_on_error? = Keyword.get(options, :halt_on_error, false)
+        action = fn record ->
+          apply(__MODULE__, :call, [record | params])
+        end
 
-        Enum.reduce_while(records, %BulkActionResult{}, fn record, acc ->
-          result =
-            try do
-              apply(__MODULE__, :call, [record | params])
-            rescue
-              error -> {:error, error}
-            end
+        options = Keyword.put(options, :action, action)
 
-          error? = is_tuple(result) && elem(result, 0) == :error
-          halt? = error? && halt_on_error?
-
-          updated_data =
-            case error? do
-              true -> acc.data
-              false -> [{record, result} | acc.data]
-            end
-
-          updated_errors =
-            case error? do
-              true -> [result | acc.errors]
-              false -> acc.errors
-            end
-
-          acc =
-            acc
-            |> Map.put(:data, updated_data)
-            |> Map.put(:errors, updated_errors)
-
-          case halt? do
-            true -> {:halt, acc}
-            false -> {:cont, acc}
-          end
-        end)
+        Artemis.Helpers.BulkAction.call(records, options)
       end
     end
   end

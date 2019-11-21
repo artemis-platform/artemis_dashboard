@@ -34,6 +34,20 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
       to: to
     ]
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
+    case length(allowed_bulk_actions) > 0 do
+      true -> Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
+      false -> nil
+    end
+  end
+
+  @doc """
+  Render a reusable warning for bulk delete actions
+  """
+  def render_extra_fields_delete_warning(_extra_fields_data) do
+    ArtemisWeb.ViewHelper.Notifications.render_notification(
+      :error,
+      header: "Warning",
+      body: "The selected action will bulk delete multiple records."
+    )
   end
 end

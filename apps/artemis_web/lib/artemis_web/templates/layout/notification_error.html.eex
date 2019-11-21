@@ -2,7 +2,7 @@
   <i class="warning sign icon"></i>
   <div class="content">
     <div class="header">
-      Error
+      <%= assigns[:header] || "Error" %>
     </div>
     <p><%= @body %></p>
   </div>

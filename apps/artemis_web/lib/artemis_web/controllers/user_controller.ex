@@ -20,9 +20,16 @@ defmodule ArtemisWeb.UserController do
         |> Map.put(:paginate, true)
         |> Map.put(:preload, [:roles])
 
-      users = ListUsers.call(params, current_user(conn))
+      user = current_user(conn)
+      users = ListUsers.call(params, user)
+      allowed_bulk_actions = ArtemisWeb.UserView.allowed_bulk_actions(user)
 
-      render(conn, "index.html", users: users)
+      assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
+        users: users
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 
