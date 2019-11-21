@@ -24,7 +24,7 @@ defmodule Artemis.Schema.SQL do
         |> order_by(asc: ^label)
         |> Repo.all()
         |> Enum.reject(&is_nil(Map.get(&1, label)))
-        |> Enum.map(&[Map.get(&1, value), Map.get(&1, label)])
+        |> Enum.map(&[key: Map.get(&1, label), value: Map.get(&1, value)])
       end
     end
   end

@@ -73,9 +73,9 @@ defmodule ArtemisWeb.UserView do
 
     select_tag =
       content_tag(:select, class: "enhanced", name: name, placeholder: "Roles") do
-        Enum.map(roles, fn [value, label] ->
+        Enum.map(roles, fn [key: key, value: value] ->
           content_tag(:option, value: value) do
-            label
+            key
           end
         end)
       end
