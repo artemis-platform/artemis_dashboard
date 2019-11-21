@@ -10,6 +10,26 @@
   <%= render_event_log_notifications @conn, "Role" %>
 
   <section>
+    <div class="table-header">
+      <%= render_search @conn %>
+      <div class="table-actions">
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
+    </div>
+
+    <%=
+      render_data_table(
+        @conn,
+        @roles.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "description", "user_count", "actions"]
+      )
+    %>
+
+    <%= render_pagination @conn, @roles %>
+  </section>
+
+  <section>
     <%= render_search @conn %>
 
     <table class="data-table">

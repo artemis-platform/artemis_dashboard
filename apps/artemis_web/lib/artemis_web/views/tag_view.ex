@@ -26,7 +26,10 @@ defmodule ArtemisWeb.TagView do
         end,
         value: fn _conn, row -> row.name end,
         value_html: fn conn, row ->
-          link(row.name, to: Routes.tag_path(conn, :show, row))
+          case has?(conn, "tags:show") do
+            true -> link(row.name, to: Routes.tag_path(conn, :show, row))
+            false -> row.name
+          end
         end
       ],
       "slug" => [

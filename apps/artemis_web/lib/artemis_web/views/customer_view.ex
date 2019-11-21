@@ -22,7 +22,13 @@ defmodule ArtemisWeb.CustomerView do
         label_html: fn conn ->
           sortable_table_header(conn, "name", "Name")
         end,
-        value: fn _conn, row -> row.name end
+        value: fn _conn, row -> row.name end,
+        value_html: fn conn, row ->
+          case has?(conn, "customers:show") do
+            true -> link(row.name, to: Routes.customer_path(conn, :show, row))
+            false -> row.name
+          end
+        end
       ]
     }
   end

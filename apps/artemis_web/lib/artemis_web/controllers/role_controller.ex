@@ -14,10 +14,15 @@ defmodule ArtemisWeb.RoleController do
 
   def index(conn, params) do
     authorize(conn, "roles:list", fn ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      roles = ListRoles.call(params, current_user(conn))
+      roles = ListRoles.call(params, user)
 
-      render(conn, "index.html", roles: roles)
+      assigns = [
+        roles: roles
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

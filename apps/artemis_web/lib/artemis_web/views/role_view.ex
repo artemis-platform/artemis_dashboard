@@ -5,6 +5,97 @@ defmodule ArtemisWeb.RoleView do
 
   alias Artemis.Permission
 
+  # Data Table
+
+  def data_table_available_columns() do
+    [
+      {"Actions", "actions"},
+      {"Description", "description"},
+      {"Name", "name"},
+      {"Slug", "slug"},
+      {"User Count", "user_count"}
+    ]
+  end
+
+  def data_table_allowed_columns() do
+    %{
+      "actions" => [
+        label: fn _conn -> nil end,
+        value: fn _conn, _row -> nil end,
+        value_html: &data_table_actions_column_html/2
+      ],
+      "description" => [
+        label: fn _conn -> "Description" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "description", "Description")
+        end,
+        value: fn _conn, row -> row.description end
+      ],
+      "name" => [
+        label: fn _conn -> "Name" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "name", "Name")
+        end,
+        value: fn _conn, row -> row.name end,
+        value_html: fn conn, row ->
+          case has?(conn, "roles:show") do
+            true -> link(row.name, to: Routes.role_path(conn, :show, row))
+            false -> row.name
+          end
+        end
+      ],
+      "slug" => [
+        label: fn _conn -> "Slug" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "slug", "Slug")
+        end,
+        value: fn _conn, row -> row.slug end,
+        value_html: fn _conn, row ->
+          content_tag(:code, row.slug)
+        end
+      ],
+      "user_count" => [
+        label: fn _conn -> "User Count" end,
+        value: fn _conn, row -> row.user_count end,
+        value_html: fn conn, row ->
+          case has?(conn, "roles:show") do
+            true -> link(row.user_count, to: Routes.role_path(conn, :show, row) <> "#link-users")
+            false -> row.user_count
+          end
+        end
+      ]
+    }
+  end
+
+  defp data_table_actions_column_html(conn, row) do
+    allowed_actions = [
+      [
+        verify: has?(conn, "roles:show"),
+        link: link("Show", to: Routes.role_path(conn, :show, row))
+      ],
+      [
+        verify: has?(conn, "roles:update"),
+        link: link("Edit", to: Routes.role_path(conn, :edit, row))
+      ],
+      [
+        verify: has?(conn, "roles:delete"),
+        link:
+          link("Delete",
+            to: Routes.role_path(conn, :delete, row),
+            method: :delete,
+            data: [confirm: "Are you sure?"]
+          )
+      ]
+    ]
+
+    Enum.reduce(allowed_actions, [], fn action, acc ->
+      case Keyword.get(action, :verify) do
+        true -> [acc | Keyword.get(action, :link)]
+        _ -> acc
+      end
+    end)
+  end
+
   @doc """
   Returns a matching `permission` record based on the passed `permission.id` match value.
 
