@@ -13,10 +13,16 @@ defmodule ArtemisWeb.FeatureController do
 
   def index(conn, params) do
     authorize(conn, "features:list", fn ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      cache = ListFeatures.call_with_cache(params, current_user(conn))
+      cache = ListFeatures.call_with_cache(params, user)
 
-      render(conn, "index.html", cache: cache, features: cache.data)
+      assigns = [
+        cache: cache,
+        features: cache.data
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 
