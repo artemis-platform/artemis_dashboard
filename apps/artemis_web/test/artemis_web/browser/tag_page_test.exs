@@ -89,7 +89,7 @@ defmodule ArtemisWeb.TagPageTest do
     end
 
     test "record details", %{tag: tag} do
-      click_link(tag.slug)
+      click_link(tag.name)
 
       assert visible?(tag.name)
       assert visible?(tag.slug)
@@ -107,7 +107,7 @@ defmodule ArtemisWeb.TagPageTest do
     end
 
     test "successfully updates record", %{tag: tag} do
-      click_link(tag.slug)
+      click_link(tag.name)
       click_link("Edit")
 
       fill_inputs("#tag-form", %{
