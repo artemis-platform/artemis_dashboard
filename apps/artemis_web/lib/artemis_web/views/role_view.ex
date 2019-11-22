@@ -5,6 +5,29 @@ defmodule ArtemisWeb.RoleView do
 
   alias Artemis.Permission
 
+  # Bulk Actions
+
+  def available_bulk_actions() do
+    [
+      %BulkAction{
+        action: &Artemis.DeleteRole.call_many(&1, &2),
+        authorize: &has?(&1, "roles:delete"),
+        extra_fields: &render_extra_fields_delete_warning(&1),
+        key: "delete",
+        label: "Delete Roles"
+      }
+    ]
+  end
+
+  def allowed_bulk_actions(user) do
+    Enum.reduce(available_bulk_actions(), [], fn entry, acc ->
+      case entry.authorize.(user) do
+        true -> [entry | acc]
+        false -> acc
+      end
+    end)
+  end
+
   # Data Table
 
   def data_table_available_columns() do

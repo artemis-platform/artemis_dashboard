@@ -1,6 +1,11 @@
 defmodule ArtemisWeb.CustomerController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.CustomerView.available_bulk_actions(),
+    path: &Routes.customer_path(&1, :index),
+    permission: "customers:list"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.customer_path/3,
     permission: "customers:list",

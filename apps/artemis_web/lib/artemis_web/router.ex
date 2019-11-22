@@ -49,6 +49,7 @@ defmodule ArtemisWeb.Router do
 
       # Customers
 
+      post "/customers/bulk-actions", CustomerController, :index_bulk_actions
       get "/customers/event-logs", CustomerController, :index_event_log_list
       get "/customers/event-logs/:id", CustomerController, :index_event_log_details
 
@@ -67,11 +68,17 @@ defmodule ArtemisWeb.Router do
 
       get "/docs/:id/:slug", WikiPageController, :show
 
+      # Event Logs
+
       resources "/event-logs", EventLogController, only: [:index, :show]
+
+      # HTTP Requests
+
       resources "/http-request-logs", HttpRequestLogController, only: [:index, :show]
 
       # Features
 
+      post "/features/bulk-actions", FeatureController, :index_bulk_actions
       get "/features/event-logs", FeatureController, :index_event_log_list
       get "/features/event-logs/:id", FeatureController, :index_event_log_details
 
@@ -80,6 +87,10 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", FeatureController, :show_event_log_details, as: :event_log
       end
 
+      # Incidents
+
+      post "/incidents/bulk-actions", IncidentController, :index_bulk_actions
+
       resources "/incidents", IncidentController, only: [:index, :show, :delete] do
         resources "/comments", IncidentCommentController, only: [:create, :edit, :update, :delete], name: :comment
         put "/tags", IncidentTagController, :update, as: :tag
@@ -87,6 +98,7 @@ defmodule ArtemisWeb.Router do
 
       # Jobs
 
+      post "/jobs/bulk-actions", JobController, :index_bulk_actions
       get "/jobs/event-logs", JobController, :index_event_log_list
       get "/jobs/event-logs/:id", JobController, :index_event_log_details
 
@@ -110,6 +122,7 @@ defmodule ArtemisWeb.Router do
 
       # Roles
 
+      post "/roles/bulk-actions", RoleController, :index_bulk_actions
       get "/roles/event-logs", RoleController, :index_event_log_list
       get "/roles/event-logs/:id", RoleController, :index_event_log_details
 
@@ -128,6 +141,7 @@ defmodule ArtemisWeb.Router do
 
       # Tags
 
+      post "/tags/bulk-actions", TagController, :index_bulk_actions
       get "/tags/event-logs", TagController, :index_event_log_list
       get "/tags/event-logs/:id", TagController, :index_event_log_details
 

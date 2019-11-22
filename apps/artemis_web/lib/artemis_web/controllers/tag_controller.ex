@@ -1,6 +1,11 @@
 defmodule ArtemisWeb.TagController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.TagView.available_bulk_actions(),
+    path: &Routes.tag_path(&1, :index),
+    permission: "tags:list"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.tag_path/3,
     permission: "tags:list",

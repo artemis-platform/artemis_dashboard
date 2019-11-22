@@ -1,6 +1,11 @@
 defmodule ArtemisWeb.JobController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.JobView.available_bulk_actions(),
+    path: &Routes.job_path(&1, :index),
+    permission: "jobs:list"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.job_path/3,
     permission: "jobs:list",

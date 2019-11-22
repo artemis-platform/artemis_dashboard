@@ -1,6 +1,11 @@
 defmodule ArtemisWeb.RoleController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.RoleView.available_bulk_actions(),
+    path: &Routes.role_path(&1, :index),
+    permission: "roles:list"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.role_path/3,
     permission: "roles:list",

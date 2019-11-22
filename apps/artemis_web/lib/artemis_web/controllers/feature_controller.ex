@@ -1,6 +1,11 @@
 defmodule ArtemisWeb.FeatureController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.FeatureView.available_bulk_actions(),
+    path: &Routes.feature_path(&1, :index),
+    permission: "features:list"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.feature_path/3,
     permission: "features:list",

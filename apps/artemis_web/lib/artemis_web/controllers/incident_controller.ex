@@ -1,6 +1,11 @@
 defmodule ArtemisWeb.IncidentController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.IncidentView.available_bulk_actions(),
+    path: &Routes.incident_path(&1, :index),
+    permission: "incidents:list"
+
   alias Artemis.Comment
   alias Artemis.DeleteIncident
   alias Artemis.GetIncident
