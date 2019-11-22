@@ -40,6 +40,14 @@
         <div>
           <%= render ArtemisWeb.TagView, "_resource_filter.html", assigns %>
         </div>
+        <%=
+          render_bulk_actions(
+            @conn,
+            "Bulk Actions",
+            Routes.incident_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: @allowed_bulk_actions
+          )
+        %>
       </content>
     </div>
 
