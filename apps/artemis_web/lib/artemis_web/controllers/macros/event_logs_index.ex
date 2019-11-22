@@ -2,9 +2,11 @@ defmodule ArtemisWeb.Controller.EventLogsIndex do
   @moduledoc """
   Functions to list Event Logs related to the resource type.
 
-  ## Routing Requests
+  ## Setup
 
-  The suggested way to route requests is by defining four new routes.
+  ### Router
+
+  The suggested way to route requests is by defining two new routes.
 
   Given a typical resource:
 

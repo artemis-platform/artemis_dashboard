@@ -1,12 +1,14 @@
 defmodule ArtemisWeb.Controller.BulkActions do
   @moduledoc """
-  Functions to process Bulk Actions related to the resource type
+  Functions to process Bulk Actions related to the resource type.
 
-  ## Router
+  ## Setup
+
+  ### Router
 
       post "/users/bulk-actions", UserController, :index_bulk_actions
 
-  ## Options
+  ### Controller
 
       use ArtemisWeb.Controller.BulkActions,
         bulk_actions: ArtemisWeb.UserView.available_bulk_actions(),
