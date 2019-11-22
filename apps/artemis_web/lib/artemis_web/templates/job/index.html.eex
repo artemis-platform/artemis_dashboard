@@ -26,6 +26,8 @@
       </div>
 
       <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+
         <%=
           render_bulk_actions(
             @conn,
@@ -35,7 +37,6 @@
           )
         %>
 
-        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
         <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
       </div>
     </div>

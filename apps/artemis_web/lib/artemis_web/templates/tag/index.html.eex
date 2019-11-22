@@ -13,6 +13,8 @@
     <div class="table-header">
       <%= render_search @conn %>
       <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+
         <%=
           render_bulk_actions(
             @conn,
