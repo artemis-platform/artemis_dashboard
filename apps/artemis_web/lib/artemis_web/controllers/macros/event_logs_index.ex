@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.Controller.Behaviour.EventLogsIndex do
+defmodule ArtemisWeb.Controller.EventLogsIndex do
   @moduledoc """
   Functions to list Event Logs related to the resource type.
 
@@ -18,7 +18,7 @@ defmodule ArtemisWeb.Controller.Behaviour.EventLogsIndex do
 
   ## Controller
 
-      use ArtemisWeb.Controller.Behaviour.EventLogsIndex,
+      use ArtemisWeb.Controller.EventLogsIndex,
         path: &Routes.permission_path/3,
         permission: "permissions:list",
         resource_type: "Permission"

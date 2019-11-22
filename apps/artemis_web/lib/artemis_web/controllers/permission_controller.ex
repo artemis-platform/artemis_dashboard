@@ -1,17 +1,17 @@
 defmodule ArtemisWeb.PermissionController do
   use ArtemisWeb, :controller
 
-  use ArtemisWeb.Controller.Behaviour.BulkActions,
+  use ArtemisWeb.Controller.BulkActions,
     bulk_actions: ArtemisWeb.PermissionView.available_bulk_actions(),
     path: &Routes.permission_path(&1, :index),
     permission: "permissions:list"
 
-  use ArtemisWeb.Controller.Behaviour.EventLogsIndex,
+  use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.permission_path/3,
     permission: "permissions:list",
     resource_type: "Permission"
 
-  use ArtemisWeb.Controller.Behaviour.EventLogsShow,
+  use ArtemisWeb.Controller.EventLogsShow,
     path: &Routes.permission_event_log_path/4,
     permission: "permissions:show",
     resource_getter: &Artemis.GetPermission.call!/2,

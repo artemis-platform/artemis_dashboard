@@ -1,6 +1,18 @@
 defmodule ArtemisWeb.CustomerController do
   use ArtemisWeb, :controller
-  use ArtemisWeb.Controller.Behaviour.EventLogs
+
+  use ArtemisWeb.Controller.EventLogsIndex,
+    path: &Routes.customer_path/3,
+    permission: "customers:list",
+    resource_type: "Customer"
+
+  use ArtemisWeb.Controller.EventLogsShow,
+    path: &Routes.customer_event_log_path/4,
+    permission: "customers:show",
+    resource_getter: &Artemis.GetCustomer.call!/2,
+    resource_id: "customer_id",
+    resource_type: "Customer",
+    resource_variable: :customer
 
   alias Artemis.CreateCustomer
   alias Artemis.Customer
@@ -90,66 +102,6 @@ defmodule ArtemisWeb.CustomerController do
       conn
       |> put_flash(:info, "Customer deleted successfully.")
       |> redirect(to: Routes.customer_path(conn, :index))
-    end)
-  end
-
-  # Callbacks - Event Logs
-
-  def index_event_log_list(conn, params) do
-    authorize(conn, "customers:list", fn ->
-      options = [
-        path: &ArtemisWeb.Router.Helpers.customer_path/3,
-        resource_type: "Customer"
-      ]
-
-      assigns = get_assigns_for_index_event_log_list(conn, params, options)
-
-      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
-    end)
-  end
-
-  def index_event_log_details(conn, %{"id" => id}) do
-    authorize(conn, "customers:list", fn ->
-      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
-
-      render(conn, "index/event_log_details.html", event_log: event_log)
-    end)
-  end
-
-  def show_event_log_list(conn, params) do
-    authorize(conn, "customers:show", fn ->
-      customer_id = Map.get(params, "customer_id")
-      customer = GetCustomer.call!(customer_id, current_user(conn))
-
-      options = [
-        path: &ArtemisWeb.Router.Helpers.customer_event_log_path/4,
-        resource_id: customer_id,
-        resource_type: "Customer"
-      ]
-
-      assigns =
-        conn
-        |> get_assigns_for_show_event_log_list(params, options)
-        |> Keyword.put(:customer, customer)
-
-      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
-    end)
-  end
-
-  def show_event_log_details(conn, params) do
-    authorize(conn, "customers:show", fn ->
-      customer_id = Map.get(params, "customer_id")
-      customer = GetCustomer.call!(customer_id, current_user(conn))
-
-      event_log_id = Map.get(params, "id")
-      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
-
-      assigns = [
-        customer: customer,
-        event_log: event_log
-      ]
-
-      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end

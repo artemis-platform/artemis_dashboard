@@ -1,17 +1,17 @@
 defmodule ArtemisWeb.UserController do
   use ArtemisWeb, :controller
 
-  use ArtemisWeb.Controller.Behaviour.BulkActions,
+  use ArtemisWeb.Controller.BulkActions,
     bulk_actions: ArtemisWeb.UserView.available_bulk_actions(),
     path: &Routes.user_path(&1, :index),
     permission: "users:list"
 
-  use ArtemisWeb.Controller.Behaviour.EventLogsIndex,
+  use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.user_path/3,
     permission: "users:list",
     resource_type: "User"
 
-  use ArtemisWeb.Controller.Behaviour.EventLogsShow,
+  use ArtemisWeb.Controller.EventLogsShow,
     path: &Routes.user_event_log_path/4,
     permission: "users:show",
     resource_getter: &Artemis.GetUser.call!/2,

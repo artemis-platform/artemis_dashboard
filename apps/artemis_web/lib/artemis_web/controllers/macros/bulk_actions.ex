@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.Controller.Behaviour.BulkActions do
+defmodule ArtemisWeb.Controller.BulkActions do
   @moduledoc """
   Functions to process Bulk Actions related to the resource type
 
@@ -8,21 +8,15 @@ defmodule ArtemisWeb.Controller.Behaviour.BulkActions do
 
   ## Options
 
-    use ArtemisWeb.Controller.Behaviour.BulkActions,
-      bulk_actions: ArtemisWeb.UserView.available_bulk_actions(),
-      permission: "users:list",
-      path: &Routes.user_path(&1, :index)
+      use ArtemisWeb.Controller.BulkActions,
+        bulk_actions: ArtemisWeb.UserView.available_bulk_actions(),
+        permission: "users:list",
+        path: &Routes.user_path(&1, :index)
 
   """
 
-  @callback index_bulk_actions(map(), map()) :: any()
-
   defmacro __using__(options) do
     quote do
-      import ArtemisWeb.Controller.Behaviour.BulkActions
-
-      @behaviour ArtemisWeb.Controller.Behaviour.BulkActions
-
       def index_bulk_actions(conn, params) do
         settings = unquote(options)
 
@@ -59,10 +53,6 @@ defmodule ArtemisWeb.Controller.Behaviour.BulkActions do
           end
         end)
       end
-
-      # Allow defined `@callback`s to be overwritten
-
-      defoverridable ArtemisWeb.Controller.Behaviour.BulkActions
     end
   end
 end

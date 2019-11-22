@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.Controller.Behaviour.EventLogsShow do
+defmodule ArtemisWeb.Controller.EventLogsShow do
   @moduledoc """
   Functions to show Event Logs related to the resource type and instance.
 
@@ -19,7 +19,7 @@ defmodule ArtemisWeb.Controller.Behaviour.EventLogsShow do
 
   ## Controllers
 
-      use ArtemisWeb.Controller.Behaviour.EventLogsShow,
+      use ArtemisWeb.Controller.EventLogsShow,
         path: &Routes.permission_event_log_path/4,
         permission: "permissions:show",
         resource_getter: &Artemis.GetPermission.call!/2,
