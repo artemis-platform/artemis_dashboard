@@ -125,6 +125,13 @@ defmodule ArtemisWeb.Controller.EventLogsIndex do
             render(conn, template, assigns)
         end
       end
+
+      # Overridable Functions
+
+      defoverridable [
+        index_event_log_details: 2,
+        index_event_log_list: 2
+      ]
     end
   end
 end

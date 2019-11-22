@@ -154,6 +154,13 @@ defmodule ArtemisWeb.Controller.EventLogsShow do
             render(conn, template, assigns)
         end
       end
+
+      # Overridable Functions
+
+      defoverridable [
+        show_event_log_details: 2,
+        show_event_log_list: 2
+      ]
     end
   end
 end
