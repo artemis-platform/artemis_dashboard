@@ -118,25 +118,6 @@ select[multiple] {
   }
 }
 
-.data-table-filters {
-  margin-bottom: 1rem;
-
-  content {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 0.5rem 0 0.5rem 0;
-
-    > * {
-      margin-right: 1.5rem !important;
-    }
-  }
-
-  .buttons {
-    max-height: 36px;
-  }
-}
-
 .bulk-actions-form {
 
   .extra-fields > * {

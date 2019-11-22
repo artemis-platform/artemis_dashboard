@@ -24,6 +24,111 @@ defmodule ArtemisWeb.IncidentView do
     end)
   end
 
+  # Data Table
+
+  def data_table_available_columns() do
+    [
+      {"Actions", "actions"},
+      {"Date", "triggered_at"},
+      {"Incident", "source_uid"},
+      {"Status", "status"},
+      {"Severity", "severity"},
+      {"Tags", "tags"},
+      {"Title", "title"}
+    ]
+  end
+
+  def data_table_allowed_columns() do
+    %{
+      "actions" => [
+        label: fn _conn -> nil end,
+        value: fn _conn, _row -> nil end,
+        value_html: &data_table_actions_column_html/2
+      ],
+      "severity" => [
+        label: fn _conn -> "Severity" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "severity", "Severity")
+        end,
+        value: fn _conn, row -> row.severity end
+      ],
+      "source_uid" => [
+        label: fn _conn -> "Incident" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "source_uid", "Incident")
+        end,
+        value: fn _conn, row -> row.source_uid end,
+        value_html: fn conn, row ->
+          case has?(conn, "incidents:show") do
+            true -> link(row.source_uid, to: Routes.incident_path(conn, :show, row))
+            false -> row.source_uid
+          end
+        end
+      ],
+      "status" => [
+        label: fn _conn -> "Status" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "status", "Status")
+        end,
+        value: fn _conn, row -> row.status end,
+        value_html: fn _conn, row ->
+          content_tag(:span, class: "status-label #{status_color(row)}") do
+            row.status
+          end
+        end
+      ],
+      "tags" => [
+        label: fn _conn -> "Tags" end,
+        value: fn _conn, row ->
+          row.tags
+          |> Enum.map(&Map.get(&1, :name))
+          |> Enum.sort()
+          |> Enum.join(", ")
+        end,
+        value_html: &render_tags/2
+      ],
+      "title" => [
+        label: fn _conn -> "Title" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "title", "Title")
+        end,
+        value: fn _conn, row -> row.title end
+      ],
+      "triggered_at" => [
+        label: fn _conn -> "Date" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "triggered_at", "Date")
+        end,
+        value: fn _conn, row -> row.triggered_at end,
+        value_html: fn _conn, row -> render_date_time(row.triggered_at) end
+      ]
+    }
+  end
+
+  defp data_table_actions_column_html(conn, row) do
+    allowed_actions = [
+      [
+        verify: has?(conn, "incidents:show"),
+        link: link("Show", to: Routes.incident_path(conn, :show, row))
+      ],
+      [
+        verify: row.source == "pagerduty",
+        link:
+          link("View on PagerDuty",
+            to: "https://#{get_subdomain()}.pagerduty.com/incidents/#{row.source_uid}",
+            target: "_blank"
+          )
+      ]
+    ]
+
+    Enum.reduce(allowed_actions, [], fn action, acc ->
+      case Keyword.get(action, :verify) do
+        true -> [acc | Keyword.get(action, :link)]
+        _ -> acc
+      end
+    end)
+  end
+
   # Helpers
 
   def render_tags(conn, incident) do
