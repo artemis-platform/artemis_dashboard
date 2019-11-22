@@ -21,7 +21,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   def render_table_row_if_empty(_records, _options), do: nil
 
   @doc """
-  Render sortable table header 
+  Render sortable table header
   """
   def sortable_table_header(conn, value, label, delimiter \\ @default_delimiter) do
     path = order_path(conn, value, delimiter)
@@ -293,6 +293,24 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   Render a select box to allow users to choose custom columns
   """
   def render_data_table_column_selector(conn, available_columns) do
-    Phoenix.View.render(ArtemisWeb.LayoutView, "data_table_columns.html", available: available_columns, conn: conn)
+    selected = parse_data_table_requested_columns(conn)
+    class = if length(selected) > 0, do: "active"
+
+    sorted_by_selected =
+      Enum.sort_by(available_columns, fn column ->
+        key = elem(column, 1)
+        index = Enum.find_index(selected, &(&1 == key)) || :infinity
+
+        index
+      end)
+
+    assigns = [
+      available: sorted_by_selected,
+      class: class,
+      conn: conn,
+      selected: selected
+    ]
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "data_table_columns.html", assigns)
   end
 end
