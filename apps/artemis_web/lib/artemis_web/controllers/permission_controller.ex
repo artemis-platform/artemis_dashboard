@@ -1,7 +1,23 @@
 defmodule ArtemisWeb.PermissionController do
   use ArtemisWeb, :controller
-  use ArtemisWeb.Controller.Behaviour.BulkActions
-  use ArtemisWeb.Controller.Behaviour.EventLogs
+
+  use ArtemisWeb.Controller.Behaviour.BulkActions,
+    bulk_actions: ArtemisWeb.PermissionView.available_bulk_actions(),
+    path: &Routes.permission_path(&1, :index),
+    permission: "permissions:list"
+
+  use ArtemisWeb.Controller.Behaviour.EventLogsIndex,
+    path: &Routes.permission_path/3,
+    permission: "permissions:list",
+    resource_type: "Permission"
+
+  use ArtemisWeb.Controller.Behaviour.EventLogsShow,
+    path: &Routes.permission_event_log_path/4,
+    permission: "permissions:show",
+    resource_getter: &Artemis.GetPermission.call!/2,
+    resource_id: "permission_id",
+    resource_type: "Permission",
+    resource_variable: :permission
 
   alias Artemis.CreatePermission
   alias Artemis.Permission
@@ -93,95 +109,6 @@ defmodule ArtemisWeb.PermissionController do
       conn
       |> put_flash(:info, "Permission deleted successfully.")
       |> redirect(to: Routes.permission_path(conn, :index))
-    end)
-  end
-
-  # Callbacks - Bulk Actions
-
-  def index_bulk_actions(conn, params) do
-    authorize(conn, "permissions:list", fn ->
-      ids = Map.get(params, "ids") || []
-      key = Map.get(params, "bulk_action")
-      user = current_user(conn)
-      return_path = Map.get(params, "return_path", Routes.permission_path(conn, :index))
-
-      bulk_action = ArtemisWeb.PermissionView.get_bulk_action(key, user)
-      result = bulk_action.(ids, [params, user])
-      total_errors = length(result.errors)
-
-      case total_errors == 0 do
-        true ->
-          conn
-          |> put_flash(:info, "Successfully completed bulk #{key} action on #{length(result.data)} records")
-          |> redirect(to: return_path)
-
-        false ->
-          message = "Error completing bulk #{key} action. Failed on #{total_errors} of #{length(ids)} records."
-
-          conn
-          |> put_flash(:error, message)
-          |> redirect(to: return_path)
-      end
-    end)
-  end
-
-  # Callbacks - Event Logs
-
-  def index_event_log_list(conn, params) do
-    authorize(conn, "permissions:list", fn ->
-      options = [
-        path: &ArtemisWeb.Router.Helpers.permission_path/3,
-        resource_type: "Permission"
-      ]
-
-      assigns = get_assigns_for_index_event_log_list(conn, params, options)
-
-      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
-    end)
-  end
-
-  def index_event_log_details(conn, %{"id" => id}) do
-    authorize(conn, "permissions:list", fn ->
-      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
-
-      render(conn, "index/event_log_details.html", event_log: event_log)
-    end)
-  end
-
-  def show_event_log_list(conn, params) do
-    authorize(conn, "permissions:show", fn ->
-      permission_id = Map.get(params, "permission_id")
-      permission = GetPermission.call!(permission_id, current_user(conn))
-
-      options = [
-        path: &ArtemisWeb.Router.Helpers.permission_event_log_path/4,
-        resource_id: permission_id,
-        resource_type: "Permission"
-      ]
-
-      assigns =
-        conn
-        |> get_assigns_for_show_event_log_list(params, options)
-        |> Keyword.put(:permission, permission)
-
-      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
-    end)
-  end
-
-  def show_event_log_details(conn, params) do
-    authorize(conn, "permissions:show", fn ->
-      permission_id = Map.get(params, "permission_id")
-      permission = GetPermission.call!(permission_id, current_user(conn))
-
-      event_log_id = Map.get(params, "id")
-      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
-
-      assigns = [
-        event_log: event_log,
-        permission: permission
-      ]
-
-      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end
