@@ -58,9 +58,7 @@ defmodule ArtemisWeb.Controller.BulkActions do
 
       # Overridable Functions
 
-      defoverridable [
-        index_bulk_actions: 2
-      ]
+      defoverridable index_bulk_actions: 2
     end
   end
 end

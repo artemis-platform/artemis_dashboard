@@ -157,10 +157,8 @@ defmodule ArtemisWeb.Controller.EventLogsShow do
 
       # Overridable Functions
 
-      defoverridable [
-        show_event_log_details: 2,
-        show_event_log_list: 2
-      ]
+      defoverridable show_event_log_details: 2,
+                     show_event_log_list: 2
     end
   end
 end

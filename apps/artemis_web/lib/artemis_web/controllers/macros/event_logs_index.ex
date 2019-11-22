@@ -128,10 +128,8 @@ defmodule ArtemisWeb.Controller.EventLogsIndex do
 
       # Overridable Functions
 
-      defoverridable [
-        index_event_log_details: 2,
-        index_event_log_list: 2
-      ]
+      defoverridable index_event_log_details: 2,
+                     index_event_log_list: 2
     end
   end
 end
