@@ -28,11 +28,19 @@ defmodule ArtemisWeb.JobController do
 
   def index(conn, params) do
     authorize(conn, "jobs:list", fn ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      jobs = ListJobs.call(params, current_user(conn))
+      jobs = ListJobs.call(params, user)
       search_enabled = Job.search_enabled?()
+      allowed_bulk_actions = ArtemisWeb.JobView.allowed_bulk_actions(user)
 
-      render_format(conn, "index", jobs: jobs, search_enabled: search_enabled)
+      assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
+        jobs: jobs,
+        search_enabled: search_enabled
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

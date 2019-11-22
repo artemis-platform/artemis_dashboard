@@ -34,8 +34,10 @@ defmodule ArtemisWeb.RoleController do
       user = current_user(conn)
       params = Map.put(params, :paginate, true)
       roles = ListRoles.call(params, user)
+      allowed_bulk_actions = ArtemisWeb.RoleView.allowed_bulk_actions(user)
 
       assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
         roles: roles
       ]
 

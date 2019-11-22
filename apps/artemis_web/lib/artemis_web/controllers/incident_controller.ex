@@ -22,10 +22,17 @@ defmodule ArtemisWeb.IncidentController do
         |> Map.put(:paginate, true)
         |> Map.put(:preload, [:tags])
 
-      incidents = ListIncidents.call(params, current_user(conn))
+      incidents = ListIncidents.call(params, user)
       tags = get_tags("incidents", user)
+      allowed_bulk_actions = ArtemisWeb.IncidentView.allowed_bulk_actions(user)
 
-      render(conn, "index.html", incidents: incidents, tags: tags)
+      assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
+        incidents: incidents,
+        tags: tags
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 

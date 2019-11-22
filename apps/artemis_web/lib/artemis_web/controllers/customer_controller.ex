@@ -30,11 +30,13 @@ defmodule ArtemisWeb.CustomerController do
 
   def index(conn, params) do
     authorize(conn, "customers:list", fn ->
-      params = Map.put(params, :paginate, true)
       user = current_user(conn)
+      params = Map.put(params, :paginate, true)
       customers = ListCustomers.call(params, user)
+      allowed_bulk_actions = ArtemisWeb.CustomerView.allowed_bulk_actions(user)
 
       assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
         customers: customers
       ]
 

@@ -33,8 +33,10 @@ defmodule ArtemisWeb.FeatureController do
       user = current_user(conn)
       params = Map.put(params, :paginate, true)
       cache = ListFeatures.call_with_cache(params, user)
+      allowed_bulk_actions = ArtemisWeb.FeatureView.allowed_bulk_actions(user)
 
       assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
         cache: cache,
         features: cache.data
       ]

@@ -33,8 +33,10 @@ defmodule ArtemisWeb.TagController do
       user = current_user(conn)
       params = Map.put(params, :paginate, true)
       tags = ListTags.call(params, user)
+      allowed_bulk_actions = ArtemisWeb.TagView.allowed_bulk_actions(user)
 
       assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
         tags: tags
       ]
 
