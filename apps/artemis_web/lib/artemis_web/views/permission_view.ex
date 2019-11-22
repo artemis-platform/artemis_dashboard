@@ -26,12 +26,6 @@ defmodule ArtemisWeb.PermissionView do
     end)
   end
 
-  def get_bulk_action(key, user) do
-    Enum.find_value(available_bulk_actions(), fn entry ->
-      entry.key == key && entry.authorize.(user) && entry.action
-    end)
-  end
-
   # Data Table
 
   def data_table_available_columns() do

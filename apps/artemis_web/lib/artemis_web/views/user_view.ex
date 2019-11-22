@@ -53,12 +53,6 @@ defmodule ArtemisWeb.UserView do
     end)
   end
 
-  def get_bulk_action(key, user) do
-    Enum.find_value(available_bulk_actions(), fn entry ->
-      entry.key == key && entry.authorize.(user) && entry.action
-    end)
-  end
-
   defp render_extra_fields_add_role(data) do
     render_extra_field_select_role(data, "add_role_id")
   end

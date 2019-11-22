@@ -13,6 +13,17 @@
     <div class="table-header">
       <%= render_search @conn %>
       <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+
+        <%=
+          render_bulk_actions(
+            @conn,
+            "Bulk Actions",
+            Routes.customer_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: @allowed_bulk_actions
+          )
+        %>
+
         <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
       </div>
     </div>
@@ -22,7 +33,8 @@
         @conn,
         @customers.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["name", "actions"]
+        default_columns: ["name", "actions"],
+        selectable: length(@allowed_bulk_actions) > 0
       )
     %>
 

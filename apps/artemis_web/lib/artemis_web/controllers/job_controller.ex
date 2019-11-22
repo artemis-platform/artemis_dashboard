@@ -1,6 +1,23 @@
 defmodule ArtemisWeb.JobController do
   use ArtemisWeb, :controller
-  use ArtemisWeb.Controller.Behaviour.EventLogs
+
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.JobView.available_bulk_actions(),
+    path: &Routes.job_path(&1, :index),
+    permission: "jobs:list"
+
+  use ArtemisWeb.Controller.EventLogsIndex,
+    path: &Routes.job_path/3,
+    permission: "jobs:list",
+    resource_type: "Job"
+
+  use ArtemisWeb.Controller.EventLogsShow,
+    path: &Routes.job_event_log_path/4,
+    permission: "jobs:show",
+    resource_getter: &Artemis.GetJob.call!/2,
+    resource_id: "job_id",
+    resource_type: "Job",
+    resource_variable: :job
 
   alias Artemis.CreateJob
   alias Artemis.DeleteJob
@@ -11,11 +28,19 @@ defmodule ArtemisWeb.JobController do
 
   def index(conn, params) do
     authorize(conn, "jobs:list", fn ->
+      user = current_user(conn)
       params = Map.put(params, :paginate, true)
-      jobs = ListJobs.call(params, current_user(conn))
+      jobs = ListJobs.call(params, user)
       search_enabled = Job.search_enabled?()
+      allowed_bulk_actions = ArtemisWeb.JobView.allowed_bulk_actions(user)
 
-      render_format(conn, "index", jobs: jobs, search_enabled: search_enabled)
+      assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
+        jobs: jobs,
+        search_enabled: search_enabled
+      ]
+
+      render_format(conn, "index", assigns)
     end)
   end
 
@@ -105,65 +130,5 @@ defmodule ArtemisWeb.JobController do
     params
     |> ListJobs.call(user)
     |> Map.get(:entries, [])
-  end
-
-  # Callbacks - Event Logs
-
-  def index_event_log_list(conn, params) do
-    authorize(conn, "jobs:list", fn ->
-      options = [
-        path: &ArtemisWeb.Router.Helpers.job_path/3,
-        resource_type: "Job"
-      ]
-
-      assigns = get_assigns_for_index_event_log_list(conn, params, options)
-
-      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
-    end)
-  end
-
-  def index_event_log_details(conn, %{"id" => id}) do
-    authorize(conn, "jobs:list", fn ->
-      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
-
-      render(conn, "index/event_log_details.html", event_log: event_log)
-    end)
-  end
-
-  def show_event_log_list(conn, params) do
-    authorize(conn, "jobs:show", fn ->
-      job_id = Map.get(params, "job_id")
-      job = GetJob.call!(job_id, current_user(conn))
-
-      options = [
-        path: &ArtemisWeb.Router.Helpers.job_event_log_path/4,
-        resource_id: job_id,
-        resource_type: "Job"
-      ]
-
-      assigns =
-        conn
-        |> get_assigns_for_show_event_log_list(params, options)
-        |> Keyword.put(:job, job)
-
-      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
-    end)
-  end
-
-  def show_event_log_details(conn, params) do
-    authorize(conn, "jobs:show", fn ->
-      job_id = Map.get(params, "job_id")
-      job = GetJob.call!(job_id, current_user(conn))
-
-      event_log_id = Map.get(params, "id")
-      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
-
-      assigns = [
-        job: job,
-        event_log: event_log
-      ]
-
-      render(conn, "show/event_log_details.html", assigns)
-    end)
   end
 end

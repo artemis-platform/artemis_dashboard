@@ -1,7 +1,23 @@
 defmodule ArtemisWeb.UserController do
   use ArtemisWeb, :controller
-  use ArtemisWeb.Controller.Behaviour.BulkActions
-  use ArtemisWeb.Controller.Behaviour.EventLogs
+
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.UserView.available_bulk_actions(),
+    path: &Routes.user_path(&1, :index),
+    permission: "users:list"
+
+  use ArtemisWeb.Controller.EventLogsIndex,
+    path: &Routes.user_path/3,
+    permission: "users:list",
+    resource_type: "User"
+
+  use ArtemisWeb.Controller.EventLogsShow,
+    path: &Routes.user_event_log_path/4,
+    permission: "users:show",
+    resource_getter: &Artemis.GetUser.call!/2,
+    resource_id: "user_id",
+    resource_type: "User",
+    resource_variable: :user
 
   alias Artemis.CreateUser
   alias Artemis.User
@@ -117,95 +133,6 @@ defmodule ArtemisWeb.UserController do
           |> put_flash(:error, "Cannot delete own user")
           |> redirect(to: Routes.user_path(conn, :show, user))
       end
-    end)
-  end
-
-  # Callbacks - Bulk Actions
-
-  def index_bulk_actions(conn, params) do
-    authorize(conn, "users:list", fn ->
-      ids = Map.get(params, "ids") || []
-      key = Map.get(params, "bulk_action")
-      user = current_user(conn)
-      return_path = Map.get(params, "return_path", Routes.user_path(conn, :index))
-
-      bulk_action = ArtemisWeb.UserView.get_bulk_action(key, user)
-      result = bulk_action.(ids, [params, user])
-      total_errors = length(result.errors)
-
-      case total_errors == 0 do
-        true ->
-          conn
-          |> put_flash(:info, "Successfully completed bulk #{key} action on #{length(result.data)} records")
-          |> redirect(to: return_path)
-
-        false ->
-          message = "Error completing bulk #{key} action. Failed on #{total_errors} of #{length(ids)} records."
-
-          conn
-          |> put_flash(:error, message)
-          |> redirect(to: return_path)
-      end
-    end)
-  end
-
-  # Callbacks - Event Logs
-
-  def index_event_log_list(conn, params) do
-    authorize(conn, "users:list", fn ->
-      options = [
-        path: &ArtemisWeb.Router.Helpers.user_path/3,
-        resource_type: "User"
-      ]
-
-      assigns = get_assigns_for_index_event_log_list(conn, params, options)
-
-      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
-    end)
-  end
-
-  def index_event_log_details(conn, %{"id" => id}) do
-    authorize(conn, "users:list", fn ->
-      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
-
-      render(conn, "index/event_log_details.html", event_log: event_log)
-    end)
-  end
-
-  def show_event_log_list(conn, params) do
-    authorize(conn, "users:show", fn ->
-      user_id = Map.get(params, "user_id")
-      user = GetUser.call!(user_id, current_user(conn))
-
-      options = [
-        path: &ArtemisWeb.Router.Helpers.user_event_log_path/4,
-        resource_id: user_id,
-        resource_type: "User"
-      ]
-
-      assigns =
-        conn
-        |> get_assigns_for_show_event_log_list(params, options)
-        |> Keyword.put(:user, user)
-
-      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
-    end)
-  end
-
-  def show_event_log_details(conn, params) do
-    authorize(conn, "users:show", fn ->
-      user_id = Map.get(params, "user_id")
-      user = GetUser.call!(user_id, current_user(conn))
-
-      event_log_id = Map.get(params, "id")
-      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
-
-      assigns = [
-        user: user,
-        event_log: event_log
-      ]
-
-      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end

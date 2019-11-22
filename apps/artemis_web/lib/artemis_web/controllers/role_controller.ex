@@ -1,6 +1,23 @@
 defmodule ArtemisWeb.RoleController do
   use ArtemisWeb, :controller
-  use ArtemisWeb.Controller.Behaviour.EventLogs
+
+  use ArtemisWeb.Controller.BulkActions,
+    bulk_actions: ArtemisWeb.RoleView.available_bulk_actions(),
+    path: &Routes.role_path(&1, :index),
+    permission: "roles:list"
+
+  use ArtemisWeb.Controller.EventLogsIndex,
+    path: &Routes.role_path/3,
+    permission: "roles:list",
+    resource_type: "Role"
+
+  use ArtemisWeb.Controller.EventLogsShow,
+    path: &Routes.role_event_log_path/4,
+    permission: "roles:show",
+    resource_getter: &Artemis.GetRole.call!/2,
+    resource_id: "role_id",
+    resource_type: "Role",
+    resource_variable: :role
 
   alias Artemis.CreateRole
   alias Artemis.Role
@@ -17,8 +34,10 @@ defmodule ArtemisWeb.RoleController do
       user = current_user(conn)
       params = Map.put(params, :paginate, true)
       roles = ListRoles.call(params, user)
+      allowed_bulk_actions = ArtemisWeb.RoleView.allowed_bulk_actions(user)
 
       assigns = [
+        allowed_bulk_actions: allowed_bulk_actions,
         roles: roles
       ]
 
@@ -99,66 +118,6 @@ defmodule ArtemisWeb.RoleController do
       conn
       |> put_flash(:info, "Role deleted successfully.")
       |> redirect(to: Routes.role_path(conn, :index))
-    end)
-  end
-
-  # Callbacks - Event Logs
-
-  def index_event_log_list(conn, params) do
-    authorize(conn, "roles:list", fn ->
-      options = [
-        path: &ArtemisWeb.Router.Helpers.role_path/3,
-        resource_type: "Role"
-      ]
-
-      assigns = get_assigns_for_index_event_log_list(conn, params, options)
-
-      render_format_for_event_log_list(conn, "index/event_log_list.html", assigns)
-    end)
-  end
-
-  def index_event_log_details(conn, %{"id" => id}) do
-    authorize(conn, "roles:list", fn ->
-      event_log = ArtemisLog.GetEventLog.call!(id, current_user(conn))
-
-      render(conn, "index/event_log_details.html", event_log: event_log)
-    end)
-  end
-
-  def show_event_log_list(conn, params) do
-    authorize(conn, "roles:show", fn ->
-      role_id = Map.get(params, "role_id")
-      role = GetRole.call!(role_id, current_user(conn))
-
-      options = [
-        path: &ArtemisWeb.Router.Helpers.role_event_log_path/4,
-        resource_id: role_id,
-        resource_type: "Role"
-      ]
-
-      assigns =
-        conn
-        |> get_assigns_for_show_event_log_list(params, options)
-        |> Keyword.put(:role, role)
-
-      render_format_for_event_log_list(conn, "show/event_log_list.html", assigns)
-    end)
-  end
-
-  def show_event_log_details(conn, params) do
-    authorize(conn, "roles:show", fn ->
-      role_id = Map.get(params, "role_id")
-      role = GetRole.call!(role_id, current_user(conn))
-
-      event_log_id = Map.get(params, "id")
-      event_log = ArtemisLog.GetEventLog.call!(event_log_id, current_user(conn))
-
-      assigns = [
-        event_log: event_log,
-        role: role
-      ]
-
-      render(conn, "show/event_log_details.html", assigns)
     end)
   end
 end
