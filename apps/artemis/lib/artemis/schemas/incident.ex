@@ -14,6 +14,7 @@ defmodule Artemis.Incident do
     field :source, :string
     field :source_uid, :string
     field :status, :string
+    field :team_id, :string
     field :time_to_acknowledge, :integer
     field :time_to_resolve, :integer
     field :title, :string
@@ -44,6 +45,7 @@ defmodule Artemis.Incident do
       :source,
       :source_uid,
       :status,
+      :team_id,
       :title,
       :triggered_at,
       :triggered_by
@@ -68,6 +70,7 @@ defmodule Artemis.Incident do
       :severity,
       :source,
       :status,
+      :team_id,
       :title
     ]
 

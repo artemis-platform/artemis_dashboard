@@ -25,47 +25,44 @@
     <%= render_notification :error, body: "Error Saving Comment" %>
   <% end %>
 
-  <article id="incident-page">
-    <content>
+  <section>
+    <%= h2 "Overview" %>
 
-      <section>
-        <%= h2 "Overview" %>
+    <%= render ArtemisWeb.IncidentTagView, "edit.html", assigns %>
 
-        <%= render ArtemisWeb.IncidentTagView, "edit.html", assigns %>
+    <p>
+      <span class="status-label <%= status_color(@incident) %>">
+        <%= @incident.status %>
+      </span>
+    </p>
 
-        <p>
-          <span class="status-label <%= status_color(@incident) %>">
-            <%= @incident.status %>
-          </span>
-        </p>
+    <%= if @incident.source == "pagerduty" do %>
+      <p>
+        <%= link "View on PagerDuty", to: "https://#{get_subdomain()}.pagerduty.com/incidents/#{@incident.source_uid}", target: "_blank" %>
+      </p>
+    <% end %>
+  </section>
 
-        <%= if @incident.source == "pagerduty" do %>
-          <p>
-            <%= link "View on PagerDuty", to: "https://#{get_subdomain()}.pagerduty.com/incidents/#{@incident.source_uid}", target: "_blank" %>
-          </p>
-        <% end %>
-      </section>
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Severity", @incident.severity],
+        ["Team ID", @incident.team_id],
+        ["Title", @incident.title],
+        ["Description", @incident.description],
+        ["Source", @incident.source],
+        ["Source UID", @incident.source_uid],
+      ])
+    %>
+  </section>
 
-      <section>
-        <%= h2 "Details" %>
-        <%=
-          render_key_value_list([
-            ["Severity", @incident.severity],
-            ["Title", @incident.title],
-            ["Description", @incident.description],
-            ["Source", @incident.source],
-            ["Source UID", @incident.source_uid],
-          ])
-        %>
-      </section>
+  <section>
+    <%= h3 "Raw Data" %>
+    <pre><code><%= Jason.encode!(@incident.meta, pretty: true) %></code></pre>
+  </section>
 
-      <section>
-        <%= h3 "Raw Data" %>
-        <pre><code><%= Jason.encode!(@incident.meta, pretty: true) %></code></pre>
-      </section>
-    </content>
-    <aside>
-      <%= render ArtemisWeb.IncidentCommentView, "index.html", assigns %>
-    </aside>
-  </article>
+  <section>
+    <%= render ArtemisWeb.IncidentCommentView, "index.html", assigns %>
+  </section>
 </div>

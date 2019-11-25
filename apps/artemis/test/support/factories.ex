@@ -59,6 +59,7 @@ defmodule Artemis.Factories do
       source: "pagerduty",
       source_uid: String.slice(Faker.UUID.v4(), 0, 8),
       status: Enum.random(Artemis.Incident.allowed_statuses()),
+      team_id: Faker.UUID.v4(),
       time_to_acknowledge: DateTime.diff(acknowledged_at, triggered_at),
       time_to_resolve: DateTime.diff(resolved_at, triggered_at),
       title: Faker.Lorem.sentence(),

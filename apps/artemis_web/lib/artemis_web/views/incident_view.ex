@@ -4,15 +4,7 @@ defmodule ArtemisWeb.IncidentView do
   # Bulk Actions
 
   def available_bulk_actions() do
-    [
-      %BulkAction{
-        action: &Artemis.DeleteIncident.call_many(&1, &2),
-        authorize: &has?(&1, "incidents:delete"),
-        extra_fields: &render_extra_fields_delete_warning(&1),
-        key: "delete",
-        label: "Delete Incidents"
-      }
-    ]
+    []
   end
 
   def allowed_bulk_actions(user) do
@@ -34,6 +26,7 @@ defmodule ArtemisWeb.IncidentView do
       {"Status", "status"},
       {"Severity", "severity"},
       {"Tags", "tags"},
+      {"Team ID", "team_id"},
       {"Title", "title"}
     ]
   end
@@ -86,6 +79,13 @@ defmodule ArtemisWeb.IncidentView do
           |> Enum.join(", ")
         end,
         value_html: &render_tags/2
+      ],
+      "team_id" => [
+        label: fn _conn -> "Team ID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "team_id", "Team ID")
+        end,
+        value: fn _conn, row -> row.team_id end
       ],
       "title" => [
         label: fn _conn -> "Title" end,
