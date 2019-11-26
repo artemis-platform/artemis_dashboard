@@ -214,7 +214,7 @@ defmodule Artemis.Helpers do
   From: https://stackoverflow.com/questions/41655852/sorting-list-of-dates-in-elixir/41655967
   """
   def sort_by_date(dates) do
-    Enum.sort_by(dates, &(&1), &date_sorter/2)
+    Enum.sort_by(dates, & &1, &date_sorter/2)
   end
 
   defp date_sorter(date_1, date_2) do
@@ -235,7 +235,7 @@ defmodule Artemis.Helpers do
   From: https://stackoverflow.com/questions/41655852/sorting-list-of-dates-in-elixir/41655967
   """
   def sort_by_date_time(date_times) do
-    Enum.sort_by(date_times, &(&1), &date_time_sorter/2)
+    Enum.sort_by(date_times, & &1, &date_time_sorter/2)
   end
 
   defp date_time_sorter(date_time_1, date_time_2) do

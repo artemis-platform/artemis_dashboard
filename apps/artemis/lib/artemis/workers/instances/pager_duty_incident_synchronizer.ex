@@ -1,8 +1,10 @@
 defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
-    interval: 60_000, # TODO: update
-    delayed_start: 60_000, # TODO: update
+    # TODO: update
+    interval: 60_000,
+    # TODO: update
+    delayed_start: 60_000,
     name: :pager_duty_incident_synchronizer
 
   import Artemis.Helpers
@@ -85,14 +87,14 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
             |> Artemis.Helpers.sort_by_date_time()
             |> List.last()
 
-          IO.inspect ["date", date]
+          IO.inspect(["date", date])
 
           options =
             options
             |> Keyword.put(:since, date)
             |> Keyword.put(:total, total)
 
-          IO.inspect "finding more"
+          IO.inspect("finding more")
 
           fetch_data(data, user, options)
       end
@@ -155,7 +157,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         # "statuses[]": "resolved",
         "team_ids[]": "PTS5TEF",
         "team_ids[]": "PENNR50",
-        "team_ids[]": "PHJYRHQ",
+        "team_ids[]": "PHJYRHQ"
         # "team_ids[]": get_team_ids(),
       ]
     ]
@@ -172,9 +174,9 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     size = length(incidents)
 
     # IO.inspect payload
-    IO.inspect request.url
+    IO.inspect(request.url)
     # IO.inspect incidents
-    IO.inspect size
+    IO.inspect(size)
 
     # # result
 
