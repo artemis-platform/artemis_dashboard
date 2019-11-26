@@ -98,7 +98,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
       ]
     ]
 
-    PagerDuty.get(path, headers, options)
+    PagerDuty.Request.get(path, headers, options)
   end
 
   defp process_escalation_polices_response(%HTTPoison.Response{body: %{"escalation_policies" => entries}}) do
@@ -145,7 +145,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
         ] ++ additional_params
     ]
 
-    PagerDuty.get(path, headers, options)
+    PagerDuty.Request.get(path, headers, options)
   end
 
   defp process_on_calls_response(%HTTPoison.Response{body: %{"oncalls" => entries}}) do

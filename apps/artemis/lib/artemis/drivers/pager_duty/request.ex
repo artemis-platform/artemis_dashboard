@@ -1,7 +1,7 @@
-defmodule Artemis.Drivers.PagerDuty do
+defmodule Artemis.Drivers.PagerDuty.Request do
   use HTTPoison.Base
 
-  @base_url "https://api.pagerduty.com/"
+  @base_url "https://api.pagerduty.com"
 
   def process_request_headers(headers) do
     [

@@ -19,7 +19,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     ]
   end
 
-  @default_start_date DateTime.from_naive!(~N[2019-01-01 00:00:00], "Etc/UTC")
+  @default_start_date DateTime.from_naive!(~N[2019-09-01 00:00:00], "Etc/UTC")
   # Warning!
   #
   # As of 2019/05 the PagerDuty API endpoint contains a critical bugs.
@@ -43,7 +43,11 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   # Callbacks
 
   @impl true
-  def call(data, _config), do: fetch_data(data)
+  def call(data, _config) do
+    system_user = GetSystemUser.call!()
+
+    fetch_data(data, system_user)
+  end
 
   # Helpers
 
@@ -56,10 +60,11 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     |> String.equivalent?("true")
   end
 
-  defp fetch_data(data, options \\ []) do
-    with user <- GetSystemUser.call!(),
-         {:ok, response} <- get_pager_duty_incidents(user, options),
+  defp fetch_data(data, user, options \\ []) do
+    with {:ok, response} <- get_pager_duty_incidents(user, options),
          200 <- response.status_code,
+         # TODO: this could be missing records. It can return `:skipped` if no
+         # matches are in the first request. Should check for `more?` and fetch next
          {:ok, incidents} <- process_response(response),
          {:ok, filtered} <- filter_incidents(incidents, user),
          {:ok, result} <- CreateManyIncidents.call(filtered, user) do
@@ -70,31 +75,46 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         false ->
           meta = [api_response: response]
           data = create_data(total, meta)
+
           {:ok, data}
 
         true ->
           date =
             incidents
             |> Enum.map(& &1.triggered_at)
-            |> Enum.sort()
-            |> hd()
+            |> Artemis.Helpers.sort_by_date_time()
+            |> List.last()
+
+          IO.inspect ["date", date]
 
           options =
             options
             |> Keyword.put(:since, date)
             |> Keyword.put(:total, total)
 
-          fetch_data(data, options)
+          IO.inspect "finding more"
+
+          fetch_data(data, user, options)
       end
     else
       {:skipped, message} -> {:skipped, message}
+      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} -> fetch_data(data, user, options)
       {:error, message} -> {:error, message}
       error -> {:error, error}
     end
   rescue
     error ->
-      Logger.info("Error synchronizing pager duty incidents: " <> inspect(error))
-      {:error, "Exception raised while synchronizing incidents"}
+      case error do
+        %MatchError{term: {:error, %HTTPoison.Error{id: nil, reason: :timeout}}} ->
+          Logger.info("Error synchronizing pager duty incidents: request timeout")
+
+          fetch_data(data, user, options)
+
+        _ ->
+          Logger.info("Error synchronizing pager duty incidents: " <> inspect(error))
+
+          {:error, "Exception raised while synchronizing incidents"}
+      end
   end
 
   defp create_data(result, meta) do
@@ -105,9 +125,15 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   end
 
   defp get_pager_duty_incidents(user, options) do
-    date =
+    since_date =
       case Keyword.get(options, :since) do
         nil -> DateTime.to_iso8601(get_start_date(user))
+        date -> date
+      end
+
+    until_date =
+      case Keyword.get(options, :until) do
+        nil -> DateTime.to_iso8601(get_until_date(user))
         date -> date
       end
 
@@ -122,12 +148,48 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         "include[]": "users",
         limit: @fetch_limit,
         offset: 0,
-        since: date,
-        "team_ids[]": get_team_ids()
+        since: since_date,
+        until: until_date,
+        # "statuses[]": "triggered",
+        # "statuses[]": "acknowledged",
+        # "statuses[]": "resolved",
+        "team_ids[]": "PTS5TEF",
+        "team_ids[]": "PENNR50",
+        "team_ids[]": "PHJYRHQ",
+        # "team_ids[]": get_team_ids(),
       ]
     ]
 
-    PagerDuty.get(path, headers, options)
+    result = PagerDuty.Request.get(path, headers, options)
+
+    {:ok, payload} = result
+
+    request = payload.request
+    request_url = request.url
+
+    body = payload.body
+    incidents = body["incidents"]
+    size = length(incidents)
+
+    # IO.inspect payload
+    IO.inspect request.url
+    # IO.inspect incidents
+    IO.inspect size
+
+    # # result
+
+    # {:ok, %{}}
+
+    PagerDuty.Request.get(path, headers, options)
+  end
+
+  @doc """
+  Return a default `until` date in the near future.
+  """
+  def get_until_date(_user) do
+    Timex.now()
+    |> Timex.shift(hours: 1)
+    |> DateTime.truncate(:second)
   end
 
   @doc """
@@ -186,15 +248,39 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     Enum.map(incidents, fn incident ->
       severity = deep_get(incident, ["priority", "summary"]) || deep_get(incident, ["service", "summary"])
 
+      team =
+        incident
+        |> Map.get("teams", [])
+        |> List.first()
+
+      # TODO: this does not work with subteams correctly
+      # May need to synchronize separately for each team
+      team_id = Map.get(team || %{}, "id")
+
       triggered_at =
         incident
         |> Map.get("created_at")
         |> Timex.parse!("{ISO:Extended}")
 
+      # TODO: how to calculate resolved_at?
+
+      acknowledgement =
+        incident
+        |> Map.get("acknowledgements", [])
+        |> List.first()
+
+      acknowledged_at =
+        case Map.get(acknowledgement || %{}, "at") do
+          nil -> nil
+          date -> Timex.parse!(date, "{ISO:Extended}")
+        end
+
+      acknowledged_by = Map.get(acknowledgement || %{}, "name")
+
       %{
-        acknowledged_at: nil,
-        acknowledged_by: nil,
-        description: nil,
+        acknowledged_at: acknowledged_at,
+        acknowledged_by: acknowledged_by,
+        description: Map.get(incident, "summary"),
         meta: incident,
         resolved_at: nil,
         resolved_by: nil,
@@ -202,6 +288,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
         source: "pagerduty",
         source_uid: Map.get(incident, "id"),
         status: Map.get(incident, "status"),
+        team_id: team_id,
         title: Map.get(incident, "title"),
         triggered_at: triggered_at,
         triggered_by: nil
