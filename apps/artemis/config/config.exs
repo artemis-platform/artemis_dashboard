@@ -84,24 +84,11 @@ config :artemis, :interval_worker, default_log_limit: System.get_env("ARTEMIS_IN
 config :artemis, :pager_duty,
   teams: [
     [
-      id: "PTS5TEF",
-      name: "vCloud Director",
-      slug: :vcloud_director
-    ],
-    [
-      id: "PENNR50",
-      name: "vCloud Director - Customer Ops",
-      slug: :vcloud_director_customer_ops
-    ],
-    [
-      id: "PHJYRHQ",
-      name: "vCloud Director - Platform Ops",
-      slug: :vcloud_director_platform_ops
+      id: System.get_env("ARTEMIS_PAGER_DUTY_TEAM_ID"),
+      name: "Artemis Dashboard",
+      slug: :artemis_dashboard
     ]
   ],
-  # TODO: remove from config
-  # TODO: remove from .env files
-  team_ids: System.get_env("ARTEMIS_PAGER_DUTY_TEAM_IDS"),
   token: System.get_env("ARTEMIS_PAGER_DUTY_TOKEN")
 
 config :slugger, separator_char: ?-

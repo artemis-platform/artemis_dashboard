@@ -88,6 +88,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
         true -> fetch_data(acc, get_updated_options(options, incidents))
       end
     else
+      {:error, %HTTPoison.Error{id: nil, reason: :closed}} -> fetch_data(acc, options)
       {:error, %HTTPoison.Error{id: nil, reason: :timeout}} -> fetch_data(acc, options)
       {:error, message} -> {:error, message}
       error -> {:error, error}
