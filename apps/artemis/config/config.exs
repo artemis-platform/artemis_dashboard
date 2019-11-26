@@ -82,7 +82,25 @@ config :artemis, :ibm_cloudant,
 config :artemis, :interval_worker, default_log_limit: System.get_env("ARTEMIS_INTERVAL_WORKER_DEFAULT_LOG_LIMIT")
 
 config :artemis, :pager_duty,
-  subdomain: System.get_env("ARTEMIS_PAGER_DUTY_SUBDOMAIN"),
+  teams: [
+    [
+      id: "PTS5TEF",
+      name: "vCloud Director",
+      slug: :vcloud_director
+    ],
+    [
+      id: "PENNR50",
+      name: "vCloud Director - Customer Ops",
+      slug: :vcloud_director_customer_ops
+    ],
+    [
+      id: "PHJYRHQ",
+      name: "vCloud Director - Platform Ops",
+      slug: :vcloud_director_platform_ops
+    ]
+  ],
+  # TODO: remove from config
+  # TODO: remove from .env files
   team_ids: System.get_env("ARTEMIS_PAGER_DUTY_TEAM_IDS"),
   token: System.get_env("ARTEMIS_PAGER_DUTY_TOKEN")
 

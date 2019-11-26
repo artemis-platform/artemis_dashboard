@@ -141,6 +141,7 @@ defmodule ArtemisWeb.IncidentView do
     end)
   end
 
+  # TODO: make this work with multiple instances
   def get_subdomain(), do: Application.fetch_env!(:artemis, :pager_duty)[:subdomain]
 
   def status_color(%{status: status}) when is_bitstring(status) do
