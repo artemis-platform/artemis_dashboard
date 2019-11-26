@@ -1,6 +1,7 @@
 defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
   alias Artemis.CreateManyIncidents
   alias Artemis.Drivers.PagerDuty
+  alias Artemis.GetSystemUser
   alias Artemis.ListIncidents
 
   @moduledoc """
@@ -9,10 +10,12 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
 
   @default_since_date DateTime.from_naive!(~N[2019-01-01 00:00:00], "Etc/UTC")
 
-  def call(team_id, user) do
+  def call(team_id) do
+    system_user = GetSystemUser.call!()
+
     options = [
-      callback: callback_factory(team_id, user),
-      request_params: get_request_params(team_id, user)
+      callback: callback_factory(team_id, system_user),
+      request_params: get_request_params(team_id, system_user)
     ]
 
     PagerDuty.ListIncidents.call(options)
@@ -27,10 +30,6 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
       "include[]": "services",
       "include[]": "users",
       since: get_since_date(team_id, user),
-      # TODO: remove statuses
-      # "statuses[]": "acknowledged",
-      # "statuses[]": "resolved",
-      # "statuses[]": "triggered",
       "team_ids[]": team_id
     ]
   end

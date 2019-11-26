@@ -1,4 +1,6 @@
 defmodule Artemis.Worker.IBMCloudantChangeSupervisor do
+  use Supervisor
+
   @moduledoc """
   Starts and supervises IBM Cloudant database change listener workers for each
   host defined in the config.
@@ -42,8 +44,6 @@ defmodule Artemis.Worker.IBMCloudantChangeSupervisor do
     )
 
   """
-
-  use Supervisor
 
   def start_link(options \\ []) do
     Supervisor.start_link(__MODULE__, :ok, name: options[:name] || __MODULE__)

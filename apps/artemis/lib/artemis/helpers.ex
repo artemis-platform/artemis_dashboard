@@ -130,6 +130,20 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
+  Returns a modulecase string. Example:
+
+      Input: "hello_world"
+      Ouput: HelloWorld
+  """
+  def modulecase(value) do
+    value
+    |> snakecase()
+    |> String.split("_")
+    |> Enum.map(&String.capitalize(&1))
+    |> Enum.join("")
+  end
+
+  @doc """
   Returns a simplified module name. Example:
 
       Input: Elixir.MyApp.MyModule
