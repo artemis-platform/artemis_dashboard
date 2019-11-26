@@ -22,8 +22,6 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
 
     trigger_synchronization_on_change(data, result)
 
-    # TODO: update LiveView to use this genserver
-
     {:ok, result}
   end
 
