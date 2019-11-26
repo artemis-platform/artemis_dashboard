@@ -87,7 +87,7 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
       Enum.map(get_teams(), fn team ->
         current_team_data = Map.get(current_data, team)
         next_team_data = Map.get(next_data, team)
-        changed? = (current_team_data != next_team_data)
+        changed? = current_team_data != next_team_data
 
         if changed? do
           call_incident_synchronizer(team)
