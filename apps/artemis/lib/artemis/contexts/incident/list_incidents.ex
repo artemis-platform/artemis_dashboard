@@ -54,6 +54,7 @@ defmodule Artemis.ListIncidents do
     |> where([..., t], t.slug in ^split(value))
   end
 
+  defp filter(query, "team_id", value), do: where(query, [i], i.team_id in ^split(value))
   defp filter(query, "triggered_after", value), do: where(query, [i], i.triggered_at >= ^value)
   defp filter(query, "triggered_before", value), do: where(query, [i], i.triggered_at < ^value)
   defp filter(query, _key, _value), do: query

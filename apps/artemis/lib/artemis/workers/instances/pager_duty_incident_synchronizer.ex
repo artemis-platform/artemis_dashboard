@@ -1,13 +1,9 @@
 defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
-    # TODO: update
-    interval: 60_000,
-    # TODO: update
-    delayed_start: 60_000,
+    interval: :timer.hours(6),
+    delayed_start: :timer.hours(6),
     name: :pager_duty_incident_synchronizer
-
-  import Artemis.Helpers
 
   alias Artemis.CreateManyIncidents
   alias Artemis.Drivers.PagerDuty
@@ -21,34 +17,15 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     ]
   end
 
-  @default_start_date DateTime.from_naive!(~N[2019-09-01 00:00:00], "Etc/UTC")
-  # Warning!
-  #
-  # As of 2019/05 the PagerDuty API endpoint contains a critical bugs.
-  #
-  # The documentation states the maximum `limit` value is 100. Anything higher
-  # than 100 automatically gets rounded down to 100.
-  #
-  # This alone isn't a problem, except for there are additional undocumented
-  # constraints that do cause problems.
-  #
-  # The actual constraint is `limit` plus `offset`. Once the combined value
-  # reached `100` pagination stops working and no further records will be returned.
-  # This includes the `more` key which will always return `false` once the
-  # constraint is hit.
-  #
-  # Finally, a more minor issue is the `total` value cannot be trusted. When
-  # explicitly passing `total: true` as a parameter, the return value for `total`
-  # is frequently incorrect.
-  @fetch_limit 99
+  @default_since_date DateTime.from_naive!(~N[2019-09-01 00:00:00], "Etc/UTC")
 
   # Callbacks
 
   @impl true
-  def call(data, _config) do
+  def call(_data, _config) do
     system_user = GetSystemUser.call!()
 
-    fetch_data(data, system_user)
+    synchronize_incidents(system_user)
   end
 
   # Helpers
@@ -62,161 +39,95 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     |> String.equivalent?("true")
   end
 
-  defp fetch_data(data, user, options \\ []) do
-    with {:ok, response} <- get_pager_duty_incidents(user, options),
-         200 <- response.status_code,
-         # TODO: this could be missing records. It can return `:skipped` if no
-         # matches are in the first request. Should check for `more?` and fetch next
-         {:ok, incidents} <- process_response(response),
-         {:ok, filtered} <- filter_incidents(incidents, user),
-         {:ok, result} <- CreateManyIncidents.call(filtered, user) do
-      total = Map.get(result, :total) + Keyword.get(options, :total, 0)
-      more? = deep_get(response, [:body, "more"])
+  defp synchronize_incidents(user) do
+    team_ids = [
+      "PTS5TEF",
+      "PENNR50",
+      "PHJYRHQ"
+    ]
 
-      case more? do
-        false ->
-          meta = [api_response: response]
-          data = create_data(total, meta)
+    results =
+      Enum.reduce(team_ids, %{}, fn team_id, acc ->
+        {:ok, result} = synchronize_incidents_for_team(team_id, user)
 
-          {:ok, data}
+        total = length(result.data)
 
-        true ->
-          date =
-            incidents
-            |> Enum.map(& &1.triggered_at)
-            |> Artemis.Helpers.sort_by_date_time()
-            |> List.last()
+        Map.put(acc, team_id, total)
+      end)
 
-          IO.inspect(["date", date])
-
-          options =
-            options
-            |> Keyword.put(:since, date)
-            |> Keyword.put(:total, total)
-
-          IO.inspect("finding more")
-
-          fetch_data(data, user, options)
-      end
-    else
-      {:skipped, message} -> {:skipped, message}
-      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} -> fetch_data(data, user, options)
-      {:error, message} -> {:error, message}
-      error -> {:error, error}
-    end
-  rescue
-    error ->
-      case error do
-        %MatchError{term: {:error, %HTTPoison.Error{id: nil, reason: :timeout}}} ->
-          Logger.info("Error synchronizing pager duty incidents: request timeout")
-
-          fetch_data(data, user, options)
-
-        _ ->
-          Logger.info("Error synchronizing pager duty incidents: " <> inspect(error))
-
-          {:error, "Exception raised while synchronizing incidents"}
-      end
-  end
-
-  defp create_data(result, meta) do
     %Data{
-      meta: Enum.into(meta, %{}),
-      result: result
+      result: results
     }
   end
 
-  defp get_pager_duty_incidents(user, options) do
-    since_date =
-      case Keyword.get(options, :since) do
-        nil -> DateTime.to_iso8601(get_start_date(user))
-        date -> date
-      end
+  defp synchronize_incidents_for_team(team_id, user) do
+    since_date = DateTime.to_iso8601(get_since_date(team_id, user))
 
-    until_date =
-      case Keyword.get(options, :until) do
-        nil -> DateTime.to_iso8601(get_until_date(user))
-        date -> date
-      end
-
-    path = "/incidents"
-    headers = []
-
-    options = [
-      params: [
-        "include[]": "acknowledgers",
-        "include[]": "assignees",
-        "include[]": "services",
-        "include[]": "users",
-        limit: @fetch_limit,
-        offset: 0,
-        since: since_date,
-        until: until_date,
-        # "statuses[]": "triggered",
-        # "statuses[]": "acknowledged",
-        # "statuses[]": "resolved",
-        "team_ids[]": "PTS5TEF",
-        "team_ids[]": "PENNR50",
-        "team_ids[]": "PHJYRHQ"
-        # "team_ids[]": get_team_ids(),
-      ]
+    request_params = [
+      "include[]": "acknowledgers",
+      "include[]": "assignees",
+      "include[]": "services",
+      "include[]": "users",
+      since: since_date,
+      # "statuses[]": "acknowledged",
+      # "statuses[]": "resolved",
+      # "statuses[]": "triggered",
+      "team_ids[]": team_id
     ]
 
-    result = PagerDuty.Request.get(path, headers, options)
+    callback = fn incidents, options ->
+      filtered = filter_incidents(team_id, incidents, user)
+      filtered_with_team_id = Enum.map(filtered, &Map.put(&1, :team_id, team_id))
 
-    {:ok, payload} = result
+      {:ok, _} = CreateManyIncidents.call(filtered_with_team_id, user)
 
-    request = payload.request
-    request_url = request.url
+      %{
+        incidents: filtered,
+        options: options
+      }
+    end
 
-    body = payload.body
-    incidents = body["incidents"]
-    size = length(incidents)
+    options = [
+      callback: callback,
+      request_params: request_params
+    ]
 
-    # IO.inspect payload
-    IO.inspect(request.url)
-    # IO.inspect incidents
-    IO.inspect(size)
-
-    # # result
-
-    # {:ok, %{}}
-
-    PagerDuty.Request.get(path, headers, options)
-  end
-
-  @doc """
-  Return a default `until` date in the near future.
-  """
-  def get_until_date(_user) do
-    Timex.now()
-    |> Timex.shift(hours: 1)
-    |> DateTime.truncate(:second)
+    PagerDuty.ListIncidents.call(options)
   end
 
   @doc """
   Find the oldest existing incident not in resolved status. If none exist,
   fallback to the default date.
   """
-  def get_start_date(user, default_start_date \\ @default_start_date) do
-    with nil <- get_earliest_unresolved_incident(user),
-         nil <- get_oldest_resolved_incident(user) do
-      default_start_date
+  def get_since_date(team_id, user) do
+    with nil <- get_earliest_unresolved_incident(team_id, user),
+         nil <- get_oldest_resolved_incident(team_id, user) do
+      @default_since_date
     else
       date -> date
     end
   end
 
-  defp get_earliest_unresolved_incident(user) do
-    case get_incident_by("triggered_at", %{status: ["triggered", "acknowledged"]}, user) do
+  defp get_earliest_unresolved_incident(team_id, user) do
+    filters = %{
+      status: ["triggered", "acknowledged"],
+      team_id: team_id
+    }
+
+    case get_incident_by("triggered_at", filters, user) do
       nil -> nil
       # Include record in API response
       incident -> Timex.shift(incident.triggered_at, seconds: -1)
     end
   end
 
-  defp get_oldest_resolved_incident(user) do
-    case get_incident_by("-triggered_at", %{status: ["resolved"]}, user) do
+  defp get_oldest_resolved_incident(team_id, user) do
+    filters = %{
+      status: ["resolved"],
+      team_id: team_id
+    }
+
+    case get_incident_by("-triggered_at", filters, user) do
       nil -> nil
       # Do not include record in API response
       incident -> Timex.shift(incident.triggered_at, seconds: 1)
@@ -239,82 +150,26 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizer do
     end
   end
 
-  defp process_response(%HTTPoison.Response{body: %{"incidents" => incidents}}) do
-    case length(incidents) do
-      0 -> {:skipped, "No new records to sync"}
-      _ -> {:ok, process_response_entries(incidents)}
-    end
-  end
+  # Filter out updates to existing incidents that are already resolved
+  defp filter_incidents(team_id, incidents, user) do
+    resolved_incidents = get_existing_resolved_incidents(team_id, user)
 
-  defp process_response_entries(incidents) do
-    Enum.map(incidents, fn incident ->
-      severity = deep_get(incident, ["priority", "summary"]) || deep_get(incident, ["service", "summary"])
-
-      team =
-        incident
-        |> Map.get("teams", [])
-        |> List.first()
-
-      # TODO: this does not work with subteams correctly
-      # May need to synchronize separately for each team
-      team_id = Map.get(team || %{}, "id")
-
-      triggered_at =
-        incident
-        |> Map.get("created_at")
-        |> Timex.parse!("{ISO:Extended}")
-
-      # TODO: how to calculate resolved_at?
-
-      acknowledgement =
-        incident
-        |> Map.get("acknowledgements", [])
-        |> List.first()
-
-      acknowledged_at =
-        case Map.get(acknowledgement || %{}, "at") do
-          nil -> nil
-          date -> Timex.parse!(date, "{ISO:Extended}")
-        end
-
-      acknowledged_by = Map.get(acknowledgement || %{}, "name")
-
-      %{
-        acknowledged_at: acknowledged_at,
-        acknowledged_by: acknowledged_by,
-        description: Map.get(incident, "summary"),
-        meta: incident,
-        resolved_at: nil,
-        resolved_by: nil,
-        severity: severity,
-        source: "pagerduty",
-        source_uid: Map.get(incident, "id"),
-        status: Map.get(incident, "status"),
-        team_id: team_id,
-        title: Map.get(incident, "title"),
-        triggered_at: triggered_at,
-        triggered_by: nil
-      }
+    Enum.reject(incidents, fn incident ->
+      Enum.member?(resolved_incidents, incident.source_uid)
     end)
   end
 
-  # Filter out updates to existing incidents that are already resolved
-  defp filter_incidents(incidents, user) do
-    resolved_incidents = get_existing_resolved_incidents(user)
+  defp get_existing_resolved_incidents(team_id, user) do
+    filters = %{
+      status: ["resolved"],
+      team_id: team_id
+    }
 
-    filtered =
-      Enum.reject(incidents, fn incident ->
-        Enum.member?(resolved_incidents, incident.source_uid)
-      end)
-
-    {:ok, filtered}
-  end
-
-  defp get_existing_resolved_incidents(user) do
-    %{filters: %{status: "resolved"}}
+    %{filters: filters}
     |> ListIncidents.call(user)
     |> Enum.map(& &1.source_uid)
   end
 
-  def get_team_ids, do: Application.fetch_env!(:artemis, :pager_duty)[:team_ids]
+  # TODO: update
+  defp get_team_ids, do: Application.fetch_env!(:artemis, :pager_duty)[:team_ids]
 end

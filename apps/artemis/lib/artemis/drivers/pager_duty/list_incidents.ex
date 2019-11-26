@@ -8,8 +8,6 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
               meta: %{}
   end
 
-  # TODO: how to pass in `team_id`?
-
   @moduledoc """
   Fetches incidents from the PagerDuty API.
 
@@ -69,7 +67,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
     fetch_data(initial_data, options)
   end
 
-  defp fetch_data(data, options) do
+  defp fetch_data(acc, options) do
     with {:ok, response} <- get_page(options),
          200 <- response.status_code,
          {:ok, incidents} <- process_response(response) do
@@ -78,30 +76,19 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
       incidents = Map.get(callback_results, :incidents, incidents)
       options = Map.get(callback_results, :options, options)
 
-      data =
-        data
+      acc =
+        acc
         |> Map.update!(:data, &Kernel.++(&1, incidents))
         |> Map.update!(:meta, &Map.put(&1, :api_response, response))
 
       more? = Artemis.Helpers.deep_get(response, [:body, "more"], false)
 
       case more? do
-        false ->
-          {:ok, data}
-
-        true ->
-          since_date =
-            incidents
-            |> Enum.map(& &1.triggered_at)
-            |> Artemis.Helpers.sort_by_date_time()
-            |> List.last()
-
-          options = Keyword.put(options, :since, since_date)
-
-          fetch_data(data, options)
+        false -> {:ok, get_unique_results(acc)}
+        true -> fetch_data(acc, get_updated_options(options, incidents))
       end
     else
-      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} -> fetch_data(data, options)
+      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} -> fetch_data(acc, options)
       {:error, message} -> {:error, message}
       error -> {:error, error}
     end
@@ -152,25 +139,15 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
 
   defp process_response_entries(incidents) do
     Enum.map(incidents, fn incident ->
+      urgency = Artemis.Helpers.deep_get(incident, ["urgency"])
       priority_summary = Artemis.Helpers.deep_get(incident, ["priority", "summary"])
       service_summary = Artemis.Helpers.deep_get(incident, ["service", "summary"])
-      severity = priority_summary || service_summary
-
-      team =
-        incident
-        |> Map.get("teams", [])
-        |> List.first()
-
-      # TODO: this does not work with subteams correctly
-      # May need to synchronize separately for each team
-      team_id = Map.get(team || %{}, "id")
+      severity = urgency || priority_summary || service_summary
 
       triggered_at =
         incident
         |> Map.get("created_at")
         |> Timex.parse!("{ISO:Extended}")
-
-      # TODO: how to calculate resolved_at?
 
       acknowledgement =
         incident
@@ -196,7 +173,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
         source: "pagerduty",
         source_uid: Map.get(incident, "id"),
         status: Map.get(incident, "status"),
-        team_id: team_id,
+        team_id: nil,
         title: Map.get(incident, "title"),
         triggered_at: triggered_at,
         triggered_by: nil
@@ -209,5 +186,25 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
       nil -> %{incidents: incidents, options: options}
       callback -> callback.(incidents, options)
     end
+  end
+
+  defp get_updated_options(options, incidents) do
+    since_date =
+      incidents
+      |> Enum.map(& &1.triggered_at)
+      |> Artemis.Helpers.sort_by_date_time()
+      |> List.last()
+      |> DateTime.to_iso8601()
+
+    request_params = Keyword.get(options, :request_params, [])
+    updated_request_params = Keyword.put(request_params, :since, since_date)
+
+    Keyword.put(options, :request_params, updated_request_params)
+  end
+
+  defp get_unique_results(acc) do
+    Map.update!(acc, :data, fn data ->
+      Enum.uniq_by(data, & &1.source_uid)
+    end)
   end
 end
