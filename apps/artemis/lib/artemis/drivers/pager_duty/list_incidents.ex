@@ -70,10 +70,10 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
   defp fetch_data(acc, options) do
     with {:ok, response} <- get_page(options),
          200 <- response.status_code,
-         {:ok, incidents} <- process_response(response) do
-      callback_results = apply_callback(incidents, options)
+         {:ok, all_incidents} <- process_response(response) do
+      callback_results = apply_callback(all_incidents, options)
 
-      incidents = Map.get(callback_results, :incidents, incidents)
+      incidents = Map.get(callback_results, :incidents, all_incidents)
       options = Map.get(callback_results, :options, options)
 
       acc =
@@ -85,7 +85,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
 
       case more? do
         false -> {:ok, get_unique_results(acc)}
-        true -> fetch_data(acc, get_updated_options(options, incidents))
+        true -> fetch_data(acc, get_updated_options(options, all_incidents))
       end
     else
       {:error, %HTTPoison.Error{id: nil, reason: :closed}} -> fetch_data(acc, options)
