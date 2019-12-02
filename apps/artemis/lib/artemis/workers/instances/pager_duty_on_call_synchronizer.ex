@@ -2,7 +2,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
     interval: :timer.seconds(15),
-    delayed_start: :timer.seconds(15),
+    delayed_start: :timer.seconds(5),
     name: :pager_duty_on_call_synchronizer
 
   alias Artemis.Drivers.PagerDuty

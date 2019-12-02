@@ -8,7 +8,7 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
   Synchronize records from PagerDuty API to Artemis.Incident schema
   """
 
-  @default_since_date DateTime.from_naive!(~N[2019-01-01 00:00:00], "Etc/UTC")
+  @default_since_date DateTime.from_naive!(~N[2019-09-01 00:00:00], "Etc/UTC")
 
   def call(team_id) do
     system_user = GetSystemUser.call!()

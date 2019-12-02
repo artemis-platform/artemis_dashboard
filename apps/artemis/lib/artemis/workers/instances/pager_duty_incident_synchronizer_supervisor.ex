@@ -56,11 +56,10 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor do
     children =
       Enum.map(teams, fn team ->
         slug = Keyword.get(team, :slug)
-        short_name = Artemis.Helpers.modulecase(slug)
 
         config = [
           id: Keyword.get(team, :id),
-          name: get_worker_name(short_name),
+          name: get_worker_name(slug),
           slug: slug
         ]
 
@@ -74,9 +73,9 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor do
     supervise(children, options)
   end
 
-  # Helpers
+  def get_worker_name(slug) do
+    short_name = Artemis.Helpers.modulecase(slug)
 
-  defp get_worker_name(short_name) do
-    String.to_atom("#{Artemis.Worker.PagerDutyIncidentSynchronizerInstance}.#{short_name}")
+    String.to_atom("Elixir.Artemis.Worker.PagerDutyIncidentSynchronizerInstance.#{short_name}")
   end
 end

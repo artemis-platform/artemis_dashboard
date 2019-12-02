@@ -1,7 +1,7 @@
 defmodule Artemis.Worker.PagerDutyIncidentStatus do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
-    delayed_start: :timer.seconds(30),
+    delayed_start: :timer.seconds(10),
     interval: :timer.seconds(30),
     name: :pager_duty_incident_status
 
@@ -36,11 +36,14 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
     |> String.equivalent?("true")
   end
 
-  defp get_team_ids do
+  defp get_teams() do
     :artemis
     |> Application.fetch_env!(:pager_duty)
     |> Keyword.fetch!(:teams)
-    |> Enum.map(&Keyword.fetch!(&1, :id))
+  end
+
+  defp get_team_ids() do
+    Enum.map(get_teams(), &Keyword.fetch!(&1, :id))
   end
 
   defp get_incident_status_summary(team_ids, statuses) do
@@ -81,33 +84,22 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
   end
 
   defp trigger_synchronization_on_change(current_data, next_data) do
-    data_present? = current_data && current_data != %{}
+    Enum.map(get_teams(), fn team ->
+      current_team_data = Map.get(current_data || %{}, team[:id])
+      next_team_data = Map.get(next_data, team[:id])
+      changed? = current_team_data != next_team_data
 
-    if data_present? do
-      Enum.map(get_teams(), fn team ->
-        current_team_data = Map.get(current_data, team)
-        next_team_data = Map.get(next_data, team)
-        changed? = current_team_data != next_team_data
-
-        if changed? do
-          call_incident_synchronizer(team)
-        end
-      end)
-    end
-  end
-
-  defp get_teams() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
+      if changed? do
+        call_incident_synchronizer(team)
+      end
+    end)
   end
 
   defp call_incident_synchronizer(team) do
     slug = Keyword.get(team, :slug)
-    short_name = Artemis.Helpers.modulecase(slug)
-    instance = String.to_atom("Elixir.Artemis.Worker.PagerDutyIncidentSynchronizerInstance.#{short_name}")
+    name = Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor.get_worker_name(slug)
     options = [async: true]
 
-    Artemis.Worker.PagerDutyIncidentSynchronizerInstance.update(options, instance)
+    Artemis.Worker.PagerDutyIncidentSynchronizerInstance.update(options, name)
   end
 end
