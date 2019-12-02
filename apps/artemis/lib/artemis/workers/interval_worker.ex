@@ -94,6 +94,15 @@ defmodule Artemis.IntervalWorker do
 
       def get_state(name \\ nil), do: GenServer.call(get_name(name), :state)
 
+      def fetch_data(options \\ [], name \\ nil) do
+        log = get_log(name)
+
+        case length(log) > 0 do
+          true -> get_data(name)
+          false -> update(options, name).data
+        end
+      end
+
       def pause(name \\ nil), do: GenServer.call(get_name(name), :pause)
 
       def resume(name \\ nil), do: GenServer.call(get_name(name), :resume)
@@ -218,7 +227,7 @@ defmodule Artemis.IntervalWorker do
         Process.send_after(self(), :update, interval)
       end
 
-      defp schedule_update_unless_paused(%{timer: timer}) when timer == :paused, do: nil
+      defp schedule_update_unless_paused(%{timer: timer}) when timer == :paused, do: :paused
       defp schedule_update_unless_paused(%{timer: timer}) when is_nil(timer), do: schedule_update()
 
       defp schedule_update_unless_paused(%{timer: timer}) do

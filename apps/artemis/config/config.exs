@@ -14,6 +14,9 @@ config :artemis, :actions,
   ibm_cloudant_migrator: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR")
   ],
+  pager_duty_synchronize_escalation_policies: [
+    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_ESCALATION_POLICIES")
+  ],
   pager_duty_synchronize_incidents: [
     enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_INCIDENTS")
   ],
