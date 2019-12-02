@@ -88,10 +88,16 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
         true -> fetch_data(acc, get_updated_options(options, all_incidents))
       end
     else
-      {:error, %HTTPoison.Error{id: nil, reason: :closed}} -> fetch_data(acc, options)
-      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} -> fetch_data(acc, options)
-      {:error, message} -> {:error, message}
-      error -> {:error, error}
+      {:error, %HTTPoison.Error{id: nil, reason: :closed}} ->
+        fetch_data(acc, options)
+
+      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ->
+        fetch_data(acc, options)
+
+      error ->
+        Logger.info("Error fetching incidents from PagerDuty API: " <> inspect(error))
+
+        return_error(error)
     end
   rescue
     error ->
@@ -135,8 +141,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
     end
   end
 
-  defp process_response({:error, error}), do: {:error, error}
-  defp process_response(error), do: {:error, error}
+  defp process_response(response), do: return_error(response)
 
   defp process_response_entries(incidents) do
     Enum.map(incidents, fn incident ->
@@ -208,4 +213,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
       Enum.uniq_by(data, & &1.source_uid)
     end)
   end
+
+  defp return_error({:error, message}), do: {:error, message}
+  defp return_error(error), do: {:error, error}
 end

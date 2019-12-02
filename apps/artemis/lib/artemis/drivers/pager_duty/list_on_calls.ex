@@ -1,4 +1,4 @@
-defmodule Artemis.Drivers.PagerDuty.ListEscalationPolicies do
+defmodule Artemis.Drivers.PagerDuty.ListOnCalls do
   require Logger
 
   alias Artemis.Drivers.PagerDuty
@@ -9,7 +9,7 @@ defmodule Artemis.Drivers.PagerDuty.ListEscalationPolicies do
   end
 
   @moduledoc """
-  Fetches escalation policies from the PagerDuty API.
+  Fetches on call from the PagerDuty API.
 
   ## Paginated Results
 
@@ -35,7 +35,7 @@ defmodule Artemis.Drivers.PagerDuty.ListEscalationPolicies do
   """
 
   @fetch_limit 50
-  @request_path "/escalation_policies"
+  @request_path "/oncalls"
 
   def call(options \\ []) do
     initial_data = %Result{
@@ -49,22 +49,22 @@ defmodule Artemis.Drivers.PagerDuty.ListEscalationPolicies do
   defp fetch_data(acc, options) do
     with {:ok, response} <- get_page(options),
          200 <- response.status_code,
-         {:ok, all_escalation_policies} <- process_response(response) do
-      callback_results = apply_callback(all_escalation_policies, options)
+         {:ok, all_on_calls} <- process_response(response) do
+      callback_results = apply_callback(all_on_calls, options)
 
-      escalation_policies = Map.get(callback_results, :escalation_policies, all_escalation_policies)
+      on_calls = Map.get(callback_results, :on_calls, all_on_calls)
       options = Map.get(callback_results, :options, options)
 
       acc =
         acc
-        |> Map.update!(:data, &Kernel.++(&1, escalation_policies))
+        |> Map.update!(:data, &Kernel.++(&1, on_calls))
         |> Map.update!(:meta, &Map.put(&1, :api_response, response))
 
       more? = Artemis.Helpers.deep_get(response, [:body, "more"], false)
 
       case more? do
         false -> {:ok, acc}
-        true -> fetch_data(acc, get_updated_options(options, all_escalation_policies))
+        true -> fetch_data(acc, get_updated_options(options, all_on_calls))
       end
     else
       {:error, %HTTPoison.Error{id: nil, reason: :closed}} ->
@@ -74,15 +74,15 @@ defmodule Artemis.Drivers.PagerDuty.ListEscalationPolicies do
         fetch_data(acc, options)
 
       error ->
-        Logger.info("Error fetching escalation policies from PagerDuty API: " <> inspect(error))
+        Logger.info("Error fetching on calls from PagerDuty API: " <> inspect(error))
 
         return_error(error)
     end
   rescue
     error ->
-      Logger.info("Error fetching escalation policies from PagerDuty API: " <> inspect(error))
+      Logger.info("Error fetching on calls from PagerDuty API: " <> inspect(error))
 
-      {:error, "Exception raised while fetching escalation policies from PagerDuty API"}
+      {:error, "Exception raised while fetching on callsfrom PagerDuty API"}
   end
 
   defp get_page(options) do
@@ -104,20 +104,20 @@ defmodule Artemis.Drivers.PagerDuty.ListEscalationPolicies do
     Keyword.merge(default_request_params, custom_request_params)
   end
 
-  defp process_response(%HTTPoison.Response{body: %{"escalation_policies" => entries}}) do
+  defp process_response(%HTTPoison.Response{body: %{"oncalls" => entries}}) do
     {:ok, entries}
   end
 
   defp process_response(response), do: return_error(response)
 
-  defp apply_callback(escalation_policies, options) do
+  defp apply_callback(on_calls, options) do
     case Keyword.get(options, :callback) do
-      nil -> %{escalation_policies: escalation_policies, options: options}
-      callback -> callback.(escalation_policies, options)
+      nil -> %{on_calls: on_calls, options: options}
+      callback -> callback.(on_calls, options)
     end
   end
 
-  defp get_updated_options(options, _escalation_policies) do
+  defp get_updated_options(options, _on_calls) do
     request_params = Keyword.get(options, :request_params, [])
     current_offset = Keyword.get(request_params, :offset, 0)
     next_offset = current_offset + 1
