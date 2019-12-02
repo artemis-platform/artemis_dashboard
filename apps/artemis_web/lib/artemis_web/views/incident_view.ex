@@ -115,7 +115,7 @@ defmodule ArtemisWeb.IncidentView do
         verify: row.source == "pagerduty",
         link:
           link("View on PagerDuty",
-            to: "https://#{get_subdomain()}.pagerduty.com/incidents/#{row.source_uid}",
+            to: "#{get_pager_duty_web_url()}/incidents/#{row.source_uid}",
             target: "_blank"
           )
       ]
@@ -141,8 +141,7 @@ defmodule ArtemisWeb.IncidentView do
     end)
   end
 
-  # TODO: make this work with multiple instances
-  def get_subdomain(), do: Application.fetch_env!(:artemis, :pager_duty)[:subdomain]
+  def get_pager_duty_web_url(), do: Application.fetch_env!(:artemis, :pager_duty)[:web_url]
 
   def status_color(%{status: status}) when is_bitstring(status) do
     case String.downcase(status) do

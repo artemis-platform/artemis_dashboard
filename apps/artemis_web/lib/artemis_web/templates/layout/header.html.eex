@@ -161,7 +161,7 @@
           <%= link "ServiceNow", to: "https://service-now.com", target: "_blank" %>
         </li>
         <li>
-          <%= link "PagerDuty", to: "https://artemis.pagerduty.com", target: "_blank" %>
+          <%= link "PagerDuty", to: Application.fetch_env!(:artemis, :pager_duty)[:web_url], target: "_blank" %>
         </li>
         <li class="more-links">
           <i class="angle down icon"></i>

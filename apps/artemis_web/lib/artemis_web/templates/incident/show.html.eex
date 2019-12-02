@@ -38,7 +38,7 @@
 
     <%= if @incident.source == "pagerduty" do %>
       <p>
-        <%= link "View on PagerDuty", to: "https://#{get_subdomain()}.pagerduty.com/incidents/#{@incident.source_uid}", target: "_blank" %>
+        <%= link "View on PagerDuty", to: "#{get_pager_duty_web_url()}/incidents/#{@incident.source_uid}", target: "_blank" %>
       </p>
     <% end %>
   </section>
