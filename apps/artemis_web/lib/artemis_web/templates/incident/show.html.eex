@@ -29,24 +29,15 @@
   <% end %>
 
   <section>
-    <%= h2 "Overview" %>
-
-    <%= render ArtemisWeb.IncidentTagView, "edit.html", assigns %>
-
-    <p>
-      <span class="status-label <%= status_color(@incident) %>">
-        <%= @incident.status %>
-      </span>
-    </p>
-  </section>
-
-  <section>
     <%= h2 "Details" %>
+
     <%=
       render_key_value_list([
-        ["Severity", @incident.severity],
         ["Team", get_team(@incident)],
+        ["Tags", render(ArtemisWeb.IncidentTagView, "edit.html", assigns)],
+        ["Status", render_status(@incident)],
         ["Title", @incident.title],
+        ["Severity", @incident.severity],
         ["Description", @incident.description],
         ["Source", @incident.source],
         ["Source UID", @incident.source_uid],

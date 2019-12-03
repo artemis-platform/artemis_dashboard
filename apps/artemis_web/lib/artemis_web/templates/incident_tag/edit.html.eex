@@ -5,6 +5,7 @@
     |> Map.put(:changeset, @tags_changeset)
     |> Map.put(:create_permission, "incidents:create:tags")
     |> Map.put(:current_tags, @incident.tags)
+    |> Map.put(:show_tag_label, false)
     |> Map.put(:tag_link, fn (tag) -> Routes.incident_path(@conn, :index, filters: %{tags: [tag]}) end)
     |> Map.put(:update_permission, "incidents:update:tags")
 

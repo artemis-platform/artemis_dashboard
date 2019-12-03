@@ -1,7 +1,9 @@
 <div class="resource-tags">
   <div class="list">
     <%= if @current_tags && length(@current_tags) > 0 do %>
-      <div class="label">Tags</div>
+      <% unless assigns[:show_tag_label] == false do %>
+        <div class="label">Tags</div>
+      <% end %>
       <ul>
         <%= Enum.map Enum.sort_by(@current_tags, &(&1.name)), fn (tag) -> %>
           <li>

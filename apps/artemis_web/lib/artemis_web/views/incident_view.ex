@@ -143,6 +143,17 @@ defmodule ArtemisWeb.IncidentView do
 
   def get_pager_duty_web_url(), do: Application.fetch_env!(:artemis, :pager_duty)[:web_url]
 
+  @doc """
+  Render status
+  """
+  def render_status(incident) do
+    content_tag(:p) do
+      content_tag(:span, class: "status-label #{status_color(incident)}") do
+        incident.status
+      end
+    end
+  end
+
   def status_color(%{status: status}) when is_bitstring(status) do
     case String.downcase(status) do
       "resolved" -> "green"
