@@ -62,4 +62,40 @@ defmodule Artemis.DataCase do
       end)
     end)
   end
+
+  @doc """
+  Disable a feature by slug. Will update an existing feature or create a new one.
+  """
+  def disable_feature(slug), do: toggle_feature(slug, false)
+
+  @doc """
+  Enable a feature by slug. Will update an existing feature or create a new one.
+  """
+  def enable_feature(slug), do: toggle_feature(slug, true)
+
+  defp toggle_feature(slug, active) do
+    case Artemis.Repo.get_by(Artemis.Feature, slug: slug) do
+      nil ->
+        create_params = %{
+          active: true,
+          name: slug,
+          slug: slug
+        }
+
+        %Artemis.Feature{}
+        |> Artemis.Feature.changeset(create_params)
+        |> Artemis.Repo.insert()
+
+      feature ->
+        case feature.active == active do
+          true ->
+            feature
+
+          false ->
+            feature
+            |> Artemis.Feature.changeset(%{active: active})
+            |> Artemis.Repo.update()
+        end
+    end
+  end
 end

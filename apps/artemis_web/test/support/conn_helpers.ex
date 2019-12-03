@@ -12,4 +12,14 @@ defmodule ArtemisWeb.ConnHelpers do
 
     Plug.Conn.put_req_header(conn, "authorization", "basic: " <> basic)
   end
+
+  @doc """
+  Disable a feature by slug. Will update an existing feature or create a new one.
+  """
+  def disable_feature(slug), do: Artemis.DataCase.disable_feature(slug)
+
+  @doc """
+  Enable a feature by slug. Will update an existing feature or create a new one.
+  """
+  def enable_feature(slug), do: Artemis.DataCase.enable_feature(slug)
 end
