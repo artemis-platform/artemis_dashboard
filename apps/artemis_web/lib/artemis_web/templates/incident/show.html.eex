@@ -45,7 +45,7 @@
     <%=
       render_key_value_list([
         ["Severity", @incident.severity],
-        ["Team ID", @incident.team_id],
+        ["Team", get_team(@incident)],
         ["Title", @incident.title],
         ["Description", @incident.description],
         ["Source", @incident.source],
