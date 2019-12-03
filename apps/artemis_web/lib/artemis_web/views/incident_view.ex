@@ -169,9 +169,12 @@ defmodule ArtemisWeb.IncidentView do
   Display a user friendly team value depending on incident type
   """
   def get_team(%{source: "pagerduty"} = team) do
-    get_pager_duty_teams()
-    |> Enum.find(&(Keyword.get(&1, :id) == team.team_id))
-    |> Keyword.get(:name)
+    team =
+      Enum.find(get_pager_duty_teams(), fn entry ->
+        Keyword.get(entry, :id) == team.team_id
+      end) || []
+
+    Keyword.get(team, :name)
   end
 
   def get_team(%{team_id: team_id}), do: team_id
