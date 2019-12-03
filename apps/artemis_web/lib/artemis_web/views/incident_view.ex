@@ -155,17 +155,17 @@ defmodule ArtemisWeb.IncidentView do
   def status_color(_), do: nil
 
   @doc """
-  Return the PagerDuty team name from configuration by team id
+  Display a user friendly team value depending on incident type
   """
   def get_team(%{source: "pagerduty"} = team) do
-    get_teams()
-    |> Enum.find(&Keyword.get(&1, :id) == team.team_id)
+    get_pager_duty_teams()
+    |> Enum.find(&(Keyword.get(&1, :id) == team.team_id))
     |> Keyword.get(:name)
   end
 
   def get_team(%{team_id: team_id}), do: team_id
 
-  defp get_teams() do
+  defp get_pager_duty_teams() do
     :artemis
     |> Application.fetch_env!(:pager_duty)
     |> Keyword.fetch!(:teams)
@@ -175,7 +175,7 @@ defmodule ArtemisWeb.IncidentView do
   Return teams as multi-select filter options
   """
   def get_incident_filter_team_id_options() do
-    Enum.map(get_teams(), fn team ->
+    Enum.map(get_pager_duty_teams(), fn team ->
       [
         key: Keyword.get(team, :name),
         value: Keyword.get(team, :id)
