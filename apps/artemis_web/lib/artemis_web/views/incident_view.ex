@@ -189,11 +189,21 @@ defmodule ArtemisWeb.IncidentView do
   Return teams as multi-select filter options
   """
   def get_incident_filter_team_id_options() do
-    Enum.map(get_pager_duty_teams(), fn team ->
-      [
-        key: Keyword.get(team, :name),
-        value: Keyword.get(team, :id)
-      ]
+    get_pager_duty_teams()
+    |> filter_team_id_options()
+    |> Enum.reverse()
+  end
+
+  defp filter_team_id_options(teams) do
+    Enum.reduce(teams, [], fn team, acc ->
+      id = Keyword.get(team, :id)
+      name = Keyword.get(team, :name)
+      entry = [key: name, value: id]
+
+      case Artemis.Helpers.present?(id) && Artemis.Helpers.present?(name) do
+        true -> [entry | acc]
+        false -> acc
+      end
     end)
   end
 end
