@@ -34,6 +34,15 @@
         <%= filter_button(@conn, "Triggered", status: "triggered") %>
       </div>
       <div>
+        <%=
+          options = get_incident_filter_team_id_options()
+
+          if length(options) > 1 do
+            filter_multi_select(@conn, "Team", :team_id, options)
+          end
+        %>
+      </div>
+      <div>
         <%= render ArtemisWeb.TagView, "_resource_filter.html", assigns %>
       </div>
       <div class="table-actions">

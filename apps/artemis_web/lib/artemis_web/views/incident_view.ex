@@ -153,4 +153,16 @@ defmodule ArtemisWeb.IncidentView do
   end
 
   def status_color(_), do: nil
+
+  def get_incident_filter_team_id_options() do
+    :artemis
+    |> Application.fetch_env!(:pager_duty)
+    |> Keyword.fetch!(:teams)
+    |> Enum.map(fn team ->
+      [
+        key: Keyword.get(team, :name),
+        value: Keyword.get(team, :id)
+      ]
+    end)
+  end
 end
