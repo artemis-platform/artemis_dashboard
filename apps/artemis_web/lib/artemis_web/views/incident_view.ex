@@ -23,10 +23,13 @@ defmodule ArtemisWeb.IncidentView do
       {"Actions", "actions"},
       {"Date", "triggered_at"},
       {"Incident", "source_uid"},
+      {"Service ID", "service_id"},
+      {"Service Name", "service_name"},
       {"Status", "status"},
       {"Severity", "severity"},
       {"Tags", "tags"},
       {"Team ID", "team_id"},
+      {"Team Name", "team_name"},
       {"Title", "title"}
     ]
   end
@@ -37,6 +40,20 @@ defmodule ArtemisWeb.IncidentView do
         label: fn _conn -> nil end,
         value: fn _conn, _row -> nil end,
         value_html: &data_table_actions_column_html/2
+      ],
+      "service_id" => [
+        label: fn _conn -> "Service ID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "service_id", "Service ID")
+        end,
+        value: fn _conn, row -> row.service_id end
+      ],
+      "service_name" => [
+        label: fn _conn -> "Service Name" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "service_name", "Service")
+        end,
+        value: fn _conn, row -> row.service_name end
       ],
       "severity" => [
         label: fn _conn -> "Severity" end,
@@ -86,6 +103,13 @@ defmodule ArtemisWeb.IncidentView do
           sortable_table_header(conn, "team_id", "Team ID")
         end,
         value: fn _conn, row -> row.team_id end
+      ],
+      "team_name" => [
+        label: fn _conn -> "Team Name" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "team_name", "Team")
+        end,
+        value: fn _conn, row -> row.team_name end
       ],
       "title" => [
         label: fn _conn -> "Title" end,

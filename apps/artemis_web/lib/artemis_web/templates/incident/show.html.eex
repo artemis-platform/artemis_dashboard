@@ -37,6 +37,7 @@
         ["Tags", render(ArtemisWeb.IncidentTagView, "edit.html", assigns)],
         ["Status", render_status(@incident)],
         ["Title", @incident.title],
+        ["Service", @incident.service_name],
         ["Severity", @incident.severity],
         ["Description", @incident.description],
         ["Source", @incident.source],

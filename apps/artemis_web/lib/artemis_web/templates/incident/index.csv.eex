@@ -3,6 +3,6 @@
     @conn,
     @incidents.entries,
     allowed_columns: data_table_allowed_columns(),
-    default_columns: ["source_uid", "triggered_at", "title", "status", "severity", "tags"]
+    default_columns: ["source_uid", "triggered_at", "title", "status", "team_name", "service_name", "severity", "tags"]
   )
 %>

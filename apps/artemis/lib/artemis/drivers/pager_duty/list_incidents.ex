@@ -147,8 +147,9 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
     Enum.map(incidents, fn incident ->
       urgency = Artemis.Helpers.deep_get(incident, ["urgency"])
       priority_summary = Artemis.Helpers.deep_get(incident, ["priority", "summary"])
-      service_summary = Artemis.Helpers.deep_get(incident, ["service", "summary"])
-      severity = urgency || priority_summary || service_summary
+      service_id = Artemis.Helpers.deep_get(incident, ["service", "id"])
+      service_name = Artemis.Helpers.deep_get(incident, ["service", "name"])
+      severity = urgency || priority_summary || service_name
 
       triggered_at =
         incident
@@ -175,11 +176,14 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
         meta: incident,
         resolved_at: nil,
         resolved_by: nil,
+        service_id: service_id,
+        service_name: service_name,
         severity: severity,
         source: "pagerduty",
         source_uid: Map.get(incident, "id"),
         status: Map.get(incident, "status"),
         team_id: nil,
+        team_name: nil,
         title: Map.get(incident, "title"),
         triggered_at: triggered_at,
         triggered_by: nil

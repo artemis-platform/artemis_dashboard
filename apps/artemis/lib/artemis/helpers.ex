@@ -92,6 +92,8 @@ defmodule Artemis.Helpers do
       Input: hello world
       Ouput: Hello World
   """
+  def titlecase(value) when is_nil(value), do: ""
+
   def titlecase(value) do
     value
     |> String.split(" ")

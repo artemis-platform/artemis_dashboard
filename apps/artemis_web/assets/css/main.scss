@@ -200,13 +200,39 @@ select[multiple] {
   display: flex;
   justify-content: space-between;
 
+  .table-filters {
+    display: flex;
+    flex-grow: 1;
+    flex-flow: row wrap;
+    margin-bottom: -0.5rem;
+    margin-left: 1rem;
+
+    &>div {
+      margin-bottom: 0.5rem;
+      margin-right: 1rem;
+
+      &>form {
+        min-width: 8rem;
+        max-width: 12rem;
+      }
+    }
+
+    &>div:last-child {
+      margin-right: 0;
+    }
+  }
+
   .table-actions {
-    align-self: center;
+    flex-shrink: 0;
     display: flex;
 
     .data-table-columns {
       margin-right: 1rem;
       width: 200px;
+    }
+
+    .button {
+      height: 38px;
     }
   }
 }

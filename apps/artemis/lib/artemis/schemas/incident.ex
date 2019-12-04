@@ -10,11 +10,14 @@ defmodule Artemis.Incident do
     field :meta, :map
     field :resolved_at, :utc_datetime
     field :resolved_by, :string
+    field :service_id, :string
+    field :service_name, :string
     field :severity, :string
     field :source, :string
     field :source_uid, :string
     field :status, :string
     field :team_id, :string
+    field :team_name, :string
     field :time_to_acknowledge, :integer
     field :time_to_resolve, :integer
     field :title, :string
@@ -41,11 +44,14 @@ defmodule Artemis.Incident do
       :meta,
       :resolved_at,
       :resolved_by,
+      :service_id,
+      :service_name,
       :severity,
       :source,
       :source_uid,
       :status,
       :team_id,
+      :team_name,
       :title,
       :triggered_at,
       :triggered_by
