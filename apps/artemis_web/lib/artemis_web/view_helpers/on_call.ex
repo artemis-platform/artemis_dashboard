@@ -7,37 +7,41 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
   Renders person currently on call.
   """
   def render_on_call_person(conn) do
-    people =
-      case Artemis.Worker.PagerDutyOnCallSynchronizer.fetch_data() do
-        nil ->
-          []
+    if Artemis.Worker.PagerDutyOnCallSynchronizer.enabled?() do
+      people =
+        case Artemis.Worker.PagerDutyOnCallSynchronizer.fetch_data() do
+          nil ->
+            []
 
-        data ->
-          data
-          |> Enum.flat_map(fn {_, value} -> value end)
-          |> Enum.filter(&(Map.get(&1, "escalation_level") == 1))
-          |> Enum.map(&Artemis.Helpers.deep_get(&1, ["user", "summary"]))
-          |> Enum.uniq()
-      end
+          data ->
+            data
+            |> Enum.flat_map(fn {_, value} -> value end)
+            |> Enum.filter(&(Map.get(&1, "escalation_level") == 1))
+            |> Enum.map(&Artemis.Helpers.deep_get(&1, ["user", "summary"]))
+            |> Enum.uniq()
+        end
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_person.html", conn: conn, people: people)
+      Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_person.html", conn: conn, people: people)
+    end
   end
 
   @doc """
   Renders current status as a colored dot and link to more information.
   """
   def render_on_call_status(conn) do
-    totals = get_pager_duty_incident_totals()
+    if Artemis.Worker.PagerDutyIncidentStatus.enabled?() do
+      totals = get_pager_duty_incident_totals()
 
-    color =
-      cond do
-        has_incident_status?(totals, :triggered) -> "red"
-        has_incident_status?(totals, :acknowledged) -> "yellow"
-        Artemis.Helpers.present?(totals) -> "green"
-        true -> "gray"
-      end
+      color =
+        cond do
+          has_incident_status?(totals, :triggered) -> "red"
+          has_incident_status?(totals, :acknowledged) -> "yellow"
+          Artemis.Helpers.present?(totals) -> "green"
+          true -> "gray"
+        end
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_status.html", conn: conn, color: color)
+      Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_status.html", conn: conn, color: color)
+    end
   end
 
   defp has_incident_status?(totals, status) do
