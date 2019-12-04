@@ -12,10 +12,7 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
 
-  <%= if has?(@conn, "incidents:list") do %>
-    <section>
-      <h3>Incident Management</h3>
-      <%= link "List Incidents", to: Routes.incident_path(@conn, :index) %>
-    </section>
-  <% end %>
+  <article id="on-call-page" class="page">
+    <%= render_pager_duty_live(@conn) %>
+  </article>
 </div>

@@ -23,9 +23,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     end
   end
 
-  # Helpers
-
-  defp enabled?() do
+  def enabled?() do
     :artemis
     |> Application.fetch_env!(:actions)
     |> Keyword.fetch!(:pager_duty_synchronize_on_call)
@@ -33,6 +31,8 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     |> String.downcase()
     |> String.equivalent?("true")
   end
+
+  # Helpers
 
   defp get_team_ids() do
     :artemis
