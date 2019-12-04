@@ -149,7 +149,7 @@
 
   <aside>
     <div class="on-call">
-      <%= render_on_call_status(@conn, @user) %>
+      <%= render_on_call_status(@conn) %>
       <%= render_on_call_person(@conn) %>
     </div>
     <div class="external-links">
