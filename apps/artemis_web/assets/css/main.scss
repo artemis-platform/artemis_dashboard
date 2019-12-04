@@ -118,25 +118,6 @@ select[multiple] {
   }
 }
 
-.data-table-filters {
-  margin-bottom: 1rem;
-
-  content {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 0.5rem 0 0.5rem 0;
-
-    > * {
-      margin-right: 1.5rem !important;
-    }
-  }
-
-  .buttons {
-    max-height: 36px;
-  }
-}
-
 .bulk-actions-form {
 
   .extra-fields > * {
@@ -219,13 +200,39 @@ select[multiple] {
   display: flex;
   justify-content: space-between;
 
+  .table-filters {
+    display: flex;
+    flex-grow: 1;
+    flex-flow: row wrap;
+    margin-bottom: -0.5rem;
+    margin-left: 1rem;
+
+    &>div {
+      margin-bottom: 0.5rem;
+      margin-right: 1rem;
+
+      &>form {
+        min-width: 8rem;
+        max-width: 12rem;
+      }
+    }
+
+    &>div:last-child {
+      margin-right: 0;
+    }
+  }
+
   .table-actions {
-    align-self: center;
+    flex-shrink: 0;
     display: flex;
 
     .data-table-columns {
       margin-right: 1rem;
       width: 200px;
+    }
+
+    .button {
+      height: 38px;
     }
   }
 }
@@ -714,6 +721,187 @@ ul.timeline {
         .field {
           margin: 0 5px 0 0;
         }
+      }
+    }
+  }
+}
+
+/* === Components - On Call Page === */
+
+#on-call-page {
+  $pager_duty_red: #b52e66;
+  $pager_duty_yellow: #d39a0b;
+
+  h2 {
+    border-color: #e2e2e2;
+  }
+
+  .pager-duty {
+    display: flex;
+    padding: 1rem 0 0 0;
+
+    .pager-duty-incident-summary {
+      border-right: 1px solid #e2e2e2;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      margin-right: 2rem;
+      width: 20rem;
+
+      h4 {
+        text-align: center;
+      }
+
+      a.triggered {
+        align-items: center;
+        color: #333;
+        display: flex;
+        margin-bottom: 0.5rem;
+
+        .count {
+          font-size: 3.5rem;
+          line-height: 3.5rem;
+          margin-right: 0.5rem;
+          min-width: 40%;
+          text-align: right;
+        }
+
+        .label {
+          align-self: top;
+          font-size: 1.375rem;
+          max-width: 60%;
+        }
+
+        &.active .count {
+          color: $pager_duty_red;
+        }
+
+        &:hover,
+        &:hover .count {
+          color: $blue;
+        }
+      }
+
+      a.acknowledged {
+        align-items: center;
+        color: #333;
+        display: flex;
+        flex-direction: row;
+
+        .count {
+          font-size: 2.5rem;
+          line-height: 2.5rem;
+          margin-right: 0.5rem;
+          min-width: 40%;
+          text-align: right;
+        }
+
+        .label {
+          align-self: top;
+          font-size: 1.125rem;
+          max-width: 60%;
+        }
+
+        &.active .count {
+          color: $pager_duty_yellow;
+        }
+
+        &:hover,
+        &:hover .count {
+          color: $blue;
+        }
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        margin: 2rem 0 0 0;
+      }
+    }
+
+    .pager-duty-team-summaries {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+
+      .pager-duty-team-summary {
+        margin: 0 2rem 0 0;
+        min-width: 33%;
+
+        h4 {
+          margin-bottom: 1rem;
+        }
+
+        .incident-summary {
+          display: block;
+          margin: 0 0 1rem 0;
+
+          a {
+            color: #333;
+
+            &:hover {
+              color: $blue;
+            }
+          }
+
+          ul {
+            list-style: none;
+            margin: 0.25rem 0 0 0;
+            padding: 0;
+
+            .triggered {
+              align-items: center;
+              display: flex;
+              font-size: 1.125rem;
+              line-height: 1.5em;
+
+              .label {
+                margin-right: 0.25rem;
+              }
+
+              i {
+                color: #ccc;
+              }
+
+              &.active i {
+                color: $pager_duty_red !important;
+              }
+            }
+
+            .acknowledged {
+              align-items: center;
+              display: flex;
+              font-size: 1.125rem;
+              line-height: 1.5em;
+
+              .label {
+                margin-right: 0.25rem;
+              }
+
+              i {
+                color: #ccc;
+              }
+
+              &.active i {
+                color: $pager_duty_yellow !important;
+              }
+            }
+          }
+        }
+
+        .on-call-summary {
+          margin: 1rem 0 0 0;
+
+          ul {
+            list-style: none;
+            margin: 0.25rem 0 0 0;
+            padding: 0;
+          }
+        }
+      }
+
+      .pager-duty-team-summary:last-child {
+        margin-right: 0;
       }
     }
   }

@@ -14,6 +14,9 @@ config :artemis, :actions,
   ibm_cloudant_migrator: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR")
   ],
+  pager_duty_synchronize_escalation_policies: [
+    enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_ESCALATION_POLICIES")
+  ],
   pager_duty_synchronize_incidents: [
     enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_INCIDENTS")
   ],
@@ -82,9 +85,16 @@ config :artemis, :ibm_cloudant,
 config :artemis, :interval_worker, default_log_limit: System.get_env("ARTEMIS_INTERVAL_WORKER_DEFAULT_LOG_LIMIT")
 
 config :artemis, :pager_duty,
-  subdomain: System.get_env("ARTEMIS_PAGER_DUTY_SUBDOMAIN"),
-  team_ids: System.get_env("ARTEMIS_PAGER_DUTY_TEAM_IDS"),
-  token: System.get_env("ARTEMIS_PAGER_DUTY_TOKEN")
+  api_token: System.get_env("ARTEMIS_PAGER_DUTY_API_TOKEN"),
+  api_url: System.get_env("ARTEMIS_PAGER_DUTY_API_URL"),
+  teams: [
+    [
+      id: System.get_env("ARTEMIS_PAGER_DUTY_TEAM_ID"),
+      name: "Artemis Dashboard",
+      slug: :artemis_dashboard
+    ]
+  ],
+  web_url: System.get_env("ARTEMIS_PAGER_DUTY_WEB_URL")
 
 config :slugger, separator_char: ?-
 config :slugger, replacement_file: "lib/replacements.exs"

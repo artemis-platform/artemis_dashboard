@@ -92,6 +92,8 @@ defmodule Artemis.Helpers do
       Input: hello world
       Ouput: Hello World
   """
+  def titlecase(value) when is_nil(value), do: ""
+
   def titlecase(value) do
     value
     |> String.split(" ")
@@ -127,6 +129,20 @@ defmodule Artemis.Helpers do
     value
     |> snakecase()
     |> String.replace("_", "-")
+  end
+
+  @doc """
+  Returns a modulecase string. Example:
+
+      Input: "hello_world"
+      Ouput: HelloWorld
+  """
+  def modulecase(value) do
+    value
+    |> snakecase()
+    |> String.split("_")
+    |> Enum.map(&String.capitalize(&1))
+    |> Enum.join("")
   end
 
   @doc """
@@ -201,6 +217,48 @@ defmodule Artemis.Helpers do
     # NOT a map. We fall back to standard merge behavior, preferring
     # the value on the right.
     right
+  end
+
+  @doc """
+  Sort an enumerable by Date
+
+  Calling `sort` on Date structs will return unexpected results, since:
+
+  > In Elixir structs are compared by their contents, in alphabetical order of the fields.
+  > In this case the most significant would be the `day`, then `month` and `year`
+
+  From: https://stackoverflow.com/questions/41655852/sorting-list-of-dates-in-elixir/41655967
+  """
+  def sort_by_date(dates) do
+    Enum.sort_by(dates, & &1, &date_sorter/2)
+  end
+
+  defp date_sorter(date_1, date_2) do
+    case Date.compare(date_1, date_2) do
+      r when r == :lt or r == :eq -> true
+      _ -> false
+    end
+  end
+
+  @doc """
+  Sort an enumerable by DateTime
+
+  Calling `sort` on DateTime structs will return unexpected results, since:
+
+  > In Elixir structs are compared by their contents, in alphabetical order of the fields.
+  > In this case the most significant would be the `day`, then `month` and `year`
+
+  From: https://stackoverflow.com/questions/41655852/sorting-list-of-dates-in-elixir/41655967
+  """
+  def sort_by_date_time(date_times) do
+    Enum.sort_by(date_times, & &1, &date_time_sorter/2)
+  end
+
+  defp date_time_sorter(date_time_1, date_time_2) do
+    case DateTime.compare(date_time_1, date_time_2) do
+      r when r == :lt or r == :eq -> true
+      _ -> false
+    end
   end
 
   # Tasks

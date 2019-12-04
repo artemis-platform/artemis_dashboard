@@ -44,6 +44,7 @@ defmodule Artemis.ListIncidents do
   defp filter(query, _key, ""), do: query
   defp filter(query, "acknowledged_by", value), do: where(query, [i], i.acknowledged_by in ^split(value))
   defp filter(query, "resolved_by", value), do: where(query, [i], i.resolved_by in ^split(value))
+  defp filter(query, "service_id", value), do: where(query, [i], i.service_id in ^split(value))
   defp filter(query, "severity", value), do: where(query, [i], i.severity in ^split(value))
   defp filter(query, "source", value), do: where(query, [i], i.source in ^split(value))
   defp filter(query, "status", value), do: where(query, [i], i.status in ^split(value))
@@ -54,6 +55,7 @@ defmodule Artemis.ListIncidents do
     |> where([..., t], t.slug in ^split(value))
   end
 
+  defp filter(query, "team_id", value), do: where(query, [i], i.team_id in ^split(value))
   defp filter(query, "triggered_after", value), do: where(query, [i], i.triggered_at >= ^value)
   defp filter(query, "triggered_before", value), do: where(query, [i], i.triggered_at < ^value)
   defp filter(query, _key, _value), do: query

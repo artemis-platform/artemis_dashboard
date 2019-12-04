@@ -34,7 +34,7 @@
         <% end %>
         <%= if render_primary_nav_section?(nav_items, ["On Call", "Incidents"]) do %>
           <li class="with-dropdown">
-            <a href="<%= Routes.incident_path(@conn, :index) %>">
+            <a href="<%= Routes.on_call_path(@conn, :index) %>">
               On Call
               <i class="angle down icon"></i>
             </a>
@@ -149,7 +149,7 @@
 
   <aside>
     <div class="on-call">
-      <%= render_on_call_status(@conn, @user) %>
+      <%= render_on_call_status(@conn) %>
       <%= render_on_call_person(@conn) %>
     </div>
     <div class="external-links">
@@ -160,9 +160,12 @@
         <li>
           <%= link "ServiceNow", to: "https://service-now.com", target: "_blank" %>
         </li>
-        <li>
-          <%= link "PagerDuty", to: "https://artemis.pagerduty.com", target: "_blank" %>
-        </li>
+        <% pager_duty_web_url = Application.fetch_env!(:artemis, :pager_duty)[:web_url] %>
+        <%= if pager_duty_web_url do %>
+          <li>
+            <%= link "PagerDuty", to: pager_duty_web_url, target: "_blank" %>
+          </li>
+        <% end %>
         <li class="more-links">
           <i class="angle down icon"></i>
           <a href="<%= Routes.wiki_page_path(@conn, :index, %{filters: %{tags: ["links"]}}) %>">

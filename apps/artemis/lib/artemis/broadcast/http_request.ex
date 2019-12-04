@@ -3,12 +3,19 @@ defmodule Artemis.HttpRequest do
   Broadcast page requests by authenticated users
   """
 
+  defmodule Data do
+    defstruct [
+      :data,
+      :user
+    ]
+  end
+
   @broadcast_topic "private:artemis:http-requests"
 
   def get_broadcast_topic, do: @broadcast_topic
 
   def broadcast({:ok, data} = result, user) do
-    payload = %{
+    payload = %Data{
       data: data,
       user: user
     }

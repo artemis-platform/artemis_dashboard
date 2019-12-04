@@ -5,5 +5,7 @@
     |> Map.put(:label, "Tag")
     |> Map.put(:value, "tags")
 
-  render ArtemisWeb.LayoutView, "filter_multi_select.html", filter_assigns
+  if length(available_tags) > 0 do
+    render ArtemisWeb.LayoutView, "filter_multi_select.html", filter_assigns
+  end
 %>

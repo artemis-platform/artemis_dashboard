@@ -4,15 +4,7 @@ defmodule ArtemisWeb.IncidentView do
   # Bulk Actions
 
   def available_bulk_actions() do
-    [
-      %BulkAction{
-        action: &Artemis.DeleteIncident.call_many(&1, &2),
-        authorize: &has?(&1, "incidents:delete"),
-        extra_fields: &render_extra_fields_delete_warning(&1),
-        key: "delete",
-        label: "Delete Incidents"
-      }
-    ]
+    []
   end
 
   def allowed_bulk_actions(user) do
@@ -20,6 +12,143 @@ defmodule ArtemisWeb.IncidentView do
       case entry.authorize.(user) do
         true -> [entry | acc]
         false -> acc
+      end
+    end)
+  end
+
+  # Data Table
+
+  def data_table_available_columns() do
+    [
+      {"Actions", "actions"},
+      {"Date", "triggered_at"},
+      {"Incident", "source_uid"},
+      {"Service ID", "service_id"},
+      {"Service Name", "service_name"},
+      {"Status", "status"},
+      {"Severity", "severity"},
+      {"Tags", "tags"},
+      {"Team ID", "team_id"},
+      {"Team Name", "team_name"},
+      {"Title", "title"}
+    ]
+  end
+
+  def data_table_allowed_columns() do
+    %{
+      "actions" => [
+        label: fn _conn -> nil end,
+        value: fn _conn, _row -> nil end,
+        value_html: &data_table_actions_column_html/2
+      ],
+      "service_id" => [
+        label: fn _conn -> "Service ID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "service_id", "Service ID")
+        end,
+        value: fn _conn, row -> row.service_id end
+      ],
+      "service_name" => [
+        label: fn _conn -> "Service Name" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "service_name", "Service")
+        end,
+        value: fn _conn, row -> row.service_name end
+      ],
+      "severity" => [
+        label: fn _conn -> "Severity" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "severity", "Severity")
+        end,
+        value: fn _conn, row -> row.severity end
+      ],
+      "source_uid" => [
+        label: fn _conn -> "Incident" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "source_uid", "Incident")
+        end,
+        value: fn _conn, row -> row.source_uid end,
+        value_html: fn conn, row ->
+          case has?(conn, "incidents:show") do
+            true -> link(row.source_uid, to: Routes.incident_path(conn, :show, row))
+            false -> row.source_uid
+          end
+        end
+      ],
+      "status" => [
+        label: fn _conn -> "Status" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "status", "Status")
+        end,
+        value: fn _conn, row -> row.status end,
+        value_html: fn _conn, row ->
+          content_tag(:span, class: "status-label #{status_color(row)}") do
+            row.status
+          end
+        end
+      ],
+      "tags" => [
+        label: fn _conn -> "Tags" end,
+        value: fn _conn, row ->
+          row.tags
+          |> Enum.map(&Map.get(&1, :name))
+          |> Enum.sort()
+          |> Enum.join(", ")
+        end,
+        value_html: &render_tags/2
+      ],
+      "team_id" => [
+        label: fn _conn -> "Team ID" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "team_id", "Team ID")
+        end,
+        value: fn _conn, row -> row.team_id end
+      ],
+      "team_name" => [
+        label: fn _conn -> "Team Name" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "team_name", "Team")
+        end,
+        value: fn _conn, row -> row.team_name end
+      ],
+      "title" => [
+        label: fn _conn -> "Title" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "title", "Title")
+        end,
+        value: fn _conn, row -> row.title end
+      ],
+      "triggered_at" => [
+        label: fn _conn -> "Date" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "triggered_at", "Date")
+        end,
+        value: fn _conn, row -> row.triggered_at end,
+        value_html: fn _conn, row -> render_date_time(row.triggered_at) end
+      ]
+    }
+  end
+
+  defp data_table_actions_column_html(conn, row) do
+    allowed_actions = [
+      [
+        verify: has?(conn, "incidents:show"),
+        link: link("Show", to: Routes.incident_path(conn, :show, row))
+      ],
+      [
+        verify: row.source == "pagerduty",
+        link:
+          link("View on PagerDuty",
+            to: "#{get_pager_duty_web_url()}/incidents/#{row.source_uid}",
+            target: "_blank"
+          )
+      ]
+    ]
+
+    Enum.reduce(allowed_actions, [], fn action, acc ->
+      case Keyword.get(action, :verify) do
+        true -> [acc | Keyword.get(action, :link)]
+        _ -> acc
       end
     end)
   end
@@ -36,7 +165,18 @@ defmodule ArtemisWeb.IncidentView do
     end)
   end
 
-  def get_subdomain(), do: Application.fetch_env!(:artemis, :pager_duty)[:subdomain]
+  def get_pager_duty_web_url(), do: Application.fetch_env!(:artemis, :pager_duty)[:web_url]
+
+  @doc """
+  Render status
+  """
+  def render_status(incident) do
+    content_tag(:p) do
+      content_tag(:span, class: "status-label #{status_color(incident)}") do
+        incident.status
+      end
+    end
+  end
 
   def status_color(%{status: status}) when is_bitstring(status) do
     case String.downcase(status) do
@@ -48,4 +188,46 @@ defmodule ArtemisWeb.IncidentView do
   end
 
   def status_color(_), do: nil
+
+  @doc """
+  Display a user friendly team value depending on incident type
+  """
+  def get_team(%{source: "pagerduty"} = team) do
+    team =
+      Enum.find(get_pager_duty_teams(), fn entry ->
+        Keyword.get(entry, :id) == team.team_id
+      end) || []
+
+    Keyword.get(team, :name)
+  end
+
+  def get_team(%{team_id: team_id}), do: team_id
+
+  defp get_pager_duty_teams() do
+    :artemis
+    |> Application.fetch_env!(:pager_duty)
+    |> Keyword.fetch!(:teams)
+  end
+
+  @doc """
+  Return teams as multi-select filter options
+  """
+  def get_incident_filter_team_id_options() do
+    get_pager_duty_teams()
+    |> filter_team_id_options()
+    |> Enum.reverse()
+  end
+
+  defp filter_team_id_options(teams) do
+    Enum.reduce(teams, [], fn team, acc ->
+      id = Keyword.get(team, :id)
+      name = Keyword.get(team, :name)
+      entry = [key: name, value: id]
+
+      case Artemis.Helpers.present?(id) && Artemis.Helpers.present?(name) do
+        true -> [entry | acc]
+        false -> acc
+      end
+    end)
+  end
 end

@@ -3,6 +3,14 @@ defmodule Artemis.Event do
   Broadcast events that change data
   """
 
+  defmodule Data do
+    defstruct [
+      :data,
+      :meta,
+      :user
+    ]
+  end
+
   @broadcast_topic "private:artemis:events"
 
   @whitelisted_meta_keys [
@@ -16,7 +24,7 @@ defmodule Artemis.Event do
   def broadcast(result, event, meta \\ %{}, user)
 
   def broadcast({:ok, data} = result, event, meta, user) do
-    payload = %{
+    payload = %Data{
       data: data,
       meta: get_whitelisted_meta(meta),
       user: user

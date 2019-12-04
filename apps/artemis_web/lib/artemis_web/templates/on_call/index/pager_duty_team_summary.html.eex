@@ -1,0 +1,32 @@
+<div class="pager-duty-team-summary">
+  <%= h4 @name %>
+
+  <div class="incident-summary">
+    <div>Open Incidents</div>
+    <ul>
+      <li class="triggered">
+        <%= @section_triggered %>
+      </li>
+      <li class="acknowledged">
+        <%= @section_acknowledged %>
+      </li>
+    </ul>
+  </div>
+
+  <div class="on-call-summary">
+    <div>On-Call</div>
+    <ul>
+      <%= if length(@on_call) > 0 do %>
+        <%= Enum.map @on_call, fn (person) -> %>
+          <li>
+            <%= link person.name, to: person.to %>
+          </li>
+        <% end %>
+      <% else %>
+        <li>
+          <%= link "Unknown", to: "#" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

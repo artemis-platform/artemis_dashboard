@@ -1,0 +1,15 @@
+<%= h2 "PagerDuty Summary" %>
+
+<div class="pager-duty">
+  <div class="pager-duty-incident-summary">
+    <h4>All Open Incidents</h4>
+    <%= @section_triggered %>
+    <%= @section_acknowledged %>
+    <div class="actions">
+      <%= action "View All Incidents", class: "basic", to: Routes.incident_path(@conn, :index) %>
+    </div>
+  </div>
+  <div class="pager-duty-team-summaries">
+    <%= render_pager_duty_team_summary @conn, :artemis_dashboard %>
+  </div>
+</div>

@@ -31,8 +31,9 @@ defmodule Artemis.IntervalWorker do
 
   @callback call(map(), any()) :: {:ok, any()} | {:error, any()}
   @callback handle_info_callback(any(), any()) :: {:ok, any()} | {:error, any()}
+  @callback init_callback(any()) :: {:ok, any()} | {:error, any()}
 
-  @optional_callbacks handle_info_callback: 2
+  @optional_callbacks handle_info_callback: 2, init_callback: 1
 
   defmacro __using__(options) do
     quote do
@@ -94,6 +95,15 @@ defmodule Artemis.IntervalWorker do
 
       def get_state(name \\ nil), do: GenServer.call(get_name(name), :state)
 
+      def fetch_data(options \\ [], name \\ nil) do
+        log = get_log(name)
+
+        case length(log) > 0 do
+          true -> get_data(name)
+          false -> update(options, name).data
+        end
+      end
+
       def pause(name \\ nil), do: GenServer.call(get_name(name), :pause)
 
       def resume(name \\ nil), do: GenServer.call(get_name(name), :resume)
@@ -101,7 +111,7 @@ defmodule Artemis.IntervalWorker do
       def update(options \\ [], name \\ nil) do
         case Keyword.get(options, :async) do
           true -> Process.send(get_name(name), :update, [])
-          _ -> GenServer.call(get_name(name), :update)
+          _ -> GenServer.call(get_name(name), :update, :timer.seconds(60))
         end
       end
 
@@ -110,6 +120,8 @@ defmodule Artemis.IntervalWorker do
       @impl true
       def init(state) do
         state = initial_actions(state)
+
+        {:ok, state} = init_callback(state)
 
         {:ok, state}
       end
@@ -179,6 +191,12 @@ defmodule Artemis.IntervalWorker do
         handle_info_callback(data, state)
       end
 
+      # Overridable Callbacks
+
+      def init_callback(state) do
+        {:ok, state}
+      end
+
       def handle_info_callback(_, state) do
         {:noreply, state}
       end
@@ -218,7 +236,7 @@ defmodule Artemis.IntervalWorker do
         Process.send_after(self(), :update, interval)
       end
 
-      defp schedule_update_unless_paused(%{timer: timer}) when timer == :paused, do: nil
+      defp schedule_update_unless_paused(%{timer: timer}) when timer == :paused, do: :paused
       defp schedule_update_unless_paused(%{timer: timer}) when is_nil(timer), do: schedule_update()
 
       defp schedule_update_unless_paused(%{timer: timer}) do
