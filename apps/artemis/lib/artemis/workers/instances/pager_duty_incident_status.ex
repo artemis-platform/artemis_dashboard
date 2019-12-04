@@ -20,7 +20,7 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
 
     result = get_incident_status_summary(team_ids, statuses)
 
-    trigger_synchronization_on_change(data, result)
+    broadcast_changes(data, result)
 
     {:ok, result}
   end
@@ -36,14 +36,11 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
     |> String.equivalent?("true")
   end
 
-  defp get_teams() do
+  defp get_team_ids() do
     :artemis
     |> Application.fetch_env!(:pager_duty)
     |> Keyword.fetch!(:teams)
-  end
-
-  defp get_team_ids() do
-    Enum.map(get_teams(), &Keyword.fetch!(&1, :id))
+    |> Enum.map(&Keyword.fetch!(&1, :id))
   end
 
   defp get_incident_status_summary(team_ids, statuses) do
@@ -83,23 +80,19 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
     end)
   end
 
-  defp trigger_synchronization_on_change(current_data, next_data) do
-    Enum.map(get_teams(), fn team ->
-      current_team_data = Map.get(current_data || %{}, team[:id])
-      next_team_data = Map.get(next_data, team[:id])
+  defp broadcast_changes(current_data, next_data) do
+    Enum.map(get_team_ids(), fn team_id ->
+      current_team_data = Map.get(current_data || %{}, team_id)
+      next_team_data = Map.get(next_data, team_id)
       changed? = current_team_data != next_team_data
 
       if changed? do
-        call_incident_synchronizer(team)
+        Artemis.PagerDutyChange.broadcast(%{
+          data: next_team_data,
+          schema: "incident",
+          team_id: team_id
+        })
       end
     end)
-  end
-
-  defp call_incident_synchronizer(team) do
-    slug = Keyword.get(team, :slug)
-    name = Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor.get_worker_name(slug)
-    options = [async: true]
-
-    Artemis.Worker.PagerDutyIncidentSynchronizerInstance.update(options, name)
   end
 end

@@ -6,7 +6,6 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     name: :pager_duty_on_call_synchronizer
 
   alias Artemis.Drivers.PagerDuty
-  alias Artemis.GetSystemUser
   alias Artemis.Worker.PagerDutyEscalationPolicySynchronizer
 
   # Callbacks
@@ -16,8 +15,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     with team_ids <- get_team_ids(),
          escalation_policies <- get_escalation_policies(),
          on_calls <- get_on_calls(team_ids, escalation_policies),
-         system_user <- GetSystemUser.call!(),
-         {:ok, _} <- broadcast_event_when_changed(data, on_calls, system_user) do
+         {:ok, _} <- broadcast_changes(data, on_calls) do
       {:ok, on_calls}
     else
       {:error, message} -> {:error, message}
@@ -43,10 +41,13 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
     |> Enum.map(&Keyword.fetch!(&1, :id))
   end
 
-  defp broadcast_event_when_changed(current, next, user) do
+  defp broadcast_changes(current, next) do
     with false <- is_nil(current),
          false <- current == next do
-      Artemis.Event.broadcast(next, "pager-duty:on-calls:updated", user)
+      Artemis.PagerDutyChange.broadcast(%{
+        data: next,
+        schema: "on-call"
+      })
     else
       _ -> {:ok, "No change detected"}
     end

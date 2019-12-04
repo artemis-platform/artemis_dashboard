@@ -31,8 +31,9 @@ defmodule Artemis.IntervalWorker do
 
   @callback call(map(), any()) :: {:ok, any()} | {:error, any()}
   @callback handle_info_callback(any(), any()) :: {:ok, any()} | {:error, any()}
+  @callback init_callback(any()) :: {:ok, any()} | {:error, any()}
 
-  @optional_callbacks handle_info_callback: 2
+  @optional_callbacks handle_info_callback: 2, init_callback: 1
 
   defmacro __using__(options) do
     quote do
@@ -110,7 +111,7 @@ defmodule Artemis.IntervalWorker do
       def update(options \\ [], name \\ nil) do
         case Keyword.get(options, :async) do
           true -> Process.send(get_name(name), :update, [])
-          _ -> GenServer.call(get_name(name), :update)
+          _ -> GenServer.call(get_name(name), :update, :timer.seconds(60))
         end
       end
 
@@ -119,6 +120,8 @@ defmodule Artemis.IntervalWorker do
       @impl true
       def init(state) do
         state = initial_actions(state)
+
+        {:ok, state} = init_callback(state)
 
         {:ok, state}
       end
@@ -186,6 +189,12 @@ defmodule Artemis.IntervalWorker do
 
       def handle_info(data, state) do
         handle_info_callback(data, state)
+      end
+
+      # Overridable Callbacks
+
+      def init_callback(state) do
+        {:ok, state}
       end
 
       def handle_info_callback(_, state) do

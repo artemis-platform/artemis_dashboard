@@ -17,6 +17,23 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerInstance do
     {:ok, result}
   end
 
+  @impl true
+  def init_callback(state) do
+    schema = "incident"
+    topic = Artemis.PagerDutyChange.get_topic(schema)
+
+    :ok = ArtemisPubSub.subscribe(topic)
+
+    {:ok, state}
+  end
+
+  @impl true
+  def handle_info_callback(message, state) do
+    update_on_match(message, state)
+
+    {:noreply, state}
+  end
+
   # Helpers
 
   defp enabled?() do
@@ -32,5 +49,18 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerInstance do
     {:ok, result} = PagerDuty.SynchronizeIncidents.call(team_id)
 
     length(result.data)
+  end
+
+  defp update_on_match(message, state) do
+    message_team_id = Artemis.Helpers.deep_get(message, [:payload, :team_id])
+
+    instance_team_id =
+      state
+      |> Map.get(:config)
+      |> Keyword.get(:id)
+
+    if instance_team_id == message_team_id do
+      Process.send(self(), :update, [])
+    end
   end
 end
