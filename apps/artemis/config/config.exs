@@ -96,6 +96,11 @@ config :artemis, :pager_duty,
   ],
   web_url: System.get_env("ARTEMIS_PAGER_DUTY_WEB_URL")
 
+config :artemis, :service_now,
+  api_token: System.get_env("ARTEMIS_SERVICE_NOW_API_TOKEN"),
+  api_url: System.get_env("ARTEMIS_SERVICE_NOW_API_URL"),
+  web_url: System.get_env("ARTEMIS_SERVICE_NOW_WEB_URL")
+
 config :slugger, separator_char: ?-
 config :slugger, replacement_file: "lib/replacements.exs"
 

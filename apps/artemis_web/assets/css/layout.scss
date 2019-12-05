@@ -765,12 +765,27 @@ body.error-page {
   &>section,
   &>article>section,
   &>article>content>section,
+  &>article>row>section,
   &>article>aside>section {
     background: #fff;
     border: 1px solid #e2e2e2;
     border-radius: 4px;
     margin: 0 0 1rem 0;
     padding: 2rem;
+  }
+
+  &>article>row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    &>section {
+      margin-right: 1rem;
+    }
+
+    &>section:last-child {
+      margin-right: 0;
+    }
   }
 
   section {

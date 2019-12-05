@@ -13,6 +13,9 @@
   <%= render_flash_notifications @conn %>
 
   <article id="on-call-page" class="page">
-    <%= render_pager_duty_live(@conn) %>
+    <row>
+      <%= render_pager_duty_live @conn %>
+      <%= render_service_now_summary @conn %>
+    </row>
   </article>
 </div>

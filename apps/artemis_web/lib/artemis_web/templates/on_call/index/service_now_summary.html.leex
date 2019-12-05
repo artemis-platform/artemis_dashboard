@@ -1,0 +1,17 @@
+<%= if Artemis.Helpers.present? @web_url do %>
+  <section>
+    <%= h2 "ServiceNow Summary" %>
+
+    <div class="service-now-summary">
+      <%
+        label = content_tag(:span) do
+          [
+            content_tag(:i, "", class: "ui external alternate icon"),
+            "Open ServiceNow"
+          ]
+        end
+      %>
+      <%= action label, target: "_blank", to: @web_url %>
+    </div>
+  </section>
+<% end %>
