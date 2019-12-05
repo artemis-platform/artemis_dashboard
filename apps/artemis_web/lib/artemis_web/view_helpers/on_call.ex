@@ -61,10 +61,8 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
     on_call_enabled? = Artemis.Worker.PagerDutyOnCallSynchronizer.enabled?()
 
     if authorized? && incident_status_enabled? && on_call_enabled? do
-      content_tag(:content) do
-        content_tag(:section) do
-          Phoenix.LiveView.live_render(conn, ArtemisWeb.PagerDutyLive)
-        end
+      content_tag(:section) do
+        Phoenix.LiveView.live_render(conn, ArtemisWeb.PagerDutyLive)
       end
     end
   end
@@ -235,5 +233,23 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
         "Triggered"
       ]
     end
+  end
+
+  @doc """
+  Render a summary for all ServiceNow teams
+  """
+  def render_service_now_summary(conn) do
+    assigns = [
+      conn: conn,
+      web_url: get_service_now_web_url()
+    ]
+
+    Phoenix.View.render(ArtemisWeb.OnCallView, "index/service_now_summary.html", assigns)
+  end
+
+  defp get_service_now_web_url() do
+    :artemis
+    |> Application.fetch_env!(:service_now)
+    |> Keyword.fetch!(:web_url)
   end
 end

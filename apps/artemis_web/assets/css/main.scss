@@ -905,6 +905,15 @@ ul.timeline {
       }
     }
   }
+
+  .service-now-summary {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 4rem);
+    justify-content: center;
+    min-width: 17.5rem;
+  }
 }
 
 /* === Components - Documentation Page === */
