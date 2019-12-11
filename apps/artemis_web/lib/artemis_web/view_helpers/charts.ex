@@ -95,7 +95,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
           enabled: false
         },
         toolbar: %{
-          show: true,
+          show: false,
           tools: %{
             download: true,
             selection: true,
@@ -118,7 +118,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
         position: "bottom",
         horizontalAlign: "center",
         fontFamily: "Muli, Lato, Helvetica Neue, Arial, Helvetica, sans-serif",
-        fontSize: "14px"
+        fontSize: "13px"
       },
       markers: %{
         # To make visible, change to `5`
@@ -151,13 +151,69 @@ defmodule ArtemisWeb.ViewHelper.Charts do
   @doc """
   Return common chart options for a specific chart types
   """
+  def get_chart_type_options(:bar) do
+    %{
+      chart: %{
+        type: "bar",
+        stacked: false
+      },
+      legend: %{
+        show: true,
+        position: "bottom",
+        horizontalAlign: "center",
+        labels: %{
+          useSeriesColors: false
+        }
+      },
+      series: [],
+      theme: %{
+        mode: "light"
+      },
+      tooltip: %{
+        enabled: true
+      },
+      xaxis: %{
+        categories: []
+      }
+    }
+  end
+
+  def get_chart_type_options(:bar_horizontal) do
+    %{
+      chart: %{
+        type: "bar",
+        stacked: false
+      },
+      plotOptions: %{
+        bar: %{
+          horizontal: true
+        }
+      },
+      legend: %{
+        show: true,
+        position: "bottom",
+        horizontalAlign: "center",
+        labels: %{
+          useSeriesColors: false
+        }
+      },
+      series: [],
+      theme: %{
+        mode: "light"
+      },
+      tooltip: %{
+        enabled: true
+      },
+      xaxis: %{
+        categories: []
+      }
+    }
+  end
+
   def get_chart_type_options(:donut) do
     %{
       chart: %{
-        type: "donut",
-        toolbar: %{
-          show: false
-        }
+        type: "donut"
       },
       plotOptions: %{
         pie: %{
@@ -241,10 +297,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
   def get_chart_type_options(:donut_thin) do
     %{
       chart: %{
-        type: "donut",
-        toolbar: %{
-          show: false
-        }
+        type: "donut"
       },
       colors: [],
       dataLabels: %{
@@ -319,10 +372,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
   def get_chart_type_options(:radial) do
     %{
       chart: %{
-        type: "radialBar",
-        toolbar: %{
-          show: false
-        }
+        type: "radialBar"
       },
       labels: [],
       legend: %{
@@ -386,20 +436,11 @@ defmodule ArtemisWeb.ViewHelper.Charts do
               formatter:
                 raw_javascript_function("""
                   function (w) {
-                    var names = w.globals.seriesNames
-                    var values = w.globals.seriesTotals
-                    var total = 0
+                    var last_index = w.globals.seriesNames.length - 1
+                    var name = w.globals.seriesNames[last_index]
+                    var value = w.globals.seriesTotals[last_index]
 
-                    for(var i = 0; i < names.length; i++) {
-                      var name = names[i]
-                      var value = values[i]
-
-                      if (value > 0) {
-                        total += Number(name.split(' ')[0])
-                      }
-                    }
-
-                    return total;
+                    return parseFloat(value, 10) + '%';
                   }
                 """)
             },
@@ -410,21 +451,7 @@ defmodule ArtemisWeb.ViewHelper.Charts do
               formatter:
                 raw_javascript_function("""
                   function (value, w) {
-                    var values = w.globals.seriesTotals
-                    var names = w.globals.seriesNames
-                    var index
-
-                    for(var i = 0; i < values.length; i++) {
-                      if (values[i] == value) {
-                        index = i;
-                      }
-                    }
-
-                    if (index === undefined) {
-                      return value
-                    } else {
-                      return names[index].split(' ')[0]
-                    }
+                    return value + '%'
                   }
                 """)
             }
