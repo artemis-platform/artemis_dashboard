@@ -142,7 +142,7 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
   Render a summary for a specific team
   """
   def render_pager_duty_team_summary(conn, slug) do
-    team = get_pager_duty_team(slug)
+    team = Artemis.Helpers.PagerDuty.get_pager_duty_team_by_slug(slug)
     team_id = team[:id]
     incident_totals = get_pager_duty_team_incident_totals(team_id)
     on_call = get_pager_duty_team_on_call(team_id)
@@ -158,15 +158,6 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
     ]
 
     Phoenix.View.render(ArtemisWeb.OnCallView, "index/pager_duty_team_summary.html", assigns)
-  end
-
-  defp get_pager_duty_team(slug) do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
-    |> Enum.find(fn team ->
-      Keyword.get(team, :slug) == slug
-    end)
   end
 
   defp get_pager_duty_team_incident_totals(team_id) do

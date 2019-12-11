@@ -11,7 +11,7 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
 
   @impl true
   def call(data, _config) do
-    team_ids = get_team_ids()
+    team_ids = Artemis.Helpers.PagerDuty.get_pager_duty_team_ids()
 
     statuses = [
       "acknowledged",
@@ -35,13 +35,6 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
   end
 
   # Helpers
-
-  defp get_team_ids() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
-    |> Enum.map(&Keyword.fetch!(&1, :id))
-  end
 
   defp get_incident_status_summary(team_ids, statuses) do
     Enum.reduce(team_ids, %{}, fn team_id, acc ->
@@ -81,7 +74,7 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
   end
 
   defp broadcast_changes(current_data, next_data) do
-    Enum.map(get_team_ids(), fn team_id ->
+    Enum.map(Artemis.Helpers.PagerDuty.get_pager_duty_team_ids(), fn team_id ->
       current_team_data = Map.get(current_data || %{}, team_id)
       next_team_data = Map.get(next_data, team_id)
       changed? = current_team_data != next_team_data

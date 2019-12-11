@@ -12,7 +12,7 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
 
   def call(team_id) do
     system_user = GetSystemUser.call!()
-    team_name = get_team_name(team_id)
+    team_name = Artemis.Helpers.PagerDuty.get_pager_duty_team_name(team_id)
 
     options = [
       callback: callback_factory(team_id, team_name, system_user),
@@ -134,17 +134,5 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
     %{filters: filters}
     |> ListIncidents.call(user)
     |> Enum.map(& &1.source_uid)
-  end
-
-  defp get_team_name(team_id) do
-    team =
-      :artemis
-      |> Application.fetch_env!(:pager_duty)
-      |> Keyword.fetch!(:teams)
-      |> Enum.find(fn team ->
-        Keyword.get(team, :id) == team_id
-      end) || []
-
-    Keyword.get(team, :name)
   end
 end

@@ -12,7 +12,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
 
   @impl true
   def call(data, _config) do
-    with team_ids <- get_team_ids(),
+    with team_ids <- Artemis.Helpers.PagerDuty.get_pager_duty_team_ids(),
          escalation_policies <- get_escalation_policies(),
          on_calls <- get_on_calls(team_ids, escalation_policies),
          {:ok, _} <- broadcast_changes(data, on_calls) do
@@ -33,13 +33,6 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
   end
 
   # Helpers
-
-  defp get_team_ids() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
-    |> Enum.map(&Keyword.fetch!(&1, :id))
-  end
 
   defp broadcast_changes(current, next) do
     with false <- is_nil(current),

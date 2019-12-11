@@ -160,10 +160,9 @@
         <li>
           <%= link "ServiceNow", to: "https://service-now.com", target: "_blank" %>
         </li>
-        <% pager_duty_web_url = Application.fetch_env!(:artemis, :pager_duty)[:web_url] %>
-        <%= if pager_duty_web_url do %>
+        <%= if Artemis.Helpers.PagerDuty.get_pager_duty_web_url() do %>
           <li>
-            <%= link "PagerDuty", to: pager_duty_web_url, target: "_blank" %>
+            <%= link "PagerDuty", to: Artemis.Helpers.PagerDuty.get_pager_duty_web_url(), target: "_blank" %>
           </li>
         <% end %>
         <li class="more-links">
