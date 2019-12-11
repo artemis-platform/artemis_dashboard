@@ -48,13 +48,8 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor do
   end
 
   def init(:ok) do
-    teams =
-      :artemis
-      |> Application.fetch_env!(:pager_duty)
-      |> Keyword.fetch!(:teams)
-
     children =
-      Enum.map(teams, fn team ->
+      Enum.map(Artemis.Helpers.PagerDuty.get_pager_duty_teams(), fn team ->
         slug = Keyword.get(team, :slug)
 
         config = [

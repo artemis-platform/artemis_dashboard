@@ -3,7 +3,7 @@ defmodule ArtemisWeb.Charts do
 
   """
 
-  @callback fetch_data(Map.t()) :: Map.t()
+  @callback fetch_data(Keyword.t(), Map.t()) :: Map.t()
   @callback render(Map.t(), Keyword.t()) :: any()
 
   defmacro __using__(_options) do

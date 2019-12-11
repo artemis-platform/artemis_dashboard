@@ -1,0 +1,9 @@
+<div
+  class="chart-updates"
+  phx-hook="ApexCharts"
+  phx-socket-id="<%= @socket.id %>"
+  chart-id="<%= @chart_id %>"
+  chart-updates="<%= Jason.encode!(@chart_data) %>"
+>
+
+</div>

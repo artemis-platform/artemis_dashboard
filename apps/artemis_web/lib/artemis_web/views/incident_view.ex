@@ -139,7 +139,7 @@ defmodule ArtemisWeb.IncidentView do
         verify: row.source == "pagerduty",
         link:
           link("View on PagerDuty",
-            to: "#{get_pager_duty_web_url()}/incidents/#{row.source_uid}",
+            to: "#{Artemis.Helpers.PagerDuty.get_pager_duty_web_url()}/incidents/#{row.source_uid}",
             target: "_blank"
           )
       ]
@@ -164,8 +164,6 @@ defmodule ArtemisWeb.IncidentView do
       end
     end)
   end
-
-  def get_pager_duty_web_url(), do: Application.fetch_env!(:artemis, :pager_duty)[:web_url]
 
   @doc """
   Render status
@@ -192,28 +190,17 @@ defmodule ArtemisWeb.IncidentView do
   @doc """
   Display a user friendly team value depending on incident type
   """
-  def get_team(%{source: "pagerduty"} = team) do
-    team =
-      Enum.find(get_pager_duty_teams(), fn entry ->
-        Keyword.get(entry, :id) == team.team_id
-      end) || []
-
-    Keyword.get(team, :name)
+  def get_team(%{source: "pagerduty", team_id: team_id}) do
+    Artemis.Helpers.PagerDuty.get_pager_duty_team_name(team_id)
   end
 
   def get_team(%{team_id: team_id}), do: team_id
-
-  defp get_pager_duty_teams() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
-  end
 
   @doc """
   Return teams as multi-select filter options
   """
   def get_incident_filter_team_id_options() do
-    get_pager_duty_teams()
+    Artemis.Helpers.PagerDuty.get_pager_duty_teams()
     |> filter_team_id_options()
     |> Enum.reverse()
   end

@@ -1,8 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>On Call</h1>
-  </header>
-</div>
+<%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>

@@ -142,7 +142,7 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
   Render a summary for a specific team
   """
   def render_pager_duty_team_summary(conn, slug) do
-    team = get_pager_duty_team(slug)
+    team = Artemis.Helpers.PagerDuty.get_pager_duty_team_by_slug(slug)
     team_id = team[:id]
     incident_totals = get_pager_duty_team_incident_totals(team_id)
     on_call = get_pager_duty_team_on_call(team_id)
@@ -158,15 +158,6 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
     ]
 
     Phoenix.View.render(ArtemisWeb.OnCallView, "index/pager_duty_team_summary.html", assigns)
-  end
-
-  defp get_pager_duty_team(slug) do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
-    |> Enum.find(fn team ->
-      Keyword.get(team, :slug) == slug
-    end)
   end
 
   defp get_pager_duty_team_incident_totals(team_id) do
@@ -251,5 +242,71 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
     :artemis
     |> Application.fetch_env!(:service_now)
     |> Keyword.fetch!(:web_url)
+  end
+
+  @doc """
+  Render PagerDuty weekly incident summary
+  """
+  def render_pager_duty_weekly_summary(_conn, options \\ []) do
+    totals =
+      options
+      |> get_pager_duty_weekly_summary_data()
+      |> total_pager_duty_weekly_summary_data()
+
+    Enum.map(totals, fn {team_id, service_data} ->
+      team_name = Artemis.Helpers.PagerDuty.get_pager_duty_team_name(team_id)
+
+      service_tags =
+        service_data
+        |> Enum.sort_by(&elem(&1, 0))
+        |> Enum.map(fn {service_name, daily_incident_count} ->
+          content_tag(:div, class: "service-summary") do
+            [
+              content_tag(:div, service_name, class: "service-name"),
+              content_tag(:div, daily_incident_count, class: "incident-total")
+            ]
+          end
+        end)
+
+      content_tag(:div) do
+        [
+          content_tag(:h5, team_name),
+          service_tags
+        ]
+      end
+    end)
+  end
+
+  defp get_pager_duty_weekly_summary_data(options) do
+    user = Artemis.GetSystemUser.call!()
+
+    reports = [
+      :count_by_team_id_and_service_name_and_day_of_week
+    ]
+
+    params =
+      options
+      |> Enum.into(%{})
+      |> Map.take([:end_date, :start_date])
+
+    response = Artemis.ListIncidentReports.call_with_cache(reports, params, user)
+    key = [:data, :count_by_team_id_and_service_name_and_day_of_week]
+
+    Artemis.Helpers.deep_get(response, key) || []
+  end
+
+  defp total_pager_duty_weekly_summary_data(rows) do
+    Enum.reduce(rows, %{}, fn row, acc ->
+      team_id = Enum.at(row, 0)
+      service_name = Enum.at(row, 1)
+      daily_incident_count = Enum.at(row, 3) || 0
+
+      team_data =
+        acc
+        |> Map.get(team_id, %{})
+        |> Map.update(service_name, daily_incident_count, &(&1 + daily_incident_count))
+
+      Map.put(acc, team_id, team_data)
+    end)
   end
 end

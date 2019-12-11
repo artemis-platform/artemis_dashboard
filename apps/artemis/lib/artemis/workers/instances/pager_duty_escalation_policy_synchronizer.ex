@@ -12,7 +12,7 @@ defmodule Artemis.Worker.PagerDutyEscalationPolicySynchronizer do
 
   @impl true
   def call(data, _config) do
-    with team_ids <- get_team_ids(),
+    with team_ids <- Artemis.Helpers.PagerDuty.get_pager_duty_team_ids(),
          escalation_policies <- get_escalation_policies(team_ids),
          system_user <- GetSystemUser.call!(),
          {:ok, _} <- broadcast_event_when_changed(data, escalation_policies, system_user) do
@@ -32,13 +32,6 @@ defmodule Artemis.Worker.PagerDutyEscalationPolicySynchronizer do
     |> Keyword.fetch!(:enabled)
     |> String.downcase()
     |> String.equivalent?("true")
-  end
-
-  defp get_team_ids() do
-    :artemis
-    |> Application.fetch_env!(:pager_duty)
-    |> Keyword.fetch!(:teams)
-    |> Enum.map(&Keyword.fetch!(&1, :id))
   end
 
   defp broadcast_event_when_changed(current, next, user) do
