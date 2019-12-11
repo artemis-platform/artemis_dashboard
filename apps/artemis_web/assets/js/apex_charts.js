@@ -18,13 +18,13 @@ ApexChartHelpers.register_instance = function (id, chart) {
 
 ApexChartHelpers.live_view_hooks = {
   mounted() {
-    var id = this.el.attributes["phx-socket-id"].value
+    var id = this.el.attributes["chart-id"].value
     var chart = ApexChartHelpers.get_instance(id)
 
-    chart.render()
+    // chart.render()
   },
   updated() {
-    var id = this.el.attributes["phx-socket-id"].value
+    var id = this.el.attributes["chart-id"].value
     var chart = ApexChartHelpers.get_instance(id)
     var updates = JSON.parse(this.el.attributes["chart-updates"].value)
 

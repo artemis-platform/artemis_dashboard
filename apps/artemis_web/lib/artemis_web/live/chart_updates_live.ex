@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.ChartLive do
+defmodule ArtemisWeb.ChartUpdatesLive do
   use ArtemisWeb.LiveView
 
   @moduledoc """
@@ -16,7 +16,7 @@ defmodule ArtemisWeb.ChartLive do
   def mount(session, socket) do
     socket =
       socket
-      |> assign(:chart_data, nil)
+      |> assign(:chart_data, session.chart_data)
       |> assign(:chart_id, session.chart_id)
       |> assign(:chart_options, session.chart_options)
       |> assign(:fetch_data_on_cloudant_changes, session.fetch_data_on_cloudant_changes)
@@ -24,8 +24,6 @@ defmodule ArtemisWeb.ChartLive do
       |> assign(:fetch_data_timer, nil)
       |> assign(:module, session.module)
       |> assign(:user, session.user)
-
-    socket = get_data_at_mount(session, socket)
 
     subscribe_to_cloudant_changes(socket.assigns)
     subscribe_to_events(socket.assigns)
@@ -35,7 +33,7 @@ defmodule ArtemisWeb.ChartLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(ArtemisWeb.LayoutView, "chart_live.html", assigns)
+    Phoenix.View.render(ArtemisWeb.LayoutView, "chart_updates.html", assigns)
   end
 
   # GenServer Callbacks
@@ -71,21 +69,6 @@ defmodule ArtemisWeb.ChartLive do
   end
 
   # Helpers
-
-  defp get_data_at_mount(session, socket) do
-    case session.fetch_data_async do
-      true ->
-        fetch_data_debounce(socket, 10)
-
-      _ ->
-        chart_data = fetch_data(session.module, session.user)
-        chart_options = Map.merge(session.chart_options, chart_data)
-
-        socket
-        |> assign(:chart_data, chart_data)
-        |> assign(:chart_options, chart_options)
-    end
-  end
 
   defp subscribe_to_cloudant_changes(%{fetch_data_on_cloudant_changes: changes}) when length(changes) > 0 do
     Enum.map(changes, fn change ->

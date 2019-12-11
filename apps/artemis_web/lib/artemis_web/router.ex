@@ -107,6 +107,9 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", JobController, :show_event_log_details, as: :event_log
       end
 
+      # On Call
+
+      get "/on-call/weekly-summary", OnCallController, :index_weekly_summary
       resources "/on-call", OnCallController, only: [:index]
 
       # Permissions

@@ -545,6 +545,10 @@ body.error-page {
       font-size: 2.5rem;
       font-weight: 300;
       margin: 0;
+
+      .subheading {
+        color: #777;
+      }
     }
 
     .actions {
@@ -810,6 +814,10 @@ body.error-page {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    &.status-page h2 {
+      border-color: #e2e2e2;
+    }
 
     &>aside,
     &>content {

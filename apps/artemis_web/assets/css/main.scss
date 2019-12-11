@@ -339,6 +339,7 @@ select[multiple] {
 
 .chart-container {
   height: 20rem;
+  overflow: hidden;
   width: 20rem;
 
   .apexcharts-legend-text {
@@ -355,12 +356,34 @@ select[multiple] {
     font-weight: 700;
   }
 
-  &.donut-chart-container {
+  &.chart-container-bar,
+  &.chart-container-bar_horizontal {
+    margin-bottom: -1rem;
+  }
+
+  &.chart-container-donut {
     margin: 0 -2rem -4rem -2.25rem;
   }
 
-  &.radial-chart-container {
-    margin: 0 -1.75rem -4rem -2.25rem;
+  &.chart-container-donut_thin {
+    margin: 0 -2rem -4rem -2.25rem;
+  }
+
+  &.chart-container-radial {
+    margin: 0 -1.25rem -4rem -2.25rem;
+
+    .apexcharts-legend-series {
+      display: flex;
+
+      .apexcharts-legend-marker {
+        margin-top: 3px;
+      }
+
+      .apexcharts-legend-text {
+        overflow: hidden;
+        height: 1.375rem;
+      }
+    }
   }
 }
 
@@ -732,10 +755,6 @@ ul.timeline {
   $pager_duty_red: #b52e66;
   $pager_duty_yellow: #d39a0b;
 
-  h2 {
-    border-color: #e2e2e2;
-  }
-
   .pager-duty {
     display: flex;
     padding: 1rem 0 0 0;
@@ -913,6 +932,56 @@ ul.timeline {
     height: calc(100% - 4rem);
     justify-content: center;
     min-width: 17.5rem;
+  }
+}
+
+#on-call-weekly-summary-page {
+
+  .pager-duty-weekly-summary {
+    display: flex;
+
+    .pager-duty-weekly-totals {
+      border-right: 1px solid #e2e2e2;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      line-height: 1.5rem;
+      margin-right: 2rem;
+      padding-right: 2rem;
+
+      h5 {
+        font-weight: 600;
+        line-height: 1.5rem;
+        margin: 1.5rem 0 0 0;
+      }
+
+      .service-summary {
+        color: #666;
+        display: flex;
+
+        .service-name {
+          color: #666;
+          margin-right: 2rem;
+          flex-grow: 1;
+        }
+
+        .incident-total {
+          flex-grow: 0;
+          min-width: 4rem;
+          text-align: right;
+        }
+      }
+    }
+
+    .pager-duty-day-of-week-totals {
+      flex-grow: 1;
+
+      .chart-container {
+        height: 20rem;
+        max-width: 50rem;
+        width: 100%;
+      }
+    }
   }
 }
 

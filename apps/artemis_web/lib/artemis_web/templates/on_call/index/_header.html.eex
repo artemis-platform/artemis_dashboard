@@ -1,0 +1,49 @@
+<div id="content-header">
+  <header>
+    <%= if assigns[:start_date] do %>
+      <h1>On Call <span class="subheading">Weekly Summary <%= Timex.format!(@start_date, "{Mshort} {D}, {YYYY}") %></span></h1>
+    <% else %>
+      <h1>On Call</h1>
+    <% end %>
+
+    <div class="actions">
+      <%= if assigns[:previous_week] do %>
+        <a class="ui button basic small" href="<%= Routes.on_call_path @conn, :index_weekly_summary, start: @previous_week %>">
+          <i class="icon angle left"></i>
+          Previous
+        </a>
+      <% end %>
+
+      <%= if assigns[:next_week] do %>
+        <% class = if (Timex.beginning_of_week(Timex.now()) == @start_date), do: "disabled" %>
+        <a class="ui button basic small <%= class %>" href="<%= Routes.on_call_path @conn, :index_weekly_summary, start: @next_week %>">
+          Next
+          <i class="icon angle right"></i>
+        </a>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Current Status",
+        path: &Routes.on_call_path(&1, :index),
+        path_match_type: :exact,
+        verify: &has?(&1, "incidents:list")
+      ],
+      [
+        label: "Weekly Summary",
+        path: &Routes.on_call_path(&1, :index_weekly_summary),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "incidents:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

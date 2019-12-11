@@ -1,8 +1,23 @@
-<div id="chart-<%= @chart_id %>" class="chart"></div>
+<div
+  id="chart-container-<%= @chart_id %>"
+  class="chart-container chart-container-<%= @chart_type %>"
+>
+  <div id="chart-<%= @chart_id %>" class="chart"></div>
 
-<script>
-  var chart_selector = document.querySelector("#chart-<%= @chart_id %>");
-  var chart = new ApexCharts(chart_selector, <%= @chart_options %>);
+  <%=
+    Phoenix.LiveView.live_render(
+      @conn,
+      ArtemisWeb.ChartUpdatesLive,
+      session: Map.delete(assigns, :conn)
+    )
+  %>
 
-  chart.render();
-</script>
+  <script>
+    var chart_selector = document.querySelector("#chart-<%= @chart_id %>");
+    var chart = new ApexCharts(chart_selector, <%= get_encoded_chart_options(@chart_options) %>);
+
+    chart.render();
+
+    window.ApexChartHelpers.register_instance("<%= @chart_id %>", chart);
+  </script>
+</div>

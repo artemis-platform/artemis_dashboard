@@ -1,0 +1,28 @@
+<%= render "index/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <article id="on-call-weekly-summary-page" class="page status-page">
+    <content>
+      <section>
+        <%= h2 "PagerDuty Notifications" %>
+        <div class="pager-duty-weekly-summary">
+          <div class="pager-duty-weekly-totals">
+            <%= h4 "Weekly Totals" %>
+            <%= render_pager_duty_weekly_summary @conn, end_date: @end_date, start_date: @start_date %>
+          </div>
+          <div class="pager-duty-day-of-week-totals">
+            <%= h4 "Daily Totals" %>
+            <%= ArtemisWeb.Charts.IncidentsByDayOfWeek.render @conn, end_date: @end_date, start_date: @start_date %>
+          </div>
+        </div>
+      </section>
+    </content>
+  </article>
+</div>
