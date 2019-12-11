@@ -42,9 +42,4 @@ defmodule Artemis.GetSystemUser do
 
   defp nil_session_id(record) when is_map(record), do: Map.put(record, :session_id, nil)
   defp nil_session_id(record), do: record
-
-  # Callbacks
-
-  @impl true
-  def get_cache_key(args), do: [:system_user, options: args]
 end
