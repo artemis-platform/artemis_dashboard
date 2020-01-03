@@ -36,7 +36,9 @@ defmodule Artemis.Helpers.DateTime do
   end
 
   defp date_time_sorter(date_time_1, date_time_2) do
-    case DateTime.compare(date_time_1, date_time_2) do
+    type = date_time_1.__struct__
+
+    case type.compare(date_time_1, date_time_2) do
       r when r == :lt or r == :eq -> true
       _ -> false
     end
