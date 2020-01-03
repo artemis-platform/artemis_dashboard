@@ -516,6 +516,6 @@ defmodule Artemis.Helpers do
   Print entire value without truncation
   """
   def print(value) do
-    IO.inspect(value, limit: :ifinity, printable_limit: :infinity)
+    IO.inspect(value, limit: :infinity, printable_limit: :infinity)
   end
 end
