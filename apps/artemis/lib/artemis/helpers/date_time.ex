@@ -59,4 +59,29 @@ defmodule Artemis.Helpers.DateTime do
   def add_microseconds(date_time, value \\ 0, precision \\ 6) do
     %{date_time | microsecond: {value, precision}}
   end
+
+  @doc """
+  Returns a Timex.Interval instance. Can be passed into `Enum.map` to iterate
+  from the start date to end date using a specified interval.
+
+  For more options see: https://hexdocs.pm/timex/Timex.Interval.html
+  """
+  def get_iterable_interval(oldest, newest, options \\ []) do
+    default_options = [
+      from: oldest,
+      # Include starting value when iterating
+      left_open: false,
+      # Include end value when iterating
+      right_open: false,
+      # Set the unit for each iteration
+      step: [
+        weeks: 1
+      ],
+      until: newest
+    ]
+
+    default_options
+    |> Keyword.merge(options)
+    |> Timex.Interval.new()
+  end
 end
