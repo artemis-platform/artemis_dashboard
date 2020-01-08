@@ -114,8 +114,22 @@ bin/local/test artemis_web test/artemis_web/controllers/feature_controller_test.
 Or if you prefer to use `mix test` directly, make sure environmental variables are exported first:
 
 ```bash
-$ set -a && source .env && set +a
-$ mix test
+set -a && source .env && set +a
+cd apps/artemis_web
+mix test # Run all tests in application artemis_web
+mix test test/artemis_web/controllers/feature_controller_test.exs:14 # Only run a specific test
+```
+
+##### Speeding Up Test Startup by Skipping Cloudant Database Setup
+
+By default, the Cloudant database is recreated when the test suite starts. This
+guarantees consistency when running the entire test suite, but it can also cause
+a noticable delay in the initial test setup.
+
+To skip the cloudant setup on specific tests, pass the `--exclude cloudant_setup` flag:
+
+```bash
+mix test --exclude cloudant_setup
 ```
 
 #### Browser Tests
