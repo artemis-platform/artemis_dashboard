@@ -12,12 +12,9 @@ attempts=0
 
 until [ $attempts -ge 5 ]
 do
-  # xvfb-run -e /dev/stdout -a mix test $@ && exit 0
-  if [ $attempts -ge 2 ]; then
-    echo "First attempt"
+  if [ $attempts -eq 0 ]; then
     xvfb-run -e /dev/stdout -a mix test --slowest 10 $@ && exit 0
   else
-    echo "Attempt ${attempts}"
     xvfb-run -e /dev/stdout -a mix test --slowest 10 --failed $@ && exit 0
   fi
 
