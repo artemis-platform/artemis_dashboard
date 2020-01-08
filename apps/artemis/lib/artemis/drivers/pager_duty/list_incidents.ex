@@ -202,7 +202,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
     since_date =
       incidents
       |> Enum.map(& &1.triggered_at)
-      |> Artemis.Helpers.sort_by_date_time()
+      |> Artemis.Helpers.DateTime.sort_by_date_time()
       |> List.last()
       |> DateTime.to_iso8601()
 
