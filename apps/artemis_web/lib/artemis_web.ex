@@ -49,6 +49,8 @@ defmodule ArtemisWeb do
 
       defp render_format_headers(conn, _), do: conn
 
+      # User Permissions
+
       defp authorize(conn, permission, render_controller) do
         case has?(conn, permission) do
           true -> render_controller.()
@@ -65,6 +67,29 @@ defmodule ArtemisWeb do
 
       defp authorize_all(conn, permissions, render_controller) do
         case has_all?(conn, permissions) do
+          true -> render_controller.()
+          false -> render_forbidden(conn)
+        end
+      end
+
+      # Features
+
+      defp feature_active?(conn, feature, render_controller) do
+        case Artemis.Helpers.Feature.active?(feature) do
+          true -> render_controller.()
+          false -> render_forbidden(conn)
+        end
+      end
+
+      defp feature_active_any?(conn, features, render_controller) do
+        case Enum.any?(features, &Artemis.Helpers.Feature.active?(&1)) do
+          true -> render_controller.()
+          false -> render_forbidden(conn)
+        end
+      end
+
+      defp feature_active_all?(conn, features, render_controller) do
+        case Enum.all?(features, &Artemis.Helpers.Feature.active?(&1)) do
           true -> render_controller.()
           false -> render_forbidden(conn)
         end

@@ -183,19 +183,16 @@ defmodule Artemis.CacheInstance do
   end
 
   @impl true
-  def handle_info(%{event: _, payload: payload}, state) do
-    case matches_any?(state.cache_reset_on_cloudant_changes, payload) do
-      true -> reset_cache(state, payload)
-      false -> {:noreply, state}
+  def handle_info(%{event: event, payload: payload}, state) do
+    cloudant_event? = is_map(payload) && Map.get(payload, :__struct__) == Artemis.CloudantChange.Data
+
+    case cloudant_event? do
+      true -> process_cloudant_event(payload, state)
+      false -> process_event(event, state)
     end
   end
 
-  def handle_info(%{event: event}, state) do
-    case Enum.member?(state.cache_reset_on_events, event) do
-      true -> reset_cache(state, event)
-      false -> {:noreply, state}
-    end
-  end
+  def handle_info(%{event: event}, state), do: process_event(event, state)
 
   # Cachex Helpers
 
@@ -240,7 +237,7 @@ defmodule Artemis.CacheInstance do
     end
   end
 
-  # Helpers
+  # Helpers - Events
 
   defp subscribe_to_cloudant_changes(%{cache_reset_on_cloudant_changes: changes}) when length(changes) > 0 do
     Enum.map(changes, fn change ->
@@ -260,6 +257,22 @@ defmodule Artemis.CacheInstance do
   end
 
   defp subscribe_to_events(_state), do: :skipped
+
+  defp process_cloudant_event(payload, state) do
+    case matches_any?(state.cache_reset_on_cloudant_changes, payload) do
+      true -> reset_cache(state, payload)
+      false -> {:noreply, state}
+    end
+  end
+
+  defp process_event(event, state) do
+    case Enum.member?(state.cache_reset_on_events, event) do
+      true -> reset_cache(state, event)
+      false -> {:noreply, state}
+    end
+  end
+
+  # Helpers
 
   defp create_cachex_options(state) do
     passed_options = convert_expiration_option(state.cachex_options)
