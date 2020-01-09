@@ -1,5 +1,4 @@
 defmodule ArtemisWeb.ViewHelper.QueryParams do
-
   @doc """
   Adds or drops values from existing query params.
 

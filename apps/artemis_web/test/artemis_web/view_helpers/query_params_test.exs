@@ -34,9 +34,11 @@ defmodule ArtemisWeb.ViewHelper.QueryParamsTest do
 
       result = QueryParams.update_query_params(current_params, update_params)
 
-      assert result == %{
+      expected = %{
         "hello" => "world"
       }
+
+      assert result == expected
     end
 
     test "accepts keyword lists" do
@@ -48,9 +50,11 @@ defmodule ArtemisWeb.ViewHelper.QueryParamsTest do
 
       result = QueryParams.update_query_params(current_params, update_params)
 
-      assert result == %{
+      expected = %{
         "hello" => "world"
       }
+
+      assert result == expected
     end
 
     test "updates existing values" do
