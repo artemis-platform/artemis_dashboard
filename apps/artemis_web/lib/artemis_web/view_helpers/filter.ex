@@ -2,47 +2,65 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   use Phoenix.HTML
 
   @doc """
+  Renders a filter toggle for setting query params in the URL
+  """
+  def filter_toggle(conn, label, key, value) do
+    key = if is_atom(key), do: Atom.to_string(key), else: key
+
+    current_query_params = conn.query_params
+    current_filter_params = Map.get(current_query_params, "filters", %{})
+
+    active? = Map.get(current_filter_params, key) == value
+    id = "filter-toggle-#{Artemis.Helpers.UUID.call()}"
+
+    values =
+      case active? do
+        true -> Map.put(%{}, key, nil)
+        false -> Map.put(%{}, key, value)
+      end
+
+    updated_filter_params = ArtemisWeb.ViewHelper.QueryParams.update_query_params(current_filter_params, values)
+    updated_query_params = Map.put(conn.query_params, "filters", updated_filter_params)
+    updated_query_string = Plug.Conn.Query.encode(updated_query_params)
+    path = "#{conn.request_path}?#{updated_query_string}"
+
+    input_options = [
+      checked: active?,
+      id: id,
+      onclick: "location.href='#{path}'",
+      type: "checkbox"
+    ]
+
+    content_tag(:div, class: "ui toggle checkbox") do
+      [
+        tag(:input, input_options),
+        content_tag(:label, label, for: id)
+      ]
+    end
+  end
+
+  @doc """
   Renders a filter button for setting query params in the URL
   """
   def filter_button(conn, label, values) do
-    values =
-      values
-      |> Enum.into(%{})
-      |> Artemis.Helpers.keys_to_strings()
-
-    grouped =
-      Enum.reduce(values, %{add: [], remove: []}, fn item, acc ->
-        {_, value} = item
-
-        add = Map.get(acc, :add, [])
-        remove = Map.get(acc, :remove, [])
-
-        case is_nil(value) do
-          true -> Map.put(acc, :remove, [item | remove])
-          false -> Map.put(acc, :add, [item | add])
-        end
-      end)
-
-    values_to_add = Map.get(grouped, :add) |> Enum.into(%{})
-    values_to_remove = Map.get(grouped, :remove) |> Enum.into(%{})
-
-    new_query_params = %{"filters" => values_to_add}
-    merged_query_params = Artemis.Helpers.deep_merge(conn.query_params, new_query_params)
-
-    keys_to_remove = Map.keys(values_to_remove)
-    merged_filters = Map.get(merged_query_params, "filters")
-    updated_filters = Map.drop(merged_filters, keys_to_remove)
-    updated_query_params = Map.put(merged_query_params, "filters", updated_filters)
-
-    query_string = Plug.Conn.Query.encode(updated_query_params)
-    path = "#{conn.request_path}?#{query_string}"
+    current_query_params = conn.query_params
+    current_filter_params = Map.get(current_query_params, "filters", %{})
+    updated_filter_params = ArtemisWeb.ViewHelper.QueryParams.update_query_params(current_filter_params, values)
+    updated_query_params = Map.put(conn.query_params, "filters", updated_filter_params)
+    updated_query_string = Plug.Conn.Query.encode(updated_query_params)
+    path = "#{conn.request_path}?#{updated_query_string}"
 
     active? =
-      case conn.query_params["filters"] != nil do
+      case current_filter_params != nil do
         true ->
-          present? = updated_query_params["filters"] != %{}
-          updated_set = MapSet.new(updated_query_params["filters"])
-          current_set = MapSet.new(conn.query_params["filters"])
+          updated_size = Artemis.Helpers.deep_size(updated_query_params)
+          updated_set = MapSet.new(updated_query_params)
+
+          current_size = Artemis.Helpers.deep_size(current_query_params)
+          current_set = MapSet.new(current_query_params)
+
+          add? = current_size <= updated_size
+          present? = updated_filter_params != %{}
           subset? = MapSet.subset?(updated_set, current_set)
 
           present? && subset?
@@ -66,6 +84,9 @@ defmodule ArtemisWeb.ViewHelper.Filter do
     content_tag(:button, label, options)
   end
 
+  @doc """
+  Render a multi select filter form element
+  """
   def filter_multi_select(conn, label, value, options) do
     filter_assigns = %{
       available: options,

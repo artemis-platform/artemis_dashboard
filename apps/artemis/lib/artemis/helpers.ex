@@ -359,7 +359,9 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
-  Recursive version of `Map.delete/2`. Adds support for nested values:
+  Recursive version of `Map.delete/2`. Deletes all instances of the given key.
+
+  Adds support for nested values:
 
   Example:
 
@@ -368,7 +370,7 @@ defmodule Artemis.Helpers do
       nested: %{example: "value", hello: "world"}
     }
 
-    deep_delete(map, [:nested, :example])
+    deep_delete(map, :hello)
 
   Returns:
 
@@ -386,6 +388,79 @@ defmodule Artemis.Helpers do
   end
 
   def deep_delete(data, _), do: data
+
+  @doc """
+  Recursive version of `Map.drop/2`. Adds support for nested values:
+
+  Example:
+
+    map = %{
+      simple: "simple",
+      nested: %{example: "value", other: "value"}
+    }
+
+    deep_drop(map, [nested: [:example]])
+
+  Returns:
+
+    map = %{
+      simple: "simple",
+      nested: %{other: "value"}
+    }
+
+  """
+  def deep_drop(map, keys) when is_map(map) do
+    {nested_keys, simple_keys} = Enum.split_with(keys, &is_tuple/1)
+
+    simple = Map.drop(map, simple_keys)
+
+    nested =
+      Enum.reduce(nested_keys, %{}, fn {key, keys}, acc ->
+        value =
+          map
+          |> Map.get(key)
+          |> deep_drop(keys)
+
+        Map.put(acc, key, value)
+      end)
+
+    Map.merge(simple, nested)
+  end
+
+  @doc """
+  Recursively drops all instances of the given value.
+
+  Example:
+
+    map = %{
+      hello: "world",
+      nested: %{example: "value", hello: "world"}
+    }
+
+    deep_drop_by_value(map, "world")
+
+  Returns:
+
+    %{
+      nested: %{example: "value"}
+    }
+
+  """
+  def deep_drop_by_value(data, match) when is_map(data) do
+    matcher = get_deep_drop_by_value_match_function(match)
+
+    Enum.reduce(data, %{}, fn {key, value}, acc ->
+      case matcher.(value) do
+        true -> acc
+        false -> Map.put(acc, key, deep_drop_by_value(value, match))
+      end
+    end)
+  end
+
+  def deep_drop_by_value(data, _), do: data
+
+  defp get_deep_drop_by_value_match_function(match) when is_function(match), do: match
+  defp get_deep_drop_by_value_match_function(match), do: &(&1 == match)
 
   @doc """
   Recursive version of `Map.get/2`. Adds support for nested values:
@@ -416,6 +491,48 @@ defmodule Artemis.Helpers do
   end
 
   def deep_get(_data, _, default), do: default
+
+  @doc """
+  Recursive version of `Map.size/2`. Returns the total number of keys in
+  Maps and Keyword Lists.
+
+  All other values, including Lists, return 0.
+
+  Example:
+
+    map = %{
+      hello: "world",
+      nested: %{example: "value", hello: "world"},
+      keywords: [one: 1, two: 2],
+      list: [1, 2, 3]
+    }
+
+    deep_size(map, [:nested, :example])
+
+  Returns:
+
+    8
+
+  """
+  def deep_size(data) when is_map(data) do
+    Enum.reduce(data, 0, fn {_, value}, acc ->
+      1 + deep_size(value) + acc
+    end)
+  end
+
+  def deep_size(data) when is_list(data) do
+    case Keyword.keyword?(data) do
+      false ->
+        0
+
+      true ->
+        Enum.reduce(data, 0, fn {_, value}, acc ->
+          1 + deep_size(value) + acc
+        end)
+    end
+  end
+
+  def deep_size(_), do: 0
 
   @doc """
   Recursive version of `Map.take/2`. Adds support for nested values:
