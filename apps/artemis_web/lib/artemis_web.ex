@@ -111,6 +111,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.HTML
       import ArtemisWeb.ViewHelper.Navigation
       import ArtemisWeb.ViewHelper.Notifications
+      import ArtemisWeb.ViewHelper.Numbers
       import ArtemisWeb.ViewHelper.OnCall
       import ArtemisWeb.ViewHelper.Pagination
       import ArtemisWeb.ViewHelper.Presence
