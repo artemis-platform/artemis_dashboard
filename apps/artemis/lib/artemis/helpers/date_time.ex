@@ -65,7 +65,19 @@ defmodule Artemis.Helpers.DateTime do
 
   For more options see: https://hexdocs.pm/timex/Timex.Interval.html
   """
-  def get_iterable_interval(oldest, newest, options \\ []) do
+  def get_iterable_interval(oldest, newest, options \\ [])
+
+  def get_iterable_interval(nil, _newest, _options), do: []
+
+  def get_iterable_interval(_oldest, nil, _options), do: []
+
+  def get_iterable_interval(oldest, newest, options) when newest == oldest do
+    updated_newest = Timex.shift(newest, microseconds: 1)
+
+    get_iterable_interval(oldest, updated_newest, options)
+  end
+
+  def get_iterable_interval(oldest, newest, options) do
     default_options = [
       from: oldest,
       # Include starting value when iterating
