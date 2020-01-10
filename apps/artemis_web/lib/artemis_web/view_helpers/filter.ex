@@ -40,7 +40,7 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   end
 
   @doc """
-  Renders a filter button for setting query params in the URL
+  Renders a filter button for setting query params in the URL under the `filters` key
   """
   def filter_button(conn, label, values) do
     current_query_params = conn.query_params
