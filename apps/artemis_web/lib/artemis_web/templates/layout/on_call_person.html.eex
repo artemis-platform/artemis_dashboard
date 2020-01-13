@@ -2,16 +2,25 @@
   <span class="separator">/</span>
   On-Call
   <ul>
-    <%= if length(@people) > 0 do %>
-      <%= Enum.map @people, fn (person) -> %>
+    <%= if length(@people) == 0 do %>
+      <li>
+        <%= link "Unknown", to: Routes.on_call_path(@conn, :index) %>
+      </li>
+    <% else %>
+      <%
+        first_three = Enum.slice(@people, 0..2)
+        remainder_count = length(@people) - 3
+      %>
+      <%= Enum.map first_three, fn (person) -> %>
         <li>
-          <%= link(person, to: Routes.on_call_path(@conn, :index)) %>
+          <%= link person, to: Routes.on_call_path(@conn, :index) %>
         </li>
       <% end %>
-    <% else %>
-      <li>
-        <%= link("Unknown", to: Routes.on_call_path(@conn, :index)) %>
-      </li>
+      <%= if remainder_count > 0 do %>
+        <li>
+          <%= link "and #{remainder_count} more", to: Routes.on_call_path(@conn, :index) %>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 </span>
