@@ -99,24 +99,17 @@ defmodule ArtemisWeb.RoleView do
       [
         verify: has?(conn, "roles:update"),
         link: link("Edit", to: Routes.role_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "roles:delete"),
-        link:
-          link("Delete",
-            to: Routes.role_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 
-    Enum.reduce(allowed_actions, [], fn action, acc ->
-      case Keyword.get(action, :verify) do
-        true -> [acc | Keyword.get(action, :link)]
-        _ -> acc
-      end
-    end)
+    content_tag(:div, class: "actions") do
+      Enum.reduce(allowed_actions, [], fn action, acc ->
+        case Keyword.get(action, :verify) do
+          true -> [acc | Keyword.get(action, :link)]
+          _ -> acc
+        end
+      end)
+    end
   end
 
   @doc """

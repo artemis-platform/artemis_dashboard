@@ -146,24 +146,17 @@ defmodule ArtemisWeb.JobView do
       [
         verify: has?(conn, "jobs:update"),
         link: link("Edit", to: Routes.job_path(conn, :edit, row._id))
-      ],
-      [
-        verify: has?(conn, "jobs:delete"),
-        link:
-          link("Delete",
-            to: Routes.job_path(conn, :delete, row._id),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 
-    Enum.reduce(allowed_actions, [], fn action, acc ->
-      case Keyword.get(action, :verify) do
-        true -> [acc | Keyword.get(action, :link)]
-        _ -> acc
-      end
-    end)
+    content_tag(:div, class: "actions") do
+      Enum.reduce(allowed_actions, [], fn action, acc ->
+        case Keyword.get(action, :verify) do
+          true -> [acc | Keyword.get(action, :link)]
+          _ -> acc
+        end
+      end)
+    end
   end
 
   defp status_row_value(_conn, row), do: row.status || "Undefined"

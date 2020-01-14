@@ -168,24 +168,17 @@ defmodule ArtemisWeb.UserView do
       [
         verify: has?(conn, "users:update"),
         link: link("Edit", to: Routes.user_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "users:delete"),
-        link:
-          link("Delete",
-            to: Routes.user_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 
-    Enum.reduce(allowed_actions, [], fn action, acc ->
-      case Keyword.get(action, :verify) do
-        true -> [acc | Keyword.get(action, :link)]
-        _ -> acc
-      end
-    end)
+    content_tag(:div, class: "actions") do
+      Enum.reduce(allowed_actions, [], fn action, acc ->
+        case Keyword.get(action, :verify) do
+          true -> [acc | Keyword.get(action, :link)]
+          _ -> acc
+        end
+      end)
+    end
   end
 
   @doc """

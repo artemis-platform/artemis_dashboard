@@ -78,23 +78,16 @@ defmodule ArtemisWeb.PermissionView do
       [
         verify: has?(conn, "permissions:update"),
         link: link("Edit", to: Routes.permission_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "permissions:delete"),
-        link:
-          link("Delete",
-            to: Routes.permission_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 
-    Enum.reduce(allowed_actions, [], fn action, acc ->
-      case Keyword.get(action, :verify) do
-        true -> [acc | Keyword.get(action, :link)]
-        _ -> acc
-      end
-    end)
+    content_tag(:div, class: "actions") do
+      Enum.reduce(allowed_actions, [], fn action, acc ->
+        case Keyword.get(action, :verify) do
+          true -> [acc | Keyword.get(action, :link)]
+          _ -> acc
+        end
+      end)
+    end
   end
 end

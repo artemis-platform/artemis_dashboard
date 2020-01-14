@@ -109,6 +109,15 @@ select[multiple] {
           white-space: nowrap;
           width: 1px;
         }
+
+        .actions a {
+          display: inline-block;
+          margin-right: 0.25rem;
+        }
+
+        .actions a:last-child {
+          margin-right: 0;
+        }
       }
     }
   }

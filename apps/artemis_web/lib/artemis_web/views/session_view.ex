@@ -53,17 +53,19 @@ defmodule ArtemisWeb.SessionView do
       ]
     ]
 
-    Enum.reduce(allowed_actions, [], fn action, acc ->
-      case Keyword.get(action, :verify) do
-        true ->
-          item = content_tag(:div, Keyword.get(action, :link))
+    content_tag(:div, class: "actions") do
+      Enum.reduce(allowed_actions, [], fn action, acc ->
+        case Keyword.get(action, :verify) do
+          true ->
+            item = content_tag(:div, Keyword.get(action, :link))
 
-          [acc | item]
+            [acc | item]
 
-        _ ->
-          acc
-      end
-    end)
+          _ ->
+            acc
+        end
+      end)
+    end
   end
 
   def render_session_user_name(session_entries) do
