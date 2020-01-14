@@ -102,12 +102,14 @@ defmodule ArtemisWeb.RoleView do
       ]
     ]
 
-    Enum.reduce(allowed_actions, [], fn action, acc ->
-      case Keyword.get(action, :verify) do
-        true -> [acc | Keyword.get(action, :link)]
-        _ -> acc
-      end
-    end)
+    content_tag(:div, class: "actions") do
+      Enum.reduce(allowed_actions, [], fn action, acc ->
+        case Keyword.get(action, :verify) do
+          true -> [acc | Keyword.get(action, :link)]
+          _ -> acc
+        end
+      end)
+    end
   end
 
   @doc """

@@ -63,7 +63,7 @@ defmodule ArtemisWeb.ViewHelper.Filter do
           present? = updated_filter_params != %{}
           subset? = MapSet.subset?(updated_set, current_set)
 
-          present? && subset?
+          add? && present? && subset?
 
         false ->
           false
