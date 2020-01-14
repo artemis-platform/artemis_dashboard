@@ -66,6 +66,15 @@ defmodule Artemis.Schema.Cloudant do
         |> Map.delete("raw_data")
       end
 
+      # ID Functions
+
+      def id_without_prefix(record, options \\ []) do
+        prefix_end = String.length(__MODULE__.id_prefix())
+        length = Keyword.get(options, :length, 8)
+
+        String.slice(record._id || "", prefix_end, length)
+      end
+
       # Config Functions
 
       def get_cloudant_host() do
