@@ -65,15 +65,6 @@ defmodule ArtemisWeb.CustomerView do
       [
         verify: has?(conn, "customers:update"),
         link: link("Edit", to: Routes.customer_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "customers:delete"),
-        link:
-          link("Delete",
-            to: Routes.customer_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 

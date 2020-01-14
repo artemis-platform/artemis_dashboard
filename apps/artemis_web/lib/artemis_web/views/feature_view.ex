@@ -89,15 +89,6 @@ defmodule ArtemisWeb.FeatureView do
       [
         verify: has?(conn, "features:update"),
         link: link("Edit", to: Routes.feature_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "features:delete"),
-        link:
-          link("Delete",
-            to: Routes.feature_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 

@@ -168,15 +168,6 @@ defmodule ArtemisWeb.UserView do
       [
         verify: has?(conn, "users:update"),
         link: link("Edit", to: Routes.user_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "users:delete"),
-        link:
-          link("Delete",
-            to: Routes.user_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 

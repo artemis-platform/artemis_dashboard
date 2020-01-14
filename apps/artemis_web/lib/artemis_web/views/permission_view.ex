@@ -78,15 +78,6 @@ defmodule ArtemisWeb.PermissionView do
       [
         verify: has?(conn, "permissions:update"),
         link: link("Edit", to: Routes.permission_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "permissions:delete"),
-        link:
-          link("Delete",
-            to: Routes.permission_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 

@@ -146,15 +146,6 @@ defmodule ArtemisWeb.JobView do
       [
         verify: has?(conn, "jobs:update"),
         link: link("Edit", to: Routes.job_path(conn, :edit, row._id))
-      ],
-      [
-        verify: has?(conn, "jobs:delete"),
-        link:
-          link("Delete",
-            to: Routes.job_path(conn, :delete, row._id),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 

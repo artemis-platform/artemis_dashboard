@@ -84,15 +84,6 @@ defmodule ArtemisWeb.TagView do
       [
         verify: has?(conn, "tags:update"),
         link: link("Edit", to: Routes.tag_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "tags:delete"),
-        link:
-          link("Delete",
-            to: Routes.tag_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 

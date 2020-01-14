@@ -99,15 +99,6 @@ defmodule ArtemisWeb.RoleView do
       [
         verify: has?(conn, "roles:update"),
         link: link("Edit", to: Routes.role_path(conn, :edit, row))
-      ],
-      [
-        verify: has?(conn, "roles:delete"),
-        link:
-          link("Delete",
-            to: Routes.role_path(conn, :delete, row),
-            method: :delete,
-            data: [confirm: "Are you sure?"]
-          )
       ]
     ]
 
