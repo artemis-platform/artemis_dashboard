@@ -10,13 +10,13 @@ notifications:
     on_failure: never
 
 addons:
-  chrome: stable
   postgresql: "9.6"
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+  # chrome: stable
+  # apt:
+  #   sources:
+  #     - google-chrome
+  #   packages:
+  #     - google-chrome-stable
 
 services:
   - xvfb
@@ -39,6 +39,11 @@ env:
 #       otp_release: 20.0
 
 before_install:
+  # Manually Install Headless Chrome
+  - curl -sSL "https://travis-build.whitewater.ibm.com/files/gpg/google-chrome.asc" | sudo -E apt-key add -
+  - echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee -a ${TRAVIS_ROOT}/etc/apt/sources.list >/dev/null
+  - travis_apt_get_update
+  - sudo -E apt-get -yq --no-install-suggests --no-install-recommends $(travis_apt_get_options) install google-chrome-stable --allow-unauthenticated
   # Configure Packages - CouchDB
   - echo "deb https://apache.bintray.com/couchdb-deb xenial main" >> /etc/apt/sources.list
   - curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc | sudo apt-key add -

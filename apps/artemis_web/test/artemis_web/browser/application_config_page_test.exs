@@ -28,7 +28,7 @@ defmodule ArtemisWeb.ApplicationConfigPageTest do
     end
 
     test "list of records" do
-      assert page_title() == "Atlas"
+      assert page_title() == "Artemis"
       assert visible?("Application Configs")
     end
   end
