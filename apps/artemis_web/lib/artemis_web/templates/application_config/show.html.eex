@@ -1,0 +1,21 @@
+<div id="content-header">
+  <header>
+    <header>
+      <h1>Application Config <span class="subheading"><%= @application_id %></span></h1>
+    </header>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <section>
+    <%= h3 "Raw Data" %>
+    <pre><code><%= inspect @application_config, pretty: true %></code></pre>
+  </section>
+</div>

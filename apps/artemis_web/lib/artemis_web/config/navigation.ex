@@ -12,6 +12,13 @@ defmodule ArtemisWeb.Config.Navigation do
   """
   def get_nav_items do
     Enum.reverse(
+      Application: [
+        [
+          label: "Application Configs",
+          path: &Routes.application_config_path(&1, :index),
+          verify: &has?(&1, "application-configs:list")
+        ]
+      ],
       Customers: [
         [
           label: "List Customers",
