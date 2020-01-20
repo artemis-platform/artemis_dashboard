@@ -1,0 +1,25 @@
+<div id="content-header">
+  <header>
+    <h1>Application Configs</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <section>
+    <%=
+      render_data_table(
+        @conn,
+        @application_configs,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["application_config", "actions"]
+      )
+    %>
+  </section>
+</div>

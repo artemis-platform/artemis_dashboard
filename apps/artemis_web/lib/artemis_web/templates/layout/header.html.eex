@@ -50,7 +50,7 @@
             </div>
           </li>
         <% end %>
-        <%= if render_primary_nav_section?(nav_items, ["Users", "Roles", "Permissions", "Features", "Event Logs", "HTTP Request Logs", "Sessions", "Tags"]) do %>
+        <%= if render_primary_nav_section?(nav_items, ["Users", "Roles", "Permissions", "Features", "Event Logs", "HTTP Request Logs", "Sessions", "Tags", "Application"]) do %>
           <li class="with-dropdown">
             <a href="<%= Routes.user_path(@conn, :index) %>">
               Admin
@@ -62,7 +62,7 @@
                   <h3>Admin</h3>
                   <p>Administrative tools to manage the site.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, @user, nav_items, ["Users", "Roles", "Permissions", "Features", "Event Log", "HTTP Request Logs", "Sessions", "Tags"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Users", "Roles", "Permissions", "Features", "Event Log", "HTTP Request Logs", "Sessions", "Tags", "Application"]) %>
               </content>
               <footer></footer>
             </div>

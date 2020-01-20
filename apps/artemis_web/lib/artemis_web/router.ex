@@ -47,6 +47,10 @@ defmodule ArtemisWeb.Router do
 
       get "/", HomeController, :index
 
+      # Application Config
+
+      resources "/application-config", ApplicationConfigController, only: [:index, :show]
+
       # Customers
 
       post "/customers/bulk-actions", CustomerController, :index_bulk_actions

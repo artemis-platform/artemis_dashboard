@@ -70,6 +70,8 @@ defmodule Artemis.Repo.GenerateData do
     admin_only = "Should be restricted to administrators"
 
     permissions = [
+      %{slug: "application-configs:list", name: "Application Configs - List", description: admin_only},
+      %{slug: "application-configs:show", name: "Application Configs - Show", description: admin_only},
       %{slug: "comments:access:all", name: "Comments - Access All", description: admin_only},
       %{slug: "comments:access:self", name: "Comments - Access Self"},
       %{slug: "customers:create", name: "Customers - Create"},
