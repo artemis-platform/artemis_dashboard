@@ -25,6 +25,23 @@ defmodule Artemis.Factories do
     }
   end
 
+  def cloud_factory do
+    %Artemis.Cloud{
+      name: sequence(:name, &"#{Faker.Company.name()}-#{&1}"),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
+    }
+  end
+
+  def data_center_factory do
+    %Artemis.DataCenter{
+      country: Faker.Address.country(),
+      latitude: Faker.Address.latitude() |> Float.to_string(),
+      longitude: Faker.Address.longitude() |> Float.to_string(),
+      name: sequence(:name, &"#{Faker.Company.name()}-#{&1}"),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
+    }
+  end
+
   def customer_factory do
     notes = Faker.Lorem.paragraph()
 
@@ -68,6 +85,14 @@ defmodule Artemis.Factories do
       title: Faker.Lorem.sentence(),
       triggered_at: triggered_at,
       triggered_by: Faker.Name.name()
+    }
+  end
+
+  def machine_factory do
+    %Artemis.Machine{
+      hostname: Faker.Internet.domain_name(),
+      name: sequence(:name, &"#{Faker.Company.name()}-#{&1}"),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
     }
   end
 

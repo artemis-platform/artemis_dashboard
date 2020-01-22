@@ -1,0 +1,22 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Machine", @machine.id %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @machine.name],
+        ["Slug", @machine.slug],
+        ["Hostname", @machine.hostname]
+      ])
+    %>
+  </section>
+</div>

@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @cloud.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "clouds:delete") do %>
+        <%= delete_confirmation "Delete", Routes.cloud_path(@conn, :delete, @cloud) %>
+      <% end %>
+      <%= if has?(@conn, "clouds:update") do %>
+        <%= action "Edit", to: Routes.cloud_path(@conn, :edit, @cloud), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.cloud_path(&1, :show, @cloud),
+        path_match_type: :exact,
+        verify: &has?(&1, "clouds:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.cloud_event_log_path(&1, :show_event_log_list, @cloud),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "clouds:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

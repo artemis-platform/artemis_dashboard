@@ -1,0 +1,19 @@
+<div id="content-header">
+  <header>
+    <h1>Edit Machine</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Machine", @machine.id %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.machine_path(@conn, :update, @machine)) %>
+  </section>
+</div>

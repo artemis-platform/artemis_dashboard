@@ -1,0 +1,19 @@
+<div id="content-header">
+  <header>
+    <h1>Edit Cloud</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Cloud", @cloud.id %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.cloud_path(@conn, :update, @cloud)) %>
+  </section>
+</div>

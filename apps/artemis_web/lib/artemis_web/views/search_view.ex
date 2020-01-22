@@ -8,9 +8,21 @@ defmodule ArtemisWeb.SearchView do
       label: "Customers",
       path: &Routes.customer_path/3
     ],
+    "clouds" => [
+      label: "Clouds",
+      path: &Routes.cloud_path/3
+    ],
     "wiki_pages" => [
       label: "Documentation",
       path: &Routes.wiki_page_path/3
+    ],
+    "data_centers" => [
+      label: "Data Centers",
+      path: &Routes.data_center_path/3
+    ],
+    "machines" => [
+      label: "Machines",
+      path: &Routes.machine_path/3
     ],
     "features" => [
       label: "Features",
@@ -83,6 +95,22 @@ defmodule ArtemisWeb.SearchView do
     |> Enum.map(&search_entry(&1))
   end
 
+  defp search_entry(%Artemis.Customer{} = data) do
+    %{
+      title: data.slug,
+      permission: "customers:show",
+      link: fn conn -> Routes.customer_path(conn, :show, data) end
+    }
+  end
+
+  defp search_entry(%Artemis.DataCenter{} = data) do
+    %{
+      title: data.slug,
+      permission: "data-centers:show",
+      link: fn conn -> Routes.data_center_path(conn, :show, data) end
+    }
+  end
+
   defp search_entry(%Artemis.Feature{} = data) do
     %{
       title: data.slug,
@@ -104,6 +132,14 @@ defmodule ArtemisWeb.SearchView do
       title: data._id,
       permission: "jobs:show",
       link: fn conn -> Routes.job_path(conn, :show, data._id) end
+    }
+  end
+
+  defp search_entry(%Artemis.Machine{} = data) do
+    %{
+      title: data.slug,
+      permission: "machines:show",
+      link: fn conn -> Routes.machine_path(conn, :show, data) end
     }
   end
 

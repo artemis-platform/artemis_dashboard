@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @data_center.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "data-centers:delete") do %>
+        <%= delete_confirmation "Delete", Routes.data_center_path(@conn, :delete, @data_center) %>
+      <% end %>
+      <%= if has?(@conn, "data-centers:update") do %>
+        <%= action "Edit", to: Routes.data_center_path(@conn, :edit, @data_center), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.data_center_path(&1, :show, @data_center),
+        path_match_type: :exact,
+        verify: &has?(&1, "data-centers:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.data_center_event_log_path(&1, :show_event_log_list, @data_center),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "data-centers:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

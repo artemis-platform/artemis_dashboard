@@ -1,0 +1,24 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "DataCenter", @data_center.id %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @data_center.name],
+        ["Slug", @data_center.slug],
+        ["Country", @data_center.country],
+        ["Latitude", @data_center.latitude],
+        ["Longitude", @data_center.longitude]
+      ])
+    %>
+  </section>
+</div>

@@ -85,6 +85,9 @@ defmodule Artemis.Job do
   def custom_views,
     do: %{}
 
+  def id_prefix,
+    do: "job_"
+
   # Changesets
 
   def changeset(struct, params \\ %{}) do

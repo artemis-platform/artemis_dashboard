@@ -1,0 +1,43 @@
+<%= render "index/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "DataCenter" %>
+
+  <section>
+    <div class="table-header">
+      <%= render_search @conn %>
+      <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+
+        <%=
+          render_bulk_actions(
+            @conn,
+            "Bulk Actions",
+            Routes.data_center_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: @allowed_bulk_actions
+          )
+        %>
+
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
+    </div>
+
+    <%=
+      render_data_table(
+        @conn,
+        @data_centers.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "slug", "active", "actions"],
+        selectable: length(@allowed_bulk_actions) > 0
+      )
+    %>
+
+    <%= render_pagination @conn, @data_centers %>
+  </section>
+</div>

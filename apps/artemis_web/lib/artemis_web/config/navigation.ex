@@ -19,6 +19,18 @@ defmodule ArtemisWeb.Config.Navigation do
           verify: &has?(&1, "application-configs:list")
         ]
       ],
+      Clouds: [
+        [
+          label: "List Clouds",
+          path: &Routes.cloud_path(&1, :index),
+          verify: &has?(&1, "clouds:list")
+        ],
+        [
+          label: "Create New Cloud",
+          path: &Routes.cloud_path(&1, :new),
+          verify: &has?(&1, "clouds:create")
+        ]
+      ],
       Customers: [
         [
           label: "List Customers",
@@ -29,6 +41,18 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "Create New Customer",
           path: &Routes.customer_path(&1, :new),
           verify: &has?(&1, "customers:create")
+        ]
+      ],
+      "Data Centers": [
+        [
+          label: "List Data Centers",
+          path: &Routes.data_center_path(&1, :index),
+          verify: &has?(&1, "data-centers:list")
+        ],
+        [
+          label: "Create New Data Center",
+          path: &Routes.data_center_path(&1, :new),
+          verify: &has?(&1, "data-centers:create")
         ]
       ],
       Documentation: [
@@ -69,6 +93,18 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "List Incidents",
           path: &Routes.incident_path(&1, :index),
           verify: &has?(&1, "incidents:list")
+        ]
+      ],
+      Machines: [
+        [
+          label: "List Machines",
+          path: &Routes.machine_path(&1, :index),
+          verify: &has?(&1, "machines:list")
+        ],
+        [
+          label: "Create New Machine",
+          path: &Routes.machine_path(&1, :new),
+          verify: &has?(&1, "machines:create")
         ]
       ],
       "On Call": [
