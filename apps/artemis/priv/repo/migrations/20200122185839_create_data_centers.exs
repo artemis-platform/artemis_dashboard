@@ -11,9 +11,10 @@ defmodule Artemis.Repo.Migrations.CreateDataCenters do
       timestamps(type: :utc_datetime)
     end
 
-    create unique_index(:data_centers, [:country])
-    create unique_index(:data_centers, [:latitude, :longitude])
-    create unique_index(:data_centers, [:name])
     create unique_index(:data_centers, [:slug])
+
+    create index(:data_centers, [:country])
+    create index(:data_centers, [:latitude, :longitude])
+    create index(:data_centers, [:name])
   end
 end

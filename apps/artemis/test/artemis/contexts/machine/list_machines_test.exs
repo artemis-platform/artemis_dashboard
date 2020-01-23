@@ -21,7 +21,10 @@ defmodule Artemis.ListMachinesTest do
     test "returns existing machine" do
       machine = insert(:machine)
 
-      assert ListMachines.call(Mock.system_user()) == [machine]
+      machines = ListMachines.call(Mock.system_user())
+
+      assert length(machines) == 1
+      assert hd(machines).id == machine.id
     end
 
     test "returns a list of machines" do

@@ -15,7 +15,12 @@
       render_key_value_list([
         ["Name", @machine.name],
         ["Slug", @machine.slug],
-        ["Hostname", @machine.hostname]
+        ["Hostname", @machine.hostname],
+        ["CPU", @machine.cpu_total],
+        ["RAM", @machine.ram_total],
+        ["Customer", ArtemisWeb.CustomerView.render_show_link(@conn, @machine.customer)],
+        ["Cloud", ArtemisWeb.CloudView.render_show_link(@conn, @machine.cloud)],
+        ["Data Center", ArtemisWeb.DataCenterView.render_show_link(@conn, @machine.data_center)]
       ])
     %>
   </section>

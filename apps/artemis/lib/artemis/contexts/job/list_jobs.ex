@@ -110,7 +110,10 @@ defmodule Artemis.ListJobs do
     filter(key, value)
   end
 
-  defp filter("first_run", value) when is_bitstring(value), do: filter("first_run", String.to_integer(value))
+  defp filter("completed_at", value) when is_bitstring(value), do: filter("completed_at", String.to_integer(value))
+  defp filter("inserted_at", value) when is_bitstring(value), do: filter("inserted_at", String.to_integer(value))
+  defp filter("started_at", value) when is_bitstring(value), do: filter("started_at", String.to_integer(value))
+  defp filter("updated_at", value) when is_bitstring(value), do: filter("updated_at", String.to_integer(value))
   defp filter(key, value), do: %{key => %{"$eq" => value}}
 
   defp maybe_add_bookmark_param(body, %{"bookmark" => bookmark}), do: Map.put(body, :bookmark, bookmark)

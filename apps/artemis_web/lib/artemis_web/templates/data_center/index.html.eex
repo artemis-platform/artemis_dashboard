@@ -33,7 +33,7 @@
         @conn,
         @data_centers.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["name", "slug", "active", "actions"],
+        default_columns: ["name", "slug", "customer_count", "cloud_count", "machine_count", "machine_total_cpu", "machine_total_ram", "actions"],
         selectable: length(@allowed_bulk_actions) > 0
       )
     %>

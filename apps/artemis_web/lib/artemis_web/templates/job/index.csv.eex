@@ -3,6 +3,6 @@
     @conn,
     @jobs.entries,
     allowed_columns: data_table_allowed_columns(),
-    default_columns: ["id", "name", "command", "status", "first_run"]
+    default_columns: ["id", "name", "status", "type", "started_at", "completed_at"]
   )
 %>

@@ -21,7 +21,10 @@ defmodule Artemis.ListDataCentersTest do
     test "returns existing data center" do
       data_center = insert(:data_center)
 
-      assert ListDataCenters.call(Mock.system_user()) == [data_center]
+      data_centers = ListDataCenters.call(Mock.system_user())
+
+      assert length(data_centers) == 1
+      assert hd(data_centers).id == data_center.id
     end
 
     test "returns a list of data centers" do
@@ -113,6 +116,67 @@ defmodule Artemis.ListDataCentersTest do
       data_centers = ListDataCenters.call(params, user)
 
       assert length(data_centers) == 0
+    end
+  end
+
+  describe "cache" do
+    setup do
+      ListDataCenters.reset_cache()
+      ListDataCenters.call_with_cache(Mock.system_user())
+
+      {:ok, []}
+    end
+
+    test "uses default simple cache key callback" do
+      user = Mock.system_user()
+      key = ListDataCenters.call_with_cache(user).key
+
+      assert key == []
+      assert length(key) == 0
+
+      params = %{
+        paginate: true
+      }
+
+      key = ListDataCenters.call_with_cache(params, user).key
+
+      assert is_list(key)
+      assert key == [params]
+    end
+
+    test "uses default context cache options" do
+      defaults = Artemis.CacheInstance.default_cachex_options()
+      cachex_options = Artemis.CacheInstance.get_cachex_options(ListDataCenters)
+
+      assert cachex_options[:expiration] == Keyword.fetch!(defaults, :expiration)
+      assert cachex_options[:limit] == Keyword.fetch!(defaults, :limit)
+    end
+
+    test "returns a cached result" do
+      initial_call = ListDataCenters.call_with_cache(Mock.system_user())
+
+      assert initial_call.__struct__ == Artemis.CacheInstance.CacheEntry
+      assert is_list(initial_call.data)
+      assert initial_call.inserted_at != nil
+      assert initial_call.key != nil
+
+      cache_hit = ListDataCenters.call_with_cache(Mock.system_user())
+
+      assert is_list(cache_hit.data)
+      assert cache_hit.inserted_at != nil
+      assert cache_hit.inserted_at == initial_call.inserted_at
+      assert cache_hit.key != nil
+
+      params = %{
+        paginate: true
+      }
+
+      different_key = ListDataCenters.call_with_cache(params, Mock.system_user())
+
+      assert different_key.data.__struct__ == Scrivener.Page
+      assert is_list(different_key.data.entries)
+      assert different_key.inserted_at != nil
+      assert different_key.key != nil
     end
   end
 end

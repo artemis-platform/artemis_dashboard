@@ -23,7 +23,9 @@ defmodule Artemis.GetDataCenterTest do
     end
 
     test "finds record by keyword list", %{data_center: data_center} do
-      assert GetDataCenter.call([name: data_center.name, slug: data_center.slug], Mock.system_user()).id == data_center.id
+      params = [name: data_center.name, slug: data_center.slug]
+
+      assert GetDataCenter.call(params, Mock.system_user()).id == data_center.id
     end
   end
 

@@ -20,7 +20,10 @@
             @conn,
             "Bulk Actions",
             Routes.cloud_path(@conn, :index_bulk_actions),
-            allowed_bulk_actions: @allowed_bulk_actions
+            allowed_bulk_actions: @allowed_bulk_actions,
+            extra_fields_data: [
+              customers: [blank_option() | Artemis.Customer.unique_select_values_for(:name)]
+            ]
           )
         %>
 
@@ -33,7 +36,7 @@
         @conn,
         @clouds.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["name", "slug", "active", "actions"],
+        default_columns: ["name", "customer", "data_centers", "machines", "machine_total_cpu", "machine_total_ram", "actions"],
         selectable: length(@allowed_bulk_actions) > 0
       )
     %>

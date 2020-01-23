@@ -1,28 +1,18 @@
-<ul>
-  <li>
-    <strong>ID:</strong>
-    <%= @job._id %>
-  </li>
+<section>
+  <%= h2 "Details" %>
+  <%=
+    render_key_value_list([
+      ["ID", @job._id],
+      ["Name", @job.name],
+      ["Status", render_status(@job)],
+      ["Started At", render_date_time_with_seconds(@job.started_at)],
+      ["Completed At", render_date_time_with_seconds(@job.completed_at)],
+      ["Elapsed Time", @now && render_elapsed_time(@job)]
+    ])
+  %>
+</section>
 
-  <li>
-    <strong>Name:</strong>
-    <%= @job.name %>
-  </li>
-
-  <li>
-    <strong>Status:</strong>
-    <span class="status-label <%= status_color(@job) %>">
-      <%= @job.status || "Undefined" %>
-    </span>
-  </li>
-
-  <li>
-    <strong>Elapsed Time:</strong>
-    <%= @now && render_elapsed_time(@job) %>
-  </li>
-
-  <li>
-    <strong>Raw JSON:</strong>
-    <pre><code><%= Jason.encode!(@job.raw_data, pretty: true) %></code></pre>
-  </li>
-</ul>
+<section>
+  <%= h3 "Raw Data" %>
+  <pre><code><%= Jason.encode!(@job.raw_data, pretty: true) %></code></pre>
+</section>

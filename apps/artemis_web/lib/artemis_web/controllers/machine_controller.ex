@@ -26,12 +26,17 @@ defmodule ArtemisWeb.MachineController do
   alias Artemis.ListMachines
   alias Artemis.UpdateMachine
 
-  @preload []
+  @preload [:cloud, :customer, :data_center]
 
   def index(conn, params) do
     authorize(conn, "machines:list", fn ->
       user = current_user(conn)
-      params = Map.put(params, :paginate, true)
+
+      params =
+        params
+        |> Map.put(:paginate, true)
+        |> Map.put(:preload, @preload)
+
       machines = ListMachines.call(params, user)
       allowed_bulk_actions = ArtemisWeb.MachineView.allowed_bulk_actions(user)
 
@@ -71,7 +76,7 @@ defmodule ArtemisWeb.MachineController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "machines:show", fn ->
-      machine = GetMachine.call!(id, current_user(conn))
+      machine = GetMachine.call!(id, current_user(conn), preload: @preload)
 
       render(conn, "show.html", machine: machine)
     end)

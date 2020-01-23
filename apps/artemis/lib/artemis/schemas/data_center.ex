@@ -9,6 +9,10 @@ defmodule Artemis.DataCenter do
     field :name, :string
     field :slug, :string
 
+    has_many :machines, Artemis.Machine, on_delete: :nilify_all
+    has_many :clouds, through: [:machines, :cloud]
+    has_many :customers, through: [:machines, :cloud, :customer]
+
     timestamps()
   end
 

@@ -24,14 +24,20 @@ defmodule ArtemisWeb.DataCenterController do
   alias Artemis.DeleteDataCenter
   alias Artemis.GetDataCenter
   alias Artemis.ListDataCenters
+  alias Artemis.ListMachines
   alias Artemis.UpdateDataCenter
 
-  @preload []
+  @preload [:customers, :clouds, :machines]
 
   def index(conn, params) do
     authorize(conn, "data-centers:list", fn ->
       user = current_user(conn)
-      params = Map.put(params, :paginate, true)
+
+      params =
+        params
+        |> Map.put(:paginate, true)
+        |> Map.put(:preload, @preload)
+
       data_centers = ListDataCenters.call(params, user)
       allowed_bulk_actions = ArtemisWeb.DataCenterView.allowed_bulk_actions(user)
 
@@ -71,9 +77,16 @@ defmodule ArtemisWeb.DataCenterController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "data-centers:show", fn ->
-      data_center = GetDataCenter.call!(id, current_user(conn))
+      user = current_user(conn)
+      data_center = GetDataCenter.call!(id, user, preload: @preload)
+      associated_machines = list_related_machines(conn, data_center, user)
 
-      render(conn, "show.html", data_center: data_center)
+      assigns = [
+        data_center: data_center,
+        associated_machines: associated_machines
+      ]
+
+      render(conn, "show.html", assigns)
     end)
   end
 
@@ -110,5 +123,24 @@ defmodule ArtemisWeb.DataCenterController do
       |> put_flash(:info, "Data Center deleted successfully.")
       |> redirect(to: Routes.data_center_path(conn, :index))
     end)
+  end
+
+  # Helpers
+
+  defp list_related_machines(conn, data_center, user) do
+    params = %{
+      "filters" => %{
+        "data_center_id" => data_center.id
+      },
+      "paginate" => false,
+      "preload" => [
+        :cloud
+      ]
+    }
+
+    conn
+    |> Map.get(:query_params)
+    |> Artemis.Helpers.deep_merge(params)
+    |> ListMachines.call(user)
   end
 end

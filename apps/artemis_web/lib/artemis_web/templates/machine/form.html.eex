@@ -14,6 +14,34 @@
     <%= text_input f, :hostname, placeholder: "Hostname" %>
   </div>
 
+  <div class="field">
+    <%= label_with_errors f, :cpu_total %>
+    <%= text_input f, :cpu_total, placeholder: "Tota CPU (Cores)" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :ram_total %>
+    <%= text_input f, :ram_total, placeholder: "Tota RAM (GB)" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :data_center_id, "Data Center" %>
+    <%=
+      data_center_options = [blank_option() | Artemis.DataCenter.unique_select_values_for(:name)]
+
+      select f, :data_center_id, data_center_options, class: "enhanced clearable", placeholder: ""
+    %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :cloud_id %>
+    <%=
+      cloud_options = [blank_option() | Artemis.Cloud.unique_select_values_for(:name)]
+
+      select f, :cloud_id, cloud_options, class: "enhanced clearable", placeholder: ""
+    %>
+  </div>
+
   <%= reason_field f %>
 
   <div>

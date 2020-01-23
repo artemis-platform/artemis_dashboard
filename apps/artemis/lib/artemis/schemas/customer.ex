@@ -7,6 +7,10 @@ defmodule Artemis.Customer do
     field :notes, :string
     field :notes_html, :string
 
+    has_many :clouds, Artemis.Cloud, on_delete: :nilify_all
+    has_many :data_centers, through: [:clouds, :machines, :data_center]
+    has_many :machines, through: [:clouds, :machines]
+
     timestamps()
   end
 

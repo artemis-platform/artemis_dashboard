@@ -37,12 +37,12 @@ defmodule ArtemisWeb.MachinePageTest do
 
     test "search", %{machine: machine} do
       fill_inputs(".search-resource", %{
-        query: machine.slug
+        query: machine.name
       })
 
       submit_search(".search-resource")
 
-      assert visible?(machine.slug)
+      assert visible?(machine.name)
     end
   end
 

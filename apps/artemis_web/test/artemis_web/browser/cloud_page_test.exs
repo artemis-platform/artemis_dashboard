@@ -37,12 +37,12 @@ defmodule ArtemisWeb.CloudPageTest do
 
     test "search", %{cloud: cloud} do
       fill_inputs(".search-resource", %{
-        query: cloud.slug
+        query: cloud.name
       })
 
       submit_search(".search-resource")
 
-      assert visible?(cloud.slug)
+      assert visible?(cloud.name)
     end
   end
 

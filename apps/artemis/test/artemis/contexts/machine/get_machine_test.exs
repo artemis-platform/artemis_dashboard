@@ -19,11 +19,11 @@ defmodule Artemis.GetMachineTest do
     end
 
     test "finds machine by id", %{machine: machine} do
-      assert GetMachine.call(machine.id, Mock.system_user()) == machine
+      assert GetMachine.call(machine.id, Mock.system_user()).id == machine.id
     end
 
     test "finds record by keyword list", %{machine: machine} do
-      assert GetMachine.call([name: machine.name, slug: machine.slug], Mock.system_user()) == machine
+      assert GetMachine.call([name: machine.name, slug: machine.slug], Mock.system_user()).id == machine.id
     end
   end
 
@@ -37,7 +37,7 @@ defmodule Artemis.GetMachineTest do
     end
 
     test "finds machine by id", %{machine: machine} do
-      assert GetMachine.call!(machine.id, Mock.system_user()) == machine
+      assert GetMachine.call!(machine.id, Mock.system_user()).id == machine.id
     end
   end
 end

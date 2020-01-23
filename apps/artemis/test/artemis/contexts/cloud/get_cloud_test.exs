@@ -19,11 +19,11 @@ defmodule Artemis.GetCloudTest do
     end
 
     test "finds cloud by id", %{cloud: cloud} do
-      assert GetCloud.call(cloud.id, Mock.system_user()) == cloud
+      assert GetCloud.call(cloud.id, Mock.system_user()).id == cloud.id
     end
 
     test "finds record by keyword list", %{cloud: cloud} do
-      assert GetCloud.call([name: cloud.name, slug: cloud.slug], Mock.system_user()) == cloud
+      assert GetCloud.call([name: cloud.name, slug: cloud.slug], Mock.system_user()).id == cloud.id
     end
   end
 
@@ -37,7 +37,7 @@ defmodule Artemis.GetCloudTest do
     end
 
     test "finds cloud by id", %{cloud: cloud} do
-      assert GetCloud.call!(cloud.id, Mock.system_user()) == cloud
+      assert GetCloud.call!(cloud.id, Mock.system_user()).id == cloud.id
     end
   end
 end

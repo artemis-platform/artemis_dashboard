@@ -3,6 +3,6 @@
     @conn,
     @customers.entries,
     allowed_columns: data_table_allowed_columns(),
-    default_columns: ["name"]
+    default_columns: ["name", "clouds", "data_centers", "machine_count"]
   )
 %>

@@ -21,4 +21,16 @@
       ])
     %>
   </section>
+
+  <section class="related-resources">
+    <%= h2 "Associated Machines" %>
+    <%=
+      render_data_table(
+        @conn,
+        @associated_machines,
+        allowed_columns: ArtemisWeb.MachineView.data_table_allowed_columns(),
+        default_columns: ["name", "slug", "cloud", "actions"]
+      )
+    %>
+  </section>
 </div>

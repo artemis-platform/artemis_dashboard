@@ -24,14 +24,20 @@ defmodule ArtemisWeb.CloudController do
   alias Artemis.DeleteCloud
   alias Artemis.GetCloud
   alias Artemis.ListClouds
+  alias Artemis.ListMachines
   alias Artemis.UpdateCloud
 
-  @preload []
+  @preload [:customer, :data_centers, :machines]
 
   def index(conn, params) do
     authorize(conn, "clouds:list", fn ->
       user = current_user(conn)
-      params = Map.put(params, :paginate, true)
+
+      params =
+        params
+        |> Map.put(:paginate, true)
+        |> Map.put(:preload, @preload)
+
       clouds = ListClouds.call(params, user)
       allowed_bulk_actions = ArtemisWeb.CloudView.allowed_bulk_actions(user)
 
@@ -71,9 +77,16 @@ defmodule ArtemisWeb.CloudController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "clouds:show", fn ->
-      cloud = GetCloud.call!(id, current_user(conn))
+      user = current_user(conn)
+      cloud = GetCloud.call!(id, user, preload: @preload)
+      associated_machines = list_related_machines(conn, cloud, user)
 
-      render(conn, "show.html", cloud: cloud)
+      assigns = [
+        cloud: cloud,
+        associated_machines: associated_machines
+      ]
+
+      render(conn, "show.html", assigns)
     end)
   end
 
@@ -110,5 +123,24 @@ defmodule ArtemisWeb.CloudController do
       |> put_flash(:info, "Cloud deleted successfully.")
       |> redirect(to: Routes.cloud_path(conn, :index))
     end)
+  end
+
+  # Helpers
+
+  defp list_related_machines(conn, cloud, user) do
+    params = %{
+      "filters" => %{
+        "cloud_id" => cloud.id
+      },
+      "paginate" => true,
+      "preload" => [
+        :data_center
+      ]
+    }
+
+    conn
+    |> Map.get(:query_params)
+    |> Artemis.Helpers.deep_merge(params)
+    |> ListMachines.call(user)
   end
 end

@@ -21,7 +21,10 @@ defmodule Artemis.ListCloudsTest do
     test "returns existing cloud" do
       cloud = insert(:cloud)
 
-      assert ListClouds.call(Mock.system_user()) == [cloud]
+      clouds = ListClouds.call(Mock.system_user())
+
+      assert length(clouds) == 1
+      assert hd(clouds).id == cloud.id
     end
 
     test "returns a list of clouds" do

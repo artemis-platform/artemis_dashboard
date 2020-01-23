@@ -37,12 +37,12 @@ defmodule ArtemisWeb.DataCenterPageTest do
 
     test "search", %{data_center: data_center} do
       fill_inputs(".search-resource", %{
-        query: data_center.slug
+        query: data_center.name
       })
 
       submit_search(".search-resource")
 
-      assert visible?(data_center.slug)
+      assert visible?(data_center.name)
     end
   end
 
