@@ -148,6 +148,27 @@ defmodule Artemis.Schema.Cloudant do
         |> String.equivalent?("true")
       end
 
+      # Common Queries
+
+      def unique_values_for(field) do
+        host = __MODULE__.get_cloudant_host()
+
+        cloudant_path = __MODULE__.get_cloudant_path()
+        design_doc = __MODULE__.get_cloudant_query_index_design_doc_name()
+        design_doc_path = "#{cloudant_path}/_design/#{design_doc}"
+
+        query_params = [group: true]
+        query_string = Plug.Conn.Query.encode(query_params)
+
+        path = "#{design_doc_path}/_view/#{field}?#{query_string}"
+
+        {:ok, data} = IBMCloudant.Request.call(%{host: host, method: :get, path: path})
+
+        data
+        |> Map.get("rows")
+        |> Enum.map(& hd(Map.get(&1, "key", [])))
+      end
+
       # Helpers
 
       defp get_cloudant_database_config(schema) do
