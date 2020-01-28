@@ -1,0 +1,47 @@
+<%= render "index/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Machine" %>
+
+  <section>
+    <div class="table-header">
+      <%= render_search @conn %>
+      <div class="table-actions">
+        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+
+        <%=
+          render_bulk_actions(
+            @conn,
+            "Bulk Actions",
+            Routes.machine_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: @allowed_bulk_actions,
+            extra_fields_data: [
+              clouds: [blank_option() | Artemis.Cloud.unique_select_values_for(:name)],
+              data_centers: [blank_option() | Artemis.DataCenter.unique_select_values_for(:name)]
+            ]
+          )
+        %>
+
+        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+      </div>
+    </div>
+
+    <%=
+      render_data_table(
+        @conn,
+        @machines.entries,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "hostname", "customer", "cloud", "data_center", "actions"],
+        selectable: length(@allowed_bulk_actions) > 0
+      )
+    %>
+
+    <%= render_pagination @conn, @machines %>
+  </section>
+</div>

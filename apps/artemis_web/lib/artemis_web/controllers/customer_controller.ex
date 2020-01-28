@@ -23,15 +23,21 @@ defmodule ArtemisWeb.CustomerController do
   alias Artemis.Customer
   alias Artemis.DeleteCustomer
   alias Artemis.GetCustomer
+  alias Artemis.ListClouds
   alias Artemis.ListCustomers
   alias Artemis.UpdateCustomer
 
-  @preload []
+  @preload [:clouds, :data_centers, :machines]
 
   def index(conn, params) do
     authorize(conn, "customers:list", fn ->
       user = current_user(conn)
-      params = Map.put(params, :paginate, true)
+
+      params =
+        params
+        |> Map.put(:paginate, true)
+        |> Map.put(:preload, @preload)
+
       customers = ListCustomers.call(params, user)
       allowed_bulk_actions = ArtemisWeb.CustomerView.allowed_bulk_actions(user)
 
@@ -71,9 +77,16 @@ defmodule ArtemisWeb.CustomerController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "customers:show", fn ->
-      customer = GetCustomer.call!(id, current_user(conn))
+      user = current_user(conn)
+      customer = GetCustomer.call!(id, user, preload: @preload)
+      associated_clouds = list_related_clouds(conn, customer, user)
 
-      render(conn, "show.html", customer: customer)
+      assigns = [
+        customer: customer,
+        associated_clouds: associated_clouds
+      ]
+
+      render(conn, "show.html", assigns)
     end)
   end
 
@@ -110,5 +123,25 @@ defmodule ArtemisWeb.CustomerController do
       |> put_flash(:info, "Customer deleted successfully.")
       |> redirect(to: Routes.customer_path(conn, :index))
     end)
+  end
+
+  # Helpers
+
+  defp list_related_clouds(conn, customer, user) do
+    params = %{
+      "filters" => %{
+        "customer_id" => customer.id
+      },
+      "paginate" => false,
+      "preload" => [
+        :data_centers,
+        :machines
+      ]
+    }
+
+    conn
+    |> Map.get(:query_params)
+    |> Artemis.Helpers.deep_merge(params)
+    |> ListClouds.call(user)
   end
 end

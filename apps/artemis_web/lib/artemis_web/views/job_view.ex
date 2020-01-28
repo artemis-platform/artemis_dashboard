@@ -29,16 +29,14 @@ defmodule ArtemisWeb.JobView do
   def data_table_available_columns() do
     [
       {"Actions", "actions"},
-      {"Command", "command"},
-      {"Dependencies", "deps"},
-      {"Doc Type", "zzdoc_type"},
-      {"First Run", "first_run"},
+      {"Completed At", "completed_at"},
+      {"Inserted At", "inserted_at"},
       {"ID", "id"},
-      {"Instance UUID", "instance_uuid"},
-      {"Last Run", "last_run"},
       {"Name", "name"},
+      {"Started At", "started_at"},
       {"Status", "status"},
-      {"Task ID", "task_id"},
+      {"Type", "type"},
+      {"Updated At", "updated_at"},
       {"UUID", "uuid"}
     ]
   end
@@ -50,26 +48,25 @@ defmodule ArtemisWeb.JobView do
         value: fn _conn, _row -> nil end,
         value_html: &data_table_actions_column_html/2
       ],
-      "command" => [
-        label: fn _conn -> "Command" end,
+      "completed_at" => [
+        label: fn _conn -> "Completed At" end,
         label_html: fn conn ->
-          sortable_table_header(conn, "cmd", "Command")
+          sortable_table_header(conn, "completed_at", "Completed At")
         end,
-        value: fn _conn, row -> row.cmd end
+        value: fn _conn, row -> row.completed_at end,
+        value_html: fn _conn, row ->
+          render_date_time_with_seconds(row.completed_at)
+        end
       ],
-      "deps" => [
-        label: fn _conn -> "Dependencies" end,
+      "inserted_at" => [
+        label: fn _conn -> "Inserted At" end,
         label_html: fn conn ->
-          sortable_table_header(conn, "deps", "Dependencies")
+          sortable_table_header(conn, "inserted_at", "Inserted At")
         end,
-        value: fn _conn, row -> row.deps end
-      ],
-      "first_run" => [
-        label: fn _conn -> "First Run" end,
-        label_html: fn conn ->
-          sortable_table_header(conn, "first_run", "First Run")
-        end,
-        value: fn _conn, row -> row.first_run end
+        value: fn _conn, row -> row.inserted_at end,
+        value_html: fn _conn, row ->
+          render_date_time_with_seconds(row.inserted_at)
+        end
       ],
       "id" => [
         label: fn _conn -> "ID" end,
@@ -84,26 +81,22 @@ defmodule ArtemisWeb.JobView do
           end
         end
       ],
-      "instance_uuid" => [
-        label: fn _conn -> "Instance UUID" end,
-        label_html: fn conn ->
-          sortable_table_header(conn, "instance_uuid", "Instance UUID")
-        end,
-        value: fn _conn, row -> row.instance_uuid end
-      ],
-      "last_run" => [
-        label: fn _conn -> "Last Run" end,
-        label_html: fn conn ->
-          sortable_table_header(conn, "last_run", "Last Run")
-        end,
-        value: fn _conn, row -> row.last_run end
-      ],
       "name" => [
         label: fn _conn -> "Name" end,
         label_html: fn conn ->
           sortable_table_header(conn, "name", "Name")
         end,
         value: fn _conn, row -> row.name end
+      ],
+      "started_at" => [
+        label: fn _conn -> "Started At" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "started_at", "Started At")
+        end,
+        value: fn _conn, row -> row.started_at end,
+        value_html: fn _conn, row ->
+          render_date_time_with_seconds(row.started_at)
+        end
       ],
       "status" => [
         label: fn _conn -> "Status" end,
@@ -113,12 +106,22 @@ defmodule ArtemisWeb.JobView do
         value: &status_row_value/2,
         value_html: &status_row_value_html/2
       ],
-      "task_id" => [
-        label: fn _conn -> "Task ID" end,
+      "type" => [
+        label: fn _conn -> "Type" end,
         label_html: fn conn ->
-          sortable_table_header(conn, "task_id", "Task ID")
+          sortable_table_header(conn, "type", "Type")
         end,
-        value: fn _conn, row -> row.task_id end
+        value: fn _conn, row -> row.type end
+      ],
+      "updated_at" => [
+        label: fn _conn -> "Updated At" end,
+        label_html: fn conn ->
+          sortable_table_header(conn, "updated_at", "Updated At")
+        end,
+        value: fn _conn, row -> row.updated_at end,
+        value_html: fn _conn, row ->
+          render_date_time_with_seconds(row.updated_at)
+        end
       ],
       "uuid" => [
         label: fn _conn -> "UUID" end,
@@ -126,13 +129,6 @@ defmodule ArtemisWeb.JobView do
           sortable_table_header(conn, "uuid", "UUID")
         end,
         value: fn _conn, row -> row.uuid end
-      ],
-      "zzdoc_type" => [
-        label: fn _conn -> "Doc Type" end,
-        label_html: fn conn ->
-          sortable_table_header(conn, "zzdoc_type", "Doc Type")
-        end,
-        value: fn _conn, row -> row.zzdoc_type end
       ]
     }
   end
@@ -169,11 +165,23 @@ defmodule ArtemisWeb.JobView do
   end
 
   @doc """
+  Render status
+  """
+  def render_status(record) do
+    color = status_color(record)
+    status = Map.get(record, :status) || "Undefined"
+
+    content_tag(:span, status, class: "status-label #{color}")
+  end
+
+  @doc """
   Return a color value based on status
   """
   def status_color(%{status: status}) when is_bitstring(status) do
     case String.downcase(status) do
+      "running" -> "blue"
       "completed" -> "green"
+      "error" -> "red"
       _ -> nil
     end
   end
@@ -183,17 +191,17 @@ defmodule ArtemisWeb.JobView do
   @doc """
   Render elapsed time
   """
-  def render_elapsed_time(%{first_run: nil}), do: nil
+  def render_elapsed_time(%{started_at: nil}), do: nil
 
   def render_elapsed_time(%{status: "Running"} = job) do
-    {:ok, start} = DateTime.from_unix(job.first_run)
+    {:ok, start} = DateTime.from_unix(job.started_at)
 
     render_time_duration(start, Timex.now())
   end
 
   def render_elapsed_time(%{status: "Completed"} = job) do
-    {:ok, first} = DateTime.from_unix(job.first_run)
-    {:ok, last} = DateTime.from_unix(job.last_run)
+    {:ok, first} = DateTime.from_unix(job.started_at)
+    {:ok, last} = DateTime.from_unix(job.completed_at)
 
     render_time_duration(first, last)
   rescue

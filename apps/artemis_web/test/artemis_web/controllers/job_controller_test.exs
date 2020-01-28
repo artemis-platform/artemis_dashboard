@@ -3,7 +3,7 @@ defmodule ArtemisWeb.JobControllerTest do
 
   import Artemis.Factories
 
-  @create_attrs %{name: "New Name", status: "Pending"}
+  @create_attrs %{name: "New Name", status: "Queued"}
   @update_attrs %{name: "Updated Name", status: "Completed"}
   @invalid_attrs %{raw_data: "{"}
 

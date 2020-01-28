@@ -29,6 +29,13 @@ defmodule ArtemisWeb.CustomerView do
   def data_table_available_columns() do
     [
       {"Actions", "actions"},
+      {"Customer", "customer"},
+      {"Cloud Count", "cloud_count"},
+      {"Clouds", "clouds"},
+      {"Data Center Count", "data_center_count"},
+      {"Data Centers", "data_centers"},
+      {"Machine Count", "machine_count"},
+      {"Machines", "machines"},
       {"Name", "name"}
     ]
   end
@@ -39,6 +46,72 @@ defmodule ArtemisWeb.CustomerView do
         label: fn _conn -> nil end,
         value: fn _conn, _row -> nil end,
         value_html: &data_table_actions_column_html/2
+      ],
+      "cloud_count" => [
+        label: fn _conn -> "Cloud Count" end,
+        value: fn _conn, row -> length(row.clouds) end
+      ],
+      "clouds" => [
+        label: fn _conn -> "Clouds" end,
+        value: fn _conn, row ->
+          Enum.map(row.clouds, fn entry ->
+            Artemis.Helpers.deep_get(entry, [:cloud, :name])
+          end)
+        end,
+        value_html: fn conn, row ->
+          row
+          |> Map.get(:clouds)
+          |> Enum.sort_by(& &1.name)
+          |> Enum.map(fn entry ->
+            content_tag(:div) do
+              ArtemisWeb.CloudView.render_show_link(conn, entry)
+            end
+          end)
+        end
+      ],
+      "data_center_count" => [
+        label: fn _conn -> "Data Center Count" end,
+        value: fn _conn, row -> length(row.data_centers) end
+      ],
+      "data_centers" => [
+        label: fn _conn -> "Data Centers" end,
+        value: fn _conn, row ->
+          Enum.map(row.data_centers, fn entry ->
+            Artemis.Helpers.deep_get(entry, [:data_center, :name])
+          end)
+        end,
+        value_html: fn conn, row ->
+          row
+          |> Map.get(:data_centers)
+          |> Enum.sort_by(& &1.name)
+          |> Enum.map(fn entry ->
+            content_tag(:div) do
+              ArtemisWeb.DataCenterView.render_show_link(conn, entry)
+            end
+          end)
+        end
+      ],
+      "machine_count" => [
+        label: fn _conn -> "Machine Count" end,
+        value: fn _conn, row -> length(row.machines) end
+      ],
+      "machines" => [
+        label: fn _conn -> "Machines" end,
+        value: fn _conn, row ->
+          Enum.map(row.machines, fn entry ->
+            Artemis.Helpers.deep_get(entry, [:machine, :name])
+          end)
+        end,
+        value_html: fn conn, row ->
+          row
+          |> Map.get(:machines)
+          |> Enum.sort_by(& &1.name)
+          |> Enum.map(fn entry ->
+            content_tag(:div) do
+              ArtemisWeb.MachineView.render_show_link(conn, entry)
+            end
+          end)
+        end
       ],
       "name" => [
         label: fn _conn -> "Name" end,
@@ -76,5 +149,13 @@ defmodule ArtemisWeb.CustomerView do
         end
       end)
     end
+  end
+
+  # Helpers
+
+  def render_show_link(_conn, nil), do: nil
+
+  def render_show_link(conn, record) do
+    link(record.name, to: Routes.customer_path(conn, :show, record))
   end
 end

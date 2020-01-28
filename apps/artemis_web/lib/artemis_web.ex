@@ -133,6 +133,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.Events
       import ArtemisWeb.ViewHelper.Export
       import ArtemisWeb.ViewHelper.Filter
+      import ArtemisWeb.ViewHelper.Form
       import ArtemisWeb.ViewHelper.HTML
       import ArtemisWeb.ViewHelper.Navigation
       import ArtemisWeb.ViewHelper.Notifications

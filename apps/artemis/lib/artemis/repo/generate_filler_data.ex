@@ -52,6 +52,13 @@ defmodule Artemis.Repo.GenerateFillerData do
     generate_incidents(system_user)
     generate_roles(system_user)
     generate_users(system_user)
+
+    customers = generate_customers(system_user)
+    clouds = generate_clouds(customers, system_user)
+    data_centers = generate_data_centers(system_user)
+    _machines = generate_machines(clouds, data_centers, system_user)
+
+    :ok
   end
 
   defp generate_incidents(_system_user), do: insert_list(100, :incident)
@@ -73,5 +80,27 @@ defmodule Artemis.Repo.GenerateFillerData do
     end)
 
     users
+  end
+
+  defp generate_customers(_system_user), do: insert_list(30, :customer)
+
+  defp generate_data_centers(_system_user), do: insert_list(10, :data_center)
+
+  defp generate_clouds(customers, _system_user) do
+    Enum.map(Range.new(0, 100), fn _ ->
+      customer = Enum.random(customers)
+
+      insert(:cloud, customer: customer, machines: [])
+    end)
+  end
+
+  defp generate_machines(clouds, data_centers, _system_user) do
+    Enum.map(clouds, fn cloud ->
+      Enum.map(Range.new(3, 16), fn _ ->
+        data_center = Enum.random(data_centers)
+
+        insert(:machine, cloud: cloud, data_center: data_center)
+      end)
+    end)
   end
 end

@@ -6,18 +6,15 @@ defmodule Artemis.Job do
   embedded_schema do
     field :_id, :string
     field :_rev, :string
-    field :cmd, :string
-    field :deps, :string
-    field :first_run, :integer
-    field :instance_uuid, :string
-    field :last_run, :integer
+    field :completed_at, :integer
+    field :inserted_at, :integer
     field :name, :string
     field :raw_data, :map
+    field :started_at, :integer
     field :status, :string
-    field :task_id, :string
-    field :transaction_id, :string
+    field :type, :string
+    field :updated_at, :integer
     field :uuid, :string
-    field :zzdoc_type, :string
   end
 
   # Callbacks
@@ -25,17 +22,15 @@ defmodule Artemis.Job do
   def updatable_fields,
     do: [
       :_rev,
-      :cmd,
-      :first_run,
-      :last_run,
-      :instance_uuid,
+      :completed_at,
+      :inserted_at,
       :name,
       :raw_data,
+      :started_at,
       :status,
-      :task_id,
-      :transaction_id,
-      :uuid,
-      :zzdoc_type
+      :type,
+      :updated_at,
+      :uuid
     ]
 
   def required_fields,
@@ -51,39 +46,38 @@ defmodule Artemis.Job do
 
   def filter_fields,
     do: [
-      :instance_uuid,
-      :task_id,
-      :transaction_id
+      :name,
+      :status,
+      :type,
+      :uuid
     ]
 
   def index_fields,
     do: [
-      :cmd,
-      :deps,
-      :first_run,
-      :instance_uuid,
-      :last_run,
+      :completed_at,
+      :inserted_at,
       :name,
+      :started_at,
       :status,
-      :task_id,
-      :transaction_id,
-      :uuid,
-      :zzdoc_type
+      :type,
+      :updated_at,
+      :uuid
     ]
 
   def search_fields,
     do: [
       :_id,
-      :cmd,
-      :deps,
       :name,
       :status,
-      :task_id,
+      :type,
       :uuid
     ]
 
   def custom_views,
     do: %{}
+
+  def id_prefix,
+    do: "job_"
 
   # Changesets
 

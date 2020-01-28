@@ -51,6 +51,17 @@ defmodule ArtemisWeb.Router do
 
       resources "/application-config", ApplicationConfigController, only: [:index, :show]
 
+      # Clouds
+
+      post "/clouds/bulk-actions", CloudController, :index_bulk_actions
+      get "/clouds/event-logs", CloudController, :index_event_log_list
+      get "/clouds/event-logs/:id", CloudController, :index_event_log_details
+
+      resources "/clouds", CloudController do
+        get "/event-logs", CloudController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", CloudController, :show_event_log_details, as: :event_log
+      end
+
       # Customers
 
       post "/customers/bulk-actions", CustomerController, :index_bulk_actions
@@ -60,6 +71,17 @@ defmodule ArtemisWeb.Router do
       resources "/customers", CustomerController do
         get "/event-logs", CustomerController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", CustomerController, :show_event_log_details, as: :event_log
+      end
+
+      # Data Centers
+
+      post "/data-centers/bulk-actions", DataCenterController, :index_bulk_actions
+      get "/data-centers/event-logs", DataCenterController, :index_event_log_list
+      get "/data-centers/event-logs/:id", DataCenterController, :index_event_log_details
+
+      resources "/data-centers", DataCenterController do
+        get "/event-logs", DataCenterController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", DataCenterController, :show_event_log_details, as: :event_log
       end
 
       # Docs
@@ -109,6 +131,17 @@ defmodule ArtemisWeb.Router do
       resources "/jobs", JobController do
         get "/event-logs", JobController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", JobController, :show_event_log_details, as: :event_log
+      end
+
+      # Machines
+
+      post "/machines/bulk-actions", MachineController, :index_bulk_actions
+      get "/machines/event-logs", MachineController, :index_event_log_list
+      get "/machines/event-logs/:id", MachineController, :index_event_log_details
+
+      resources "/machines", MachineController do
+        get "/event-logs", MachineController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", MachineController, :show_event_log_details, as: :event_log
       end
 
       # On Call

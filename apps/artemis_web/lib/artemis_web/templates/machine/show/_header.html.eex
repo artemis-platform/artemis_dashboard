@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @machine.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "machines:delete") do %>
+        <%= delete_confirmation "Delete", Routes.machine_path(@conn, :delete, @machine) %>
+      <% end %>
+      <%= if has?(@conn, "machines:update") do %>
+        <%= action "Edit", to: Routes.machine_path(@conn, :edit, @machine), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.machine_path(&1, :show, @machine),
+        path_match_type: :exact,
+        verify: &has?(&1, "machines:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.machine_event_log_path(&1, :show_event_log_list, @machine),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "machines:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

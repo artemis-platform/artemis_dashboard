@@ -1,0 +1,27 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Machine", @machine.id %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Name", @machine.name],
+        ["Slug", @machine.slug],
+        ["Hostname", @machine.hostname],
+        ["CPU", @machine.cpu_total],
+        ["RAM", @machine.ram_total],
+        ["Customer", ArtemisWeb.CustomerView.render_show_link(@conn, @machine.customer)],
+        ["Cloud", ArtemisWeb.CloudView.render_show_link(@conn, @machine.cloud)],
+        ["Data Center", ArtemisWeb.DataCenterView.render_show_link(@conn, @machine.data_center)]
+      ])
+    %>
+  </section>
+</div>

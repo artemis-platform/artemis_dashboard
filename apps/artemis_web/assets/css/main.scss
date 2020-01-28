@@ -996,6 +996,15 @@ ul.timeline {
 
 /* === Components - Documentation Page === */
 
+.wiki-page-filters {
+  display: flex;
+  margin: 0 0 2rem 0;
+
+  .search-resource {
+    margin-right: 1rem;
+  }
+}
+
 #wiki-page {
   display: flex;
   flex-direction: row;

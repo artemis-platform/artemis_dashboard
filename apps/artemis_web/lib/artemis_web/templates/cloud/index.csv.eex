@@ -1,0 +1,8 @@
+<%=
+  render_data_table(
+    @conn,
+    @clouds.entries,
+    allowed_columns: data_table_allowed_columns(),
+    default_columns: ["name", "customer", "data_centers", "machines", "machine_total_cpu", "machine_total_ram"]
+  )
+%>

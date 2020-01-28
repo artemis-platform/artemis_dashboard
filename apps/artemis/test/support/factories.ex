@@ -13,6 +13,15 @@ defmodule Artemis.Factories do
     }
   end
 
+  def cloud_factory do
+    %Artemis.Cloud{
+      customer: build(:customer),
+      name: sequence(:name, &"#{Faker.Company.name()}-#{&1}"),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
+      machines: build_list(3, :machine)
+    }
+  end
+
   def comment_factory do
     body = Faker.Lorem.paragraph()
 
@@ -32,6 +41,18 @@ defmodule Artemis.Factories do
       name: sequence(:name, &"#{Faker.Company.name()}-#{&1}"),
       notes: notes,
       notes_html: notes
+    }
+  end
+
+  def data_center_factory do
+    country = Faker.Address.country()
+
+    %Artemis.DataCenter{
+      country: sequence(:name, &"#{country}#{&1}"),
+      latitude: Faker.Address.latitude() |> Float.to_string(),
+      longitude: Faker.Address.longitude() |> Float.to_string(),
+      name: sequence(:name, &"#{country}#{&1}"),
+      slug: sequence(:slug, &"#{Faker.Address.country_code()}#{&1}")
     }
   end
 
@@ -71,6 +92,37 @@ defmodule Artemis.Factories do
     }
   end
 
+  def job_factory do
+    %Artemis.Job{
+      _id: Faker.UUID.v4(),
+      _rev: sequence(:slug, &"#{&1}-#{Faker.UUID.v4()}"),
+      completed_at: DateTime.utc_now() |> DateTime.to_unix(),
+      inserted_at: DateTime.utc_now() |> DateTime.to_unix(),
+      name: Faker.Name.name(),
+      started_at: DateTime.utc_now() |> DateTime.to_unix(),
+      status: Enum.random(["Queued", "Running", "Completed", "Error"]),
+      type: Enum.random(["Provision Machine", "Remove Machine"]),
+      updated_at: DateTime.utc_now() |> DateTime.to_unix(),
+      uuid: Faker.UUID.v4()
+    }
+  end
+
+  def machine_factory do
+    domain_name = sequence(:name, &"#{&1}.#{Faker.Internet.domain_name()}")
+    name = Enum.random(["Compute Server", "Management Server", "Backup Server", "Storage Server"])
+
+    %Artemis.Machine{
+      cpu_total: Enum.random([1, 2, 4, 8, 16]),
+      cpu_used: Enum.random(Range.new(0, 16)),
+      hostname: domain_name,
+      name: sequence(:name, &"#{name}-#{&1}"),
+      slug: domain_name,
+      data_center: build(:data_center),
+      ram_total: Enum.random([1, 2, 4, 8, 16, 32, 64, 128, 256]),
+      ram_used: Enum.random(Range.new(0, 256))
+    }
+  end
+
   def permission_factory do
     %Artemis.Permission{
       name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
@@ -82,18 +134,6 @@ defmodule Artemis.Factories do
     %Artemis.Role{
       name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
       slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
-    }
-  end
-
-  def job_factory do
-    %Artemis.Job{
-      _id: Faker.UUID.v4(),
-      _rev: sequence(:slug, &"#{&1}-#{Faker.UUID.v4()}"),
-      cmd: "#{Faker.Internet.slug()}.py",
-      first_run: DateTime.utc_now() |> DateTime.to_unix(),
-      name: Faker.Name.name(),
-      status: "Completed",
-      uuid: Faker.UUID.v4()
     }
   end
 

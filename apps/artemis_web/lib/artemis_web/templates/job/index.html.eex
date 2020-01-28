@@ -20,9 +20,11 @@
       <% end %>
 
       <div class="ui basic buttons small">
-        <%= filter_button(@conn, "All", zzdoc_type: nil) %>
-        <%= filter_button(@conn, "Jobs", zzdoc_type: "job") %>
-        <%= filter_button(@conn, "Tasks", zzdoc_type: "task") %>
+        <%= filter_button(@conn, "All", status: nil) %>
+        <%= filter_button(@conn, "Queued", status: "Queued") %>
+        <%= filter_button(@conn, "Running", status: "Running") %>
+        <%= filter_button(@conn, "Completed", status: "Completed") %>
+        <%= filter_button(@conn, "Error", status: "Error") %>
       </div>
 
       <div class="table-actions">
@@ -46,7 +48,7 @@
         @conn,
         @jobs.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["id", "name", "command", "status", "first_run", "actions"],
+        default_columns: ["id", "name", "status", "type", "started_at", "completed_at", "actions"],
         selectable: length(@allowed_bulk_actions) > 0
       )
     %>

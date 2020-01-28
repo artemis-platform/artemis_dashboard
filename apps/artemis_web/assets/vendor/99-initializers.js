@@ -116,9 +116,11 @@ function initializeSelect2() {
     var options = {}
 
     // Options
+    var hasClearable = classes.includes('clearable')
     var hasCreate = classes.includes('creatable') || classes.includes('tags')
     var hasSearch = classes.includes('search')
 
+    options.allowClear = hasClearable
     options.minimumResultsForSearch = hasSearch ? 0 : Infinity
     options.tags = hasCreate
     options.placeholder = item.attr('placeholder') || ''
@@ -226,8 +228,15 @@ function initializeSelectTableRow() {
       var all_fields = extra_fields.find('.extra-field')
       var selected_field = extra_fields.find('.extra-field-' + value)
 
-      all_fields.hide()
-      selected_field.show()
+      all_fields.each(function() {
+        $(this).find("input, select").prop("disabled", true)
+        $(this).hide()
+      })
+
+      selected_field.each(function() {
+        $(this).find("input, select").prop("disabled", false)
+        $(this).show()
+      })
     })
   })
 }

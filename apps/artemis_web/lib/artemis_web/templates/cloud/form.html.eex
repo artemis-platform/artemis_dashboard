@@ -1,0 +1,30 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "cloud-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :name %>
+    <%= text_input f, :name, placeholder: "Name" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :slug %>
+    <%= text_input f, :slug, placeholder: "Slug" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :customer_id %>
+    <%=
+      customer_options = [blank_option() | Artemis.Customer.unique_select_values_for(:name)]
+
+      select f, :customer_id, customer_options, class: "enhanced clearable", placeholder: ""
+    %>
+  </div>
+
+  <%= reason_field f %>
+
+  <div>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save", class: "ui button primary" %>
+  </div>
+<% end %>

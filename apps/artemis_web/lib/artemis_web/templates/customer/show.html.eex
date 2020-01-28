@@ -22,4 +22,16 @@
     <%= h3 "Customer Notes" %>
     <%= raw @customer.notes_html %>
   </section>
+
+  <section class="related-resources">
+    <%= h2 "Associated Clouds" %>
+    <%=
+      render_data_table(
+        @conn,
+        @associated_clouds,
+        allowed_columns: ArtemisWeb.CloudView.data_table_allowed_columns(),
+        default_columns: ["name", "slug", "data_centers", "machine_count", "actions"]
+      )
+    %>
+  </section>
 </div>

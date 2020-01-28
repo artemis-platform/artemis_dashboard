@@ -125,7 +125,7 @@ defmodule ArtemisWeb.JobPageTest do
 
       raw_data = %{
         name: "Updated Name",
-        status: "Pending"
+        status: "Queued"
       }
 
       fill_inputs("#job-form", %{
@@ -135,7 +135,7 @@ defmodule ArtemisWeb.JobPageTest do
       submit_form("#job-form")
 
       assert visible?("Updated Name")
-      assert visible?("Pending")
+      assert visible?("Queued")
     end
   end
 

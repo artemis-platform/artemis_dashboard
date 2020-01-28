@@ -14,19 +14,19 @@
             </a>
           </li>
         <% end %>
-        <%= if render_primary_nav_section?(nav_items, ["Jobs"]) do %>
+        <%= if render_primary_nav_section?(nav_items, ["Clouds", "Data Centers", "Machines", "Jobs"]) do %>
           <li class="with-dropdown">
-            <a href="<%= Routes.job_path(@conn, :index) %>">
-              Services
+            <a href="<%= Routes.cloud_path(@conn, :index) %>">
+              Clouds
               <i class="angle down icon"></i>
             </a>
             <div class="dropdown">
               <content>
                 <header>
-                  <h3>Services</h3>
-                  <p>Details of every service in the offering catalogue.</p>
+                  <h3>Clouds</h3>
+                  <p>Details of every deployed cloud and supporting instances.</p>
                 </header>
-                <%= render_primary_nav_section(@conn, @user, nav_items, ["Jobs"]) %>
+                <%= render_primary_nav_section(@conn, @user, nav_items, ["Clouds", "Data Centers", "Machines", "Jobs"]) %>
               </content>
               <footer></footer>
             </div>
