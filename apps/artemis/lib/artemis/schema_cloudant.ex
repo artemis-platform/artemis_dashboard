@@ -150,6 +150,12 @@ defmodule Artemis.Schema.Cloudant do
 
       # Common Queries
 
+      @doc """
+      Return a list of unique values for a given field.
+
+      Requires a query index to already exist for the field, which is typically
+      created by the `def index_fields, do: [:field_name]` entry in the schema file.
+      """
       def unique_values_for(field) do
         host = __MODULE__.get_cloudant_host()
 
@@ -166,7 +172,7 @@ defmodule Artemis.Schema.Cloudant do
 
         data
         |> Map.get("rows")
-        |> Enum.map(& hd(Map.get(&1, "key", [])))
+        |> Enum.map(&hd(Map.get(&1, "key", [])))
       end
 
       # Helpers
