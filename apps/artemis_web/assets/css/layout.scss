@@ -766,6 +766,48 @@ body.error-page {
   background: $content_background;
   padding: 2rem 2rem 1rem 2rem;
 
+  .page-filters {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin: 0.25rem 0 1.5rem 0;
+
+    h5 {
+      margin: 0 1rem 0.5rem 0;
+    }
+
+    .table-filters {
+      align-items: center;
+    }
+
+    .ui.toggle.checkbox label::before {
+      background: rgba(0, 0, 0, 0.20);
+    }
+
+    .ui.buttons {
+      max-height: 38px;
+    }
+
+    .ui.button {
+      background: #fff !important;
+    }
+
+    &>div {
+      margin-bottom: 0.5rem;
+      margin-right: 1rem;
+
+      &>form {
+        min-width: 8rem;
+        max-width: 12rem;
+      }
+    }
+
+    &>div:last-child {
+      margin-right: 0;
+    }
+  }
+
   &>section,
   &>article>section,
   &>article>content>section,
