@@ -6,18 +6,14 @@ defmodule ArtemisWeb.SystemTaskController do
     permission: "system-tasks:list",
     resource_type: "SystemTask"
 
+  alias Artemis.SystemTask
+
   # TODO: in context, broadcast system task event
   # TODO: should this be liveview, so the task can take as long as needed?
-  @available_system_tasks [
-
-  ]
+  @available_system_tasks []
 
   def index(conn, params) do
     authorize(conn, "system-tasks:list", fn ->
-      # user = current_user(conn)
-      # system_tasks = ListSystemTasks.call(params, user)
-      available_system_tasks = []
-
       assigns = [
         available_system_tasks: @available_system_tasks
       ]
@@ -26,10 +22,13 @@ defmodule ArtemisWeb.SystemTaskController do
     end)
   end
 
-  def new(conn, _params) do
+  def new(conn, params) do
     authorize(conn, "system-tasks:create", fn ->
+      changeset = SystemTask.changeset(%SystemTask{}, params)
+
       assigns = [
-        available_system_tasks: @available_system_tasks
+        available_system_tasks: @available_system_tasks,
+        changeset: changeset
       ]
 
       render(conn, "new.html", assigns)
@@ -38,17 +37,21 @@ defmodule ArtemisWeb.SystemTaskController do
 
   def create(conn, %{"system_task" => params}) do
     authorize(conn, "system-tasks:create", fn ->
-      # case CreateFeature.call(params, current_user(conn)) do
-      #   {:ok, feature} ->
-      #     conn
-      #     |> put_flash(:info, "Executing System Task.")
-      #     |> redirect(to: Routes.system_task_path(conn, :index))
+      # TODO case CreateSystemTask.call(params, current_user(conn)) do
+      case {:ok, params} do
+        {:ok, _} ->
+          conn
+          |> put_flash(:info, "Successfully Submitted System Task")
+          |> redirect(to: Routes.system_task_path(conn, :index))
 
-      #   {:error, %Ecto.Changeset{} = changeset} ->
-      #     feature = %Feature{}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          assigns = [
+            available_system_tasks: @available_system_tasks,
+            changeset: changeset
+          ]
 
-      #     render(conn, "new.html", changeset: changeset, feature: feature)
-      # end
+          render(conn, "new.html", assigns)
+      end
     end)
   end
 end

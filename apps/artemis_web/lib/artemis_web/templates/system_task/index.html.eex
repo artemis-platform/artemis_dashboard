@@ -8,4 +8,11 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "SystemTask" %>
+
+  <section>
+    <%= h2 "Available System Tasks" %>
+    <%= if has?(@conn, "system-tasks:create") do %>
+      <%= action "New", to: Routes.system_task_path(@conn, :new), color: "blue" %>
+    <% end %>
+  </section>
 </div>

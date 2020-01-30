@@ -11,22 +11,16 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
-
   <section>
-    <%= form_for @changeset, @action, [class: "ui form", id: "system-task-form"], fn f -> %>
+    <%= form_for @changeset, Routes.system_task_path(@conn, :create), [class: "ui form", id: "system-task-form"], fn f -> %>
       <div class="field">
-        <%= label_with_errors f, :name %>
-        <%= text_input f, :name, placeholder: "Name" %>
+        <%= label_with_errors f, :type, "System Task" %>
+        <%= select f, :type, @available_system_tasks, class: "enhanced", placeholder: "" %>
       </div>
 
       <div class="field">
-        <%= label_with_errors f, :slug %>
-        <%= text_input f, :slug, placeholder: "Slug" %>
-      </div>
-
-      <div class="field">
-        <%= label f, :active %>
-        <%= checkbox f, :active %>
+        <%= label_with_errors f, :extra_params, "Extra Params" %>
+        <%= textarea f, :extra_params, value: pretty_print_json_into_textarea(f, :extra_params) %>
       </div>
 
       <%= reason_field f %>
