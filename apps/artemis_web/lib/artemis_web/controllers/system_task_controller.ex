@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.SessionController do
+defmodule ArtemisWeb.SystemTaskController do
   use ArtemisWeb, :controller
 
   use ArtemisWeb.Controller.EventLogsIndex,

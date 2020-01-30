@@ -181,6 +181,9 @@ defmodule ArtemisWeb.Router do
 
       # System Tasks
 
+      get "/system-tasks/event-logs", SystemTaskController, :index_event_log_list
+      get "/system-tasks/event-logs/:id", SystemTaskController, :index_event_log_details
+
       resources "/system-tasks", SystemTaskController, only: [:index, :new, :create]
 
       # Tags
