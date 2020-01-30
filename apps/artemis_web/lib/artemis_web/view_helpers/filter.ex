@@ -2,6 +2,22 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   use Phoenix.HTML
 
   @doc """
+  Renders top level a page filters
+  """
+  def page_filters(options) do
+    content_tag(:div, class: "page-filters") do
+      [
+        content_tag(:h5) do
+          [
+            content_tag(:i, "", class: "ui icon filter"),
+            "Data Filters"
+          ]
+        end
+      ] ++ Keyword.get(options, :do, [])
+    end
+  end
+
+  @doc """
   Renders a filter toggle for setting query params in the URL
   """
   def filter_toggle(conn, label, key, value) do

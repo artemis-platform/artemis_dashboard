@@ -10,7 +10,7 @@ function getQueryParams() {
 function updateQueryParams(newParams) {
   var currentParams = getQueryParams()
   var encodingOptions = { arrayFormat: 'brackets', encodeValuesOnly: true }
-  var nextParams = $.merge(newParams, currentParams)
+  var nextParams = $.extend({}, currentParams, newParams)
   var nextQueryString = qs.stringify(nextParams, encodingOptions)
 
   window.location = window.location.pathname + '?' + nextQueryString
