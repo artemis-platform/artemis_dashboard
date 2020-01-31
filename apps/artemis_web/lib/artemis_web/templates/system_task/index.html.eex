@@ -10,9 +10,13 @@
   <%= render_event_log_notifications @conn, "SystemTask" %>
 
   <section>
-    <%= h2 "Available System Tasks" %>
-    <%= if has?(@conn, "system-tasks:create") do %>
-      <%= action "New", to: Routes.system_task_path(@conn, :new), color: "blue" %>
-    <% end %>
+    <%=
+      render_data_table(
+        @conn,
+        @system_tasks,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "type", "description", "actions"]
+      )
+    %>
   </section>
 </div>

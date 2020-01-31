@@ -137,6 +137,15 @@ defmodule Artemis.Factories do
     }
   end
 
+  def system_task_factory do
+    %Artemis.SystemTask{
+      extra_params: %{
+        "reason" => "Testing"
+      },
+      type: Enum.random(Artemis.SystemTask.allowed_system_tasks()).type
+    }
+  end
+
   def tag_factory do
     %Artemis.Tag{
       description: Faker.Lorem.paragraph(),

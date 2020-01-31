@@ -11,32 +11,30 @@ defmodule Artemis.CreateSystemTask do
   end
 
   def call(params, user) do
-    with_transaction(fn ->
-      params
-      |> create_system_task(user)
-      |> Event.broadcast("system-task:created", params, user)
-    end)
+    params
+    |> Artemis.Helpers.keys_to_strings()
+    |> create_system_task(user)
   end
 
   defp create_system_task(params, user) do
-    record = struct(SystemTask, params)
+    extra_params = Map.get(params, "extra_params") || %{}
+    type = Map.get(params, "type")
+    record = %SystemTask{extra_params: extra_params, type: type}
     changeset = SystemTask.changeset(%SystemTask{}, params)
-    system_task = find_system_task(record.type, user)
+    system_task = find_system_task(type, user)
 
-    {_, changeset} = Ecto.Changeset.apply_action(changeset, :insert)
-
-    with true <- changeset.valid?(),
+    with true <- changeset.valid?,
          true <- system_task != nil,
-         extra_params <- Map.get(params, "extra_params", %{}),
-         async_task <- Task.async(fn -> system_task.(extra_params, user) end) do
+         async_task <- Task.async(fn -> system_task.action.(extra_params, user) end),
+         {:ok, _} <- Event.broadcast({:ok, record}, "system-task:created", params, user) do
       {:ok, async_task}
     else
-      _ -> {:error, changeset}
+      _ -> Ecto.Changeset.apply_action(changeset, :insert)
     end
   end
 
   defp find_system_task(type, user) do
-    Enum.map(Artemis.SystemTask.allowed_system_tasks(), fn system_task ->
+    Enum.find(Artemis.SystemTask.allowed_system_tasks(), fn system_task ->
       system_task.type == type && system_task.verify.(user)
     end)
   end

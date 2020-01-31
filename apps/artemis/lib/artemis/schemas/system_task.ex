@@ -29,16 +29,11 @@ defmodule Artemis.SystemTask do
   def allowed_system_tasks,
     do: [
       %{
-        # TODO: tests for schema
-        # TODO: tests for context
-        # TODO: tests for controller
-        # TODO: tests for browser
-        # TODO: create delete all incidents context
-        action: fn params, user -> Artemis.DeleteIncident.call(1, params, user) end,
+        action: fn params, user -> Artemis.DeleteAllIncidents.call(params, user) end,
         description: "Removes all incident records, so they can be regenerated from the original source.",
-        label: "Regenerate Incidents",
+        name: "Delete All Incidents",
         type: "delete_all_incidents",
-        verify: fn user -> Artemis.UserAccess.has?(user, "incidents:delete") end
+        verify: fn user -> Artemis.UserAccess.has_all?(user, ["system-tasks:create", "incidents:delete"]) end
       }
     ]
 
