@@ -15,7 +15,7 @@
     <%= form_for @changeset, Routes.system_task_path(@conn, :create), [class: "ui form", id: "system-task-form"], fn f -> %>
       <div class="field">
         <%= label_with_errors f, :type, "System Task" %>
-        <%= select f, :type, @available_system_tasks, class: "enhanced", placeholder: "" %>
+        <%= select f, :type, [blank_option() | @system_task_type_options], class: "enhanced clearable" %>
       </div>
 
       <div class="field">

@@ -26,6 +26,22 @@ defmodule Artemis.SystemTask do
       :type
     ]
 
+  def allowed_system_tasks,
+    do: [
+      %{
+        # TODO: tests for schema
+        # TODO: tests for context
+        # TODO: tests for controller
+        # TODO: tests for browser
+        # TODO: create delete all incidents context
+        action: fn params, user -> Artemis.DeleteIncident.call(1, params, user) end,
+        description: "Removes all incident records, so they can be regenerated from the original source.",
+        label: "Regenerate Incidents",
+        type: "delete_all_incidents",
+        verify: fn user -> Artemis.UserAccess.has?(user, "incidents:delete") end
+      }
+    ]
+
   # Changesets
 
   def changeset(struct, params \\ %{}) do
@@ -33,6 +49,7 @@ defmodule Artemis.SystemTask do
     |> cast(params, updatable_fields())
     |> validate_required(required_fields())
     |> validate_extra_params()
+    |> validate_type()
   end
 
   # Validators
@@ -45,4 +62,15 @@ defmodule Artemis.SystemTask do
   end
 
   defp validate_extra_params(changeset), do: changeset
+
+  defp validate_type(%{changes: %{type: type}} = changeset) do
+    allowed_types = Enum.map(allowed_system_tasks(), & &1.type)
+
+    case Enum.member?(allowed_types, type) do
+      true -> changeset
+      false -> add_error(changeset, :type, "invalid type")
+    end
+  end
+
+  defp validate_type(changeset), do: changeset
 end

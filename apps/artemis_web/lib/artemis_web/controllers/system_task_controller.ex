@@ -6,16 +6,15 @@ defmodule ArtemisWeb.SystemTaskController do
     permission: "system-tasks:list",
     resource_type: "SystemTask"
 
+  alias Artemis.CreateSystemTask
   alias Artemis.SystemTask
 
-  # TODO: in context, broadcast system task event
-  # TODO: should this be liveview, so the task can take as long as needed?
-  @available_system_tasks []
-
-  def index(conn, params) do
+  def index(conn, _params) do
     authorize(conn, "system-tasks:list", fn ->
+      user = current_user(conn)
+
       assigns = [
-        available_system_tasks: @available_system_tasks
+        system_task_type_options: get_system_task_type_options(user)
       ]
 
       render_format(conn, "index", assigns)
@@ -24,11 +23,12 @@ defmodule ArtemisWeb.SystemTaskController do
 
   def new(conn, params) do
     authorize(conn, "system-tasks:create", fn ->
+      user = current_user(conn)
       changeset = SystemTask.changeset(%SystemTask{}, params)
 
       assigns = [
-        available_system_tasks: @available_system_tasks,
-        changeset: changeset
+        changeset: changeset,
+        system_task_type_options: get_system_task_type_options(user)
       ]
 
       render(conn, "new.html", assigns)
@@ -37,8 +37,9 @@ defmodule ArtemisWeb.SystemTaskController do
 
   def create(conn, %{"system_task" => params}) do
     authorize(conn, "system-tasks:create", fn ->
-      # TODO case CreateSystemTask.call(params, current_user(conn)) do
-      case {:ok, params} do
+      user = current_user(conn)
+
+      case CreateSystemTask.call(params, user) do
         {:ok, _} ->
           conn
           |> put_flash(:info, "Successfully Submitted System Task")
@@ -46,11 +47,25 @@ defmodule ArtemisWeb.SystemTaskController do
 
         {:error, %Ecto.Changeset{} = changeset} ->
           assigns = [
-            available_system_tasks: @available_system_tasks,
-            changeset: changeset
+            changeset: changeset,
+            system_task_type_options: get_system_task_type_options(user)
           ]
 
           render(conn, "new.html", assigns)
+      end
+    end)
+  end
+
+  # Helpers
+
+  defp get_system_task_type_options(user) do
+    Enum.reduce(SystemTask.allowed_system_tasks(), [], fn system_task, acc ->
+      allowed? = system_task.verify.(user)
+      option = [key: system_task.label, value: system_task.type]
+
+      case allowed? do
+        true -> [option | acc]
+        false -> acc
       end
     end)
   end
