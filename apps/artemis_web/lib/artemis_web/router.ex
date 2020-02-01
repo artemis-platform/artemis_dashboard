@@ -179,6 +179,13 @@ defmodule ArtemisWeb.Router do
 
       resources "/sessions", SessionController, only: [:index, :show]
 
+      # System Tasks
+
+      get "/system-tasks/event-logs", SystemTaskController, :index_event_log_list
+      get "/system-tasks/event-logs/:id", SystemTaskController, :index_event_log_details
+
+      resources "/system-tasks", SystemTaskController, only: [:index, :new, :create]
+
       # Tags
 
       post "/tags/bulk-actions", TagController, :index_bulk_actions

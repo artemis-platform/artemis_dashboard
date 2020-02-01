@@ -135,6 +135,8 @@ defmodule Artemis.Repo.GenerateData do
       %{slug: "sessions:access:self", name: "Sessions - Access Self"},
       %{slug: "sessions:list", name: "Sessions - List"},
       %{slug: "sessions:show", name: "Sessions - Show"},
+      %{slug: "system-tasks:create", name: "System Tasks - Create"},
+      %{slug: "system-tasks:list", name: "System Tasks - List"},
       %{slug: "tags:create", name: "Tags - Global Create", description: admin_only},
       %{slug: "tags:delete", name: "Tags - Global Delete", description: admin_only},
       %{slug: "tags:list", name: "Tags - Global List", description: admin_only},

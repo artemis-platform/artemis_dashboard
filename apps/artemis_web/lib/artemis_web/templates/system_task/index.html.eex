@@ -1,0 +1,22 @@
+<%= render "index/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "SystemTask" %>
+
+  <section>
+    <%=
+      render_data_table(
+        @conn,
+        @system_tasks,
+        allowed_columns: data_table_allowed_columns(),
+        default_columns: ["name", "type", "description", "actions"]
+      )
+    %>
+  </section>
+</div>

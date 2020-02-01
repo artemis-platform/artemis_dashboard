@@ -17,6 +17,11 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "Application Configs",
           path: &Routes.application_config_path(&1, :index),
           verify: &has?(&1, "application-configs:list")
+        ],
+        [
+          label: "System Tasks",
+          path: &Routes.system_task_path(&1, :index),
+          verify: &has?(&1, "system-tasks:list")
         ]
       ],
       Clouds: [

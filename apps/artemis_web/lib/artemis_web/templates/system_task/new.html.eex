@@ -1,0 +1,37 @@
+<div id="content-header">
+  <header>
+    <h1>New System Task</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <section>
+    <%= form_for @changeset, Routes.system_task_path(@conn, :create), [class: "ui form", id: "system-task-form"], fn f -> %>
+      <div class="field">
+        <%= label_with_errors f, :type, "System Task" %>
+        <%= select f, :type, [blank_option() | @system_task_type_options], class: "enhanced clearable" %>
+      </div>
+
+      <div class="field">
+        <%= label_with_errors f, :extra_params, "Extra Params" %>
+        <%= textarea f, :extra_params, value: pretty_print_json_into_textarea(f, :extra_params) %>
+      </div>
+
+      <%= reason_field f %>
+
+      <div>
+        <%= if @changeset.action do %>
+          <%= render_notification :error, body: "Error Submitting Form" %>
+        <% end %>
+
+        <%= submit "Save", class: "ui button primary" %>
+      </div>
+    <% end %>
+  </section>
+</div>
