@@ -15,6 +15,7 @@
       render_key_value_list([
         ["Name", @user.name],
         ["Email", @user.email],
+        ["Username", @user.username],
         ["First Name", @user.first_name],
         ["Last Name", @user.last_name]
       ])

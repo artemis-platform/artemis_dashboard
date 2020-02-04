@@ -14,6 +14,7 @@ defmodule Artemis.User do
     field :last_name, :string
     field :name, :string
     field :session_id, :string
+    field :username, :string
 
     has_many :auth_providers, Artemis.AuthProvider, on_delete: :delete_all
     has_many :comments, Artemis.Comment, on_delete: :nilify_all
@@ -39,7 +40,8 @@ defmodule Artemis.User do
       :image,
       :last_log_in_at,
       :last_name,
-      :session_id
+      :session_id,
+      :username
     ]
 
   def required_fields,

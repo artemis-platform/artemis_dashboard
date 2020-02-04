@@ -9,6 +9,14 @@
     <%= text_input f, :email, placeholder: "Email" %>
   </div>
 
+  <div class="field">
+    <%= label_with_errors f, :username %>
+    <div class="ui labeled input">
+      <div class="ui label">@</div>
+      <%= text_input f, :username, placeholder: "username" %>
+    </div>
+  </div>
+
   <h3>Roles</h3>
 
   <ul class="form-checklist">
