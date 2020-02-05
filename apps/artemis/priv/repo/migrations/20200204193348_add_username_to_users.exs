@@ -6,6 +6,6 @@ defmodule Artemis.Repo.Migrations.AddUsernameToUsers do
       add :username, :string
     end
 
-    create index(:users, :username)
+    create unique_index(:users, :username)
   end
 end

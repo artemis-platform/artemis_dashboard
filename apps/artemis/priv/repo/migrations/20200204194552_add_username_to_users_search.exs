@@ -28,6 +28,7 @@ defmodule Artemis.Repo.Migrations.AddUsernameToUsersSearch do
             'pg_catalog.english',
             coalesce(new.email, ' ') || ' ' ||
             coalesce(new.username, ' ') || ' ' ||
+            '@' || coalesce(new.username, ' ') || ' ' ||
             coalesce(new.name, ' ') || ' ' ||
             coalesce(new.first_name, ' ') || ' ' ||
             coalesce(new.last_name, ' ')

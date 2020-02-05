@@ -43,6 +43,53 @@ defmodule Artemis.UserTest do
         insert(:user, email: existing.email)
       end
     end
+
+    test "username must be unique" do
+      existing = insert(:user)
+
+      assert_raise Ecto.ConstraintError, fn ->
+        insert(:user, username: existing.username)
+      end
+    end
+
+    test "username can only contain characters, hyphen, and underscore" do
+      # Valid - a-Z Characters and 0-9 Numbers
+
+      params = params_for(:user, username: "Valid09")
+      changeset = User.changeset(%User{}, params)
+
+      assert changeset.valid?
+
+      # Valid - Underscore
+
+      params = params_for(:user, username: "valid_username")
+      changeset = User.changeset(%User{}, params)
+
+      assert changeset.valid?
+
+      # Valid - Hyphen
+
+      params = params_for(:user, username: "valid-username")
+      changeset = User.changeset(%User{}, params)
+
+      assert changeset.valid?
+
+      # Invalid - Special Characters
+
+      params = params_for(:user, username: "@hello")
+      changeset = User.changeset(%User{}, params)
+
+      refute changeset.valid?
+      assert errors_on(changeset) == %{username: ["is invalid"]}
+
+      # Invalid - Space
+
+      params = params_for(:user, username: "Hello World")
+      changeset = User.changeset(%User{}, params)
+
+      refute changeset.valid?
+      assert errors_on(changeset) == %{username: ["is invalid"]}
+    end
   end
 
   describe "associations - auth providers" do
