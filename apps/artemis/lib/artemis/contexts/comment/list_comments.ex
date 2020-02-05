@@ -40,8 +40,15 @@ defmodule Artemis.ListComments do
 
   defp filter_query(query, _params, _user), do: query
 
+  defp filter(query, "resource_id", value) when is_integer(value) do
+    filter(query, "resource_id", Integer.to_string(value))
+  end
+
+  defp filter(query, "resource_id", value), do: where(query, [c], c.resource_id in ^split(value))
+  defp filter(query, "resource_type", value), do: where(query, [c], c.resource_type in ^split(value))
   defp filter(query, "user_id", value), do: where(query, [c], c.user_id in ^split(value))
 
+  # TODO: deprecated
   defp filter(query, "wiki_page_id", value) do
     query
     |> join(:left, [comments], wiki_pages in assoc(comments, :wiki_pages))

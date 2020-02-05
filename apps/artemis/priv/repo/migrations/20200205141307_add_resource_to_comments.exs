@@ -9,6 +9,7 @@ defmodule Artemis.Repo.Migrations.AddResourceToComments do
 
     create index(:comments, :resource_id)
     create index(:comments, :resource_type)
+    create index(:comments, [:resource_id, :resource_type])
     create index(:comments, [:resource_type, :resource_id])
   end
 end

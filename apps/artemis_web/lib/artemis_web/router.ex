@@ -69,6 +69,13 @@ defmodule ArtemisWeb.Router do
       get "/customers/event-logs/:id", CustomerController, :index_event_log_details
 
       resources "/customers", CustomerController do
+        get "/comments", CustomerController, :index_comment, as: :comment
+        post "/comments", CustomerController, :create_comment, as: :comment
+        get "/comments/:id/edit", CustomerController, :edit_comment, as: :comment
+        patch "/comments/:id", CustomerController, :update_comment, as: :comment
+        put "/comments/:id", CustomerController, :update_comment, as: :comment
+        delete "/comments/:id", CustomerController, :delete_comment, as: :comment
+
         get "/event-logs", CustomerController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", CustomerController, :show_event_log_details, as: :event_log
       end

@@ -1,0 +1,15 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <section>
+    <%= h2 "Comments" %>
+    <%= render ArtemisWeb.CommentView, "index.html", assigns %>
+  </section>
+</div>
