@@ -14,6 +14,7 @@ defmodule Artemis.User do
     field :last_name, :string
     field :name, :string
     field :session_id, :string
+    field :username, :string
 
     has_many :auth_providers, Artemis.AuthProvider, on_delete: :delete_all
     has_many :comments, Artemis.Comment, on_delete: :nilify_all
@@ -39,7 +40,8 @@ defmodule Artemis.User do
       :image,
       :last_log_in_at,
       :last_name,
-      :session_id
+      :session_id,
+      :username
     ]
 
   def required_fields,
@@ -70,7 +72,20 @@ defmodule Artemis.User do
     |> cast(params, updatable_fields())
     |> validate_required(required_fields())
     |> unique_constraint(:email)
+    |> unique_constraint(:username)
+    |> validate_username()
   end
+
+  # Validators
+
+  defp validate_username(%{changes: %{username: username}} = changeset) do
+    case String.match?(username, ~r/^[a-zA-Z0-9-_]+$/) do
+      true -> changeset
+      false -> add_error(changeset, :username, "is invalid")
+    end
+  end
+
+  defp validate_username(changeset), do: changeset
 
   # Helpers
 
