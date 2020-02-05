@@ -28,6 +28,8 @@ defmodule Artemis.Factories do
     %Artemis.Comment{
       body: body,
       body_html: body,
+      resource_id: 1,
+      resource_type: "WikiPage",
       topic: Faker.Name.name(),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
       user: insert(:user)

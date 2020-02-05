@@ -6,6 +6,8 @@ defmodule Artemis.Comment do
   schema "comments" do
     field :body, :string
     field :body_html, :string
+    field :resource_id, :string
+    field :resource_type, :string
     field :title, :string
     field :topic, :string
 
@@ -30,6 +32,8 @@ defmodule Artemis.Comment do
     do: [
       :body,
       :body_html,
+      :resource_id,
+      :resource_type,
       :title,
       :topic,
       :user_id
@@ -39,6 +43,8 @@ defmodule Artemis.Comment do
     do: [
       :body,
       :body_html,
+      :resource_id,
+      :resource_type,
       :title,
       :topic,
       :user_id
@@ -52,6 +58,8 @@ defmodule Artemis.Comment do
   def event_log_fields,
     do: [
       :id,
+      :resource_id,
+      :resource_type,
       :title,
       :topic,
       :user_id
