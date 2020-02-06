@@ -1,4 +1,4 @@
-defmodule Artemis.DeleteIncidentTest do
+defmodule Artemis.DeleteAllIncidentsTest do
   use Artemis.DataCase
 
   import Artemis.Factories

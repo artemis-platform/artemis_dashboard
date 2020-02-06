@@ -28,7 +28,7 @@ defmodule Artemis.Factories do
     %Artemis.Comment{
       body: body,
       body_html: body,
-      resource_id: 1,
+      resource_id: "1",
       resource_type: "WikiPage",
       topic: Faker.Name.name(),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
@@ -163,7 +163,7 @@ defmodule Artemis.Factories do
       first_name: Faker.Name.first_name(),
       last_name: Faker.Name.last_name(),
       name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
-      username: sequence(:username, &"#{Faker.Name.last_name()}-#{&1}")
+      username: sequence(:username, &"#{Faker.Internet.slug()}-#{&1}")
     }
   end
 
