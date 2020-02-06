@@ -13,7 +13,10 @@ defmodule Artemis.CreateUserRoleTest do
     end
 
     test "creates a user_role when passed valid params" do
-      params = params_for(:user_role)
+      user = insert(:user)
+      role = insert(:role)
+
+      params = params_for(:user_role, created_by: user, role: role, user: user)
 
       user_role = CreateUserRole.call!(params, Mock.system_user())
 
@@ -29,7 +32,10 @@ defmodule Artemis.CreateUserRoleTest do
     end
 
     test "creates a user_role when passed valid params" do
-      params = params_for(:user_role)
+      user = insert(:user)
+      role = insert(:role)
+
+      params = params_for(:user_role, created_by: user, role: role, user: user)
 
       {:ok, user_role} = CreateUserRole.call(params, Mock.system_user())
 
@@ -42,7 +48,12 @@ defmodule Artemis.CreateUserRoleTest do
     test "publishes event and record" do
       ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())
 
-      {:ok, user_role} = CreateUserRole.call(params_for(:user_role), Mock.system_user())
+      user = insert(:user)
+      role = insert(:role)
+
+      params = params_for(:user_role, created_by: user, role: role, user: user)
+
+      {:ok, user_role} = CreateUserRole.call(params, Mock.system_user())
 
       assert_received %Phoenix.Socket.Broadcast{
         event: "user-role:created",

@@ -3,7 +3,7 @@ defmodule ArtemisWeb.SystemTaskPageTest do
   use ExUnit.Case
   use Hound.Helpers
 
-  import Artemis.Factories
+  # import Artemis.Factories
   import ArtemisWeb.BrowserHelpers
   import ArtemisWeb.Router.Helpers
 

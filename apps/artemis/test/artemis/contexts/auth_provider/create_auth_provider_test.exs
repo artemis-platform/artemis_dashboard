@@ -13,7 +13,8 @@ defmodule Artemis.CreateAuthProviderTest do
     end
 
     test "creates a auth provider when passed valid params" do
-      params = params_for(:auth_provider)
+      user = insert(:user)
+      params = params_for(:auth_provider, user: user)
 
       auth_provider = CreateAuthProvider.call!(params, Mock.system_user())
 
@@ -31,7 +32,8 @@ defmodule Artemis.CreateAuthProviderTest do
     end
 
     test "creates a auth provider when passed valid params" do
-      params = params_for(:auth_provider)
+      user = insert(:user)
+      params = params_for(:auth_provider, user: user)
 
       {:ok, auth_provider} = CreateAuthProvider.call(params, Mock.system_user())
 
@@ -44,7 +46,10 @@ defmodule Artemis.CreateAuthProviderTest do
     test "publishes event and record" do
       ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())
 
-      {:ok, auth_provider} = CreateAuthProvider.call(params_for(:auth_provider), Mock.system_user())
+      user = insert(:user)
+      params = params_for(:auth_provider, user: user)
+
+      {:ok, auth_provider} = CreateAuthProvider.call(params, Mock.system_user())
 
       assert_received %Phoenix.Socket.Broadcast{
         event: "auth-provider:created",

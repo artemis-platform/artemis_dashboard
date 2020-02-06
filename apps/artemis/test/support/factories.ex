@@ -9,7 +9,7 @@ defmodule Artemis.Factories do
       data: %{},
       type: Faker.Internet.slug(),
       uid: sequence(:uid, &"#{Faker.Internet.slug()}-#{&1}"),
-      user: insert(:user)
+      user: build(:user)
     }
   end
 
@@ -32,7 +32,7 @@ defmodule Artemis.Factories do
       resource_type: "WikiPage",
       topic: Faker.Name.name(),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
-      user: insert(:user)
+      user: build(:user)
     }
   end
 
@@ -169,9 +169,9 @@ defmodule Artemis.Factories do
 
   def user_role_factory do
     %Artemis.UserRole{
-      created_by: insert(:user),
-      role: insert(:role),
-      user: insert(:user)
+      created_by: build(:user),
+      role: build(:role),
+      user: build(:user)
     }
   end
 
@@ -181,7 +181,7 @@ defmodule Artemis.Factories do
       section: Faker.Name.name(),
       slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
-      user: insert(:user),
+      user: build(:user),
       weight: :rand.uniform(100)
     }
   end
@@ -192,9 +192,9 @@ defmodule Artemis.Factories do
       section: Faker.Name.name(),
       slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}"),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
-      user: insert(:user),
+      user: build(:user),
       weight: :rand.uniform(100),
-      wiki_page: insert(:wiki_page)
+      wiki_page: build(:wiki_page)
     }
   end
 
