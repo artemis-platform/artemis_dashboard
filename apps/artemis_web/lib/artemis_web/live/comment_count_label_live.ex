@@ -7,17 +7,21 @@ defmodule ArtemisWeb.CommentCountLabelLive do
 
   @impl true
   def mount(session, socket) do
+    resource_id = Artemis.Helpers.to_string(session.resource_id)
+    resource_type = Artemis.Helpers.to_string(session.resource_type)
+    broadcast_topic = Artemis.Event.get_broadcast_topic()
+
     assigns =
       socket
       |> assign(:count, nil)
-      |> assign(:resource_id, session.resource_id)
-      |> assign(:resource_type, session.resource_type)
+      |> assign(:resource_id, resource_id)
+      |> assign(:resource_type, resource_type)
       |> assign(:status, :loading)
       |> assign(:user, session.user)
 
     if connected?(socket), do: Process.send_after(self(), {:update_data, :loaded}, 10)
 
-    :ok = ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())
+    :ok = ArtemisPubSub.subscribe(broadcast_topic)
 
     {:ok, assigns}
   end
@@ -30,28 +34,23 @@ defmodule ArtemisWeb.CommentCountLabelLive do
   # GenServer Callbacks
 
   @impl true
-  def handle_info(%{event: event, payload: payload}, socket) do
-    update_if_match(socket, event, payload)
-
-    {:noreply, socket}
-  end
-
   def handle_info({:update_data, status}, socket) do
     socket = update_data(socket, status)
 
     {:noreply, socket}
   end
 
+  def handle_info(%{event: event, payload: %{data: data}}, socket) do
+    update_if_match(socket, event, data)
+
+    {:noreply, socket}
+  end
+
+  def handle_info(_, socket), do: {:noreply, socket}
+
   # Helpers
 
-  defp update_if_match(socket, event, payload) do
-    resource_id = Artemis.Helpers.deep_get(payload, [:data, :resource_id])
-    resource_type = Artemis.Helpers.deep_get(payload, [:data, :resource_type])
-
-    resource_id_match? = resource_id == Integer.to_string(socket.assigns.resource_id)
-    resource_type_match? = resource_type == socket.assigns.resource_type
-    resource_match? = resource_id_match? && resource_type_match?
-
+  defp update_if_match(socket, event, %{resource_id: resource_id, resource_type: resource_type}) do
     events = [
       "comment:created",
       "comment:deleted",
@@ -59,9 +58,17 @@ defmodule ArtemisWeb.CommentCountLabelLive do
     ]
 
     event_match? = Enum.member?(events, event)
+    resource_type_match? = resource_type == socket.assigns.resource_type
 
-    if resource_match? && event_match? do
+    if event_match? && resource_type_match? && resource_id_match?(socket, resource_id) do
       Process.send_after(self(), {:update_data, :updated}, 150)
+    end
+  end
+
+  defp resource_id_match?(socket, resource_id) do
+    case Artemis.Helpers.present?(socket.assigns.resource_id) do
+      true -> Artemis.Helpers.to_string(resource_id) == socket.assigns.resource_id
+      _ -> true
     end
   end
 
