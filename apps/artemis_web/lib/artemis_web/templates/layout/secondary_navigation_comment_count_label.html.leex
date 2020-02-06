@@ -1,0 +1,7 @@
+<div class="count-label comment-count-label">
+  Comments
+  <% color = if @status == :updated, do: "teal", else: "grey" %>
+  <div class="ui label <%= color %> tiny">
+    <%= @count || "-" %>
+  </div>
+</div>

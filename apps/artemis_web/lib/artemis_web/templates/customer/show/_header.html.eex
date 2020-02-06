@@ -23,14 +23,14 @@
         verify: &has?(&1, "customers:show")
       ],
       [
-        label: "Comments",
-        path: &Routes.customer_comment_path(&1, :index_comment, @customer),
+        label: "Event Logs",
+        path: &Routes.customer_event_log_path(&1, :show_event_log_list, @customer),
         path_match_type: :starts_with,
         verify: &has?(&1, "customers:show")
       ],
       [
-        label: "Event Logs",
-        path: &Routes.customer_event_log_path(&1, :show_event_log_list, @customer),
+        label: render_secondary_navigation_live_comment_count_label(@conn, "Customer", @customer.id),
+        path: &Routes.customer_comment_path(&1, :index_comment, @customer),
         path_match_type: :starts_with,
         verify: &has?(&1, "customers:show")
       ]

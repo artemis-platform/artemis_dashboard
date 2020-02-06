@@ -1,6 +1,13 @@
 defmodule Artemis.ListComments do
   use Artemis.Context
 
+  use Artemis.ContextCache,
+    cache_reset_on_events: [
+      "comment:created",
+      "comment:deleted",
+      "comment:updated"
+    ]
+
   import Artemis.Helpers.Filter
   import Artemis.Helpers.Search
   import Ecto.Query
@@ -21,6 +28,7 @@ defmodule Artemis.ListComments do
     |> filter_query(params, user)
     |> search_filter(params)
     |> order_query(params)
+    |> select_count(params)
     |> get_records(params)
   end
 
@@ -56,6 +64,15 @@ defmodule Artemis.ListComments do
   end
 
   defp filter(query, _, _), do: query
+
+  defp select_count(query, %{"count" => true}) do
+    query
+    |> exclude(:preload)
+    |> exclude(:order_by)
+    |> select([c], %{count: count(c.id)})
+  end
+
+  defp select_count(query, _params), do: query
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)
