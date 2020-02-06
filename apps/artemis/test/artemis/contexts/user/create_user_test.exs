@@ -46,10 +46,15 @@ defmodule Artemis.CreateUserTest do
     end
 
     test "creates user with associations" do
+      user_role_params = [
+        params_for(:user_role, role: insert(:role)),
+        params_for(:user_role, role: insert(:role))
+      ]
+
       params =
         :user
         |> params_for
-        |> Map.put(:user_roles, [params_for(:user_role), params_for(:user_role)])
+        |> Map.put(:user_roles, user_role_params)
 
       {:ok, user} = CreateUser.call(params, Mock.system_user())
 
