@@ -13,7 +13,7 @@ defmodule Artemis.CreateCommentTest do
     end
 
     test "creates a comment when passed valid params" do
-      params = params_for(:comment)
+      params = params_for(:comment, user: Mock.system_user())
 
       comment = CreateComment.call!(params, Mock.system_user())
 
@@ -29,7 +29,7 @@ defmodule Artemis.CreateCommentTest do
     end
 
     test "creates a comment when passed valid params" do
-      params = params_for(:comment)
+      params = params_for(:comment, user: Mock.system_user())
 
       {:ok, comment} = CreateComment.call(params, Mock.system_user())
 
@@ -37,7 +37,7 @@ defmodule Artemis.CreateCommentTest do
     end
 
     test "supports markdown" do
-      params = params_for(:comment, body: "# Test")
+      params = params_for(:comment, body: "# Test", user: Mock.system_user())
 
       {:ok, comment} = CreateComment.call(params, Mock.system_user())
 
@@ -50,7 +50,7 @@ defmodule Artemis.CreateCommentTest do
 
       params =
         :comment
-        |> params_for
+        |> params_for(user: Mock.system_user())
         |> Map.put(:wiki_pages, [%{id: wiki_page.id}])
 
       {:ok, comment} = CreateComment.call(params, Mock.system_user())
@@ -66,7 +66,9 @@ defmodule Artemis.CreateCommentTest do
     test "publishes event and record" do
       ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())
 
-      {:ok, comment} = CreateComment.call(params_for(:comment), Mock.system_user())
+      params = params_for(:comment, user: Mock.system_user())
+
+      {:ok, comment} = CreateComment.call(params, Mock.system_user())
 
       assert_received %Phoenix.Socket.Broadcast{
         event: "comment:created",
