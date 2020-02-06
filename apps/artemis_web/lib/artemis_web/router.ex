@@ -125,7 +125,13 @@ defmodule ArtemisWeb.Router do
       post "/incidents/bulk-actions", IncidentController, :index_bulk_actions
 
       resources "/incidents", IncidentController, only: [:index, :show, :delete] do
-        resources "/comments", IncidentCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        get "/comments", IncidentController, :index_comment, as: :comment
+        post "/comments", IncidentController, :create_comment, as: :comment
+        get "/comments/:id/edit", IncidentController, :edit_comment, as: :comment
+        patch "/comments/:id", IncidentController, :update_comment, as: :comment
+        put "/comments/:id", IncidentController, :update_comment, as: :comment
+        delete "/comments/:id", IncidentController, :delete_comment, as: :comment
+
         put "/tags", IncidentTagController, :update, as: :tag
       end
 

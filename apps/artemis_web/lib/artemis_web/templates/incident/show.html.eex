@@ -1,19 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>
-      Incident Details <%= @incident.source_uid %>
-    </h1>
-
-    <div class="actions">
-      <%= if @incident.source == "pagerduty" do %>
-        <%= action "View in PagerDuty", to: "#{Artemis.Helpers.PagerDuty.get_pager_duty_web_url()}/incidents/#{@incident.source_uid}", target: "_blank" %>
-      <% end %>
-      <%= if has?(@conn, "incidents:delete") do %>
-        <%= delete_confirmation "Delete", Routes.incident_path(@conn, :delete, @incident) %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "show/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -23,10 +8,7 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "Incident", @incident.id %>
-
-  <%= if @comment_changeset.action do %>
-    <%= render_notification :error, body: "Error Saving Comment" %>
-  <% end %>
+  <%= render_comment_notifications @conn, "Incident", @incident.id, Routes.incident_comment_path(@conn, :index_comment, @incident) %>
 
   <section>
     <%= h2 "Details" %>
@@ -49,9 +31,5 @@
   <section>
     <%= h3 "Raw Data" %>
     <pre><code><%= Jason.encode!(@incident.meta, pretty: true) %></code></pre>
-  </section>
-
-  <section>
-    <%= render ArtemisWeb.IncidentCommentView, "index.html", assigns %>
   </section>
 </div>

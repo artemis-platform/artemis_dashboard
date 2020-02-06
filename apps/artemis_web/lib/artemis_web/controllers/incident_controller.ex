@@ -6,6 +6,13 @@ defmodule ArtemisWeb.IncidentController do
     path: &Routes.incident_path(&1, :index),
     permission: "incidents:list"
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.incident_path/3,
+    permission: "incidents:show",
+    resource_getter: &Artemis.GetIncident.call!/2,
+    resource_id_key: "incident_id",
+    resource_type: "Incident"
+
   alias Artemis.Comment
   alias Artemis.DeleteIncident
   alias Artemis.GetIncident
