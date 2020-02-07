@@ -1,6 +1,13 @@
 defmodule ArtemisWeb.WikiPageController do
   use ArtemisWeb, :controller
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.wiki_page_path/3,
+    permission: "wiki-pages:show",
+    resource_getter: &Artemis.GetWikiPage.call!/2,
+    resource_id_key: "wiki_page_id",
+    resource_type: "WikiPage"
+
   alias Artemis.Comment
   alias Artemis.CreateWikiPage
   alias Artemis.DeleteWikiPage

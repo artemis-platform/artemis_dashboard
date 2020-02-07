@@ -1,22 +1,4 @@
-<div id="content-header">
-  <header>
-    <h1>
-      Documentation
-    </h1>
-
-    <div class="actions">
-      <%= if has?(@conn, "wiki-pages:delete") do %>
-        <%= action "Delete", method: "delete", to: Routes.wiki_page_path(@conn, :delete, @wiki_page), data: [confirm: "Confirm Delete"] %>
-      <% end %>
-      <%= if has?(@conn, "wiki-revisions:show") do %>
-        <%= action "Revisions", to: Routes.wiki_page_revision_path(@conn, :index, @wiki_page) %>
-      <% end %>
-      <%= if has?(@conn, "wiki-pages:update") do %>
-        <%= action "Edit", to: Routes.wiki_page_path(@conn, :edit, @wiki_page), color: "green" %>
-      <% end %>
-    </div>
-  </header>
-</div>
+<%= render "show/_header.html", assigns %>
 
 <div id="content-navigation">
   <%= render_breadcrumbs @conn %>
@@ -55,9 +37,6 @@
         <%= render ArtemisWeb.WikiPageTagView, "edit.html", assigns %>
         <%= raw @wiki_page.body_html %>
       </content>
-      <footer>
-        <%= render ArtemisWeb.WikiPageCommentView, "index.html", assigns %>
-      </footer>
     </article>
   </section>
 </div>

@@ -94,8 +94,15 @@ defmodule ArtemisWeb.Router do
       # Docs
 
       resources "/docs", WikiPageController do
-        resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        get "/comments", WikiPageController, :index_comment, as: :comment
+        post "/comments", WikiPageController, :create_comment, as: :comment
+        get "/comments/:id/edit", WikiPageController, :edit_comment, as: :comment
+        patch "/comments/:id", WikiPageController, :update_comment, as: :comment
+        put "/comments/:id", WikiPageController, :update_comment, as: :comment
+        delete "/comments/:id", WikiPageController, :delete_comment, as: :comment
+
         resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
+
         put "/tags", WikiPageTagController, :update, as: :tag
       end
 
