@@ -4,52 +4,35 @@ defmodule Artemis.DeleteManyAssociatedComments do
   alias Artemis.Comment
   alias Artemis.Repo
 
-  @moduledoc """
-  Guarantee many-to-many comment associations are always removed even if
-  database is not setup to properly cascade.
-
-  See: https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
-  """
-
-  def call!(record, user) do
-    case call(record, user) do
+  def call!(resource_type, resource_id \\ nil, user) do
+    case call(resource_type, resource_id, user) do
       {:error, _} -> raise(Artemis.Context.Error, "Error deleting many associated comments")
       {:ok, result} -> result
       result -> result
     end
   end
 
-  def call(record, user) when is_map(record), do: delete_comments(record, user)
-
-  def call({:ok, record}, user) do
-    case delete_comments(record, user) do
+  def call(resource_type, resource_id \\ nil, user) do
+    case delete_records(resource_type, resource_id, user) do
       {:error, message} -> {:error, message}
-      record -> {:ok, record}
+      {total, _} -> {:ok, %{total: total}}
     end
   end
 
-  def call(error, _user), do: error
-
-  defp delete_comments(%{comments: %Ecto.Association.NotLoaded{}} = record, user) do
-    record
-    |> Repo.preload([:comments], force: true)
-    |> delete_comments(user)
+  defp delete_records(resource_type, resource_id, _user) do
+    Comment
+    |> where([c], c.resource_type == ^resource_type)
+    |> maybe_where_resource_id(resource_id)
+    |> Repo.delete_all()
   end
 
-  defp delete_comments(%{comments: comments} = record, _user) when length(comments) > 1 do
-    comment_ids = Enum.map(comments, & &1.id)
+  defp maybe_where_resource_id(query, nil), do: query
 
-    {total_deleted, _} =
-      Comment
-      |> where([c], c.id in ^comment_ids)
-      |> Repo.delete_all()
-
-    case length(comment_ids) == total_deleted do
-      true -> record
-      false -> {:error, "Error removing associated comments"}
-    end
+  defp maybe_where_resource_id(query, resource_id) when is_integer(resource_id) do
+    maybe_where_resource_id(query, Integer.to_string(resource_id))
   end
 
-  defp delete_comments(%{comments: comments} = record, _user) when length(comments) == 0, do: record
-  defp delete_comments(_record, _user), do: {:error, "No comments association found."}
+  defp maybe_where_resource_id(query, resource_id) do
+    where(query, [c], c.resource_id == ^resource_id)
+  end
 end

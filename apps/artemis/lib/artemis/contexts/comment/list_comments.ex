@@ -56,13 +56,6 @@ defmodule Artemis.ListComments do
   defp filter(query, "resource_type", value), do: where(query, [c], c.resource_type in ^split(value))
   defp filter(query, "user_id", value), do: where(query, [c], c.user_id in ^split(value))
 
-  # TODO: deprecated
-  defp filter(query, "wiki_page_id", value) do
-    query
-    |> join(:left, [comments], wiki_pages in assoc(comments, :wiki_pages))
-    |> where([..., wp], wp.id in ^split(value))
-  end
-
   defp filter(query, _, _), do: query
 
   defp select_count(query, %{"count" => true}) do
