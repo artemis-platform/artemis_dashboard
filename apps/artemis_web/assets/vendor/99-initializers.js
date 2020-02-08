@@ -246,15 +246,8 @@ function initializeSelectTableRow() {
       var all_fields = extra_fields.find('.extra-field')
       var selected_field = extra_fields.find('.extra-field-' + value)
 
-      all_fields.each(function() {
-        $(this).find("input, select").prop("disabled", true)
-        $(this).hide()
-      })
-
-      selected_field.each(function() {
-        $(this).find("input, select").prop("disabled", false)
-        $(this).show()
-      })
+      all_fields.hide()
+      selected_field.show()
     })
   })
 }
@@ -373,7 +366,7 @@ $(document).ready(function() {
   initializeColumnField()
   initializeDropdowns()
   initializeFilterFields()
-  initializeHighlightJs()
+  // initializeHighlightJs()
   initializeInlineForm()
   initializeMarkdownTextarea()
   initializeModals()
