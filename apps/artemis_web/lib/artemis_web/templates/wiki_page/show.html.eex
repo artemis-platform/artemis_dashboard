@@ -8,10 +8,7 @@
 <div id="content">
   <%= render_flash_notifications @conn %>
   <%= render_event_log_notifications @conn, "WikiPage", @wiki_page.id %>
-
-  <%= if @comment_changeset.action do %>
-    <%= render_notification :error, body: "Error Saving Comment" %>
-  <% end %>
+  <%= render_comment_notifications @conn, "WikiPage", @wiki_page.id, Routes.wiki_page_comment_path(@conn, :index_comment, @wiki_page) %>
 
   <section id="wiki-page">
     <aside>

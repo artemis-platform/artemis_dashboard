@@ -24,11 +24,6 @@ defmodule Artemis.Incident do
     field :triggered_at, :utc_datetime
     field :triggered_by, :string
 
-    many_to_many :comments, Artemis.Comment,
-      join_through: "comments_incidents",
-      on_delete: :delete_all,
-      on_replace: :delete
-
     many_to_many :tags, Artemis.Tag, join_through: "tags_incidents", on_delete: :delete_all, on_replace: :delete
 
     timestamps()

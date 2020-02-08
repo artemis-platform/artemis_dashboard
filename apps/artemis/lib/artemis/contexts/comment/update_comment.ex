@@ -1,6 +1,5 @@
 defmodule Artemis.UpdateComment do
   use Artemis.Context
-  use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.Comment
   alias Artemis.GetComment
@@ -19,7 +18,6 @@ defmodule Artemis.UpdateComment do
       id
       |> get_record(user)
       |> update_record(params)
-      |> update_associations(params)
       |> Event.broadcast("comment:updated", user)
     end)
   end

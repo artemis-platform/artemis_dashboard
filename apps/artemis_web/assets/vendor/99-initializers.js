@@ -64,6 +64,24 @@ function reinitializeHighlightJs() {
   hljs.initHighlighting()
 }
 
+function initializeInlineForm() {
+  $('.inline-form').each(function() {
+    var container = $(this)
+
+    container.find('.show-form').click(function(event) {
+      event.preventDefault()
+      container.find('>div').hide()
+      container.find('.form').show()
+    })
+
+    container.find('.show-value').click(function(event) {
+      event.preventDefault()
+      container.find('>div').hide()
+      container.find('.value').show()
+    })
+  })
+}
+
 function initializeMarkdownTextarea() {
   $('textarea.markdown').each(function() {
     var easyMDE = new EasyMDE({
@@ -281,20 +299,6 @@ function initializeSidebars() {
   })
 }
 
-function initializeTagForm() {
-  $('.resource-tags .show-list-tags').click(function(event) {
-    event.preventDefault()
-    $('.resource-tags>div').hide()
-    $('.resource-tags .list').show()
-  })
-
-  $('.resource-tags .show-edit-tags').click(function(event) {
-    event.preventDefault()
-    $('.resource-tags>div').hide()
-    $('.resource-tags .form').show()
-  })
-}
-
 function initializeWikiSidenav() {
   var links = []
   var offsets = []
@@ -370,12 +374,12 @@ $(document).ready(function() {
   initializeDropdowns()
   initializeFilterFields()
   initializeHighlightJs()
+  initializeInlineForm()
   initializeMarkdownTextarea()
   initializeModals()
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()
   initializeSelectTableRow()
-  initializeTagForm()
   initializeWikiSidenav()
 })

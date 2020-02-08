@@ -32,6 +32,8 @@ defmodule Artemis.DeleteIncident do
     {:ok, _} = DeleteManyAssociatedComments.call(resource_type, resource_id, user)
 
     record
+  rescue
+    _ -> record
   end
 
   defp delete_record(nil), do: {:error, "Record not found"}

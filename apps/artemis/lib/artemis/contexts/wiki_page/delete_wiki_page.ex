@@ -16,7 +16,7 @@ defmodule Artemis.DeleteWikiPage do
     with_transaction(fn ->
       id
       |> get_record(user)
-      |> DeleteManyAssociatedComments.call(user)
+      |> delete_associated_comments(user)
       |> delete_record
       |> Event.broadcast("wiki-page:deleted", user)
     end)
@@ -24,6 +24,17 @@ defmodule Artemis.DeleteWikiPage do
 
   def get_record(%{id: id}, user), do: get_record(id, user)
   def get_record(id, user), do: GetWikiPage.call(id, user)
+
+  def delete_associated_comments(record, user) do
+    resource_type = "WikiPage"
+    resource_id = record.id
+
+    {:ok, _} = DeleteManyAssociatedComments.call(resource_type, resource_id, user)
+
+    record
+  rescue
+    _ -> record
+  end
 
   defp delete_record(nil), do: {:error, "Record not found"}
   defp delete_record(record), do: Repo.delete(record)

@@ -50,7 +50,7 @@ defmodule Artemis.DeleteWikiPageTest do
 
     test "deletes associated many to many associations" do
       record = insert(:wiki_page)
-      comments = insert_list(3, :comment, wiki_pages: [record])
+      comments = insert_list(3, :comment, resource_type: "WikiPage", resource_id: Integer.to_string(record.id))
       _other = insert_list(2, :comment)
 
       total_before =

@@ -56,9 +56,9 @@ defmodule Artemis.DeleteIncidentTest do
       assert Repo.get(Incident, record.id) == nil
     end
 
-    test "deletes associated many to many associations" do
+    test "deletes associated associations" do
       record = insert(:incident)
-      comments = insert_list(3, :comment, incidents: [record])
+      comments = insert_list(3, :comment, resource_type: "Incident", resource_id: Integer.to_string(record.id))
       _other = insert_list(2, :comment)
 
       total_before =
