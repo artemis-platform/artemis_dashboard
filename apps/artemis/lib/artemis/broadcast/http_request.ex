@@ -6,6 +6,7 @@ defmodule Artemis.HttpRequest do
   defmodule Data do
     defstruct [
       :data,
+      :type,
       :user
     ]
   end
@@ -17,6 +18,7 @@ defmodule Artemis.HttpRequest do
   def broadcast({:ok, data} = result, user) do
     payload = %Data{
       data: data,
+      type: "http-request",
       user: user
     }
 

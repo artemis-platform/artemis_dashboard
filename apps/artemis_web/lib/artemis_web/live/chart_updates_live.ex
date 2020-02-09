@@ -19,12 +19,15 @@ defmodule ArtemisWeb.ChartUpdatesLive do
       |> assign(:chart_data, session.chart_data)
       |> assign(:chart_id, session.chart_id)
       |> assign(:chart_options, session.chart_options)
+      # TODO: update existing charts to pass this value
+      |> assign(:fetch_data_on_cache_events, session.fetch_data_on_cache_events)
       |> assign(:fetch_data_on_cloudant_changes, session.fetch_data_on_cloudant_changes)
       |> assign(:fetch_data_on_events, session.fetch_data_on_events)
       |> assign(:fetch_data_timer, nil)
       |> assign(:module, session.module)
       |> assign(:user, session.user)
 
+    subscribe_to_cache_events(socket.assigns)
     subscribe_to_cloudant_changes(socket.assigns)
     subscribe_to_events(socket.assigns)
 
@@ -39,18 +42,6 @@ defmodule ArtemisWeb.ChartUpdatesLive do
   # GenServer Callbacks
 
   @impl true
-  def handle_info(%{event: _, payload: payload}, socket) do
-    socket = parse_cloudant_change(payload, socket)
-
-    {:noreply, socket}
-  end
-
-  def handle_info(%{event: event}, socket) do
-    socket = parse_event(event, socket)
-
-    {:noreply, socket}
-  end
-
   def handle_info(:fetch_data, socket) do
     module = Map.get(socket.assigns, :module)
     user = Map.get(socket.assigns, :user)
@@ -64,11 +55,35 @@ defmodule ArtemisWeb.ChartUpdatesLive do
     {:noreply, socket}
   end
 
-  def handle_info(_, socket) do
+  def handle_info(%{event: "cache:reset", payload: %{type: "cache-event"} = payload}, socket) do
+    socket = parse_cache_event(payload.module, socket)
+
     {:noreply, socket}
   end
 
+  def handle_info(%{event: _event, payload: %{type: "cloudant-change"} = payload}, socket) do
+    socket = parse_cloudant_change(payload, socket)
+
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: event}, socket) do
+    socket = parse_event(event, socket)
+
+    {:noreply, socket}
+  end
+
+  def handle_info(_, socket), do: {:noreply, socket}
+
   # Helpers
+
+  defp subscribe_to_cache_events(%{fetch_data_on_cache_events: events}) when length(events) > 0 do
+    topic = Artemis.CacheEvent.get_broadcast_topic()
+
+    :ok = ArtemisPubSub.subscribe(topic)
+  end
+
+  defp subscribe_to_cache_events(_state), do: :skipped
 
   defp subscribe_to_cloudant_changes(%{fetch_data_on_cloudant_changes: changes}) when length(changes) > 0 do
     Enum.map(changes, fn change ->
@@ -88,6 +103,13 @@ defmodule ArtemisWeb.ChartUpdatesLive do
   end
 
   defp subscribe_to_events(_state), do: :skipped
+
+  defp parse_cache_event(module, socket) do
+    case Enum.member?(socket.assigns.fetch_data_on_cache_events, module) do
+      true -> fetch_data_debounce(socket)
+      false -> socket
+    end
+  end
 
   defp parse_cloudant_change(payload, socket) do
     case matches_any?(socket.assigns.fetch_data_on_cloudant_changes, payload) do

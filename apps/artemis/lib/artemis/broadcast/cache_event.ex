@@ -6,7 +6,8 @@ defmodule Artemis.CacheEvent do
   defmodule Data do
     defstruct [
       :meta,
-      :name
+      :module,
+      :type
     ]
   end
 
@@ -14,12 +15,13 @@ defmodule Artemis.CacheEvent do
 
   def get_broadcast_topic, do: @broadcast_topic
 
-  def broadcast(event, name, meta \\ %{})
+  def broadcast(event, module, meta \\ %{})
 
-  def broadcast(event, name, meta) do
+  def broadcast(event, module, meta) do
     payload = %Data{
       meta: meta,
-      name: name
+      module: module,
+      type: "cache-event"
     }
 
     ArtemisPubSub.broadcast(@broadcast_topic, event, payload)

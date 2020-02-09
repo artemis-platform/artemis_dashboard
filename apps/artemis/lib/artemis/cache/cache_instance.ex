@@ -148,18 +148,18 @@ defmodule Artemis.CacheInstance do
   Clear all cache data
   """
   def reset(module) do
-    :ok = CacheEvent.broadcast("cache:reset", module)
-
     stop(module)
+
+    :ok = CacheEvent.broadcast("cache:reset", module)
   end
 
   @doc """
   Stop the cache GenServer and the linked Cachex process
   """
   def stop(module) do
-    :ok = CacheEvent.broadcast("cache:stopped", module)
-
     GenServer.stop(get_cache_server_name(module))
+
+    :ok = CacheEvent.broadcast("cache:stopped", module)
   end
 
   # Instance Callbacks
@@ -195,13 +195,8 @@ defmodule Artemis.CacheInstance do
   end
 
   @impl true
-  def handle_info(%{event: event, payload: payload}, state) do
-    cloudant_event? = is_map(payload) && Map.get(payload, :__struct__) == Artemis.CloudantChange.Data
-
-    case cloudant_event? do
-      true -> process_cloudant_event(payload, state)
-      false -> process_event(event, state)
-    end
+  def handle_info(%{event: _event, payload: %{type: "cloudant-change"} = payload}, state) do
+    process_cloudant_event(payload, state)
   end
 
   def handle_info(%{event: event}, state), do: process_event(event, state)
