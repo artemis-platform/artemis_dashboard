@@ -5,6 +5,8 @@ defmodule Artemis.CacheInstance do
 
   require Logger
 
+  alias Artemis.CacheEvent
+
   defmodule CacheEntry do
     defstruct [:data, :inserted_at, :key]
   end
@@ -145,12 +147,20 @@ defmodule Artemis.CacheInstance do
   @doc """
   Clear all cache data
   """
-  def reset(module), do: stop(module)
+  def reset(module) do
+    :ok = CacheEvent.broadcast("cache:reset", module)
+
+    stop(module)
+  end
 
   @doc """
   Stop the cache GenServer and the linked Cachex process
   """
-  def stop(module), do: GenServer.stop(get_cache_server_name(module))
+  def stop(module) do
+    :ok = CacheEvent.broadcast("cache:stopped", module)
+
+    GenServer.stop(get_cache_server_name(module))
+  end
 
   # Instance Callbacks
 
@@ -167,6 +177,8 @@ defmodule Artemis.CacheInstance do
 
     subscribe_to_cloudant_changes(initial_state)
     subscribe_to_events(initial_state)
+
+    :ok = CacheEvent.broadcast("cache:started", initial_state.module)
 
     {:ok, state}
   end
@@ -301,6 +313,8 @@ defmodule Artemis.CacheInstance do
   end
 
   defp reset_cache(state, event) do
+    :ok = CacheEvent.broadcast("cache:reset", state.module, event)
+
     Logger.debug("#{state.cachex_instance_name}: Cache reset by event #{event}")
 
     {:stop, :normal, state}
