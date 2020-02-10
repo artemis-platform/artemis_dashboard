@@ -11,6 +11,7 @@ defmodule Artemis.ListIncidentReports do
     cache_reset_on_events: [
       "incident:created",
       "incident:deleted",
+      "incident:deleted:all",
       "incident:updated"
     ]
 
