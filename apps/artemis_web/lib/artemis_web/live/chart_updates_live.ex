@@ -104,7 +104,7 @@ defmodule ArtemisWeb.ChartUpdatesLive do
   defp subscribe_to_events(_state), do: :skipped
 
   defp parse_cache_event(module, socket) do
-    case Enum.member?(socket.assigns.fetch_data_on_cache_events, module) do
+    case Enum.member?(socket.assigns.fetch_data_on_cache_resets, module) do
       true -> fetch_data_debounce(socket)
       false -> socket
     end
