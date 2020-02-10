@@ -1,5 +1,5 @@
-<div class="resource-tags">
-  <div class="list">
+<div class="inline-form resource-tags">
+  <div class="value">
     <%= if @current_tags && length(@current_tags) > 0 do %>
       <% unless assigns[:show_tag_label] == false do %>
         <div class="label">Tags</div>
@@ -12,12 +12,12 @@
         <% end %>
       </ul>
     <% end %>
-    <a href="#show-edit-tags" class="show-edit-tags">Edit Tags</a>
+    <a href="#show-form" class="show-form">Edit Tags</a>
   </div>
   <div class="form">
     <content>
       <%= render ArtemisWeb.TagView, "_resource_form.html", assigns %>
-      <a href="#show-list-tags" class="show-list-tags">Close</a>
+      <a href="#show-value" class="show-value">Close</a>
     </content>
   </div>
 </div>

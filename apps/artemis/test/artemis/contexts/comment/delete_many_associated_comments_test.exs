@@ -7,58 +7,56 @@ defmodule Artemis.DeleteManyAssociatedCommentsTest do
   alias Artemis.DeleteManyAssociatedComments
 
   describe "call!" do
-    test "raises an exception record has no comments association" do
-      record = insert(:feature)
-
-      assert_raise Artemis.Context.Error, fn ->
-        DeleteManyAssociatedComments.call!(record, Mock.system_user())
+    test "raises an exception record on failure" do
+      assert_raise Ecto.Query.CastError, fn ->
+        DeleteManyAssociatedComments.call!(:invalid_value, Mock.system_user())
       end
     end
 
     test "succeeds if record has no comments" do
-      record = insert(:wiki_page, comments: [])
+      record = insert(:customer)
 
-      %Artemis.WikiPage{} = DeleteManyAssociatedComments.call!(record, Mock.system_user())
+      result = DeleteManyAssociatedComments.call!("Customer", record.id, Mock.system_user())
+
+      assert result.total == 0
     end
 
-    test "deletes associated comments when passed valid record" do
-      record = insert(:wiki_page)
-      comments = insert_list(3, :comment, wiki_pages: [record])
+    test "deletes associated comments when passed valid resource type and resource id" do
+      record = insert(:customer)
+      comments = insert_list(3, :comment, resource_id: Integer.to_string(record.id), resource_type: "Customer")
 
-      %Artemis.WikiPage{} = DeleteManyAssociatedComments.call!(record, Mock.system_user())
+      result = DeleteManyAssociatedComments.call!("Customer", record.id, Mock.system_user())
 
+      assert result.total == 3
       assert Repo.get(Comment, hd(comments).id) == nil
     end
   end
 
   describe "call" do
-    test "returns an error if record has no comments association" do
-      record = insert(:feature)
-
-      {:error, _} = DeleteManyAssociatedComments.call(record, Mock.system_user())
-    end
-
     test "succeeds if record has no comments" do
-      record = insert(:wiki_page, comments: [])
+      record = insert(:customer)
 
-      %Artemis.WikiPage{} = DeleteManyAssociatedComments.call(record, Mock.system_user())
+      {:ok, result} = DeleteManyAssociatedComments.call("Customer", record.id, Mock.system_user())
+
+      assert result.total == 0
     end
 
-    test "deletes associated comments when passed valid record" do
-      record = insert(:wiki_page)
-      comments = insert_list(3, :comment, wiki_pages: [record])
+    test "deletes associated comments when passed valid resource type and resource id" do
+      record = insert(:customer)
+      comments = insert_list(3, :comment, resource_id: Integer.to_string(record.id), resource_type: "Customer")
 
-      %Artemis.WikiPage{} = DeleteManyAssociatedComments.call(record, Mock.system_user())
+      {:ok, result} = DeleteManyAssociatedComments.call("Customer", record.id, Mock.system_user())
 
+      assert result.total == 3
       assert Repo.get(Comment, hd(comments).id) == nil
     end
 
-    test "returns a tuple if passed a tuple" do
-      record = insert(:wiki_page)
-      comments = insert_list(3, :comment, wiki_pages: [record])
+    test "succeeds associated comments when passed valid resource type" do
+      comments = insert_list(3, :comment, resource_type: "Customer")
 
-      {:ok, %Artemis.WikiPage{}} = DeleteManyAssociatedComments.call({:ok, record}, Mock.system_user())
+      {:ok, result} = DeleteManyAssociatedComments.call("Customer", Mock.system_user())
 
+      assert result.total == 3
       assert Repo.get(Comment, hd(comments).id) == nil
     end
   end

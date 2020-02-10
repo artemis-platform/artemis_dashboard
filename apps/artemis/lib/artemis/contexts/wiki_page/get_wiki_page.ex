@@ -4,7 +4,7 @@ defmodule Artemis.GetWikiPage do
   alias Artemis.Repo
   alias Artemis.WikiPage
 
-  @default_preload [:comments, :tags, :user]
+  @default_preload [:tags, :user]
 
   def call!(value, _user, options \\ []) do
     get_record(value, options, &Repo.get_by!/2)

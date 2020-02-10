@@ -11,6 +11,7 @@
   <%= render_comment_notifications @conn, "Customer", @customer.id, Routes.customer_comment_path(@conn, :index_comment, @customer) %>
 
   <section>
-    <%= render_event_log_details @conn, @event_log %>
+    <%= h2 "Comments" %>
+    <%= render ArtemisWeb.CommentView, "index.html", assigns %>
   </section>
 </div>

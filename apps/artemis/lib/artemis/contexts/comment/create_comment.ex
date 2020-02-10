@@ -1,6 +1,5 @@
 defmodule Artemis.CreateComment do
   use Artemis.Context
-  use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.Comment
   alias Artemis.Helpers.Markdown
@@ -17,7 +16,6 @@ defmodule Artemis.CreateComment do
     with_transaction(fn ->
       params
       |> insert_record
-      |> update_associations(params)
       |> Event.broadcast("comment:created", user)
     end)
   end

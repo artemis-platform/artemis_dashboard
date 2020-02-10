@@ -61,22 +61,6 @@ defmodule Artemis.ListCommentsTest do
       results = ListComments.call(params, Mock.system_user())
 
       assert length(results) == 1
-
-      # With wiki page many to many association filter
-
-      wiki_page = insert(:wiki_page, comments: [comment])
-
-      params = %{
-        filters: %{
-          wiki_page_id: wiki_page.id
-        },
-        preload: [:user, :wiki_pages]
-      }
-
-      results = ListComments.call(params, Mock.system_user())
-
-      assert length(results) == 1
-      assert hd(hd(results).wiki_pages).id == wiki_page.id
     end
 
     test "order" do

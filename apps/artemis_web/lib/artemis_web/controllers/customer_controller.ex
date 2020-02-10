@@ -6,6 +6,13 @@ defmodule ArtemisWeb.CustomerController do
     path: &Routes.customer_path(&1, :index),
     permission: "customers:list"
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.customer_path/3,
+    permission: "customers:show",
+    resource_getter: &Artemis.GetCustomer.call!/2,
+    resource_id_key: "customer_id",
+    resource_type: "Customer"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.customer_path/3,
     permission: "customers:list",

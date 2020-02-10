@@ -64,6 +64,24 @@ function reinitializeHighlightJs() {
   hljs.initHighlighting()
 }
 
+function initializeInlineForm() {
+  $('.inline-form').each(function() {
+    var container = $(this)
+
+    container.find('.show-form').click(function(event) {
+      event.preventDefault()
+      container.find('>div').hide()
+      container.find('.form').show()
+    })
+
+    container.find('.show-value').click(function(event) {
+      event.preventDefault()
+      container.find('>div').hide()
+      container.find('.value').show()
+    })
+  })
+}
+
 function initializeMarkdownTextarea() {
   $('textarea.markdown').each(function() {
     var easyMDE = new EasyMDE({
@@ -228,15 +246,8 @@ function initializeSelectTableRow() {
       var all_fields = extra_fields.find('.extra-field')
       var selected_field = extra_fields.find('.extra-field-' + value)
 
-      all_fields.each(function() {
-        $(this).find("input, select").prop("disabled", true)
-        $(this).hide()
-      })
-
-      selected_field.each(function() {
-        $(this).find("input, select").prop("disabled", false)
-        $(this).show()
-      })
+      all_fields.hide()
+      selected_field.show()
     })
   })
 }
@@ -278,20 +289,6 @@ function initializeSidebars() {
     }
 
     $('#sidebar-primary-navigation').sidebar('hide')
-  })
-}
-
-function initializeTagForm() {
-  $('.resource-tags .show-list-tags').click(function(event) {
-    event.preventDefault()
-    $('.resource-tags>div').hide()
-    $('.resource-tags .list').show()
-  })
-
-  $('.resource-tags .show-edit-tags').click(function(event) {
-    event.preventDefault()
-    $('.resource-tags>div').hide()
-    $('.resource-tags .form').show()
   })
 }
 
@@ -369,13 +366,13 @@ $(document).ready(function() {
   initializeColumnField()
   initializeDropdowns()
   initializeFilterFields()
-  initializeHighlightJs()
+  // initializeHighlightJs()
+  initializeInlineForm()
   initializeMarkdownTextarea()
   initializeModals()
   initializeSelect2()
   initializeSidebars()
   initializeSearchSubmit()
   initializeSelectTableRow()
-  initializeTagForm()
   initializeWikiSidenav()
 })

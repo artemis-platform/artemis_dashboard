@@ -8,10 +8,7 @@ defmodule Artemis.GetCommentTest do
   setup do
     user = insert(:user)
 
-    comment =
-      :comment
-      |> insert(user: user)
-      |> with_wiki_page()
+    comment = insert(:comment, user: user)
 
     {:ok, comment: comment, user: user}
   end
@@ -50,23 +47,6 @@ defmodule Artemis.GetCommentTest do
 
     test "finds comment keyword list", %{comment: comment} do
       assert GetComment.call([title: comment.title, topic: comment.topic], Mock.system_user()) == comment
-    end
-  end
-
-  describe "call - options" do
-    test "preload", %{comment: comment} do
-      comment = GetComment.call(comment.id, Mock.system_user())
-
-      assert !is_list(comment.wiki_pages)
-      assert comment.wiki_pages.__struct__ == Ecto.Association.NotLoaded
-
-      options = [
-        preload: [:wiki_pages]
-      ]
-
-      comment = GetComment.call(comment.id, Mock.system_user(), options)
-
-      assert is_list(comment.wiki_pages)
     end
   end
 

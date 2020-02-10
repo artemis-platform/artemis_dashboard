@@ -1,6 +1,13 @@
 defmodule Artemis.ListComments do
   use Artemis.Context
 
+  use Artemis.ContextCache,
+    cache_reset_on_events: [
+      "comment:created",
+      "comment:deleted",
+      "comment:updated"
+    ]
+
   import Artemis.Helpers.Filter
   import Artemis.Helpers.Search
   import Ecto.Query
@@ -21,6 +28,7 @@ defmodule Artemis.ListComments do
     |> filter_query(params, user)
     |> search_filter(params)
     |> order_query(params)
+    |> select_count(params)
     |> get_records(params)
   end
 
@@ -40,15 +48,24 @@ defmodule Artemis.ListComments do
 
   defp filter_query(query, _params, _user), do: query
 
-  defp filter(query, "user_id", value), do: where(query, [c], c.user_id in ^split(value))
-
-  defp filter(query, "wiki_page_id", value) do
-    query
-    |> join(:left, [comments], wiki_pages in assoc(comments, :wiki_pages))
-    |> where([..., wp], wp.id in ^split(value))
+  defp filter(query, "resource_id", value) when is_integer(value) do
+    filter(query, "resource_id", Integer.to_string(value))
   end
 
+  defp filter(query, "resource_id", value), do: where(query, [c], c.resource_id in ^split(value))
+  defp filter(query, "resource_type", value), do: where(query, [c], c.resource_type in ^split(value))
+  defp filter(query, "user_id", value), do: where(query, [c], c.user_id in ^split(value))
+
   defp filter(query, _, _), do: query
+
+  defp select_count(query, %{"count" => true}) do
+    query
+    |> exclude(:preload)
+    |> exclude(:order_by)
+    |> select([c], %{count: count(c.id)})
+  end
+
+  defp select_count(query, _params), do: query
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)

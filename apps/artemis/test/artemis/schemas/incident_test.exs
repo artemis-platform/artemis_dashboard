@@ -5,12 +5,11 @@ defmodule Artemis.IncidentTest do
   import Ecto.Repo
   import Artemis.Factories
 
-  alias Artemis.Comment
   alias Artemis.Incident
   alias Artemis.Repo
   alias Artemis.Tag
 
-  @preload [:comments, :tags]
+  @preload [:tags]
 
   describe "attributes - constraints" do
     test "compound source uid value must be unique" do
@@ -44,79 +43,6 @@ defmodule Artemis.IncidentTest do
         %Incident{}
         |> Incident.changeset(params)
         |> Repo.insert()
-    end
-  end
-
-  describe "associations - comments" do
-    setup do
-      comments = insert_list(3, :comment)
-      incident = insert(:incident, comments: comments)
-
-      {:ok, comments: comments, incident: Repo.preload(incident, @preload)}
-    end
-
-    test "updating association does not change record", %{incident: incident} do
-      assert length(incident.comments) == 3
-
-      comment = Repo.get(Comment, hd(incident.comments).id)
-
-      assert comment != nil
-      assert comment.title != "Updated Title"
-
-      params = %{title: "Updated Title"}
-
-      {:ok, comment} =
-        comment
-        |> Comment.changeset(params)
-        |> Repo.update()
-
-      assert comment != nil
-      assert comment.title == "Updated Title"
-
-      incident =
-        Incident
-        |> preload(^@preload)
-        |> Repo.get(incident.id)
-
-      assert length(incident.comments) == 3
-    end
-
-    test "deleting association does not change record", %{incident: incident} do
-      assert length(incident.comments) == 3
-
-      comment = Repo.get(Comment, hd(incident.comments).id)
-
-      Repo.delete!(comment)
-
-      incident =
-        Incident
-        |> preload(^@preload)
-        |> Repo.get(incident.id)
-
-      assert length(incident.comments) == 2
-    end
-
-    test "deleting record only removes the join table, not the associated records", %{incident: incident} do
-      # Only the join table records are removed. This is a limitation of Ecto many_to_many:
-      # https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3-removing-data
-      #
-      comment =
-        Comment
-        |> preload([:incidents])
-        |> Repo.get(hd(incident.comments).id)
-
-      assert !is_nil(comment)
-      assert length(comment.incidents) == 1
-
-      Repo.delete!(incident)
-
-      comment =
-        Comment
-        |> preload([:incidents])
-        |> Repo.get(hd(incident.comments).id)
-
-      assert !is_nil(comment)
-      assert length(comment.incidents) == 0
     end
   end
 

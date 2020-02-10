@@ -1,8 +1,11 @@
 defmodule Artemis.DeleteAllIncidents do
   use Artemis.Context
 
+  alias Artemis.DeleteManyAssociatedComments
   alias Artemis.Incident
   alias Artemis.Repo
+
+  # TODO: test all comments deleted
 
   def call!(params \\ %{}, user) do
     case call(params, user) do
@@ -12,10 +15,14 @@ defmodule Artemis.DeleteAllIncidents do
   end
 
   def call(params \\ %{}, user) do
-    {deleted_count, _} = Repo.delete_all(Incident)
+    with_transaction(fn ->
+      {:ok, _} = DeleteManyAssociatedComments.call("Incident", user)
 
-    Event.broadcast(%{records_deleted: deleted_count}, "incident:deleted:all", params, user)
+      {deleted_count, _} = Repo.delete_all(Incident)
 
-    {:ok, deleted_count}
+      Event.broadcast(%{records_deleted: deleted_count}, "incident:deleted:all", params, user)
+
+      {:ok, deleted_count}
+    end)
   end
 end

@@ -1,0 +1,42 @@
+<div id="content-header">
+  <header>
+    <h1>
+      Documentation
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "wiki-pages:delete") do %>
+        <%= action "Delete", method: "delete", to: Routes.wiki_page_path(@conn, :delete, @wiki_page), data: [confirm: "Confirm Delete"] %>
+      <% end %>
+      <%= if has?(@conn, "wiki-revisions:show") do %>
+        <%= action "Revisions", to: Routes.wiki_page_revision_path(@conn, :index, @wiki_page) %>
+      <% end %>
+      <%= if has?(@conn, "wiki-pages:update") do %>
+        <%= action "Edit", to: Routes.wiki_page_path(@conn, :edit, @wiki_page), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.wiki_page_path(&1, :show, @wiki_page),
+        path_match_type: :exact,
+        verify: &has?(&1, "wiki-pages:show")
+      ],
+      [
+        label: render_secondary_navigation_live_comment_count_label(@conn, "WikiPage", @wiki_page.id),
+        path: &Routes.wiki_page_comment_path(&1, :index_comment, @wiki_page),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "wiki-pages:show")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

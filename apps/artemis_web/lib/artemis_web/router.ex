@@ -69,6 +69,13 @@ defmodule ArtemisWeb.Router do
       get "/customers/event-logs/:id", CustomerController, :index_event_log_details
 
       resources "/customers", CustomerController do
+        get "/comments", CustomerController, :index_comment, as: :comment
+        post "/comments", CustomerController, :create_comment, as: :comment
+        get "/comments/:id/edit", CustomerController, :edit_comment, as: :comment
+        patch "/comments/:id", CustomerController, :update_comment, as: :comment
+        put "/comments/:id", CustomerController, :update_comment, as: :comment
+        delete "/comments/:id", CustomerController, :delete_comment, as: :comment
+
         get "/event-logs", CustomerController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", CustomerController, :show_event_log_details, as: :event_log
       end
@@ -87,8 +94,15 @@ defmodule ArtemisWeb.Router do
       # Docs
 
       resources "/docs", WikiPageController do
-        resources "/comments", WikiPageCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        get "/comments", WikiPageController, :index_comment, as: :comment
+        post "/comments", WikiPageController, :create_comment, as: :comment
+        get "/comments/:id/edit", WikiPageController, :edit_comment, as: :comment
+        patch "/comments/:id", WikiPageController, :update_comment, as: :comment
+        put "/comments/:id", WikiPageController, :update_comment, as: :comment
+        delete "/comments/:id", WikiPageController, :delete_comment, as: :comment
+
         resources "/revisions", WikiRevisionController, only: [:index, :show, :delete], as: :revision
+
         put "/tags", WikiPageTagController, :update, as: :tag
       end
 
@@ -118,7 +132,13 @@ defmodule ArtemisWeb.Router do
       post "/incidents/bulk-actions", IncidentController, :index_bulk_actions
 
       resources "/incidents", IncidentController, only: [:index, :show, :delete] do
-        resources "/comments", IncidentCommentController, only: [:create, :edit, :update, :delete], name: :comment
+        get "/comments", IncidentController, :index_comment, as: :comment
+        post "/comments", IncidentController, :create_comment, as: :comment
+        get "/comments/:id/edit", IncidentController, :edit_comment, as: :comment
+        patch "/comments/:id", IncidentController, :update_comment, as: :comment
+        put "/comments/:id", IncidentController, :update_comment, as: :comment
+        delete "/comments/:id", IncidentController, :delete_comment, as: :comment
+
         put "/tags", IncidentTagController, :update, as: :tag
       end
 

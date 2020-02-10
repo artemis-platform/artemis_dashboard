@@ -1,11 +1,16 @@
 defmodule ArtemisWeb.WikiPageController do
   use ArtemisWeb, :controller
 
-  alias Artemis.Comment
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.wiki_page_path/3,
+    permission: "wiki-pages:show",
+    resource_getter: &Artemis.GetWikiPage.call!/2,
+    resource_id_key: "wiki_page_id",
+    resource_type: "WikiPage"
+
   alias Artemis.CreateWikiPage
   alias Artemis.DeleteWikiPage
   alias Artemis.GetWikiPage
-  alias Artemis.ListComments
   alias Artemis.ListWikiPages
   alias Artemis.UpdateWikiPage
   alias Artemis.WikiPage
@@ -58,14 +63,10 @@ defmodule ArtemisWeb.WikiPageController do
     authorize(conn, "wiki-pages:show", fn ->
       user = current_user(conn)
       wiki_page = GetWikiPage.call!(id, user)
-      comments = ListComments.call(%{filters: %{wiki_page_id: id}}, user)
-      comment_changeset = Comment.changeset(%Comment{})
       tags = get_tags("wiki-pages", user)
       tags_changeset = WikiPage.changeset(wiki_page)
 
       render(conn, "show.html",
-        comment_changeset: comment_changeset,
-        comments: comments,
         tags: tags,
         tags_changeset: tags_changeset,
         wiki_page: wiki_page

@@ -1,0 +1,17 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "WikiPage", @wiki_page.id %>
+  <%= render_comment_notifications @conn, "WikiPage", @wiki_page.id, Routes.wiki_page_comment_path(@conn, :index_comment, @wiki_page) %>
+
+  <section>
+    <%= h2 "Comments" %>
+    <%= render ArtemisWeb.CommentView, "index.html", assigns %>
+  </section>
+</div>

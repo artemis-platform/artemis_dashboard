@@ -606,7 +606,6 @@ body.error-page {
     }
   }
 
-  
   article.statistics {
     color: #fff;
     display: flex;
@@ -656,18 +655,48 @@ body.error-page {
         }
 
         a {
+          align-items: center;
           color: #888;
-          display: block;
+          display: flex;
           font-weight: 600;
           height: 100%;
-          margin: 0 1.5rem 0 0;
+          margin: 0 1.75rem 0 0;
+
+          .count-label {
+            display: flex;
+            flex-direction: row;
+
+            .label {
+              align-self: center;
+              font-weight: 500;
+              margin: 0 0 0 0.5rem;
+              min-width: 1.625rem;
+              height: 1.5rem;
+              text-align: center;
+
+              &.grey {
+                background: #222529 !important;
+                color: #888 !important;
+              }
+            }
+          }
 
           &:hover {
             color: #fff;
+
+            .label.grey {
+              background: #3a3a3a !important;
+              color: #fff !important;
+            }
           }
 
           &.selected {
             color: #fff;
+
+            .label.grey {
+              background: #3a3a3a !important;
+              color: #fff !important;
+            }
           }
         }
       }

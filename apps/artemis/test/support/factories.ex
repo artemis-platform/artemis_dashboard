@@ -28,6 +28,8 @@ defmodule Artemis.Factories do
     %Artemis.Comment{
       body: body,
       body_html: body,
+      resource_id: "1",
+      resource_type: "WikiPage",
       topic: Faker.Name.name(),
       title: sequence(:title, &"#{Faker.Name.name()}-#{&1}"),
       user: build(:user)
@@ -161,7 +163,7 @@ defmodule Artemis.Factories do
       first_name: Faker.Name.first_name(),
       last_name: Faker.Name.last_name(),
       name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
-      username: sequence(:username, &"#{Faker.Name.last_name()}-#{&1}")
+      username: sequence(:username, &"#{Faker.Address.country_code()}-#{&1}")
     }
   end
 
@@ -235,11 +237,6 @@ defmodule Artemis.Factories do
   def with_user_roles(%Artemis.User{} = user, number) do
     insert_list(number, :user_role, user: user)
     user
-  end
-
-  def with_wiki_page(%Artemis.Comment{} = comment) do
-    insert(:wiki_page, comments: [comment])
-    comment
   end
 
   def with_wiki_page(%Artemis.Tag{} = tag) do

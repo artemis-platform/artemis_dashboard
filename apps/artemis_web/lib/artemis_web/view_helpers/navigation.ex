@@ -2,6 +2,7 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   use Phoenix.HTML
 
   import ArtemisWeb.Config.Navigation
+  import ArtemisWeb.Guardian.Helpers
 
   @doc """
   Lists all primary navigation items
@@ -139,5 +140,18 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
         [icon | entries]
       end
     end
+  end
+
+  @doc """
+  Render secondary navigation comment label
+  """
+  def render_secondary_navigation_live_comment_count_label(conn, resource_type, resource_id) do
+    session = %{
+      resource_id: resource_id,
+      resource_type: resource_type,
+      user: current_user(conn)
+    }
+
+    Phoenix.LiveView.live_render(conn, ArtemisWeb.CommentCountLabelLive, session: session)
   end
 end

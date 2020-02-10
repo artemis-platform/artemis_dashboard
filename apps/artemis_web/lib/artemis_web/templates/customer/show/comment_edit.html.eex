@@ -11,6 +11,13 @@
   <%= render_comment_notifications @conn, "Customer", @customer.id, Routes.customer_comment_path(@conn, :index_comment, @customer) %>
 
   <section>
-    <%= render_event_log_details @conn, @event_log %>
+    <%= h2 "Edit Comment" %>
+    <%=
+      comment_form_assigns = assigns
+        |> Map.put(:action, @comment_update_action.(@comment.id))
+        |> Map.put(:changeset, @comment_changeset)
+
+      render ArtemisWeb.CommentView, "form.html", comment_form_assigns
+    %>
   </section>
 </div>

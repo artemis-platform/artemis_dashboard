@@ -1,0 +1,37 @@
+<%=
+  comment_form_assigns = assigns
+    |> Map.put(:action, @comment_create_action)
+    |> Map.put(:changeset, @comment_changeset)
+
+  render ArtemisWeb.CommentView, "form.html", comment_form_assigns
+%>
+
+<%= Enum.map @comments, fn (comment) -> %>
+  <div class="comment">
+    <header>
+      <span class="title"><%= comment.title %></span>
+    </header>
+    <content class="markdown">
+      <%= raw comment.body_html %>
+    </content>
+    <footer>
+      <div class="meta">
+        <span class="author">Comment by <%= Artemis.Helpers.deep_get(comment, [:user, :name], "Unknown") %></span>
+        <span class="timestamp">on <%= render_date_time(comment.inserted_at) %></span>
+        <span class="timestamp-relative"><%= Timex.Format.DateTime.Formatters.Relative.format!(comment.inserted_at, "{relative}") %></span>
+      </div>
+      <div class="actions">
+        <%= if update_comments?(comment, current_user(@conn)) do %>
+          <span>
+            <%= link "Edit Comment", to: @comment_edit_action.(comment.id) %>
+          </span>
+        <% end %>
+        <%= if delete_comments?(comment, current_user(@conn)) do %>
+          <span>
+            <%= link "Delete Comment", method: "delete", to: @comment_delete_action.(comment.id), data: [confirm: "Delete Comment?"] %>
+          </span>
+        <% end %>
+      </div>
+    </footer>
+  </div>
+<% end %>
