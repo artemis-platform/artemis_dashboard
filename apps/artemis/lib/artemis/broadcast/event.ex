@@ -7,6 +7,7 @@ defmodule Artemis.Event do
     defstruct [
       :data,
       :meta,
+      :type,
       :user
     ]
   end
@@ -27,6 +28,7 @@ defmodule Artemis.Event do
     payload = %Data{
       data: data,
       meta: get_whitelisted_meta(meta),
+      type: "event",
       user: user
     }
 
