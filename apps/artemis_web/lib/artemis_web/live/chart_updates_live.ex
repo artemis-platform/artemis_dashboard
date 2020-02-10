@@ -19,8 +19,7 @@ defmodule ArtemisWeb.ChartUpdatesLive do
       |> assign(:chart_data, session.chart_data)
       |> assign(:chart_id, session.chart_id)
       |> assign(:chart_options, session.chart_options)
-      # TODO: update existing charts to pass this value
-      |> assign(:fetch_data_on_cache_events, session.fetch_data_on_cache_events)
+      |> assign(:fetch_data_on_cache_resets, session.fetch_data_on_cache_resets)
       |> assign(:fetch_data_on_cloudant_changes, session.fetch_data_on_cloudant_changes)
       |> assign(:fetch_data_on_events, session.fetch_data_on_events)
       |> assign(:fetch_data_timer, nil)
@@ -77,7 +76,7 @@ defmodule ArtemisWeb.ChartUpdatesLive do
 
   # Helpers
 
-  defp subscribe_to_cache_events(%{fetch_data_on_cache_events: events}) when length(events) > 0 do
+  defp subscribe_to_cache_events(%{fetch_data_on_cache_resets: modules}) when length(modules) > 0 do
     topic = Artemis.CacheEvent.get_broadcast_topic()
 
     :ok = ArtemisPubSub.subscribe(topic)

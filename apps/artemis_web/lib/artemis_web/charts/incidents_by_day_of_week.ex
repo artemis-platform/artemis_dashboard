@@ -1,7 +1,7 @@
 defmodule ArtemisWeb.Charts.IncidentsByDayOfWeek do
   use ArtemisWeb.Charts
 
-  @cache_events []
+  @cache_reset_modules []
 
   @cloudant_changes []
 
@@ -32,7 +32,7 @@ defmodule ArtemisWeb.Charts.IncidentsByDayOfWeek do
       chart_options: chart_options,
       chart_type: "bar",
       conn: conn,
-      fetch_data_on_cache_events: @cache_events,
+      fetch_data_on_cache_resets: @cache_reset_modules,
       fetch_data_on_cloudant_changes: @cloudant_changes,
       fetch_data_on_events: @events,
       module: __MODULE__,
