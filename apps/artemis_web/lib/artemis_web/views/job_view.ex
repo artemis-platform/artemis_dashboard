@@ -207,4 +207,6 @@ defmodule ArtemisWeb.JobView do
   rescue
     _ -> nil
   end
+
+  def render_elapsed_time(_), do: nil
 end
