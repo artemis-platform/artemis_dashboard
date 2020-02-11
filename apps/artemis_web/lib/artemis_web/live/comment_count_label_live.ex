@@ -3,10 +3,6 @@ defmodule ArtemisWeb.CommentCountLabelLive do
 
   alias Artemis.ListComments
 
-  @cache_reset_modules [
-    Artemis.ListComments
-  ]
-
   # LiveView Callbacks
 
   @impl true
