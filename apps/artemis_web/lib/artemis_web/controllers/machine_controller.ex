@@ -6,6 +6,13 @@ defmodule ArtemisWeb.MachineController do
     path: &Routes.machine_path(&1, :index),
     permission: "machines:list"
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.machine_path/3,
+    permission: "machines:show",
+    resource_getter: &Artemis.GetMachine.call!/2,
+    resource_id_key: "machine_id",
+    resource_type: "Machine"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.machine_path/3,
     permission: "machines:list",

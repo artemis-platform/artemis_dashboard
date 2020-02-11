@@ -1,0 +1,3 @@
+<%= render_flash_notifications @conn %>
+<%= render_event_log_notifications @conn, "DataCenter", @data_center.id %>
+<%= render_comment_notifications @conn, "DataCenter", @data_center.id, Routes.data_center_comment_path(@conn, :index_comment, @data_center) %>

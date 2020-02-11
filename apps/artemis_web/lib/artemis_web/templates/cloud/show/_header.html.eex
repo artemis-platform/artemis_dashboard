@@ -27,6 +27,12 @@
         path: &Routes.cloud_event_log_path(&1, :show_event_log_list, @cloud),
         path_match_type: :starts_with,
         verify: &has?(&1, "clouds:list")
+      ],
+      [
+        label: render_secondary_navigation_live_comment_count_label(@conn, "Cloud", @cloud.id),
+        path: &Routes.cloud_comment_path(&1, :index_comment, @cloud),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "clouds:show")
       ]
     ]
 

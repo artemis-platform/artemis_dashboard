@@ -6,6 +6,13 @@ defmodule ArtemisWeb.CloudController do
     path: &Routes.cloud_path(&1, :index),
     permission: "clouds:list"
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.cloud_path/3,
+    permission: "clouds:show",
+    resource_getter: &Artemis.GetCloud.call!/2,
+    resource_id_key: "cloud_id",
+    resource_type: "Cloud"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.cloud_path/3,
     permission: "clouds:list",

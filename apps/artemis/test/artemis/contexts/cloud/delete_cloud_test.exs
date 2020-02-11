@@ -4,6 +4,7 @@ defmodule Artemis.DeleteCloudTest do
   import Artemis.Factories
 
   alias Artemis.Cloud
+  alias Artemis.Comment
   alias Artemis.DeleteCloud
 
   describe "call!" do
@@ -53,6 +54,29 @@ defmodule Artemis.DeleteCloudTest do
       {:ok, _} = DeleteCloud.call(record.id, Mock.system_user())
 
       assert Repo.get(Cloud, record.id) == nil
+    end
+
+    test "deletes associated associations" do
+      record = insert(:cloud)
+      comments = insert_list(3, :comment, resource_type: "Cloud", resource_id: Integer.to_string(record.id))
+      _other = insert_list(2, :comment)
+
+      total_before =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      {:ok, _} = DeleteCloud.call(record.id, Mock.system_user())
+
+      assert Repo.get(Cloud, record.id) == nil
+
+      total_after =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      assert total_after == total_before - 3
+      assert Repo.get(Comment, hd(comments).id) == nil
     end
   end
 

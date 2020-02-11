@@ -15,12 +15,12 @@
   </div>
 
   <div class="field">
-    <%= label_with_errors f, :cpu_total %>
+    <%= label_with_errors f, :cpu_total, "CPU Total" %>
     <%= text_input f, :cpu_total, placeholder: "Tota CPU (Cores)" %>
   </div>
 
   <div class="field">
-    <%= label_with_errors f, :ram_total %>
+    <%= label_with_errors f, :ram_total, "RAM Total" %>
     <%= text_input f, :ram_total, placeholder: "Tota RAM (GB)" %>
   </div>
 

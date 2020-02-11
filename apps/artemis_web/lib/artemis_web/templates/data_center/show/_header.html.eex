@@ -27,6 +27,12 @@
         path: &Routes.data_center_event_log_path(&1, :show_event_log_list, @data_center),
         path_match_type: :starts_with,
         verify: &has?(&1, "data-centers:list")
+      ],
+      [
+        label: render_secondary_navigation_live_comment_count_label(@conn, "DataCenter", @data_center.id),
+        path: &Routes.data_center_comment_path(&1, :index_comment, @data_center),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "data-centers:show")
       ]
     ]
 
