@@ -199,7 +199,7 @@ defmodule Artemis.CacheInstance do
     process_cloudant_event(payload, state)
   end
 
-  def handle_info(%{event: event}, state), do: process_event(event, state)
+  def handle_info(%{event: event, payload: payload}, state), do: process_event(event, payload, state)
 
   # Cachex Helpers
 
@@ -272,9 +272,9 @@ defmodule Artemis.CacheInstance do
     end
   end
 
-  defp process_event(event, state) do
+  defp process_event(event, payload, state) do
     case Enum.member?(state.cache_reset_on_events, event) do
-      true -> reset_cache(state, event)
+      true -> reset_cache(state, payload)
       false -> {:noreply, state}
     end
   end

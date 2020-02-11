@@ -9,7 +9,7 @@ defmodule ArtemisWeb.CommentCountLabelLive do
   def mount(session, socket) do
     resource_id = Artemis.Helpers.to_string(session.resource_id)
     resource_type = Artemis.Helpers.to_string(session.resource_type)
-    broadcast_topic = Artemis.Event.get_broadcast_topic()
+    broadcast_topic = Artemis.CacheEvent.get_broadcast_topic()
 
     assigns =
       socket
@@ -40,8 +40,8 @@ defmodule ArtemisWeb.CommentCountLabelLive do
     {:noreply, socket}
   end
 
-  def handle_info(%{event: event, payload: %{data: data}}, socket) do
-    update_if_match(socket, event, data)
+  def handle_info(%{event: "cache:reset", payload: payload}, socket) do
+    update_if_match(socket, payload)
 
     {:noreply, socket}
   end
@@ -50,26 +50,26 @@ defmodule ArtemisWeb.CommentCountLabelLive do
 
   # Helpers
 
-  defp update_if_match(socket, event, %{resource_id: resource_id, resource_type: resource_type}) do
-    events = [
-      "comment:created",
-      "comment:deleted",
-      "comment:updated"
-    ]
-
-    event_match? = Enum.member?(events, event)
-    resource_type_match? = resource_type == socket.assigns.resource_type
-
-    if event_match? && resource_type_match? && resource_id_match?(socket, resource_id) do
-      Process.send_after(self(), {:update_data, :updated}, 150)
+  defp update_if_match(socket, payload) do
+    if module_match?(payload) && resource_id_match?(socket, payload) do
+      Process.send(self(), {:update_data, :updated}, [])
     end
   end
 
-  defp resource_id_match?(socket, resource_id) do
+  defp module_match?(%{module: Artemis.ListComments}), do: true
+  defp module_match?(_payload), do: false
+
+  defp resource_id_match?(socket, payload) do
     case Artemis.Helpers.present?(socket.assigns.resource_id) do
-      true -> Artemis.Helpers.to_string(resource_id) == socket.assigns.resource_id
+      true -> socket.assigns.resource_id == get_resource_id(payload)
       _ -> true
     end
+  end
+
+  defp get_resource_id(payload) do
+    payload
+    |> Artemis.Helpers.deep_get([:meta, :data, :resource_id])
+    |> Artemis.Helpers.to_string()
   end
 
   defp update_data(socket, status) do
