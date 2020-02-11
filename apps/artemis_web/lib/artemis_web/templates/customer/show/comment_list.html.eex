@@ -6,9 +6,7 @@
 </div>
 
 <div id="content">
-  <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "Customer", @customer.id %>
-  <%= render_comment_notifications @conn, "Customer", @customer.id, Routes.customer_comment_path(@conn, :index_comment, @customer) %>
+  <%= render "show/_notifications.html", assigns %>
 
   <section>
     <%= h2 "Comments" %>
