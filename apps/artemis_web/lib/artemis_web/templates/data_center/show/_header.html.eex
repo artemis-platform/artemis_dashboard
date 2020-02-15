@@ -20,13 +20,13 @@
         label: "Overview",
         path: &Routes.data_center_path(&1, :show, @data_center),
         path_match_type: :exact,
-        verify: &has?(&1, "data-centers:list")
+        verify: &has?(&1, "data-centers:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.data_center_event_log_path(&1, :show_event_log_list, @data_center),
         path_match_type: :starts_with,
-        verify: &has?(&1, "data-centers:list")
+        verify: &has?(&1, "data-centers:show")
       ],
       [
         label: render_secondary_navigation_live_comment_count_label(@conn, "DataCenter", @data_center.id),

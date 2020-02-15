@@ -29,13 +29,13 @@
         label: "Overview",
         path: &Routes.user_path(&1, :show, @user),
         path_match_type: :exact,
-        verify: &has?(&1, "users:list")
+        verify: &has?(&1, "users:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.user_event_log_path(&1, :show_event_log_list, @user),
         path_match_type: :starts_with,
-        verify: &has?(&1, "users:list")
+        verify: &has?(&1, "users:show")
       ]
     ]
 
