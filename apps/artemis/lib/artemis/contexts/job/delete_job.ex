@@ -1,6 +1,7 @@
 defmodule Artemis.DeleteJob do
   use Artemis.Context
 
+  alias Artemis.DeleteManyAssociatedComments
   alias Artemis.Drivers.IBMCloudant
   alias Artemis.GetJob
   alias Artemis.Job
@@ -16,12 +17,21 @@ defmodule Artemis.DeleteJob do
     id
     |> get_record(user)
     |> delete_record()
+    |> delete_associated_comments(id, user)
     |> parse_response()
     |> Event.broadcast("job:deleted", params, user)
   end
 
   def get_record(%{_id: id}, user), do: get_record(id, user)
   def get_record(id, user), do: GetJob.call(id, user)
+
+  def delete_associated_comments(record, resource_id, user) do
+    {:ok, _} = DeleteManyAssociatedComments.call("Job", resource_id, user)
+
+    record
+  rescue
+    _ -> record
+  end
 
   defp delete_record(nil), do: {:error, "Record not found"}
 

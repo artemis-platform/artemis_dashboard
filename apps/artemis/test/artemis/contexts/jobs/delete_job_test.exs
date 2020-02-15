@@ -3,6 +3,7 @@ defmodule Artemis.DeleteJobTest do
 
   import Artemis.Factories
 
+  alias Artemis.Comment
   alias Artemis.DeleteJob
   alias Artemis.GetJob
 
@@ -55,6 +56,29 @@ defmodule Artemis.DeleteJobTest do
       {:ok, _} = DeleteJob.call(record._id, Mock.system_user())
 
       assert GetJob.call(record._id, Mock.system_user()) == nil
+    end
+
+    test "deletes associated comments" do
+      record = cloudant_insert(:job)
+      comments = insert_list(3, :comment, resource_type: "Job", resource_id: record._id)
+      _other = insert_list(2, :comment)
+
+      total_before =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      {:ok, _} = DeleteJob.call(record._id, Mock.system_user())
+
+      assert GetJob.call(record._id, Mock.system_user()) == nil
+
+      total_after =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      assert total_after == total_before - 3
+      assert Repo.get(Comment, hd(comments).id) == nil
     end
   end
 

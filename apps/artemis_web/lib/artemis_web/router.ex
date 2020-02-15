@@ -163,6 +163,13 @@ defmodule ArtemisWeb.Router do
       get "/jobs/event-logs/:id", JobController, :index_event_log_details
 
       resources "/jobs", JobController do
+        get "/comments", JobController, :index_comment, as: :comment
+        post "/comments", JobController, :create_comment, as: :comment
+        get "/comments/:id/edit", JobController, :edit_comment, as: :comment
+        patch "/comments/:id", JobController, :update_comment, as: :comment
+        put "/comments/:id", JobController, :update_comment, as: :comment
+        delete "/comments/:id", JobController, :delete_comment, as: :comment
+
         get "/event-logs", JobController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", JobController, :show_event_log_details, as: :event_log
       end

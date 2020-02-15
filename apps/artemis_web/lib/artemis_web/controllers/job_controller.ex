@@ -6,6 +6,13 @@ defmodule ArtemisWeb.JobController do
     path: &Routes.job_path(&1, :index),
     permission: "jobs:list"
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.job_path/3,
+    permission: "jobs:show",
+    resource_getter: &Artemis.GetJob.call!/2,
+    resource_id_key: "job_id",
+    resource_type: "Job"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.job_path/3,
     permission: "jobs:list",

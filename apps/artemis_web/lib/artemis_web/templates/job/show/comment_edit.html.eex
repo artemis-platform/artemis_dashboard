@@ -9,14 +9,13 @@
   <%= render "show/_notifications.html", assigns %>
 
   <section>
+    <%= h2 "Edit Comment" %>
     <%=
-      render_event_log_list(
-        @conn,
-        @event_logs,
-        allowed_columns: @allowed_columns,
-        default_columns: @default_columns,
-        pagination_options: @pagination_options
-      )
+      comment_form_assigns = assigns
+        |> Map.put(:action, @comment_update_action.(@comment.id))
+        |> Map.put(:changeset, @comment_changeset)
+
+      render ArtemisWeb.CommentView, "form.html", comment_form_assigns
     %>
   </section>
 </div>

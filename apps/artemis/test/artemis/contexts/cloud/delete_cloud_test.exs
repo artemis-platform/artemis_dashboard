@@ -56,7 +56,7 @@ defmodule Artemis.DeleteCloudTest do
       assert Repo.get(Cloud, record.id) == nil
     end
 
-    test "deletes associated associations" do
+    test "deletes associated comments" do
       record = insert(:cloud)
       comments = insert_list(3, :comment, resource_type: "Cloud", resource_id: Integer.to_string(record.id))
       _other = insert_list(2, :comment)

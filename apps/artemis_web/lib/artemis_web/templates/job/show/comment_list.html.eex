@@ -9,6 +9,7 @@
   <%= render "show/_notifications.html", assigns %>
 
   <section>
-    <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
+    <%= h2 "Comments" %>
+    <%= render ArtemisWeb.CommentView, "index.html", assigns %>
   </section>
 </div>
