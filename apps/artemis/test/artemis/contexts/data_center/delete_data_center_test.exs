@@ -3,6 +3,7 @@ defmodule Artemis.DeleteDataCenterTest do
 
   import Artemis.Factories
 
+  alias Artemis.Comment
   alias Artemis.DataCenter
   alias Artemis.DeleteDataCenter
 
@@ -45,6 +46,29 @@ defmodule Artemis.DeleteDataCenterTest do
       {:ok, _} = DeleteDataCenter.call(record, Mock.system_user())
 
       assert Repo.get(DataCenter, record.id) == nil
+    end
+
+    test "deletes associated associations" do
+      record = insert(:data_center)
+      comments = insert_list(3, :comment, resource_type: "DataCenter", resource_id: Integer.to_string(record.id))
+      _other = insert_list(2, :comment)
+
+      total_before =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      {:ok, _} = DeleteDataCenter.call(record.id, Mock.system_user())
+
+      assert Repo.get(DataCenter, record.id) == nil
+
+      total_after =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      assert total_after == total_before - 3
+      assert Repo.get(Comment, hd(comments).id) == nil
     end
   end
 

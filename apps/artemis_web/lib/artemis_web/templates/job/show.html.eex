@@ -6,8 +6,7 @@
 </div>
 
 <div id="content">
-  <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "Job", @job._id %>
+  <%= render "show/_notifications.html", assigns %>
 
   <section>
     <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>

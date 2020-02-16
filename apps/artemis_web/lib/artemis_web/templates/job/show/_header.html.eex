@@ -20,13 +20,19 @@
         label: "Overview",
         path: &Routes.job_path(&1, :show, @job._id),
         path_match_type: :exact,
-        verify: &has?(&1, "jobs:list")
+        verify: &has?(&1, "jobs:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.job_event_log_path(&1, :show_event_log_list, @job._id),
         path_match_type: :starts_with,
-        verify: &has?(&1, "jobs:list")
+        verify: &has?(&1, "jobs:show")
+      ],
+      [
+        label: render_secondary_navigation_live_comment_count_label(@conn, "Job", @job._id),
+        path: &Routes.job_comment_path(&1, :index_comment, @job._id),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "jobs:show")
       ]
     ]
 

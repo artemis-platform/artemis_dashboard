@@ -3,6 +3,7 @@ defmodule Artemis.DeleteMachineTest do
 
   import Artemis.Factories
 
+  alias Artemis.Comment
   alias Artemis.Machine
   alias Artemis.DeleteMachine
 
@@ -53,6 +54,29 @@ defmodule Artemis.DeleteMachineTest do
       {:ok, _} = DeleteMachine.call(record.id, Mock.system_user())
 
       assert Repo.get(Machine, record.id) == nil
+    end
+
+    test "deletes associated associations" do
+      record = insert(:machine)
+      comments = insert_list(3, :comment, resource_type: "Machine", resource_id: Integer.to_string(record.id))
+      _other = insert_list(2, :comment)
+
+      total_before =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      {:ok, _} = DeleteMachine.call(record.id, Mock.system_user())
+
+      assert Repo.get(Machine, record.id) == nil
+
+      total_after =
+        Comment
+        |> Repo.all()
+        |> length()
+
+      assert total_after == total_before - 3
+      assert Repo.get(Comment, hd(comments).id) == nil
     end
   end
 

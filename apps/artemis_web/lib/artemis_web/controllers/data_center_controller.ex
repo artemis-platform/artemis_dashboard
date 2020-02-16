@@ -6,6 +6,13 @@ defmodule ArtemisWeb.DataCenterController do
     path: &Routes.data_center_path(&1, :index),
     permission: "data-centers:list"
 
+  use ArtemisWeb.Controller.CommentsShow,
+    path: &Routes.data_center_path/3,
+    permission: "data-centers:show",
+    resource_getter: &Artemis.GetDataCenter.call!/2,
+    resource_id_key: "data_center_id",
+    resource_type: "DataCenter"
+
   use ArtemisWeb.Controller.EventLogsIndex,
     path: &Routes.data_center_path/3,
     permission: "data-centers:list",

@@ -20,13 +20,13 @@
         label: "Overview",
         path: &Routes.feature_path(&1, :show, @feature),
         path_match_type: :exact,
-        verify: &has?(&1, "features:list")
+        verify: &has?(&1, "features:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.feature_event_log_path(&1, :show_event_log_list, @feature),
         path_match_type: :starts_with,
-        verify: &has?(&1, "features:list")
+        verify: &has?(&1, "features:show")
       ]
     ]
 

@@ -6,8 +6,7 @@
 </div>
 
 <div id="content">
-  <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "Machine", @machine.id %>
+  <%= render "show/_notifications.html", assigns %>
 
   <section>
     <%= h2 "Details" %>

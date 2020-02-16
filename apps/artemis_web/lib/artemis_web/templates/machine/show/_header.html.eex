@@ -20,13 +20,19 @@
         label: "Overview",
         path: &Routes.machine_path(&1, :show, @machine),
         path_match_type: :exact,
-        verify: &has?(&1, "machines:list")
+        verify: &has?(&1, "machines:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.machine_event_log_path(&1, :show_event_log_list, @machine),
         path_match_type: :starts_with,
-        verify: &has?(&1, "machines:list")
+        verify: &has?(&1, "machines:show")
+      ],
+      [
+        label: render_secondary_navigation_live_comment_count_label(@conn, "Machine", @machine.id),
+        path: &Routes.machine_comment_path(&1, :index_comment, @machine),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "machines:show")
       ]
     ]
 

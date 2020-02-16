@@ -20,13 +20,13 @@
         label: "Overview",
         path: &Routes.permission_path(&1, :show, @permission),
         path_match_type: :exact,
-        verify: &has?(&1, "permissions:list")
+        verify: &has?(&1, "permissions:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.permission_event_log_path(&1, :show_event_log_list, @permission),
         path_match_type: :starts_with,
-        verify: &has?(&1, "permissions:list")
+        verify: &has?(&1, "permissions:show")
       ]
     ]
 

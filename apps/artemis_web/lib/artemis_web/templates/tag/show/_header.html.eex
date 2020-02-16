@@ -20,13 +20,13 @@
         label: "Overview",
         path: &Routes.tag_path(&1, :show, @tag),
         path_match_type: :exact,
-        verify: &has?(&1, "tags:list")
+        verify: &has?(&1, "tags:show")
       ],
       [
         label: "Event Logs",
         path: &Routes.tag_event_log_path(&1, :show_event_log_list, @tag),
         path_match_type: :starts_with,
-        verify: &has?(&1, "tags:list")
+        verify: &has?(&1, "tags:show")
       ]
     ]
 
