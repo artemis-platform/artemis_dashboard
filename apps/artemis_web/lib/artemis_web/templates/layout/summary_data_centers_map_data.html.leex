@@ -1,0 +1,9 @@
+<div
+  class="am-chart-updates"
+  phx-hook="AmCharts"
+  phx-socket-id="<%= @socket.id %>"
+  chart-id="<%= @id %>"
+  chart-data="<%= Jason.encode!(@data) %>"
+>
+
+</div>

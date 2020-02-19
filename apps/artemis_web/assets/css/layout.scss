@@ -971,5 +971,10 @@ body.error-page {
     & > div {
       display: flex;
     }
+
+    .user-link {
+      display: inline-block;
+      margin: 0 0 0 5px;
+    }
   }
 }

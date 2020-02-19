@@ -1,0 +1,42 @@
+<ul class="summary-data-centers">
+  <%= if @status == :loading do %>
+    <li>-</li>
+  <% else %>
+    <%= Enum.map @data, fn data_center -> %>
+      <li>
+        <a href="<%= Routes.data_center_path(@socket, :show, data_center.id) %>">
+          <div class="heading">
+            <div class="title">
+              <div class="name">
+                <%= data_center.name %>
+              </div>
+              <div class="country">
+                <%= data_center.country %>
+              </div>
+            </div>
+
+            <div class="slug">
+              <%= data_center.slug %>
+            </div>
+          </div>
+          <div class="details">
+            <div class="count customer-count">
+              <i class="ui icon user circle"></i>
+              <%= ngettext("%{count} Customer", "%{count} Customers", data_center.customer_count, count: data_center.customer_count) %>
+            </div>
+
+            <div class="count cloud-count">
+              <i class="ui icon cloud"></i>
+              <%= ngettext("%{count} Cloud", "%{count} Clouds", data_center.cloud_count, count: data_center.cloud_count) %>
+            </div>
+
+            <div class="count machine-count">
+              <i class="ui icon hdd"></i>
+              <%= ngettext("%{count} Machine", "%{count} Machines", data_center.machine_count, count: data_center.machine_count) %>
+            </div>
+          </div>
+        </a>
+      </li>
+    <% end %>
+  <% end %>
+</ul>

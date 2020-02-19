@@ -8,6 +8,7 @@ defmodule Artemis.Context do
       import Artemis.Context
       import Artemis.Repo.Helpers
       import Artemis.Repo.Order
+      import Artemis.Repo.SelectCount
       import Artemis.UserAccess
 
       require Logger

@@ -11,4 +11,82 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
+
+  <article id="home-page" class="page status-page">
+    <content>
+      <section class="world-status">
+        <div class="status-map">
+          <%= render_summary_data_centers_map_live @conn %>
+        </div>
+
+        <div class="status-summary">
+          <%= render_summary_data_centers_list_live @conn %>
+        </div>
+      </section>
+
+      <div>
+        <ul class="summary-counts">
+          <li>
+            <%=
+              render_summary_count_live(
+                @conn,
+                label_plural: "Customers",
+                label_singular: "Customer",
+                module: Artemis.ListCustomers,
+                path: has?(@conn, "customers:list") && Routes.customer_path(@conn, :index)
+              )
+            %>
+          </li>
+
+          <li>
+            <%=
+              render_summary_count_live(
+                @conn,
+                label_plural: "Clouds",
+                label_singular: "Cloud",
+                module: Artemis.ListClouds,
+                path: has?(@conn, "clouds:list") && Routes.cloud_path(@conn, :index)
+              )
+            %>
+          </li>
+
+          <li>
+            <%=
+              render_summary_count_live(
+                @conn,
+                label_plural: "Data Centers",
+                label_singular: "Data Center",
+                module: Artemis.ListDataCenters,
+                path: has?(@conn, "data-centers:list") && Routes.data_center_path(@conn, :index)
+              )
+            %>
+          </li>
+
+          <li>
+            <%=
+              render_summary_count_live(
+                @conn,
+                label_plural: "Machines",
+                label_singular: "Machine",
+                module: Artemis.ListMachines,
+                path: has?(@conn, "machines:list") && Routes.machine_path(@conn, :index)
+              )
+            %>
+          </li>
+
+          <li>
+            <%=
+              render_summary_count_live(
+                @conn,
+                label_plural: "Users",
+                label_singular: "User",
+                module: Artemis.ListUsers,
+                path: has?(@conn, "users:list") && Routes.user_path(@conn, :index)
+              )
+            %>
+          </li>
+        </ul>
+      </div>
+    </content>
+  </article>
 </div>

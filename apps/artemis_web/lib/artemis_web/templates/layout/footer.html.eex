@@ -15,13 +15,11 @@
   <div class="container footer">
     <div>
       <a target="_blank" href="https://github.com/artemis-platform/artemis_dashboard"><i class="icon github"></i>GitHub</a>
-      &nbsp;|&nbsp;
-      Created by <a target="_blank" href="http://artemis-platform.com">Chris Laskey</a>
     </div>
     <div>
       <%= if current_user?(@conn) do %>
-        Logged in as 
-        <a href="<%= Routes.user_path(@conn, :show, current_user(@conn)) %>">
+        Logged in as
+        <a class="user-link" href="<%= Routes.user_path(@conn, :show, current_user(@conn)) %>">
           <span>
             <i class="user icon outline"></i><%= current_user(@conn).name %>
           </span>

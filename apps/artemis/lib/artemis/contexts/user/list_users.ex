@@ -1,6 +1,13 @@
 defmodule Artemis.ListUsers do
   use Artemis.Context
 
+  use Artemis.ContextCache,
+    cache_reset_on_events: [
+      "user:created",
+      "user:deleted",
+      "user:updated"
+    ]
+
   import Artemis.Helpers.Search
   import Ecto.Query
 
@@ -19,6 +26,7 @@ defmodule Artemis.ListUsers do
     |> preload(^Map.get(params, "preload"))
     |> search_filter(params)
     |> order_query(params)
+    |> select_count(params)
     |> restrict_access(user)
     |> get_records(params)
   end

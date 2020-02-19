@@ -58,15 +58,6 @@ defmodule Artemis.ListComments do
 
   defp filter(query, _, _), do: query
 
-  defp select_count(query, %{"count" => true}) do
-    query
-    |> exclude(:preload)
-    |> exclude(:order_by)
-    |> select([c], %{count: count(c.id)})
-  end
-
-  defp select_count(query, _params), do: query
-
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)
 end

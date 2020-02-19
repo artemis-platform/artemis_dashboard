@@ -21,6 +21,7 @@ defmodule Artemis.ListWikiPages do
     |> filter_query(params, user)
     |> search_filter(params)
     |> order_query(params)
+    |> select_count(params)
     |> get_records(params)
   end
 

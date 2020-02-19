@@ -1,0 +1,186 @@
+<div class="world-map-container" id="<%= @id %>"></div>
+
+<script>
+  am4core.ready(function() {
+
+    // Theme
+    am4core.useTheme(am4themes_animated)
+
+    // Create map instance
+    var chart = am4core.create("<%= @id %>", am4maps.MapChart)
+
+    // Set map definition
+    chart.geodata = am4geodata_worldHigh
+
+    // Set projection
+    chart.projection = new am4maps.projections.Miller()
+
+    // Zoom control
+    chart.zoomControl = new am4maps.ZoomControl()
+
+    // Center on the groups by default
+    chart.homeZoomLevel = 2.5
+    chart.homeGeoPoint = { longitude: 10, latitude: 52 }
+
+    // Create map polygon series
+    var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries())
+
+    // Exclude Antartica
+    polygonSeries.exclude = ["AQ"]
+
+    // Make map load polygon (like country names) data from GeoJSON
+    polygonSeries.useGeodata = true
+
+    // Configure series
+    var polygonTemplate = polygonSeries.mapPolygons.template
+    polygonTemplate.tooltipText = "{name}"
+    polygonTemplate.polygon.fillOpacity = 1
+    polygonTemplate.polygon.fill = "#e3e3ea"
+
+    var groupData = [
+      {
+        "name": "Europe",
+        "color": chart.colors.getIndex(0),
+        "data": ["BE", "FR", "IE", "IT", "LU", "MC", "NL", "GB", "ES", "PT", "AD", "FI", "DK", "SE", "NO", "LT", "LV", "EE", "IS", "AT", "CZ", "DE", "HU", "LI", "PL", "SK", "SI", "CH", "MD", "BY", "UA", "AL", "BA", "BG", "HR", "GR", "XK", "MK", "ME", "RO", "RS"]
+      },
+      {
+        "name": "North Asia",
+        "color": chart.colors.getIndex(1),
+        "data": ["CN", "TW", "JP", "KR", "KP", "RU", "MN", "KG", "KZ"]
+      },
+      {
+        "name": "North America",
+        "color": chart.colors.getIndex(2),
+        "data": ["US", "CA", "MX"]
+      }
+    ]
+
+    groupData.forEach(function(group) {
+      var series = chart.series.push(new am4maps.MapPolygonSeries())
+      series.name = group.name
+      series.useGeodata = true
+
+      var includedCountries = []
+
+      group.data.forEach(function(country) {
+        includedCountries.push(country)
+        polygonSeries.exclude.push(country)
+      })
+
+      series.include = includedCountries
+
+      series.fill = am4core.color(group.color);
+
+      // By creating a hover state and setting setStateOnChildren to true, when we
+      // hover over the series itself, it will trigger the hover SpriteState of all
+      // its countries (provided those countries have a hover SpriteState, too!).
+      series.setStateOnChildren = true;
+      series.calculateVisualCenter = true;
+
+      // Country shape properties & behaviors
+      var mapPolygonTemplate = series.mapPolygons.template;
+      // Instead of our custom title, we could also use {name} which comes from geodata
+      mapPolygonTemplate.fill = am4core.color(group.color);
+      mapPolygonTemplate.fillOpacity = 0.8;
+      mapPolygonTemplate.nonScalingStroke = true;
+      mapPolygonTemplate.tooltipPosition = "fixed"
+
+      mapPolygonTemplate.events.on("over", function(event) {
+        series.mapPolygons.each(function(mapPolygon) {
+          mapPolygon.isHover = true;
+        })
+        event.target.isHover = false;
+        event.target.isHover = true;
+      })
+
+      mapPolygonTemplate.events.on("out", function(event) {
+        series.mapPolygons.each(function(mapPolygon) {
+          mapPolygon.isHover = false;
+        })
+      })
+
+      // States
+      // var hoverState = mapPolygonTemplate.states.create("hover");
+      // hoverState.properties.fill = am4core.color("#CC0000");
+
+      // Tooltip
+      // mapPolygonTemplate.tooltipText = "{title} joined EU at {customData}"; // enables tooltip
+      // series.tooltip.getFillFromObject = false; // prevents default colorization, which would make all tooltips red on hover
+      // series.tooltip.background.fill = am4core.color(group.color);
+
+      // MapPolygonSeries will mutate the data assigned to it,
+      // we make and provide a copy of the original data array to leave it untouched.
+      // (This method of copying works only for simple objects, e.g. it will not work
+      //  as predictably for deep copying custom Classes.)
+      series.data = JSON.parse(JSON.stringify(group.data));
+    })
+
+    // Create hover state and set alternative fill color
+    var hs = polygonTemplate.states.create("hover")
+    hs.properties.fill = chart.colors.getIndex(0)
+
+    // Add image series
+    var imageSeries = chart.series.push(new am4maps.MapImageSeries())
+    imageSeries.mapImages.template.propertyFields.longitude = "longitude"
+    imageSeries.mapImages.template.propertyFields.latitude = "latitude"
+    imageSeries.mapImages.template.tooltipText = "{title}"
+    imageSeries.mapImages.template.propertyFields.url = "url"
+
+    var circle = imageSeries.mapImages.template.createChild(am4core.Circle)
+    circle.radius = 2.5
+    circle.propertyFields.fill = "color"
+    circle.stroke = "#ffffff"
+    circle.strokeWidth = 0.75
+    circle.strokeOpacity = 1
+
+    var circle2 = imageSeries.mapImages.template.createChild(am4core.Circle)
+    circle2.radius = 2.5
+    circle2.propertyFields.fill = "color"
+
+    circle2.events.on("inited", function(event){
+      animateBullet(event.target)
+    })
+
+    /**
+    * Returns a random integer between min (inclusive) and max (inclusive).
+    * The value is no lower than min (or the next integer greater than min
+    * if min isn't an integer) and no greater than max (or the next integer
+    * lower than max if max isn't an integer).
+    * Using Math.round() will give you a non-uniform distribution!
+    *
+    * From: https://stackoverflow.com/a/1527820
+    */
+    function getRandomInt(min, max) {
+      var min = Math.ceil(min)
+      var max = Math.floor(max)
+
+      return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    function animateBullet(circle) {
+        var animation = circle.animate([{ property: "scale", from: 1, to: 5 }, { property: "opacity", from: 1, to: 0 }], 1000, am4core.ease.circleOut)
+
+        animation.events.on("animationended", function(event){
+           var interval = getRandomInt(2500, 7500)
+
+           setTimeout(function() { animateBullet(event.target.object) }, interval)
+        })
+    }
+
+    var colorSet = new am4core.ColorSet()
+
+    imageSeries.data = []
+
+    // Register instance
+    window.AmChartHelpers.register_instance("<%= @id %>", {chart: chart, data: imageSeries})
+  })
+</script>
+
+<%=
+  session = %{
+    id: @id,
+    user: @user
+  }
+
+  Phoenix.LiveView.live_render(@conn, ArtemisWeb.SummaryDataCentersMapLive, session: session)
+%>

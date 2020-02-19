@@ -1,0 +1,20 @@
+<%= if @path do %>
+  <a class="summary-count" href="<%= @path %>">
+<% else %>
+  <div class="summary-count">
+<% end %>
+  <div class="count">
+    <%= if @status == :loading do %>
+      -
+    <% else %>
+      <%= Number.Delimit.number_to_delimited(@count, precision: 0) %>
+    <% end %>
+  </div>
+  <div class="label">
+    <%= if @count && @count == 1, do: @label_singular, else: @label_plural %>
+  </div>
+<%= if @path do %>
+  </a>
+<% else %>
+  </div>
+<% end %>

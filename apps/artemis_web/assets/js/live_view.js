@@ -1,5 +1,6 @@
 import {Socket} from "phoenix"
 import LiveSocket from "phoenix_live_view"
+import AmChartHelpers from "./am_charts"
 import ApexChartHelpers from "./apex_charts"
 
 // LiveView Browser Polyfills
@@ -15,6 +16,7 @@ import "formdata-polyfill"
 
 const LiveViewHooks = {}
 
+LiveViewHooks.AmCharts = AmChartHelpers.live_view_hooks
 LiveViewHooks.ApexCharts = ApexChartHelpers.live_view_hooks
 
 // LiveView Initialization
