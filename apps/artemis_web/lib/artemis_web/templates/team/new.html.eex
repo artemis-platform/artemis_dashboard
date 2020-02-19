@@ -1,0 +1,18 @@
+<div id="content-header">
+  <header>
+    <h1>New Team</h1>
+  </header>
+</div>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+
+  <section>
+    <%= render "form.html", Map.put(assigns, :action, Routes.team_path(@conn, :create)) %>
+  </section>
+</div>

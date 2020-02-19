@@ -245,6 +245,17 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", TagController, :show_event_log_details, as: :event_log
       end
 
+      # Teams
+
+      post "/teams/bulk-actions", TeamController, :index_bulk_actions
+      get "/teams/event-logs", TeamController, :index_event_log_list
+      get "/teams/event-logs/:id", TeamController, :index_event_log_details
+
+      resources "/teams", TeamController do
+        get "/event-logs", TeamController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", TeamController, :show_event_log_details, as: :event_log
+      end
+
       # Users
 
       post "/users/bulk-actions", UserController, :index_bulk_actions

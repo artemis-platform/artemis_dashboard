@@ -44,6 +44,10 @@ defmodule ArtemisWeb.SearchView do
       label: "Roles",
       path: &Routes.role_path/3
     ],
+    "teams" => [
+      label: "Teams",
+      path: &Routes.team_path/3
+    ],
     "users" => [
       label: "Users",
       path: &Routes.user_path/3
@@ -155,7 +159,15 @@ defmodule ArtemisWeb.SearchView do
     %{
       title: data.slug,
       permission: "roles:show",
-      link: fn conn -> Routes.user_path(conn, :show, data) end
+      link: fn conn -> Routes.role_path(conn, :show, data) end
+    }
+  end
+
+  defp search_entry(%Artemis.Team{} = data) do
+    %{
+      title: data.slug,
+      permission: "teams:show",
+      link: fn conn -> Routes.team_path(conn, :show, data) end
     }
   end
 

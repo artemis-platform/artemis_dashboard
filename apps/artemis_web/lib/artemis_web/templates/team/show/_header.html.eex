@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      <%= @team.name %>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "teams:delete") do %>
+        <%= delete_confirmation "Delete", Routes.team_path(@conn, :delete, @team) %>
+      <% end %>
+      <%= if has?(@conn, "teams:update") do %>
+        <%= action "Edit", to: Routes.team_path(@conn, :edit, @team), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.team_path(&1, :show, @team),
+        path_match_type: :exact,
+        verify: &has?(&1, "teams:show")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.team_event_log_path(&1, :show_event_log_list, @team),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "teams:show")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

@@ -157,6 +157,13 @@ defmodule Artemis.Factories do
     }
   end
 
+  def team_factory do
+    %Artemis.Team{
+      name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
+      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
+    }
+  end
+
   def user_factory do
     %Artemis.User{
       email: sequence(:email, &"#{Faker.Internet.email()}-#{&1}"),
@@ -171,6 +178,14 @@ defmodule Artemis.Factories do
     %Artemis.UserRole{
       created_by: build(:user),
       role: build(:role),
+      user: build(:user)
+    }
+  end
+
+  def user_team_factory do
+    %Artemis.UserTeam{
+      created_by: build(:user),
+      team: build(:team),
       user: build(:user)
     }
   end

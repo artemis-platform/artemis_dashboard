@@ -66,6 +66,11 @@ defmodule Artemis.Search do
         function: &Artemis.ListRoles.call/2,
         permissions: "roles:list"
       ],
+      "teams" => [
+        enabled: true,
+        function: &Artemis.ListTeams.call/2,
+        permissions: "teams:list"
+      ],
       "users" => [
         enabled: true,
         function: &Artemis.ListUsers.call/2,
