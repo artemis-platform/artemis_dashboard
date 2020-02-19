@@ -22,19 +22,32 @@
     %>
   </section>
 
-  <section>
-    <%= h3 "Roles" %>
-
-    <ul>
-      <%= Enum.map @user.roles, fn (role) -> %>
-        <li><%= link role.name, to: Routes.role_path(@conn, :show, role) %></li>
-      <% end %>
-    </ul>
+  <section class="related-resources">
+    <%= h2 "Teams" %>
+    <%=
+      render_data_table(
+        @conn,
+        @user.teams,
+        allowed_columns: ArtemisWeb.TeamView.data_table_allowed_columns(),
+        default_columns: ["name", "slug", "actions"]
+      )
+    %>
   </section>
 
-  <section>
-    <%= h3 "Permissions" %>
+  <section class="related-resources">
+    <%= h2 "Roles" %>
+    <%=
+      render_data_table(
+        @conn,
+        @user.roles,
+        allowed_columns: ArtemisWeb.RoleView.data_table_allowed_columns(),
+        default_columns: ["name", "slug", "actions"]
+      )
+    %>
+  </section>
 
+  <section class="related-resources">
+    <%= h2 "Permissions" %>
     <%=
       render_data_table(
         @conn,

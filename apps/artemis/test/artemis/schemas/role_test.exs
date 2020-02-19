@@ -103,20 +103,6 @@ defmodule Artemis.RoleTest do
       {:ok, role: Repo.preload(role, @preload)}
     end
 
-    test "update associations", %{role: role} do
-      new_user = insert(:user)
-
-      assert length(role.user_roles) == 3
-
-      {:ok, updated} =
-        role
-        |> Role.associations_changeset(%{user_roles: [%{role_id: role.id, user_id: new_user.id}]})
-        |> Repo.update()
-
-      assert length(updated.user_roles) == 1
-      assert hd(updated.user_roles).user_id == new_user.id
-    end
-
     test "deleting association does not remove record", %{role: role} do
       assert Repo.get(Role, role.id) != nil
       assert length(role.user_roles) == 3

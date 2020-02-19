@@ -24,6 +24,7 @@ defmodule ArtemisWeb.UserController do
   alias Artemis.DeleteUser
   alias Artemis.GetUser
   alias Artemis.ListRoles
+  alias Artemis.ListTeams
   alias Artemis.ListUsers
   alias Artemis.UpdateUser
 
@@ -34,7 +35,7 @@ defmodule ArtemisWeb.UserController do
       params =
         params
         |> Map.put(:paginate, true)
-        |> Map.put(:preload, [:roles])
+        |> Map.put(:preload, [:roles, :teams])
 
       user = current_user(conn)
       users = ListUsers.call(params, user)
@@ -54,8 +55,16 @@ defmodule ArtemisWeb.UserController do
       user = %User{user_roles: []}
       changeset = User.changeset(user)
       roles = ListRoles.call(current_user(conn))
+      teams = ListTeams.call(current_user(conn))
 
-      render(conn, "new.html", changeset: changeset, roles: roles, user: user)
+      assigns = [
+        changeset: changeset,
+        roles: roles,
+        teams: teams,
+        user: user
+      ]
+
+      render(conn, "new.html", assigns)
     end)
   end
 
@@ -72,15 +81,23 @@ defmodule ArtemisWeb.UserController do
         {:error, %Ecto.Changeset{} = changeset} ->
           user = %User{user_roles: []}
           roles = ListRoles.call(current_user(conn))
+          teams = ListTeams.call(current_user(conn))
 
-          render(conn, "new.html", changeset: changeset, roles: roles, user: user)
+          assigns = [
+            changeset: changeset,
+            roles: roles,
+            teams: teams,
+            user: user
+          ]
+
+          render(conn, "new.html", assigns)
       end
     end)
   end
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "users:show", fn ->
-      user = GetUser.call!(id, current_user(conn), preload: [:permissions, :roles])
+      user = GetUser.call!(id, current_user(conn), preload: [:permissions, :roles, :teams])
 
       render(conn, "show.html", user: user)
     end)
@@ -91,8 +108,16 @@ defmodule ArtemisWeb.UserController do
       user = GetUser.call(id, current_user(conn), preload: @preload)
       changeset = User.changeset(user)
       roles = ListRoles.call(current_user(conn))
+      teams = ListTeams.call(current_user(conn))
 
-      render(conn, "edit.html", changeset: changeset, roles: roles, user: user)
+      assigns = [
+        changeset: changeset,
+        roles: roles,
+        teams: teams,
+        user: user
+      ]
+
+      render(conn, "edit.html", assigns)
     end)
   end
 
@@ -109,8 +134,16 @@ defmodule ArtemisWeb.UserController do
         {:error, %Ecto.Changeset{} = changeset} ->
           user = GetUser.call(id, current_user(conn), preload: @preload)
           roles = ListRoles.call(current_user(conn))
+          teams = ListTeams.call(current_user(conn))
 
-          render(conn, "edit.html", changeset: changeset, roles: roles, user: user)
+          assigns = [
+            changeset: changeset,
+            roles: roles,
+            teams: teams,
+            user: user
+          ]
+
+          render(conn, "edit.html", assigns)
       end
     end)
   end

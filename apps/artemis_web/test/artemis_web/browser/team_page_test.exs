@@ -31,7 +31,7 @@ defmodule ArtemisWeb.TeamPageTest do
     end
 
     test "list of records" do
-      assert page_title() == "Atlas"
+      assert page_title() == "Artemis"
       assert visible?("Teams")
     end
 
@@ -78,10 +78,9 @@ defmodule ArtemisWeb.TeamPageTest do
 
   describe "show" do
     setup do
-      team =
-        :team
-        |> insert()
-        |> with_permissions()
+      team = insert(:team)
+
+      insert_list(3, :user_team, team: team)
 
       browser_sign_in()
       navigate_to(@url)
