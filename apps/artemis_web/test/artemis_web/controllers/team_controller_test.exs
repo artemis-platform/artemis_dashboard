@@ -3,9 +3,9 @@ defmodule ArtemisWeb.TeamControllerTest do
 
   import Artemis.Factories
 
-  @create_attrs %{name: "some name", slug: "test-slug"}
-  @update_attrs %{name: "some updated name", slug: "test-slug"}
-  @invalid_attrs %{name: nil, slug: nil}
+  @create_attrs %{name: "some name", description: "test description"}
+  @update_attrs %{name: "some updated name", description: "test description"}
+  @invalid_attrs %{name: nil, description: nil}
 
   setup %{conn: conn} do
     {:ok, conn: sign_in(conn)}

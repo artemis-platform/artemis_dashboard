@@ -165,7 +165,7 @@ defmodule ArtemisWeb.SearchView do
 
   defp search_entry(%Artemis.Team{} = data) do
     %{
-      title: data.slug,
+      title: data.name,
       permission: "teams:show",
       link: fn conn -> Routes.team_path(conn, :show, data) end
     }

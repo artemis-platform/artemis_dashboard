@@ -24,7 +24,7 @@ defmodule Artemis.GetTeamTest do
     end
 
     test "finds record by keyword list", %{team: team} do
-      assert GetTeam.call([name: team.name, slug: team.slug], Mock.system_user()).id == team.id
+      assert GetTeam.call([name: team.name], Mock.system_user()).id == team.id
     end
   end
 
@@ -36,8 +36,7 @@ defmodule Artemis.GetTeamTest do
       assert team.users.__struct__ == Ecto.Association.NotLoaded
 
       values = [
-        name: team.name,
-        slug: team.slug
+        name: team.name
       ]
 
       options = [

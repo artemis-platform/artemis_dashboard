@@ -65,14 +65,12 @@ defmodule ArtemisWeb.TeamPageTest do
       click_link("New")
 
       fill_inputs("#team-form", %{
-        "team[name]": "Test Name",
-        "team[slug]": "test-slug"
+        "team[name]": "Test Name"
       })
 
       submit_form("#team-form")
 
       assert visible?("Test Name")
-      assert visible?("test-slug")
     end
   end
 
@@ -92,7 +90,6 @@ defmodule ArtemisWeb.TeamPageTest do
       click_link(team.name)
 
       assert visible?(team.name)
-      assert visible?(team.slug)
 
       assert visible?("Permissions")
     end
@@ -113,14 +110,12 @@ defmodule ArtemisWeb.TeamPageTest do
       click_link("Edit")
 
       fill_inputs("#team-form", %{
-        "team[name]": "Updated Name",
-        "team[slug]": "updated-slug"
+        "team[name]": "Updated Name"
       })
 
       submit_form("#team-form")
 
       assert visible?("Updated Name")
-      assert visible?("updated-slug")
     end
   end
 

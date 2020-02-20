@@ -8,7 +8,7 @@ defmodule Artemis.ListTeams do
   alias Artemis.Repo
   alias Artemis.Team
 
-  @default_order "slug"
+  @default_order "name"
   @default_page_size 25
   @default_preload []
 
@@ -49,7 +49,6 @@ defmodule Artemis.ListTeams do
   defp filter_query(query, _params, _user), do: query
 
   defp filter(query, "name", value), do: where(query, [r], r.name in ^split(value))
-  defp filter(query, "slug", value), do: where(query, [r], r.slug in ^split(value))
 
   defp get_records(query, %{"paginate" => true} = params), do: Repo.paginate(query, pagination_params(params))
   defp get_records(query, _params), do: Repo.all(query)

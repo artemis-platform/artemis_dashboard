@@ -159,8 +159,8 @@ defmodule Artemis.Factories do
 
   def team_factory do
     %Artemis.Team{
-      name: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
-      slug: sequence(:slug, &"#{Faker.Internet.slug()}-#{&1}")
+      description: Faker.Lorem.paragraph(),
+      name: sequence(:name, &"#{Faker.Name.name()}-#{&1}")
     }
   end
 

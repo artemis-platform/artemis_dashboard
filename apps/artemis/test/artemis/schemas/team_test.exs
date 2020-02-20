@@ -11,24 +11,6 @@ defmodule Artemis.TeamTest do
 
   @preload [:user_teams, :users]
 
-  describe "attributes - constraints" do
-    test "name must be unique" do
-      existing = insert(:team)
-
-      assert_raise Ecto.ConstraintError, fn ->
-        insert(:team, name: existing.name)
-      end
-    end
-
-    test "slug must be unique" do
-      existing = insert(:team)
-
-      assert_raise Ecto.ConstraintError, fn ->
-        insert(:team, slug: existing.slug)
-      end
-    end
-  end
-
   describe "associations - user teams" do
     setup do
       team = insert(:team)

@@ -29,7 +29,7 @@
         @conn,
         @user.teams,
         allowed_columns: ArtemisWeb.TeamView.data_table_allowed_columns(),
-        default_columns: ["name", "slug", "actions"]
+        default_columns: ["name", "actions"]
       )
     %>
   </section>

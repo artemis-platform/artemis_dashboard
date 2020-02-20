@@ -103,9 +103,9 @@ defmodule Artemis.ListTeamsTest do
     end
 
     test "query - search" do
-      insert(:team, name: "Four Six", slug: "four-six")
-      insert(:team, name: "Four Two", slug: "four-two")
-      insert(:team, name: "Five Six", slug: "five-six")
+      insert(:team, name: "Four Six", description: "four-six")
+      insert(:team, name: "Four Two", description: "four-two")
+      insert(:team, name: "Five Six", description: "five-six")
 
       user = Mock.system_user()
       teams = ListTeams.call(user)

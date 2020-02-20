@@ -33,7 +33,7 @@ defmodule Artemis.Repo.Migrations.CreateTeamsSearch do
           to_tsvector(
             'pg_catalog.english',
             coalesce(new.name, ' ') || ' ' ||
-            coalesce(new.slug, ' ')
+            coalesce(new.description, ' ')
           );
         return new;
       end

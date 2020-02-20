@@ -35,7 +35,6 @@ defmodule ArtemisWeb.TeamView do
       {"Actions", "actions"},
       {"Description", "description"},
       {"Name", "name"},
-      {"Slug", "slug"},
       {"User Count", "user_count"}
     ]
   end
@@ -65,16 +64,6 @@ defmodule ArtemisWeb.TeamView do
             true -> link(row.name, to: Routes.team_path(conn, :show, row))
             false -> row.name
           end
-        end
-      ],
-      "slug" => [
-        label: fn _conn -> "Slug" end,
-        label_html: fn conn ->
-          sortable_table_header(conn, "slug", "Slug")
-        end,
-        value: fn _conn, row -> row.slug end,
-        value_html: fn _conn, row ->
-          content_tag(:code, row.slug)
         end
       ],
       "user_count" => [

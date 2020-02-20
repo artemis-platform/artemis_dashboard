@@ -6,7 +6,6 @@ defmodule Artemis.Team do
   schema "teams" do
     field :description, :string
     field :name, :string
-    field :slug, :string
 
     field :user_count, :integer, virtual: true
 
@@ -21,14 +20,12 @@ defmodule Artemis.Team do
   def updatable_fields,
     do: [
       :description,
-      :name,
-      :slug
+      :name
     ]
 
   def required_fields,
     do: [
-      :name,
-      :slug
+      :name
     ]
 
   def updatable_associations,
@@ -38,8 +35,7 @@ defmodule Artemis.Team do
 
   def event_log_fields,
     do: [
-      :id,
-      :slug
+      :id
     ]
 
   # Changesets
@@ -48,7 +44,5 @@ defmodule Artemis.Team do
     struct
     |> cast(params, updatable_fields())
     |> validate_required(required_fields())
-    |> unique_constraint(:name)
-    |> unique_constraint(:slug)
   end
 end
