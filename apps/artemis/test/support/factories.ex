@@ -184,6 +184,7 @@ defmodule Artemis.Factories do
 
   def user_team_factory do
     %Artemis.UserTeam{
+      type: Enum.random(Artemis.UserTeam.allowed_types()),
       created_by: build(:user),
       team: build(:team),
       user: build(:user)

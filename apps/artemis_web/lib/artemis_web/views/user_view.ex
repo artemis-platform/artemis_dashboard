@@ -104,11 +104,16 @@ defmodule ArtemisWeb.UserView do
   end
 
   defp render_extra_fields_add_team(data) do
-    render_extra_field_select_team(data, "add_team_id")
+    [
+      render_extra_field_select_team(data, "add_team_id"),
+      render_extra_field_select_user_team_type(data)
+    ]
   end
 
   defp render_extra_fields_remove_team(data) do
-    render_extra_field_select_team(data, "remove_team_id")
+    [
+      render_extra_field_select_team(data, "remove_team_id"),
+    ]
   end
 
   defp render_extra_field_select_team(data, name) do
@@ -120,6 +125,24 @@ defmodule ArtemisWeb.UserView do
         Enum.map(teams, fn [key: key, value: value] ->
           content_tag(:option, value: value) do
             key
+          end
+        end)
+      end
+
+    content_tag(:div, class: "field") do
+      [label_tag, select_tag]
+    end
+  end
+
+  defp render_extra_field_select_user_team_type(data) do
+    types = Keyword.get(data, :user_team_types)
+    label_tag = content_tag(:label, "User Team Type")
+
+    select_tag =
+      content_tag(:select, class: "enhanced", name: "type", placeholder: "User Team Type") do
+        Enum.map(types, fn value ->
+          content_tag(:option, value: value) do
+            value
           end
         end)
       end

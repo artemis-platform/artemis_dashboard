@@ -12,6 +12,22 @@ defmodule Artemis.UserTeamTest do
 
   @preload [:created_by, :team, :user]
 
+  describe "attributes - constraints" do
+    test "required associations" do
+      team = insert(:team)
+      user = insert(:user)
+
+      params = params_for(:user_team, team: team, user: user, type: "test-invalid-type")
+
+      {:error, changeset} =
+        %UserTeam{}
+        |> UserTeam.changeset(params)
+        |> Repo.insert()
+
+      assert errors_on(changeset) == %{type: ["is invalid"]}
+    end
+  end
+
   describe "associations - created by" do
     setup do
       user_team = insert(:user_team)

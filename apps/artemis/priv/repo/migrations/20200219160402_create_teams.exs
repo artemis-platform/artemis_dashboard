@@ -5,6 +5,7 @@ defmodule Artemis.Repo.Migrations.CreateTeams do
     create table(:teams) do
       add :description, :text
       add :name, :string
+
       timestamps(type: :utc_datetime)
     end
 
