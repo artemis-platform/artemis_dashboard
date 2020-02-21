@@ -73,7 +73,7 @@ defmodule ArtemisWeb.TeamController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "teams:show", fn ->
-      team = GetTeam.call!(id, current_user(conn), preload: [:users])
+      team = GetTeam.call!(id, current_user(conn), preload: [:event_templates, :users])
 
       render(conn, "show.html", team: team)
     end)

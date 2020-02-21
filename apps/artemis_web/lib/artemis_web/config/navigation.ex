@@ -74,6 +74,18 @@ defmodule ArtemisWeb.Config.Navigation do
           verify: &has?(&1, "event-logs:list")
         ]
       ],
+      "Event Questions": [
+        [
+          label: "List Event Questions",
+          path: &Routes.event_question_path(&1, :index),
+          verify: &has?(&1, "event-questions:list")
+        ],
+        [
+          label: "Create New Event Question",
+          path: &Routes.event_question_path(&1, :new),
+          verify: &has?(&1, "event-questions:create")
+        ]
+      ],
       "Event Templates": [
         [
           label: "List Event Templates",

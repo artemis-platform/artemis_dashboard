@@ -58,6 +58,15 @@ defmodule Artemis.Factories do
     }
   end
 
+  def event_question_factory do
+    %Artemis.EventQuestion{
+      active: true,
+      title: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
+      type: Enum.random(Artemis.EventQuestion.allowed_types()),
+      event_template: build(:event_template)
+    }
+  end
+
   def event_template_factory do
     %Artemis.EventTemplate{
       active: true,

@@ -18,4 +18,17 @@
       ])
     %>
   </section>
+
+  <section>
+    <%= h3 "Event Questions" %>
+
+    <%=
+      render_data_table(
+        @conn,
+        @event_template.event_questions,
+        allowed_columns: ArtemisWeb.EventQuestionView.data_table_allowed_columns(),
+        default_columns: ["title", "actions"]
+      )
+    %>
+  </section>
 </div>

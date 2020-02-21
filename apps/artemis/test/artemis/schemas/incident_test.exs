@@ -12,6 +12,17 @@ defmodule Artemis.IncidentTest do
   @preload [:tags]
 
   describe "attributes - constraints" do
+    test "status must in allowed statuses" do
+      params = params_for(:incident, status: "test-invalid-status")
+
+      {:error, changeset} =
+        %Incident{}
+        |> Incident.changeset(params)
+        |> Repo.insert()
+
+      assert errors_on(changeset) == %{status: ["is invalid"]}
+    end
+
     test "compound source uid value must be unique" do
       # Raise Exception when both columns match
 

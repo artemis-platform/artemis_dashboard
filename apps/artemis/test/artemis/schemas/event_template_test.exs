@@ -10,6 +10,19 @@ defmodule Artemis.EventTemplateTest do
 
   @preload [:team]
 
+  describe "attributes - constraints" do
+    test "required associations" do
+      params = params_for(:event_template)
+
+      {:error, changeset} =
+        %EventTemplate{}
+        |> EventTemplate.changeset(params)
+        |> Repo.insert()
+
+      assert errors_on(changeset) == %{team_id: ["can't be blank"]}
+    end
+  end
+
   describe "associations - team" do
     setup do
       event_template = insert(:event_template)

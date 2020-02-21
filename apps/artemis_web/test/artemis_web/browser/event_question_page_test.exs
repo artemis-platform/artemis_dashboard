@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.EventTemplatePageTest do
+defmodule ArtemisWeb.EventQuestionPageTest do
   use ArtemisWeb.ConnCase
   use ExUnit.Case
   use Hound.Helpers
@@ -8,7 +8,7 @@ defmodule ArtemisWeb.EventTemplatePageTest do
   import ArtemisWeb.Router.Helpers
 
   @moduletag :browser
-  @url event_template_url(ArtemisWeb.Endpoint, :index)
+  @url event_question_url(ArtemisWeb.Endpoint, :index)
 
   hound_session()
 
@@ -22,12 +22,12 @@ defmodule ArtemisWeb.EventTemplatePageTest do
 
   describe "index" do
     setup do
-      event_template = insert(:event_template)
+      event_question = insert(:event_question)
 
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, event_template: event_template}
+      {:ok, event_question: event_question}
     end
 
     test "list of records" do
@@ -35,14 +35,14 @@ defmodule ArtemisWeb.EventTemplatePageTest do
       assert visible?("Event Templates")
     end
 
-    test "search", %{event_template: event_template} do
+    test "search", %{event_question: event_question} do
       fill_inputs(".search-resource", %{
-        query: event_template.title
+        query: event_question.title
       })
 
       submit_search(".search-resource")
 
-      assert visible?(event_template.title)
+      assert visible?(event_question.title)
     end
   end
 
@@ -56,7 +56,7 @@ defmodule ArtemisWeb.EventTemplatePageTest do
 
     test "submitting an empty form shows an error" do
       click_link("New")
-      submit_form("#event-template-form")
+      submit_form("#event-question-form")
 
       assert visible?("can't be blank")
     end
@@ -64,11 +64,11 @@ defmodule ArtemisWeb.EventTemplatePageTest do
     test "successfully creates a new record" do
       click_link("New")
 
-      fill_inputs("#event-template-form", %{
-        "event_template[title]": "Test Title"
+      fill_inputs("#event-question-form", %{
+        "event_question[title]": "Test Title"
       })
 
-      submit_form("#event-template-form")
+      submit_form("#event-question-form")
 
       assert visible?("Test Title")
     end
@@ -76,44 +76,44 @@ defmodule ArtemisWeb.EventTemplatePageTest do
 
   describe "show" do
     setup do
-      event_template = insert(:event_template)
+      event_question = insert(:event_question)
 
-      Artemis.ListEventTemplates.reset_cache()
+      Artemis.ListEventQuestions.reset_cache()
 
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, event_template: event_template}
+      {:ok, event_question: event_question}
     end
 
-    test "record details", %{event_template: event_template} do
-      click_link(event_template.title)
+    test "record details", %{event_question: event_question} do
+      click_link(event_question.title)
 
-      assert visible?(event_template.title)
+      assert visible?(event_question.title)
     end
   end
 
   describe "edit / update" do
     setup do
-      event_template = insert(:event_template)
+      event_question = insert(:event_question)
 
-      Artemis.ListEventTemplates.reset_cache()
+      Artemis.ListEventQuestions.reset_cache()
 
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, event_template: event_template}
+      {:ok, event_question: event_question}
     end
 
-    test "successfully updates record", %{event_template: event_template} do
-      click_link(event_template.title)
+    test "successfully updates record", %{event_question: event_question} do
+      click_link(event_question.title)
       click_link("Edit")
 
-      fill_inputs("#event-template-form", %{
-        "event_template[title]": "Updated Title"
+      fill_inputs("#event-question-form", %{
+        "event_question[title]": "Updated Title"
       })
 
-      submit_form("#event-template-form")
+      submit_form("#event-question-form")
 
       assert visible?("Updated Title")
     end
@@ -121,22 +121,22 @@ defmodule ArtemisWeb.EventTemplatePageTest do
 
   describe "delete" do
     setup do
-      event_template = insert(:event_template)
+      event_question = insert(:event_question)
 
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, event_template: event_template}
+      {:ok, event_question: event_question}
     end
 
     @tag :uses_browser_alert_box
-    # test "deletes record and redirects to index", %{event_template: event_template} do
-    #   click_link(event_template.title)
+    # test "deletes record and redirects to index", %{event_question: event_question} do
+    #   click_link(event_question.title)
     #   click_button("Delete")
     #   accept_dialog()
 
     #   assert current_url() == @url
-    #   assert not visible?(event_template.title)
+    #   assert not visible?(event_question.title)
     # end
   end
 end

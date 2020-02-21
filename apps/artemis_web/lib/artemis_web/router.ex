@@ -126,6 +126,17 @@ defmodule ArtemisWeb.Router do
 
       resources "/event-logs", EventLogController, only: [:index, :show]
 
+      # Event Questions
+
+      post "/event-questions/bulk-actions", EventQuestionController, :index_bulk_actions
+      get "/event-questions/event-logs", EventQuestionController, :index_event_log_list
+      get "/event-questions/event-logs/:id", EventQuestionController, :index_event_log_details
+
+      resources "/event-questions", EventQuestionController do
+        get "/event-logs", EventQuestionController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", EventQuestionController, :show_event_log_details, as: :event_log
+      end
+
       # Event Templates
 
       post "/event-templates/bulk-actions", EventTemplateController, :index_bulk_actions

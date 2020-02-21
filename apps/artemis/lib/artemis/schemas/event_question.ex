@@ -1,15 +1,16 @@
-defmodule Artemis.EventTemplate do
+defmodule Artemis.EventQuestion do
   use Artemis.Schema
   use Artemis.Schema.SQL
   use Assoc.Schema, repo: Artemis.Repo
 
-  schema "event_templates" do
+  schema "event_questions" do
     field :active, :boolean, default: true
     field :title, :string
+    field :type, :string
 
-    belongs_to :team, Artemis.Team, on_replace: :delete
+    belongs_to :event_template, Artemis.EventTemplate, on_replace: :delete
 
-    has_many :event_questions, Artemis.EventQuestion, on_delete: :delete_all, on_replace: :delete
+    has_one :team, through: [:event_template, :team]
 
     timestamps()
   end
@@ -19,25 +20,33 @@ defmodule Artemis.EventTemplate do
   def updatable_fields,
     do: [
       :active,
-      :team_id,
-      :title
+      :event_template_id,
+      :title,
+      :type
     ]
 
   def required_fields,
     do: [
-      :team_id,
-      :title
+      :event_template_id,
+      :title,
+      :type
     ]
 
   def updatable_associations,
     do: [
-      team: Artemis.Team
+      event_template: Artemis.EventTemplate
     ]
 
   def event_log_fields,
     do: [
       :id,
-      :title
+      :title,
+      :type
+    ]
+
+  def allowed_types,
+    do: [
+      "text"
     ]
 
   # Changesets
@@ -46,6 +55,7 @@ defmodule Artemis.EventTemplate do
     struct
     |> cast(params, updatable_fields())
     |> validate_required(required_fields())
-    |> foreign_key_constraint(:team_id)
+    |> validate_inclusion(:type, allowed_types())
+    |> foreign_key_constraint(:event_template_id)
   end
 end

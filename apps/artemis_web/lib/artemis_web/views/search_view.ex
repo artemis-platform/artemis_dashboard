@@ -115,6 +115,22 @@ defmodule ArtemisWeb.SearchView do
     }
   end
 
+  defp search_entry(%Artemis.EventQuestion{} = data) do
+    %{
+      title: data.name,
+      permission: "event-questions:show",
+      link: fn conn -> Routes.event_question_path(conn, :show, data) end
+    }
+  end
+
+  defp search_entry(%Artemis.EventTemplate{} = data) do
+    %{
+      title: data.name,
+      permission: "event-templates:show",
+      link: fn conn -> Routes.event_template_path(conn, :show, data) end
+    }
+  end
+
   defp search_entry(%Artemis.Feature{} = data) do
     %{
       title: data.slug,

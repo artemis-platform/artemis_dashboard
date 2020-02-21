@@ -1,0 +1,2 @@
+<%= render_flash_notifications @conn %>
+<%= render_event_log_notifications @conn, "EventQuestion", @event_question.id %>

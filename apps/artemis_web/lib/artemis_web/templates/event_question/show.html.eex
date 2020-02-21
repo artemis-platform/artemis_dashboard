@@ -1,0 +1,21 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render "show/_notifications.html", assigns %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["Title", @event_question.title],
+        ["Active", @event_question.active],
+        ["Event Template", ArtemisWeb.EventTemplateView.render_show_link(@conn, @event_question.event_template)]
+      ])
+    %>
+  </section>
+</div>

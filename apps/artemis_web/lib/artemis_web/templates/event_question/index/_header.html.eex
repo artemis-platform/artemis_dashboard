@@ -1,0 +1,34 @@
+<div id="content-header">
+  <header>
+    <h1>Event Templates</h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "event-questions:create") do %>
+        <%= action "New", to: Routes.event_question_path(@conn, :new), color: "blue" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.event_question_path(&1, :index),
+        path_match_type: :exact,
+        verify: &has?(&1, "event-questions:list")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.event_question_path(&1, :index_event_log_list),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "event-questions:list")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

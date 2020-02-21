@@ -1,0 +1,40 @@
+<div id="content-header">
+  <header>
+    <h1>
+      Event Template
+      <span class="subheading"><%= @event_question.title %></span>
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "event-questions:delete") do %>
+        <%= delete_confirmation "Delete", Routes.event_question_path(@conn, :delete, @event_question) %>
+      <% end %>
+      <%= if has?(@conn, "event-questions:update") do %>
+        <%= action "Edit", to: Routes.event_question_path(@conn, :edit, @event_question), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.event_question_path(&1, :show, @event_question),
+        path_match_type: :exact,
+        verify: &has?(&1, "event-questions:show")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.event_question_event_log_path(&1, :show_event_log_list, @event_question),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "event-questions:show")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

@@ -26,7 +26,7 @@ defmodule ArtemisWeb.EventTemplateController do
   alias Artemis.ListEventTemplates
   alias Artemis.UpdateEventTemplate
 
-  @preload [:team]
+  @preload [:event_questions, :team]
 
   def index(conn, params) do
     authorize(conn, "event-templates:list", fn ->

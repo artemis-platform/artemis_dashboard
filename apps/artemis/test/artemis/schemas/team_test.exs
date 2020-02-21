@@ -13,11 +13,10 @@ defmodule Artemis.TeamTest do
   @preload [:event_templates, :user_teams, :users]
 
   describe "associations - event templates" do
-
     setup do
-			team = insert(:team)
+      team = insert(:team)
 
-			insert_list(3, :event_template, team: team)
+      insert_list(3, :event_template, team: team)
 
       {:ok, team: Repo.preload(team, @preload)}
     end
