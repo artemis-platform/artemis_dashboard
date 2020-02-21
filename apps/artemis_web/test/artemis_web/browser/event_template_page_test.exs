@@ -48,10 +48,12 @@ defmodule ArtemisWeb.EventTemplatePageTest do
 
   describe "new / create" do
     setup do
+      team = insert(:team)
+
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, []}
+      {:ok, team: team}
     end
 
     test "submitting an empty form shows an error" do
@@ -61,12 +63,14 @@ defmodule ArtemisWeb.EventTemplatePageTest do
       assert visible?("can't be blank")
     end
 
-    test "successfully creates a new record" do
+    test "successfully creates a new record", %{team: team} do
       click_link("New")
 
       fill_inputs("#event-template-form", %{
         "event_template[title]": "Test Title"
       })
+
+      fill_select("#event-template-form select[name=event_template[team_id]]", team.id)
 
       submit_form("#event-template-form")
 

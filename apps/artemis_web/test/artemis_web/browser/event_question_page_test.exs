@@ -48,10 +48,12 @@ defmodule ArtemisWeb.EventQuestionPageTest do
 
   describe "new / create" do
     setup do
+      event_template = insert(:event_template)
+
       browser_sign_in()
       navigate_to(@url)
 
-      {:ok, []}
+      {:ok, event_template: event_template}
     end
 
     test "submitting an empty form shows an error" do
@@ -61,12 +63,14 @@ defmodule ArtemisWeb.EventQuestionPageTest do
       assert visible?("can't be blank")
     end
 
-    test "successfully creates a new record" do
+    test "successfully creates a new record", %{event_template: event_template} do
       click_link("New")
 
       fill_inputs("#event-question-form", %{
         "event_question[title]": "Test Title"
       })
+
+      fill_select("#event-question-form select[name=event_question[event_template_id]]", event_template.id)
 
       submit_form("#event-question-form")
 

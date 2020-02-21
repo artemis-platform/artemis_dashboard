@@ -5,6 +5,7 @@ defmodule Artemis.EventQuestion do
 
   schema "event_questions" do
     field :active, :boolean, default: true
+    field :order, :integer
     field :title, :string
     field :type, :string
 
@@ -21,6 +22,7 @@ defmodule Artemis.EventQuestion do
     do: [
       :active,
       :event_template_id,
+      :order,
       :title,
       :type
     ]

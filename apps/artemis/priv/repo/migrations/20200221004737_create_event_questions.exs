@@ -4,6 +4,7 @@ defmodule Artemis.Repo.Migrations.CreateEventQuestions do
   def change do
     create table(:event_questions) do
       add :active, :boolean
+      add :order, :integer
       add :title, :string
       add :type, :string
 

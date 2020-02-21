@@ -26,9 +26,9 @@ defmodule ArtemisWeb.EventQuestionControllerTest do
 
   describe "create event_question" do
     test "redirects to show when data is valid", %{conn: conn} do
-      team = insert(:team)
+      event_template = insert(:event_template)
 
-      params = params_for(:event_question, team: team)
+      params = params_for(:event_question, event_template: event_template)
 
       conn = post(conn, Routes.event_question_path(conn, :create), event_question: params)
 

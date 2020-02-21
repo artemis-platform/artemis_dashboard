@@ -112,7 +112,7 @@ defmodule ArtemisWeb.UserView do
 
   defp render_extra_fields_remove_team(data) do
     [
-      render_extra_field_select_team(data, "remove_team_id"),
+      render_extra_field_select_team(data, "remove_team_id")
     ]
   end
 

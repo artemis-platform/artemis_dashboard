@@ -15,7 +15,7 @@ defmodule Artemis.ListEventQuestions do
   alias Artemis.EventQuestion
   alias Artemis.Repo
 
-  @default_order "title"
+  @default_order "order,inserted_at"
   @default_page_size 25
   @default_preload []
 

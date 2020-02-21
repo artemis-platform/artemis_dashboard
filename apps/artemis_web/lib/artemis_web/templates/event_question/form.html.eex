@@ -19,6 +19,11 @@
   </div>
 
   <div class="field">
+    <%= label_with_errors f, :order %>
+    <%= text_input f, :order, placeholder: "Order" %>
+  </div>
+
+  <div class="field">
     <%= label f, :active %>
     <%= checkbox f, :active %>
   </div>
