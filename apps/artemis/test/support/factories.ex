@@ -58,6 +58,14 @@ defmodule Artemis.Factories do
     }
   end
 
+  def event_template_factory do
+    %Artemis.EventTemplate{
+      active: true,
+      title: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
+      team: build(:team)
+    }
+  end
+
   def feature_factory do
     %Artemis.Feature{
       active: false,

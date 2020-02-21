@@ -135,4 +135,12 @@ defmodule ArtemisWeb.TeamView do
       id == match
     end)
   end
+
+  # Helpers
+
+  def render_show_link(_conn, nil), do: nil
+
+  def render_show_link(conn, record) do
+    link(record.name, to: Routes.team_path(conn, :show, record))
+  end
 end
