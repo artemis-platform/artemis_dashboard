@@ -10,6 +10,7 @@ defmodule Artemis.UserTest do
   alias Artemis.Repo
   alias Artemis.User
   alias Artemis.UserRole
+  alias Artemis.UserTeam
   alias Artemis.WikiPage
   alias Artemis.WikiRevision
 
@@ -18,6 +19,7 @@ defmodule Artemis.UserTest do
     :comments,
     :roles,
     :user_roles,
+    :user_teams,
     :wiki_pages,
     :wiki_revisions
   ]
@@ -270,6 +272,44 @@ defmodule Artemis.UserTest do
 
       Enum.map(user.user_roles, fn user_role ->
         assert Repo.get(UserRole, user_role.id) == nil
+      end)
+    end
+  end
+
+  describe "associations - user teams" do
+    setup do
+      user = insert(:user)
+
+      insert_list(3, :user_team, user: user)
+
+      {:ok, user: Repo.preload(user, @preload)}
+    end
+
+    test "deleting association does not remove record", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.user_teams) == 3
+
+      Enum.map(user.user_teams, &Repo.delete(&1))
+
+      user =
+        User
+        |> preload(^@preload)
+        |> Repo.get(user.id)
+
+      assert Repo.get(User, user.id) != nil
+      assert length(user.user_teams) == 0
+    end
+
+    test "deleting record removes associations", %{user: user} do
+      assert Repo.get(User, user.id) != nil
+      assert length(user.user_teams) == 3
+
+      Repo.delete(user)
+
+      assert Repo.get(User, user.id) == nil
+
+      Enum.map(user.user_teams, fn user_team ->
+        assert Repo.get(UserTeam, user_team.id) == nil
       end)
     end
   end

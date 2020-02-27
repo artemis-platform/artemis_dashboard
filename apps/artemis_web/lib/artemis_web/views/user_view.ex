@@ -35,6 +35,30 @@ defmodule ArtemisWeb.UserView do
         label: "Remove Role"
       },
       %BulkAction{
+        action: fn ids, [request_params, user] ->
+          team_id = Map.get(request_params, "add_team_id")
+          params = [team_id, request_params, user]
+
+          Artemis.GetOrCreateUserTeam.call_many(ids, params)
+        end,
+        authorize: &has_all?(&1, ["users:access:all", "users:update"]),
+        extra_fields: &render_extra_fields_add_team(&1),
+        key: "add-team",
+        label: "Add Team"
+      },
+      %BulkAction{
+        action: fn ids, [request_params, user] ->
+          team_id = Map.get(request_params, "remove_team_id")
+          params = [team_id, request_params, user]
+
+          Artemis.GetAndDeleteUserTeam.call_many(ids, params)
+        end,
+        authorize: &has_all?(&1, ["users:access:all", "users:update"]),
+        extra_fields: &render_extra_fields_remove_team(&1),
+        key: "remove-team",
+        label: "Remove Team"
+      },
+      %BulkAction{
         action: &Artemis.DeleteUser.call_many(&1, &2),
         authorize: &has?(&1, "users:delete"),
         extra_fields: &render_extra_fields_delete_warning(&1),
@@ -79,6 +103,32 @@ defmodule ArtemisWeb.UserView do
     end
   end
 
+  defp render_extra_fields_add_team(data) do
+    render_extra_field_select_team(data, "add_team_id")
+  end
+
+  defp render_extra_fields_remove_team(data) do
+    render_extra_field_select_team(data, "remove_team_id")
+  end
+
+  defp render_extra_field_select_team(data, name) do
+    teams = Keyword.get(data, :teams)
+    label_tag = content_tag(:label, "Teams")
+
+    select_tag =
+      content_tag(:select, class: "enhanced", name: name, placeholder: "Teams") do
+        Enum.map(teams, fn [key: key, value: value] ->
+          content_tag(:option, value: value) do
+            key
+          end
+        end)
+      end
+
+    content_tag(:div, class: "field") do
+      [label_tag, select_tag]
+    end
+  end
+
   # Data Table
 
   def data_table_available_columns() do
@@ -89,7 +139,8 @@ defmodule ArtemisWeb.UserView do
       {"Last Login", "last_log_in_at"},
       {"Last Name", "last_name"},
       {"Name", "name"},
-      {"Roles", "roles"}
+      {"Roles", "roles"},
+      {"Teams", "teams"}
     ]
   end
 
@@ -151,6 +202,21 @@ defmodule ArtemisWeb.UserView do
         end,
         value_html: fn _conn, row ->
           row.roles
+          |> Enum.map(&Map.get(&1, :name))
+          |> Enum.sort()
+          |> Enum.map(&content_tag(:div, &1))
+        end
+      ],
+      "teams" => [
+        label: fn _conn -> "Teams" end,
+        value: fn _conn, row ->
+          row.teams
+          |> Enum.map(&Map.get(&1, :name))
+          |> Enum.sort()
+          |> Enum.join(", ")
+        end,
+        value_html: fn _conn, row ->
+          row.teams
           |> Enum.map(&Map.get(&1, :name))
           |> Enum.sort()
           |> Enum.map(&content_tag(:div, &1))

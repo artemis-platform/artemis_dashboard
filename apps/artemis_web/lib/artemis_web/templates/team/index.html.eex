@@ -7,7 +7,7 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "User" %>
+  <%= render_event_log_notifications @conn, "Team" %>
 
   <section>
     <div class="table-header">
@@ -19,12 +19,8 @@
           render_bulk_actions(
             @conn,
             "Bulk Actions",
-            Routes.user_path(@conn, :index_bulk_actions),
-            allowed_bulk_actions: @allowed_bulk_actions,
-            extra_fields_data: [
-              roles: Artemis.Role.unique_select_values_for(:name),
-              teams: Artemis.Team.unique_select_values_for(:name)
-            ]
+            Routes.team_path(@conn, :index_bulk_actions),
+            allowed_bulk_actions: @allowed_bulk_actions
           )
         %>
 
@@ -35,13 +31,13 @@
     <%=
       render_data_table(
         @conn,
-        @users.entries,
+        @teams.entries,
         allowed_columns: data_table_allowed_columns(),
-        default_columns: ["name", "email", "roles", "last_log_in_at", "actions"],
+        default_columns: ["name", "description", "user_count", "actions"],
         selectable: length(@allowed_bulk_actions) > 0
       )
     %>
 
-    <%= render_pagination @conn, @users %>
+    <%= render_pagination @conn, @teams %>
   </section>
 </div>

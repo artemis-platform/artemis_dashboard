@@ -174,6 +174,18 @@ defmodule ArtemisWeb.Config.Navigation do
           verify: &has?(&1, "tags:create")
         ]
       ],
+      Teams: [
+        [
+          label: "List Team",
+          path: &Routes.team_path(&1, :index),
+          verify: &has?(&1, "teams:list")
+        ],
+        [
+          label: "Create New Team",
+          path: &Routes.team_path(&1, :new),
+          verify: &has?(&1, "teams:create")
+        ]
+      ],
       Users: [
         [
           label: "List Users",
