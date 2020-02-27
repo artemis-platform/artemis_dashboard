@@ -50,7 +50,7 @@ before_install:
   - sudo rm -rf /etc/couchdb
   # Install Packages
   - sudo apt-get update
-  - sudo apt-get install couchdb
+  - sudo apt-get install couchdb=2.3.1~xenial
   - sudo apt-get install chromium-chromedriver
   # Start Packages
   - sudo systemctl start couchdb
