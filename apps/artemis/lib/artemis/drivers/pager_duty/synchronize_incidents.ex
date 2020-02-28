@@ -8,8 +8,6 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
   Synchronize records from PagerDuty API to Artemis.Incident schema
   """
 
-  @default_since_date DateTime.from_naive!(~N[2019-09-01 00:00:00], "Etc/UTC")
-
   def call(team_id) do
     system_user = GetSystemUser.call!()
     team_name = Artemis.Helpers.PagerDuty.get_pager_duty_team_name(team_id)
@@ -68,7 +66,7 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
   def calculate_since_date(team_id, user) do
     with nil <- get_earliest_unresolved_incident(team_id, user),
          nil <- get_oldest_resolved_incident(team_id, user) do
-      @default_since_date
+      get_default_since_date()
     else
       date -> date
     end
@@ -114,6 +112,12 @@ defmodule Artemis.Drivers.PagerDuty.SynchronizeIncidents do
     else
       _ -> nil
     end
+  end
+
+  defp get_default_since_date() do
+    Timex.now()
+    |> Timex.shift(months: -5)
+    |> DateTime.truncate(:second)
   end
 
   # Filter out updates to existing incidents that are already resolved
