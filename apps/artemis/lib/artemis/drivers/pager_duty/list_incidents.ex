@@ -36,7 +36,6 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
 
   """
 
-  @default_since_date DateTime.from_naive!(~N[2019-09-01 00:00:00], "Etc/UTC")
   # Warning!
   #
   # As of 2019/05 the PagerDuty API endpoint contains a critical bugs.
@@ -69,7 +68,7 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
 
   defp fetch_data(acc, options) do
     with {:ok, response} <- get_page(options),
-         200 <- response.status_code,
+         %HTTPoison.Response{status_code: 200} <- response,
          {:ok, all_incidents} <- process_response(response) do
       callback_results = apply_callback(all_incidents, options)
 
@@ -93,6 +92,12 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
 
       {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ->
         fetch_data(acc, options)
+
+      %HTTPoison.Response{} = response ->
+        log_data = Map.take(response, [:body, :request_url, :status_code])
+        Logger.info("Error fetching incidents from PagerDuty API: " <> inspect(log_data))
+
+        return_error(response.status_code)
 
       error ->
         Logger.info("Error fetching incidents from PagerDuty API: " <> inspect(error))
@@ -118,13 +123,20 @@ defmodule Artemis.Drivers.PagerDuty.ListIncidents do
     default_request_params = [
       limit: @fetch_limit,
       offset: 0,
-      since: @default_since_date,
+      since: get_default_since_date(),
       until: get_default_until_date()
     ]
 
     custom_request_params = Keyword.get(options, :request_params, [])
 
     Keyword.merge(default_request_params, custom_request_params)
+  end
+
+  defp get_default_since_date() do
+    Timex.now()
+    |> Timex.shift(months: -5)
+    |> DateTime.truncate(:second)
+    |> DateTime.to_iso8601()
   end
 
   defp get_default_until_date() do
