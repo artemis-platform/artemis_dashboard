@@ -100,6 +100,18 @@ defmodule ArtemisWeb.Config.Navigation do
           verify: &has?(&1, "incidents:list")
         ]
       ],
+      Jobs: [
+        [
+          label: "List Jobs",
+          path: &Routes.job_path(&1, :index),
+          verify: &has?(&1, "jobs:list")
+        ],
+        [
+          label: "Create New Job",
+          path: &Routes.job_path(&1, :new),
+          verify: &has?(&1, "jobs:create")
+        ]
+      ],
       Machines: [
         [
           label: "List Machines",
@@ -141,18 +153,6 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "Create New Role",
           path: &Routes.role_path(&1, :new),
           verify: &has?(&1, "roles:create")
-        ]
-      ],
-      Jobs: [
-        [
-          label: "List Jobs",
-          path: &Routes.job_path(&1, :index),
-          verify: &has?(&1, "jobs:list")
-        ],
-        [
-          label: "Create New Job",
-          path: &Routes.job_path(&1, :new),
-          verify: &has?(&1, "jobs:create")
         ]
       ],
       Sessions: [

@@ -8,6 +8,22 @@
   display: none;
 }
 
+/* Screen Breakpoint */
+
+@media only screen and (max-width: 1200px) {
+
+  #primary-header {
+
+    #quick-search {
+      display: none !important;
+    }
+
+    #icon-navigation .search-icon {
+      display: block;
+    }
+  }
+}
+
 /* Tablet Breakpoint */
 
 @media only screen and (max-width: 1024px) {
@@ -23,14 +39,6 @@
       li.primary-navigation-link {
         display: block !important;
       }
-    }
-
-    #quick-search {
-      display: none !important;
-    }
-
-    #icon-navigation .search-icon {
-      display: block;
     }
 
     #user-navigation {

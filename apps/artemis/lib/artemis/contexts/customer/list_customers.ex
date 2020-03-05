@@ -1,6 +1,13 @@
 defmodule Artemis.ListCustomers do
   use Artemis.Context
 
+  use Artemis.ContextCache,
+    cache_reset_on_events: [
+      "customer:created",
+      "customer:deleted",
+      "customer:updated"
+    ]
+
   import Artemis.Helpers.Filter
   import Artemis.Helpers.Search
   import Ecto.Query
@@ -21,6 +28,7 @@ defmodule Artemis.ListCustomers do
     |> filter_query(params, user)
     |> search_filter(params)
     |> order_query(params)
+    |> select_count(params)
     |> get_records(params)
   end
 
