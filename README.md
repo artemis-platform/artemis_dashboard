@@ -23,11 +23,9 @@ General Patterns:
 - Docker Support
 - Unit Testing
 - Browser-based Testing
-- Dynamic Caching
 
 UI Patterns:
 
-- Custom UI and Design
 - Breadcrumbs
 - Pagination
 - Table Search
@@ -35,6 +33,11 @@ UI Patterns:
 - Table Sorting
 - Table Filtering
 
+Additional Patterns:
+
+- Real-time data updates with Phoenix LiveView
+- Dynamic Caching
+- Custom UI and Design
 
 ## Demo
 

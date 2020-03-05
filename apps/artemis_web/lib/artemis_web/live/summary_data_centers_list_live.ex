@@ -50,7 +50,7 @@ defmodule ArtemisWeb.SummaryDataCentersListLive do
     end
   end
 
-  defp module_match?(socket, %{module: module}) do
+  defp module_match?(_socket, %{module: module}) do
     module == Artemis.ListDataCenters
   end
 

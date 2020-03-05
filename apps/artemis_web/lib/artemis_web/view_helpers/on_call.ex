@@ -22,6 +22,8 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
         end
 
       Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_person.html", conn: conn, people: people)
+    else
+      Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_person.html", conn: conn, people: [])
     end
   end
 
@@ -41,6 +43,8 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
         end
 
       Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_status.html", conn: conn, color: color)
+    else
+      Phoenix.View.render(ArtemisWeb.LayoutView, "on_call_status.html", conn: conn, color: "green")
     end
   end
 
