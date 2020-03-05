@@ -43,6 +43,8 @@ Additional Patterns:
 
 View a live demo at [https://artemis-dashboard.com/](https://artemis-dashboard.com/).
 
+[![Artemis Dashboard Home](/docs/artemis-dashboard-home.png)](https://artemis-dashboard.com/)
+
 Or spin up a demo locally. Assuming [docker](https://www.docker.com/) and [docker compose](https://docs.docker.com/compose/) is installed:
 
 ```bash
