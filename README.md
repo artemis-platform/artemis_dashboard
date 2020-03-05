@@ -4,6 +4,8 @@
 
 Artemis Dashboard is built on top of [Artemis Platform](https://github.com/artemis-platform/artemis_platform), a collection of production-ready design patterns for Elixir and Phoenix.
 
+[![Artemis Dashboard Home](/docs/artemis-dashboard-home.png)](https://artemis-dashboard.com/)
+
 View a live demo at [https://artemis-dashboard.com/](https://artemis-dashboard.com/).
 
 [![Build Status](https://travis-ci.com/artemis-platform/artemis_dashboard.svg?branch=master)](https://travis-ci.com/artemis-platform/artemis_dashboard)
@@ -42,8 +44,6 @@ Additional Patterns:
 ## Demo
 
 View a live demo at [https://artemis-dashboard.com/](https://artemis-dashboard.com/).
-
-[![Artemis Dashboard Home](/docs/artemis-dashboard-home.png)](https://artemis-dashboard.com/)
 
 Or spin up a demo locally. Assuming [docker](https://www.docker.com/) and [docker compose](https://docs.docker.com/compose/) is installed:
 
