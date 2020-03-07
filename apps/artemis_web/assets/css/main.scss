@@ -817,8 +817,10 @@ a.summary-count:hover {
 
     .status-map {
       display: flex;
-      flex: 2 0 auto;
+      flex: 10 0 auto;
       margin-right: 2rem;
+      max-width: 100%;
+      min-width: 26rem;
       overflow: hidden;
 
       .world-map-container {
