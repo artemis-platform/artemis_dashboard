@@ -21,7 +21,7 @@ config :logger, level: :info
 # before starting your production server.
 config :artemis_web, ArtemisWeb.Endpoint,
   http: [port: System.get_env("ARTEMIS_WEB_PORT")],
-  url: [host: "localhost", port: System.get_env("ARTEMIS_WEB_PORT")],
+  url: [host: System.get_env("ARTEMIS_WEB_HOSTNAME")],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   root: ".",
