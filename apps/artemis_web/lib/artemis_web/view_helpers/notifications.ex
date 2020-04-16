@@ -11,6 +11,15 @@ defmodule ArtemisWeb.ViewHelper.Notifications do
   end
 
   @doc """
+  Generates a notification. See `render_notification/2`.
+  """
+  def render_notification(type, params, do: block) do
+    params = Keyword.put(params, :do, block)
+
+    render_notification(type, params)
+  end
+
+  @doc """
   Generates flash notifications
   """
   def render_flash_notifications(conn) do

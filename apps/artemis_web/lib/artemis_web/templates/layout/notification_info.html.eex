@@ -1,9 +1,9 @@
-<div class="ui icon message small">
+<div class="ui icon message <%= assigns[:size] || "small" %>">
   <i class="info circle icon"></i>
   <div class="content">
     <div class="header">
-      Notice
+      <%= assigns[:header] || "Notice" %>
     </div>
-    <p><%= @body %></p>
+    <p><%= assigns[:body] || assigns[:do] %></p>
   </div>
 </div>
