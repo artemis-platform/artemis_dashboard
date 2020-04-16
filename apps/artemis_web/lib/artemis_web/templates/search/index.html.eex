@@ -83,6 +83,13 @@
 
       <% else %>
 
+        <%= render_notification(:info, size: "medium") do %>
+          <p>Cloudant documents have search limitations. When searching by UUID, try including a document id prefix and search for just the first segment.</p>
+          <p>For example, if the search query <code>2c8b4dc8-e90a-45c5-9893-518b396ca553</code> for a job gives no results, try <code>job_2c8b4dc8</code> or <code>2c8b4dc8</code>.</p>
+        <% end %>
+
+        <h2>Search Summary</h2>
+
         <p>No matching results found</p>
 
       <% end %>
