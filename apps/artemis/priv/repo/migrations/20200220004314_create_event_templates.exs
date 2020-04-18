@@ -4,6 +4,7 @@ defmodule Artemis.Repo.Migrations.CreateEventTemplates do
   def change do
     create table(:event_templates) do
       add :active, :boolean
+      add :description, :text
       add :title, :string
 
       add :team_id, references(:teams, on_delete: :delete_all)

@@ -1,4 +1,4 @@
-defmodule Artemis.Repo.Migrations.CreateEventQuestionsSearch do
+defmodule Artemis.Repo.Migrations.CreateEventInstancesSearch do
   use Ecto.Migration
 
   def up do
@@ -6,7 +6,7 @@ defmodule Artemis.Repo.Migrations.CreateEventQuestionsSearch do
     #
     # Define a column to store full text search data
     #
-    alter table(:event_questions) do
+    alter table(:event_instances) do
       add :tsv_search, :tsvector
     end
 
@@ -14,7 +14,7 @@ defmodule Artemis.Repo.Migrations.CreateEventQuestionsSearch do
     #
     # Create a GIN index on the full text search data column
     #
-    create index(:event_questions, [:tsv_search], name: :event_questions_search_vector, using: "GIN")
+    create index(:event_instances, [:tsv_search], name: :event_instances_search_vector, using: "GIN")
 
     # 3. Define a Coalesce Function
     #
@@ -27,12 +27,13 @@ defmodule Artemis.Repo.Migrations.CreateEventQuestionsSearch do
     # - last_name
     #
     execute("""
-      CREATE FUNCTION create_search_data_event_questions() RETURNS trigger AS $$
+      CREATE FUNCTION create_search_data_event_instances() RETURNS trigger AS $$
       begin
         new.tsv_search :=
           to_tsvector(
             'pg_catalog.english',
             coalesce(new.title, ' ') || ' ' ||
+            coalesce(new.slug, ' ') || ' ' ||
             coalesce(new.description, ' ')
           );
         return new;
@@ -46,22 +47,22 @@ defmodule Artemis.Repo.Migrations.CreateEventQuestionsSearch do
     #
     execute("""
       CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
-      ON event_questions FOR EACH ROW EXECUTE PROCEDURE create_search_data_event_questions();
+      ON event_instances FOR EACH ROW EXECUTE PROCEDURE create_search_data_event_instances();
     """)
   end
 
   def down do
     # 1. Remove Triggers
-    execute("drop function create_search_data_event_questions();")
+    execute("drop function create_search_data_event_instances();")
 
     # 2. Remove Functions
-    execute("drop trigger tsvectorupdate on event_questions;")
+    execute("drop trigger tsvectorupdate on event_instances;")
 
     # 3. Remove Indexes
-    drop index(:event_questions, [:tsv_search])
+    drop index(:event_instances, [:tsv_search])
 
     # 4. Remove Columns
-    alter table(:event_questions) do
+    alter table(:event_instances) do
       remove :tsv_search
     end
   end

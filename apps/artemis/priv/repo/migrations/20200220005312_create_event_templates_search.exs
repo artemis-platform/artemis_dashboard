@@ -32,7 +32,8 @@ defmodule Artemis.Repo.Migrations.CreateEventTemplatesSearch do
         new.tsv_search :=
           to_tsvector(
             'pg_catalog.english',
-            coalesce(new.title, ' ')
+            coalesce(new.title, ' ') || ' ' ||
+            coalesce(new.description, ' ')
           );
         return new;
       end

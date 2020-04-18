@@ -1,18 +1,20 @@
-defmodule Artemis.EventQuestion do
+defmodule Artemis.EventInstance do
   use Artemis.Schema
   use Artemis.Schema.SQL
   use Assoc.Schema, repo: Artemis.Repo
 
-  schema "event_questions" do
-    field :active, :boolean, default: true
+  schema "event_instances" do
     field :description, :string
-    field :order, :integer
+    field :slug, :string
     field :title, :string
-    field :type, :string
+
+    # TODO: add constraint to ensure unique within event_template
 
     belongs_to :event_template, Artemis.EventTemplate, on_replace: :delete
 
     has_one :team, through: [:event_template, :team]
+
+    has_many :event_answers, Artemis.EventAnswer, on_delete: :delete_all, on_replace: :delete
 
     timestamps()
   end
@@ -21,19 +23,17 @@ defmodule Artemis.EventQuestion do
 
   def updatable_fields,
     do: [
-      :active,
       :description,
       :event_template_id,
-      :order,
-      :title,
-      :type
+      :slug,
+      :title
     ]
 
   def required_fields,
     do: [
       :event_template_id,
-      :title,
-      :type
+      :slug,
+      :title
     ]
 
   def updatable_associations,
@@ -44,13 +44,7 @@ defmodule Artemis.EventQuestion do
   def event_log_fields,
     do: [
       :id,
-      :title,
-      :type
-    ]
-
-  def allowed_types,
-    do: [
-      "text"
+      :title
     ]
 
   # Changesets
@@ -59,7 +53,6 @@ defmodule Artemis.EventQuestion do
     struct
     |> cast(params, updatable_fields())
     |> validate_required(required_fields())
-    |> validate_inclusion(:type, allowed_types())
     |> foreign_key_constraint(:event_template_id)
   end
 end
