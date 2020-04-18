@@ -58,6 +58,16 @@ defmodule Artemis.Factories do
     }
   end
 
+  def event_answer_factory do
+    %Artemis.EventAnswer{
+      type: Enum.random(Artemis.EventAnswer.allowed_types()),
+      value: Faker.Lorem.paragraph(),
+      event_instance: build(:event_instance),
+      event_question: build(:event_question),
+      user: build(:user)
+    }
+  end
+
   def event_instance_factory do
     %Artemis.EventInstance{
       description: Faker.Lorem.paragraph(),

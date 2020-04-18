@@ -7,7 +7,7 @@ defmodule Artemis.Repo.Migrations.CreateEventAnswers do
       add :value, :text
 
       add :event_instance_id, references(:event_instances, on_delete: :delete_all)
-      add :event_template_id, references(:event_templates, on_delete: :delete_all)
+      add :event_question_id, references(:event_questions, on_delete: :delete_all)
       add :user_id, references(:users, on_delete: :nilify_all)
 
       timestamps(type: :utc_datetime)
