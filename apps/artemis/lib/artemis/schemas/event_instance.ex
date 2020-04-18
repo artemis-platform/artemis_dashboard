@@ -8,8 +8,6 @@ defmodule Artemis.EventInstance do
     field :slug, :string
     field :title, :string
 
-    # TODO: add constraint to ensure unique within event_template
-
     belongs_to :event_template, Artemis.EventTemplate, on_replace: :delete
 
     has_one :team, through: [:event_template, :team]

@@ -58,6 +58,15 @@ defmodule Artemis.Factories do
     }
   end
 
+  def event_instance_factory do
+    %Artemis.EventInstance{
+      description: Faker.Lorem.paragraph(),
+      slug: sequence(:slug, &"#{Faker.Date.between(~D[2010-01-01], ~D[2030-01-01])}-#{&1}"),
+      title: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
+      event_template: build(:event_template)
+    }
+  end
+
   def event_question_factory do
     %Artemis.EventQuestion{
       active: true,
