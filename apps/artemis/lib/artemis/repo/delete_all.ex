@@ -7,8 +7,12 @@ defmodule Artemis.Repo.DeleteAll do
 
   @schemas [
     Artemis.AuthProvider,
+    Artemis.Cloud,
+    Artemis.Customer,
+    Artemis.DataCenter,
     Artemis.Feature,
     Artemis.Incident,
+    Artemis.Machine,
     Artemis.Permission,
     Artemis.Role,
     Artemis.User,

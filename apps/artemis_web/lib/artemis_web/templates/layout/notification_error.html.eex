@@ -4,6 +4,6 @@
     <div class="header">
       <%= assigns[:header] || "Error" %>
     </div>
-    <p><%= @body %></p>
+    <p><%= assigns[:body] || assigns[:do] %></p>
   </div>
 </div>
