@@ -6,18 +6,16 @@ defmodule Artemis.EventAnswerTest do
   import Artemis.Factories
 
   alias Artemis.EventAnswer
-  alias Artemis.EventInstance
   alias Artemis.EventQuestion
   alias Artemis.User
 
-  @preload [:event_instance, :event_question, :user]
+  @preload [:event_question, :user]
 
   describe "attributes - constraints" do
     test "required associations" do
       params =
         :event_answer
         |> params_for()
-        |> Map.delete(:event_instance_id)
         |> Map.delete(:event_question_id)
         |> Map.delete(:user_id)
 
@@ -27,38 +25,11 @@ defmodule Artemis.EventAnswerTest do
         |> Repo.insert()
 
       expected_errors = %{
-        event_instance_id: ["can't be blank"],
         event_question_id: ["can't be blank"],
         user_id: ["can't be blank"]
       }
 
       assert errors_on(changeset) == expected_errors
-    end
-  end
-
-  describe "associations - event_instance" do
-    setup do
-      event_answer = insert(:event_answer)
-
-      {:ok, event_answer: Repo.preload(event_answer, @preload)}
-    end
-
-    test "deleting association removes record", %{event_answer: event_answer} do
-      assert Repo.get(EventInstance, event_answer.event_instance.id) != nil
-
-      Repo.delete!(event_answer.event_instance)
-
-      assert Repo.get(EventInstance, event_answer.event_instance.id) == nil
-      assert Repo.get(EventAnswer, event_answer.id) == nil
-    end
-
-    test "deleting record does not remove association", %{event_answer: event_answer} do
-      assert Repo.get(EventInstance, event_answer.event_instance.id) != nil
-
-      Repo.delete!(event_answer)
-
-      assert Repo.get(EventInstance, event_answer.event_instance.id) != nil
-      assert Repo.get(EventAnswer, event_answer.id) == nil
     end
   end
 

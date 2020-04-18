@@ -62,18 +62,8 @@ defmodule Artemis.Factories do
     %Artemis.EventAnswer{
       type: Enum.random(Artemis.EventAnswer.allowed_types()),
       value: Faker.Lorem.paragraph(),
-      event_instance: build(:event_instance),
       event_question: build(:event_question),
       user: build(:user)
-    }
-  end
-
-  def event_instance_factory do
-    %Artemis.EventInstance{
-      description: Faker.Lorem.paragraph(),
-      slug: sequence(:slug, &"#{Faker.Date.between(~D[2010-01-01], ~D[2030-01-01])}-#{&1}"),
-      title: sequence(:name, &"#{Faker.Name.name()}-#{&1}"),
-      event_template: build(:event_template)
     }
   end
 

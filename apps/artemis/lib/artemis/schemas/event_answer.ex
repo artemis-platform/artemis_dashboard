@@ -7,7 +7,6 @@ defmodule Artemis.EventAnswer do
     field :type, :string
     field :value, :string
 
-    belongs_to :event_instance, Artemis.EventInstance, on_replace: :delete
     belongs_to :event_question, Artemis.EventQuestion, on_replace: :delete
     belongs_to :user, Artemis.User, on_replace: :delete
 
@@ -20,7 +19,6 @@ defmodule Artemis.EventAnswer do
 
   def updatable_fields,
     do: [
-      :event_instance_id,
       :event_question_id,
       :type,
       :user_id,
@@ -29,7 +27,6 @@ defmodule Artemis.EventAnswer do
 
   def required_fields,
     do: [
-      :event_instance_id,
       :event_question_id,
       :type,
       :value,
@@ -38,7 +35,6 @@ defmodule Artemis.EventAnswer do
 
   def updatable_associations,
     do: [
-      event_instance: Artemis.EventInstance,
       event_question: Artemis.EventQuestion,
       user: Artemis.User
     ]
@@ -46,7 +42,6 @@ defmodule Artemis.EventAnswer do
   def event_log_fields,
     do: [
       :id,
-      :event_instance_id,
       :event_question_id,
       :type,
       :value,
