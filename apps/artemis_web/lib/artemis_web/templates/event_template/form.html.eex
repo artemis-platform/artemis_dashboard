@@ -18,7 +18,26 @@
     <%= checkbox f, :active %>
   </div>
 
-  <%= reason_field f %>
+	<%= h3 "Questions" %>
+
+	<%= inputs_for f, :event_questions, fn q -> %>
+    <%= hidden_input q, :id %>
+
+    <div class="field">
+      <%= label_with_errors q, :title %>
+      <%= text_input q, :title, placeholder: "Title" %>
+    </div>
+
+    <div class="field">
+      <%= label_with_errors q, :type %>
+      <%= select q, :type, Artemis.EventQuestion.allowed_types(), class: "enhanced clearable", placeholder: "" %>
+    </div>
+
+    <div class="field">
+      <%= label_with_errors q, :order %>
+      <%= text_input q, :order, placeholder: "Order" %>
+    </div>
+  <% end %>
 
   <div>
     <%= if @changeset.action do %>

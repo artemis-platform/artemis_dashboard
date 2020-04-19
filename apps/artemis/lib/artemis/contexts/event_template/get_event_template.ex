@@ -4,7 +4,7 @@ defmodule Artemis.GetEventTemplate do
   alias Artemis.EventTemplate
   alias Artemis.Repo
 
-  @default_preload [:team]
+  @default_preload [:event_questions, :team]
 
   def call!(value, _user, options \\ []) do
     get_record(value, options, &Repo.get_by!/2)

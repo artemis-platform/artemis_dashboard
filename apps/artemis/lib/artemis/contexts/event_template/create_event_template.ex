@@ -1,5 +1,6 @@
 defmodule Artemis.CreateEventTemplate do
   use Artemis.Context
+  use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.EventTemplate
   alias Artemis.Repo
@@ -15,6 +16,7 @@ defmodule Artemis.CreateEventTemplate do
     with_transaction(fn ->
       params
       |> insert_record
+      |> update_associations(params)
       |> Event.broadcast("event_template:created", params, user)
     end)
   end

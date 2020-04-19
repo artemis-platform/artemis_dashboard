@@ -1,5 +1,6 @@
 defmodule Artemis.UpdateEventTemplate do
   use Artemis.Context
+  use Assoc.Updater, repo: Artemis.Repo
 
   alias Artemis.EventTemplate
   alias Artemis.GetEventTemplate
@@ -17,6 +18,7 @@ defmodule Artemis.UpdateEventTemplate do
       id
       |> get_record(user)
       |> update_record(params)
+      |> update_associations(params)
       |> Event.broadcast("event_template:updated", params, user)
     end)
   end

@@ -127,6 +127,7 @@ defmodule ArtemisWeb.Router do
       resources "/event-logs", EventLogController, only: [:index, :show]
 
       # Event Questions
+      # TODO: remove? Need to move into event template edit form first
 
       post "/event-questions/bulk-actions", EventQuestionController, :index_bulk_actions
       get "/event-questions/event-logs", EventQuestionController, :index_event_log_list
@@ -139,11 +140,11 @@ defmodule ArtemisWeb.Router do
 
       # Event Templates
 
-      post "/event-templates/bulk-actions", EventTemplateController, :index_bulk_actions
-      get "/event-templates/event-logs", EventTemplateController, :index_event_log_list
-      get "/event-templates/event-logs/:id", EventTemplateController, :index_event_log_details
+      post "/events/bulk-actions", EventTemplateController, :index_bulk_actions
+      get "/events/event-logs", EventTemplateController, :index_event_log_list
+      get "/events/event-logs/:id", EventTemplateController, :index_event_log_details
 
-      resources "/event-templates", EventTemplateController do
+      resources "/events", EventTemplateController do
         get "/event-logs", EventTemplateController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", EventTemplateController, :show_event_log_details, as: :event_log
       end

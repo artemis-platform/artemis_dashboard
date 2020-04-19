@@ -8,10 +8,9 @@ defmodule Artemis.EventTemplate do
     field :description, :string
     field :title, :string
 
-    # TODO: add description field
-
     belongs_to :team, Artemis.Team, on_replace: :delete
 
+    # TODO: add schema tests for updating through event_template
     has_many :event_questions, Artemis.EventQuestion, on_delete: :delete_all, on_replace: :delete
 
     timestamps()
@@ -35,6 +34,7 @@ defmodule Artemis.EventTemplate do
 
   def updatable_associations,
     do: [
+      event_questions: Artemis.EventQuestion,
       team: Artemis.Team
     ]
 

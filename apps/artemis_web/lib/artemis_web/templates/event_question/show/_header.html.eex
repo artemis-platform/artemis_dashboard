@@ -1,7 +1,7 @@
 <div id="content-header">
   <header>
     <h1>
-      Event Template
+      Event Question
       <span class="subheading"><%= @event_question.title %></span>
     </h1>
 
