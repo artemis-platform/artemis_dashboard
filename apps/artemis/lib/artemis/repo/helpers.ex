@@ -32,7 +32,7 @@ defmodule Artemis.Repo.Helpers do
     )
   rescue
     error ->
-      Logger.debug("Transaction error " <> inspect(error))
-      raise error
+      Logger.info("Transaction error " <> inspect(error))
+      reraise error, __STACKTRACE__
   end
 end
