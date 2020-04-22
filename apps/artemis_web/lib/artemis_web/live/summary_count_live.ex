@@ -17,11 +17,11 @@ defmodule ArtemisWeb.SummaryCountLive do
       |> assign(:status, :loading)
       |> assign(:user, session.user)
 
-    if connected?(socket), do: Process.send_after(self(), {:update_data, :loaded}, 10)
+    socket = update_data(assigns, :loaded)
 
     :ok = ArtemisPubSub.subscribe(broadcast_topic)
 
-    {:ok, assigns}
+    {:ok, socket}
   end
 
   @impl true
