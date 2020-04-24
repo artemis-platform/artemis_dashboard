@@ -22,7 +22,12 @@ defmodule Artemis.UserTeam do
       :user_id
     ]
 
-  def required_fields, do: []
+  def required_fields,
+    do: [
+      :created_by_id,
+      :team_id,
+      :user_id
+    ]
 
   def event_log_fields,
     do: [

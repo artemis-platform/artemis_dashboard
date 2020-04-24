@@ -7,7 +7,7 @@ defmodule Artemis.CreateUserTeamTest do
 
   describe "call!" do
     test "returns error when params are empty" do
-      assert_raise Postgrex.Error, fn ->
+      assert_raise Artemis.Context.Error, fn ->
         CreateUserTeam.call!(%{}, Mock.system_user())
       end
     end
@@ -26,7 +26,7 @@ defmodule Artemis.CreateUserTeamTest do
 
   describe "call" do
     test "raises an error when params are empty" do
-      assert_raise Postgrex.Error, fn ->
+      assert_raise Artemis.Context.Error, fn ->
         CreateUserTeam.call!(%{}, Mock.system_user())
       end
     end

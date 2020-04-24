@@ -14,7 +14,7 @@ defmodule Artemis.CreateUserTeam do
   def call(params, user) do
     with_transaction(fn ->
       params
-      |> insert_record
+      |> insert_record()
       |> Event.broadcast("user-team:created", params, user)
     end)
   end

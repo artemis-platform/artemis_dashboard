@@ -4,7 +4,7 @@ defmodule Artemis.GetUserTeam do
   alias Artemis.Repo
   alias Artemis.UserTeam
 
-  @default_preload []
+  @default_preload [:created_by, :team, :user]
 
   def call!(value, _user, options \\ []) do
     get_record(value, options, &Repo.get_by!/2)

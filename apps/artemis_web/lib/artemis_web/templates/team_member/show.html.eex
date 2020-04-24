@@ -14,7 +14,10 @@
       render_key_value_list([
         ["User", @user_team.user.name],
         ["Team", @user_team.team.name],
-        ["Created By", @user_team.created_by.name]
+        ["Type", @user_team.type],
+        ["Created By", @user_team.created_by.name],
+        ["Created At", @user_team.inserted_at],
+        ["Updated At", @user_team.updated_at]
       ])
     %>
   </section>

@@ -3,8 +3,8 @@ defmodule ArtemisWeb.TeamMemberControllerTest do
 
   import Artemis.Factories
 
-  @update_attrs %{title: "some updated title"}
-  @invalid_attrs %{title: nil}
+  @update_attrs %{type: "admin"}
+  @invalid_attrs %{user_id: nil}
 
   setup %{conn: conn} do
     team = insert(:team)
@@ -22,13 +22,14 @@ defmodule ArtemisWeb.TeamMemberControllerTest do
   describe "new team member" do
     test "renders new form", %{conn: conn, team: team} do
       conn = get(conn, Routes.team_member_path(conn, :new, team))
-      assert html_response(conn, 200) =~ "New Team User"
+      assert html_response(conn, 200) =~ "New Team Member"
     end
   end
 
   describe "create team member" do
     test "redirects to show when data is valid", %{conn: conn, team: team} do
-      params = params_for(:user_team, team: team)
+      user = Mock.system_user()
+      params = params_for(:user_team, created_by: user, team: team, user: user)
 
       conn = post(conn, Routes.team_member_path(conn, :create, team), user_team: params)
 
@@ -36,12 +37,12 @@ defmodule ArtemisWeb.TeamMemberControllerTest do
       assert redirected_to(conn) == Routes.team_path(conn, :show, team)
 
       conn = get(conn, Routes.team_path(conn, :show, team))
-      assert html_response(conn, 200) =~ "Title"
+      assert html_response(conn, 200) =~ params.type
     end
 
     test "renders errors when data is invalid", %{conn: conn, team: team} do
       conn = post(conn, Routes.team_member_path(conn, :create, team), user_team: @invalid_attrs)
-      assert html_response(conn, 200) =~ "New Team User"
+      assert html_response(conn, 200) =~ "New Team Member"
     end
   end
 
@@ -50,7 +51,7 @@ defmodule ArtemisWeb.TeamMemberControllerTest do
 
     test "shows team member", %{conn: conn, team: team, record: record} do
       conn = get(conn, Routes.team_member_path(conn, :show, team, record))
-      assert html_response(conn, 200) =~ "Title"
+      assert html_response(conn, 200) =~ record.type
     end
   end
 
@@ -59,7 +60,7 @@ defmodule ArtemisWeb.TeamMemberControllerTest do
 
     test "renders form for editing chosen team member", %{conn: conn, team: team, record: record} do
       conn = get(conn, Routes.team_member_path(conn, :edit, team, record))
-      assert html_response(conn, 200) =~ "Edit Team User"
+      assert html_response(conn, 200) =~ "Edit Team Member"
     end
   end
 
@@ -71,13 +72,13 @@ defmodule ArtemisWeb.TeamMemberControllerTest do
       assert redirected_to(conn) == Routes.team_path(conn, :show, team)
 
       conn = get(conn, Routes.team_path(conn, :show, team))
-      assert html_response(conn, 200) =~ "some updated title"
+      assert html_response(conn, 200) =~ "admin"
     end
 
     test "renders errors when data is invalid", %{conn: conn, team: team, record: record} do
       conn = put(conn, Routes.team_member_path(conn, :update, team, record), user_team: @invalid_attrs)
 
-      assert html_response(conn, 200) =~ "Edit Team User"
+      assert html_response(conn, 200) =~ "Edit Team Member"
     end
   end
 

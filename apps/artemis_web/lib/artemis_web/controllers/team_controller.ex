@@ -24,6 +24,7 @@ defmodule ArtemisWeb.TeamController do
   alias Artemis.DeleteTeam
   alias Artemis.GetTeam
   alias Artemis.ListTeams
+  alias Artemis.ListUserTeams
   alias Artemis.UpdateTeam
 
   @preload []
@@ -73,9 +74,16 @@ defmodule ArtemisWeb.TeamController do
 
   def show(conn, %{"id" => id}) do
     authorize(conn, "teams:show", fn ->
-      team = GetTeam.call!(id, current_user(conn), preload: [:users])
+      user = current_user(conn)
+      team = GetTeam.call!(id, user)
+      user_teams = get_user_teams(id, user)
 
-      render(conn, "show.html", team: team)
+      assigns = [
+        team: team,
+        user_teams: user_teams
+      ]
+
+      render(conn, "show.html", assigns)
     end)
   end
 
@@ -114,5 +122,18 @@ defmodule ArtemisWeb.TeamController do
       |> put_flash(:info, "Team deleted successfully.")
       |> redirect(to: Routes.team_path(conn, :index))
     end)
+  end
+
+  # Helpers
+
+  defp get_user_teams(team_id, user) do
+    params = %{
+      filters: %{
+        team_id: team_id
+      },
+      preload: [:team, :user]
+    }
+
+    ListUserTeams.call(params, user)
   end
 end

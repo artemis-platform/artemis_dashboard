@@ -37,7 +37,8 @@ defmodule ArtemisWeb.UserView do
       %BulkAction{
         action: fn ids, [request_params, user] ->
           team_id = Map.get(request_params, "add_team_id")
-          params = [team_id, request_params, user]
+          type = Map.get(request_params, "add_type")
+          params = [team_id, type, request_params, user]
 
           Artemis.GetOrCreateUserTeam.call_many(ids, params)
         end,
@@ -104,11 +105,16 @@ defmodule ArtemisWeb.UserView do
   end
 
   defp render_extra_fields_add_team(data) do
-    render_extra_field_select_team(data, "add_team_id")
+    [
+      render_extra_field_select_team(data, "add_team_id"),
+      render_extra_field_select_type(data, "add_type")
+    ]
   end
 
   defp render_extra_fields_remove_team(data) do
-    render_extra_field_select_team(data, "remove_team_id")
+    [
+      render_extra_field_select_team(data, "remove_team_id")
+    ]
   end
 
   defp render_extra_field_select_team(data, name) do
@@ -120,6 +126,24 @@ defmodule ArtemisWeb.UserView do
         Enum.map(teams, fn [key: key, value: value] ->
           content_tag(:option, value: value) do
             key
+          end
+        end)
+      end
+
+    content_tag(:div, class: "field") do
+      [label_tag, select_tag]
+    end
+  end
+
+  defp render_extra_field_select_type(_data, name) do
+    types = Artemis.UserTeam.allowed_types()
+    label_tag = content_tag(:label, "Type")
+
+    select_tag =
+      content_tag(:select, class: "enhanced", name: name, placeholder: "Type") do
+        Enum.map(types, fn value ->
+          content_tag(:option, value: value) do
+            value
           end
         end)
       end

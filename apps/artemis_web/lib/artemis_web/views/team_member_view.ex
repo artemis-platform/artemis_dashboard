@@ -8,6 +8,7 @@ defmodule ArtemisWeb.TeamMemberView do
       {"Actions", "actions"},
       {"Team", "team"},
       {"Type", "type"},
+      {"Updated At", "updated_at"},
       {"User", "user"}
     ]
   end
@@ -33,12 +34,16 @@ defmodule ArtemisWeb.TeamMemberView do
         label: fn _conn -> "Type" end,
         value: fn _conn, row -> row.type end
       ],
+      "updated_at" => [
+        label: fn _conn -> "Updated At" end,
+        value: fn _conn, row -> row.updated_at end
+      ],
       "user" => [
         label: fn _conn -> "User" end,
         value: fn _conn, row -> row.user.name end,
         value_html: fn conn, row ->
-          case has?(conn, "users:show") do
-            true -> link(row.user.name, to: Routes.user_path(conn, :show, row.user))
+          case has?(conn, "user-teams:show") do
+            true -> link(row.user.name, to: Routes.team_member_path(conn, :show, row.team, row))
             false -> row.user.name
           end
         end
@@ -50,11 +55,11 @@ defmodule ArtemisWeb.TeamMemberView do
     allowed_actions = [
       [
         verify: has?(conn, "user-teams:show"),
-        link: link("Show", to: Routes.team_member_path(conn, :show, row.team_template, row))
+        link: link("Show", to: Routes.team_member_path(conn, :show, row.team, row))
       ],
       [
         verify: has?(conn, "user-teams:update"),
-        link: link("Edit", to: Routes.team_member_path(conn, :edit, row.team_template, row))
+        link: link("Edit", to: Routes.team_member_path(conn, :edit, row.team, row))
       ]
     ]
 

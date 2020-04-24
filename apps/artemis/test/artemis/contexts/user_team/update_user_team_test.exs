@@ -101,9 +101,11 @@ defmodule Artemis.UpdateUserTeamTest do
 
       {:ok, updated} = UpdateUserTeam.call(user_team, params, Mock.system_user())
 
-      assert Repo.preload(updated, @preload).team.id == updated_team.id
-      assert Repo.preload(updated, @preload).user.id == updated_user.id
-      assert Repo.preload(updated, @preload).created_by.id == updated_created_by.id
+      updated = Repo.preload(updated, @preload, force: true)
+
+      assert updated.team.id == updated_team.id
+      assert updated.user.id == updated_user.id
+      assert updated.created_by.id == updated_created_by.id
     end
   end
 
