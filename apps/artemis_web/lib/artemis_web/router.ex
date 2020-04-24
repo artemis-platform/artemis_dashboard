@@ -254,7 +254,7 @@ defmodule ArtemisWeb.Router do
       resources "/teams", TeamController do
         get "/event-logs", TeamController, :show_event_log_list, as: :event_log
         get "/event-logs/:id", TeamController, :show_event_log_details, as: :event_log
-        resources "/members", TeamMemberController
+        resources "/members", TeamMemberController, as: "member"
       end
 
       # Users
