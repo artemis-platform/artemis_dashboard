@@ -1,0 +1,31 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "team-member-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :title %>
+    <%= text_input f, :title, placeholder: "Title" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :type %>
+    <%= select f, :type, Artemis.EventQuestion.allowed_types(), class: "enhanced clearable", placeholder: "" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :order %>
+    <%= text_input f, :order, placeholder: "Order" %>
+  </div>
+
+  <div class="field">
+    <%= label f, :active %>
+    <%= checkbox f, :active %>
+  </div>
+
+  <%= hidden_input f, :event_template_id, value: @event_template.id %>
+
+  <div>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save", class: "ui button primary" %>
+  </div>
+<% end %>

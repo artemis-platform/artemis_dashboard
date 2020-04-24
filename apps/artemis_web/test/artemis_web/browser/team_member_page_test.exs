@@ -62,7 +62,7 @@ defmodule ArtemisWeb.TeamMemberPageTest do
 
     test "submitting an empty form shows an error" do
       click_link("New")
-      submit_form("#team-user-form")
+      submit_form("#team-member-form")
 
       assert visible?("can't be blank")
     end
@@ -70,13 +70,13 @@ defmodule ArtemisWeb.TeamMemberPageTest do
     test "successfully creates a new record", %{user_team: user_team} do
       click_link("New")
 
-      fill_inputs("#team-user-form", %{
+      fill_inputs("#team-member-form", %{
         "user_team[title]": "Test Title"
       })
 
-      fill_select("#team-user-form select[name=user_team[user_team_id]]", user_team.id)
+      fill_select("#team-member-form select[name=user_team[user_team_id]]", user_team.id)
 
-      submit_form("#team-user-form")
+      submit_form("#team-member-form")
 
       assert visible?("Test Title")
     end
@@ -119,11 +119,11 @@ defmodule ArtemisWeb.TeamMemberPageTest do
       click_link(user_team.title)
       click_link("Edit")
 
-      fill_inputs("#team-user-form", %{
+      fill_inputs("#team-member-form", %{
         "user_team[title]": "Updated Title"
       })
 
-      submit_form("#team-user-form")
+      submit_form("#team-member-form")
 
       assert visible?("Updated Title")
     end

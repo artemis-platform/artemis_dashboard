@@ -1,0 +1,2 @@
+<%= render_flash_notifications @conn %>
+<%= render_event_log_notifications @conn, "UserTeam", @user_team.id %>
