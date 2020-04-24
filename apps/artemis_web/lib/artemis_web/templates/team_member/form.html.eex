@@ -1,0 +1,21 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "team-member-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :user_id %>
+    <%= select f, :user_id, Artemis.User.unique_select_values_for(:user), class: "enhanced clearable", placeholder: "User" %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :type %>
+    <%= select f, :type, Artemis.UserTeam.allowed_types(), class: "enhanced clearable", default: "member", placeholder: "" %>
+  </div>
+
+  <%= hidden_input f, :team_id, value: @team.id %>
+
+  <div>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save", class: "ui button primary" %>
+  </div>
+<% end %>

@@ -35,7 +35,7 @@ defmodule ArtemisWeb.TeamMemberPageTest do
 
     test "list of records" do
       assert page_title() == "Artemis"
-      assert visible?("Team Users")
+      assert visible?("Team Members")
     end
 
     test "search", %{user_team: user_team} do

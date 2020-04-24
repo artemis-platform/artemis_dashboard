@@ -16,7 +16,7 @@
     <%=
       form_assigns =
         assigns
-        |> Map.put(:action, Routes.team_member_path(@conn, :create, @user_team))
+        |> Map.put(:action, Routes.team_member_path(@conn, :create, @team, @user_team))
         |> Map.put(:team, @team)
 
       render "form.html", form_assigns
