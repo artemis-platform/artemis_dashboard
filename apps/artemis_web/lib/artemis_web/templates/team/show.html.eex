@@ -32,5 +32,7 @@
         default_columns: ["name", "email"]
       )
     %>
+
+    <%# TODO: add a link to adding users %>
   </section>
 </div>
