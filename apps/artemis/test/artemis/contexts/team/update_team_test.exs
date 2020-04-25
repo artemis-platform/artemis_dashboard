@@ -84,11 +84,18 @@ defmodule Artemis.UpdateTeamTest do
       team = insert(:team)
       user = insert(:user)
 
+      user_team_params = %{
+        type: "admin",
+        created_by_id: user.id,
+        team_id: team.id,
+        user_id: user.id
+      }
+
       params = %{
         id: team.id,
         name: "Updated Name",
         user_teams: [
-          %{user_id: user.id}
+          user_team_params
         ]
       }
 

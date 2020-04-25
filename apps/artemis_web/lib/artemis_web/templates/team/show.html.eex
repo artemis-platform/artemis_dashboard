@@ -20,17 +20,19 @@
   </section>
 
   <section>
-    <%= h3 "Users" %>
+    <%= h3 "Team Members" %>
 
-    Total Users: <%= @team.user_count %>
+    Total Members: <%= @team.user_count %>
 
     <%=
       render_data_table(
         @conn,
-        @team.users,
-        allowed_columns: ArtemisWeb.UserView.data_table_allowed_columns(),
-        default_columns: ["name", "email"]
+        @user_teams,
+        allowed_columns: ArtemisWeb.TeamMemberView.data_table_allowed_columns(),
+        default_columns: ["user", "type", "updated_at", "actions"]
       )
     %>
+
+    <%= action "New Team Member", to: Routes.team_member_path(@conn, :new, @team), color: "blue" %>
   </section>
 </div>

@@ -26,6 +26,12 @@ defmodule ArtemisWeb.BrowserHelpers do
 
   def fill_input(element, value), do: fill_field(element, value)
 
+  def fill_select(element, value) do
+    :css
+    |> find_element("#{element} option[value='#{value}']")
+    |> click()
+  end
+
   def fill_enhanced_select(element, value) when is_bitstring(value), do: fill_enhanced_select(element, [value])
 
   def fill_enhanced_select(element, values) when is_list(values) do

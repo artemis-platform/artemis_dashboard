@@ -7,10 +7,11 @@ defmodule Artemis.GetOrCreateUserTeam do
 
   @preload [:team, :user]
 
-  def call(user_id, team_id, params, creator) do
+  def call(user_id, team_id, type, params, creator) do
     params
-    |> Map.put("created_by", creator)
+    |> Map.put("created_by_id", creator.id)
     |> Map.put("team_id", team_id)
+    |> Map.put("type", type)
     |> Map.put("user_id", user_id)
     |> call(creator)
   end
