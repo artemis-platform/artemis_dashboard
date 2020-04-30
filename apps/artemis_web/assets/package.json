@@ -10,7 +10,7 @@
     "child-replace-with-polyfill": "^1.0.1",
     "formdata-polyfill": "^3.0.18",
     "highlight.js": "^9.15.6",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "license-checker": "^25.0.1",
     "mdn-polyfills": "^5.17.0",
     "phoenix": "file:../../../deps/phoenix",
