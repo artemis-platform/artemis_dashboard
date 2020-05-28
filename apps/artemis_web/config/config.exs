@@ -9,7 +9,7 @@ config :artemis_web, ArtemisWeb.Endpoint,
   url: [host: System.get_env("ARTEMIS_WEB_HOSTNAME")],
   secret_key_base: System.get_env("ARTEMIS_SECRET_KEY"),
   render_errors: [view: ArtemisWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: ArtemisPubSub],
+  pubsub_server: ArtemisPubSub,
   live_view: [signing_salt: System.get_env("ARTEMIS_WEB_LIVE_VIEW_SECRET_KEY")]
 
 config :artemis_web, ArtemisWeb.Guardian,
