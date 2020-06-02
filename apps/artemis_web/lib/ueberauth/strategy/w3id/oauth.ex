@@ -25,8 +25,10 @@ defmodule Ueberauth.Strategy.W3ID.OAuth do
 
   # Authorize Phase
 
-  def authorize_url! do
-    OAuth2.Client.authorize_url!(client(), scope: "openid")
+  def authorize_url!(options \\ []) do
+    params = Keyword.put(options, :scope, "openid")
+
+    OAuth2.Client.authorize_url!(client(), params)
   end
 
   def authorize_url(client, params) do
