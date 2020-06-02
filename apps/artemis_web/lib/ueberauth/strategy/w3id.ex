@@ -7,7 +7,8 @@ defmodule Ueberauth.Strategy.W3ID do
   The initial redirect to the w3id authentication page.
   """
   def handle_request!(conn) do
-    authorize_url = Ueberauth.Strategy.W3ID.OAuth.authorize_url!()
+    state = Map.get(conn.params, "state")
+    authorize_url = Ueberauth.Strategy.W3ID.OAuth.authorize_url!(state: state)
 
     redirect!(conn, authorize_url)
   end
@@ -76,7 +77,8 @@ defmodule Ueberauth.Strategy.W3ID do
   def extra(conn) do
     %Ueberauth.Auth.Extra{
       raw_info: %{
-        id_token_data: conn.private.w3id_user
+        id_token_data: conn.private.w3id_user,
+        state: conn.params["state"]
       }
     }
   end
