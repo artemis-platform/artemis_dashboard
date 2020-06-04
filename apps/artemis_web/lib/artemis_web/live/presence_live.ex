@@ -8,9 +8,9 @@ defmodule ArtemisWeb.PresenceLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
-    user = session.current_user
-    path = session.request_path
+  def mount(_params, session, socket) do
+    user = session["current_user"]
+    path = session["request_path"]
     id = "user:#{user.id}:path:#{path}"
     topic = get_presence_topic()
     payload = get_presence_payload(path, user)

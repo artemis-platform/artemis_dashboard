@@ -4,16 +4,16 @@ defmodule ArtemisWeb.EventLogNotificationsLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
-    resource_id = Artemis.Helpers.to_string(session.resource_id)
-    resource_type = Artemis.Helpers.to_string(session.resource_type)
+  def mount(_params, session, socket) do
+    resource_id = Artemis.Helpers.to_string(session["resource_id"])
+    resource_type = Artemis.Helpers.to_string(session["resource_type"])
     broadcast_topic = Artemis.Event.get_broadcast_topic()
     timestamp = DateTime.utc_now()
 
     socket =
       socket
       |> assign(:connected_at, timestamp)
-      |> assign(:current_user, session.current_user)
+      |> assign(:current_user, session["current_user"])
       |> assign(:event_received_at, nil)
       |> assign(:event_received_by, nil)
       |> assign(:resource_id, resource_id)
