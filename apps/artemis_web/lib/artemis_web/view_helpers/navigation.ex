@@ -147,11 +147,11 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   """
   def render_secondary_navigation_live_comment_count_label(conn, resource_type, resource_id) do
     session = %{
-      resource_id: resource_id,
-      resource_type: resource_type,
-      user: current_user(conn)
+      "resource_id" => resource_id,
+      "resource_type" => resource_type,
+      "user" => current_user(conn)
     }
 
-    Phoenix.LiveView.live_render(conn, ArtemisWeb.CommentCountLabelLive, session: session)
+    Phoenix.LiveView.Helpers.live_render(conn, ArtemisWeb.CommentCountLabelLive, session: session)
   end
 end

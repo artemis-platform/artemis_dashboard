@@ -32,7 +32,7 @@ defmodule ArtemisWeb.ViewHelper.Notifications do
   def render_event_log_notifications(conn, type, id \\ nil) do
     user = current_user(conn)
 
-    Phoenix.LiveView.live_render(
+    Phoenix.LiveView.Helpers.live_render(
       conn,
       ArtemisWeb.EventLogNotificationsLive,
       session: %{
@@ -49,14 +49,14 @@ defmodule ArtemisWeb.ViewHelper.Notifications do
   def render_comment_notifications(conn, type, id \\ nil, path) do
     user = current_user(conn)
 
-    Phoenix.LiveView.live_render(
+    Phoenix.LiveView.Helpers.live_render(
       conn,
       ArtemisWeb.CommentNotificationsLive,
       session: %{
-        current_user: user,
-        path: path,
-        resource_id: id,
-        resource_type: type
+        "current_user" => user,
+        "path" => path,
+        "resource_id" => id,
+        "resource_type" => type
       }
     )
   end

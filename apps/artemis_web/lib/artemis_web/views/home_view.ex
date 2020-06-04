@@ -8,9 +8,10 @@ defmodule ArtemisWeb.HomeView do
     session =
       options
       |> Enum.into(%{})
-      |> Map.put(:user, current_user(conn))
+      |> Artemis.Helpers.keys_to_strings()
+      |> Map.put("user", current_user(conn))
 
-    Phoenix.LiveView.live_render(conn, ArtemisWeb.SummaryDataCentersListLive, session: session)
+    live_render(conn, ArtemisWeb.SummaryDataCentersListLive, session: session)
   end
 
   @doc """
@@ -35,6 +36,6 @@ defmodule ArtemisWeb.HomeView do
       |> Enum.into(%{})
       |> Map.put(:user, current_user(conn))
 
-    Phoenix.LiveView.live_render(conn, ArtemisWeb.SummaryCountLive, session: session)
+    live_render(conn, ArtemisWeb.SummaryCountLive, session: session)
   end
 end

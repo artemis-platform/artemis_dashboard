@@ -66,7 +66,7 @@ defmodule ArtemisWeb.ViewHelper.OnCall do
 
     if authorized? && incident_status_enabled? && on_call_enabled? do
       content_tag(:section) do
-        Phoenix.LiveView.live_render(conn, ArtemisWeb.PagerDutyLive)
+        Phoenix.LiveView.Helpers.live_render(conn, ArtemisWeb.PagerDutyLive, %{})
       end
     end
   end
