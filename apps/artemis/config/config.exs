@@ -84,6 +84,7 @@ config :artemis, :ibm_cloudant,
 
 config :artemis, :interval_worker, default_log_limit: System.get_env("ARTEMIS_INTERVAL_WORKER_DEFAULT_LOG_LIMIT")
 
+<<<<<<< HEAD
 config :artemis, :pager_duty,
   api_token: System.get_env("ARTEMIS_PAGER_DUTY_API_TOKEN"),
   api_url: System.get_env("ARTEMIS_PAGER_DUTY_API_URL"),
@@ -100,6 +101,8 @@ config :artemis, :service_now,
   api_token: System.get_env("ARTEMIS_SERVICE_NOW_API_TOKEN"),
   api_url: System.get_env("ARTEMIS_SERVICE_NOW_API_URL"),
   web_url: System.get_env("ARTEMIS_SERVICE_NOW_WEB_URL")
+
+config :config_tuples, distillery: false
 
 config :slugger, separator_char: ?-
 config :slugger, replacement_file: "lib/replacements.exs"
