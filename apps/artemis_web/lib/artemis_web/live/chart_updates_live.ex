@@ -13,18 +13,18 @@ defmodule ArtemisWeb.ChartUpdatesLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
+  def mount(_params, session, socket) do
     socket =
       socket
-      |> assign(:chart_data, session.chart_data)
-      |> assign(:chart_id, session.chart_id)
-      |> assign(:chart_options, session.chart_options)
-      |> assign(:fetch_data_on_cache_resets, session.fetch_data_on_cache_resets)
-      |> assign(:fetch_data_on_cloudant_changes, session.fetch_data_on_cloudant_changes)
-      |> assign(:fetch_data_on_events, session.fetch_data_on_events)
+      |> assign(:chart_data, session["chart_data"])
+      |> assign(:chart_id, session["chart_id"])
+      |> assign(:chart_options, session["chart_options"])
+      |> assign(:fetch_data_on_cache_resets, session["fetch_data_on_cache_resets"])
+      |> assign(:fetch_data_on_cloudant_changes, session["fetch_data_on_cloudant_changes"])
+      |> assign(:fetch_data_on_events, session["fetch_data_on_events"])
       |> assign(:fetch_data_timer, nil)
-      |> assign(:module, session.module)
-      |> assign(:user, session.user)
+      |> assign(:module, session["module"])
+      |> assign(:user, session["user"])
 
     subscribe_to_cache_events(socket.assigns)
     subscribe_to_cloudant_changes(socket.assigns)

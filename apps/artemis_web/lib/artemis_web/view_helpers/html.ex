@@ -33,7 +33,7 @@ defmodule ArtemisWeb.ViewHelper.HTML do
       |> Enum.into([])
 
     cond do
-      method == "get" && live? -> Phoenix.LiveView.live_link(label, tag_options)
+      method == "get" && live? -> Phoenix.LiveView.Helpers.live_redirect(label, tag_options)
       method == "get" -> link(label, tag_options)
       true -> button(label, tag_options)
     end

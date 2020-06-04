@@ -15,7 +15,7 @@
   <section>
     <%= h3 "Live Sessions" %>
 
-    <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.SessionLive %>
+    <%= Phoenix.LiveView.Helpers.live_render @conn, ArtemisWeb.SessionLive %>
   </section>
 
   <section>

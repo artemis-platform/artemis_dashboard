@@ -4,7 +4,7 @@ defmodule ArtemisWeb.PagerDutyLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(_session, socket) do
+  def mount(_params, _session, socket) do
     socket = assign(socket, :updated_at, Timex.now())
 
     subscribe_to_incident_changes()

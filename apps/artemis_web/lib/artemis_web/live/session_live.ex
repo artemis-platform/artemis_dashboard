@@ -6,7 +6,7 @@ defmodule ArtemisWeb.SessionLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(_session, socket) do
+  def mount(_params, _session, socket) do
     ArtemisPubSub.subscribe(get_presence_topic())
 
     assigns = assign(socket, :presences, list_all_presences())

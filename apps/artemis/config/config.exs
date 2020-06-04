@@ -101,6 +101,8 @@ config :artemis, :service_now,
   api_url: System.get_env("ARTEMIS_SERVICE_NOW_API_URL"),
   web_url: System.get_env("ARTEMIS_SERVICE_NOW_WEB_URL")
 
+config :config_tuples, distillery: false
+
 config :slugger, separator_char: ?-
 config :slugger, replacement_file: "lib/replacements.exs"
 

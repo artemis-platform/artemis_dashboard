@@ -6,9 +6,9 @@ defmodule ArtemisWeb.CommentCountLabelLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
-    resource_id = Artemis.Helpers.to_string(session.resource_id)
-    resource_type = Artemis.Helpers.to_string(session.resource_type)
+  def mount(_params, session, socket) do
+    resource_id = Artemis.Helpers.to_string(session["resource_id"])
+    resource_type = Artemis.Helpers.to_string(session["resource_type"])
     broadcast_topic = Artemis.CacheEvent.get_broadcast_topic()
 
     assigns =
@@ -17,7 +17,7 @@ defmodule ArtemisWeb.CommentCountLabelLive do
       |> assign(:resource_id, resource_id)
       |> assign(:resource_type, resource_type)
       |> assign(:status, :loading)
-      |> assign(:user, session.user)
+      |> assign(:user, session["user"])
 
     if connected?(socket), do: Process.send_after(self(), {:update_data, :loaded}, 10)
 

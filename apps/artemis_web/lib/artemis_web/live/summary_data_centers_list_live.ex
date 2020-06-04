@@ -4,14 +4,14 @@ defmodule ArtemisWeb.SummaryDataCentersListLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
+  def mount(_params, session, socket) do
     broadcast_topic = Artemis.CacheEvent.get_broadcast_topic()
 
     assigns =
       socket
       |> assign(:data, [])
       |> assign(:status, :loading)
-      |> assign(:user, session.user)
+      |> assign(:user, session["user"])
 
     socket = update_data(assigns, :loaded)
 
