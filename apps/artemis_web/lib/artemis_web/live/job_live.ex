@@ -6,10 +6,10 @@ defmodule ArtemisWeb.JobLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
+  def mount(_params, session, socket) do
     assigns =
       socket
-      |> assign(:job, session.job)
+      |> assign(:job, session["job"])
       |> assign(:now, Timex.now())
 
     :ok = ArtemisPubSub.subscribe(Artemis.CloudantChange.topic(@schema))

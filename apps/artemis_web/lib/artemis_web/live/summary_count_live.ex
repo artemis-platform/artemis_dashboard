@@ -4,18 +4,18 @@ defmodule ArtemisWeb.SummaryCountLive do
   # LiveView Callbacks
 
   @impl true
-  def mount(session, socket) do
+  def mount(_params, session, socket) do
     broadcast_topic = Artemis.CacheEvent.get_broadcast_topic()
 
     assigns =
       socket
       |> assign(:count, nil)
-      |> assign(:label_plural, session.label_plural)
-      |> assign(:label_singular, session.label_singular)
-      |> assign(:module, session.module)
-      |> assign(:path, session.path)
+      |> assign(:label_plural, session["label_plural"])
+      |> assign(:label_singular, session["label_singular"])
+      |> assign(:module, session["module"])
+      |> assign(:path, session["path"])
       |> assign(:status, :loading)
-      |> assign(:user, session.user)
+      |> assign(:user, session["user"])
 
     socket = update_data(assigns, :loaded)
 
