@@ -36,9 +36,9 @@ defmodule ArtemisWeb.ViewHelper.Notifications do
       conn,
       ArtemisWeb.EventLogNotificationsLive,
       session: %{
-        current_user: user,
-        resource_id: id,
-        resource_type: type
+        "current_user" => user,
+        "resource_id" => id,
+        "resource_type" => type
       }
     )
   end

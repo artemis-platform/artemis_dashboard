@@ -5,10 +5,16 @@
   <div id="chart-<%= @chart_id %>" class="chart"></div>
 
   <%=
-    Phoenix.LiveView.live_render(
+    session =
+      assigns
+      |> Enum.into(%{})
+      |> Artemis.Helpers.keys_to_strings()
+      |> Map.delete("conn")
+
+    Phoenix.LiveView.Helpers.live_render(
       @conn,
       ArtemisWeb.ChartUpdatesLive,
-      session: Map.delete(assigns, :conn)
+      session: session
     )
   %>
 

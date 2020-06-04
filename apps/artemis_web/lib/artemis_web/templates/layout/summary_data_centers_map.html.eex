@@ -178,9 +178,9 @@
 
 <%=
   session = %{
-    id: @id,
-    user: @user
+    "id" => @id,
+    "user" => @user
   }
 
-  Phoenix.LiveView.live_render(@conn, ArtemisWeb.SummaryDataCentersMapLive, session: session)
+  Phoenix.LiveView.Helpers.live_render(@conn, ArtemisWeb.SummaryDataCentersMapLive, session: session)
 %>

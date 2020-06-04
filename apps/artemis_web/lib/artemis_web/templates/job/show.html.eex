@@ -9,6 +9,6 @@
   <%= render "show/_notifications.html", assigns %>
 
   <section>
-    <%= Phoenix.LiveView.live_render @conn, ArtemisWeb.JobLive, session: %{job: @job} %>
+    <%= Phoenix.LiveView.Helpers.live_render @conn, ArtemisWeb.JobLive, session: %{"job" => @job} %>
   </section>
 </div>
