@@ -173,6 +173,7 @@ defmodule Artemis.Helpers do
   def to_string(value) when is_nil(value), do: ""
   def to_string(value) when is_atom(value), do: Atom.to_string(value)
   def to_string(value) when is_integer(value), do: Integer.to_string(value)
+  def to_string(value) when is_float(value), do: Float.to_string(value)
   def to_string(value), do: value
 
   @doc """
@@ -264,6 +265,70 @@ defmodule Artemis.Helpers do
     |> Enum.zip(values)
     |> Enum.into(%{})
   end
+
+  @doc """
+  Convert a list of bitstrings to atoms. If passed the `allow` option with a
+  list of atoms, only converted values matching that list will be returned.
+
+  Options:
+
+    `:allow` -> List of allowed atoms. When passed, any converted values not in the list will be removed
+
+  Example:
+
+    list_to_atoms([:hello, "world"])
+
+  Returns:
+
+    [:hello, :world]
+
+  """
+  def list_to_atoms(values, options \\ [])
+
+  def list_to_atoms(values, options) when is_list(values) do
+    allow = Keyword.get(options, :allow)
+
+    convert_values_to_atoms(values, allow)
+  end
+
+  def list_to_atoms(value, options) do
+    [value]
+    |> list_to_atoms(options)
+    |> List.first()
+  end
+
+  defp convert_values_to_atoms(values, allow) do
+    values
+    |> Enum.reduce([], fn value, acc ->
+      case convert_value_to_atom(value, allow) do
+        nil -> acc
+        value -> [value | acc]
+      end
+    end)
+    |> Enum.reverse()
+  end
+
+  defp convert_value_to_atom(value, allow) when is_atom(value) and is_list(allow) do
+    case Enum.member?(allow, value) do
+      true -> value
+      false -> nil
+    end
+  end
+
+  defp convert_value_to_atom(value, allow) when is_bitstring(value) and is_list(allow) do
+    allow_strings = Enum.map(allow, &Artemis.Helpers.to_string(&1))
+
+    case Enum.member?(allow_strings, value) do
+      true -> String.to_atom(value)
+      false -> nil
+    end
+  end
+
+  defp convert_value_to_atom(value, _allow) when is_atom(value), do: value
+
+  defp convert_value_to_atom(value, _allow) when is_bitstring(value), do: String.to_atom(value)
+
+  defp convert_value_to_atom(_value, _allow), do: nil
 
   @doc """
   Recursively converts the keys of a map into an atom.
