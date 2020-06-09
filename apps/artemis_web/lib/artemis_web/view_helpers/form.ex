@@ -9,6 +9,66 @@ defmodule ArtemisWeb.ViewHelper.Form do
   def blank_option(), do: [key: " ", value: ""]
 
   @doc """
+  Returns option data for a select field
+
+  Options
+
+    :key_field -> atom. required if passing a list of maps or list of keyword lists
+    :value_field -> atom. required if passing a list of maps or list of keyword lists
+    :blank_option -> boolean. include a blank option
+
+  Example:
+
+    select_options(["one", "two"])
+
+  Returns:
+
+    [
+      [key: "one", value: "one"],
+      [key: "two", value: "two"]
+    ]
+
+  """
+  def select_options(data, options \\ []) do
+    results = 
+      data
+      |> Enum.map(&select_option(&1, options))
+      |> Enum.reject(&is_nil(Keyword.get(&1, :value)))
+
+    case Keyword.get(options, :blank_option) do
+      true -> [blank_option() | results]
+      _ -> results
+    end
+  end
+
+  defp select_option(entry, options) when is_map(entry) do
+    key = Keyword.get(options, :field) || Keyword.fetch!(options, :key_field)
+    value = Keyword.get(options, :field) || Keyword.fetch!(options, :value_field)
+
+    [
+      key: Map.get(entry, key),
+      value: Map.get(entry, value)
+    ]
+  end
+
+  defp select_option(entry, options) when is_list(entry) do
+    key = Keyword.get(options, :key_field)
+    value = Keyword.get(options, :value_field)
+
+    [
+      key: Keyword.get(entry, key),
+      value: Keyword.get(entry, value)
+    ]
+  end
+
+  defp select_option(entry, _options), do: [key: entry, value: entry]
+
+  @doc """
+  Returns the value of a changeset field
+  """
+  def get_changeset_value(changeset, field), do: Ecto.Changeset.get_field(changeset, field)
+
+  @doc """
   Render a standalone select input form field. Note, if using `form_for`, use
   the Phoenix built-in function `select` instead.
 
