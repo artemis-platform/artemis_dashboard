@@ -24,7 +24,7 @@
 
       <div>
         <%=
-          options = ArtemisLog.HttpRequestLog.unique_values_for(:user_name)
+          options = select_options(@filter_user_names, field: :user_name)
 
           filter_multi_select(@conn, "User Name", :user_name, options)
         %>
@@ -32,7 +32,7 @@
 
       <div>
         <%=
-          options = ArtemisLog.HttpRequestLog.unique_values_for(:user_id)
+          options = select_options(@filter_user_ids, field: :user_id)
 
           filter_multi_select(@conn, "User ID", :user_id, options)
         %>
@@ -40,7 +40,7 @@
 
       <div>
         <%=
-          options = ArtemisLog.HttpRequestLog.unique_values_for(:session_id)
+          options = select_options(@filter_session_ids, field: :session_id)
 
           filter_multi_select(@conn, "Session ID", :session_id, options)
         %>
@@ -48,7 +48,7 @@
 
       <div>
         <%=
-          options = ArtemisLog.HttpRequestLog.unique_values_for(:path)
+          options = select_options(@filter_paths, field: :path)
 
           filter_multi_select(@conn, "Path", :path, options)
         %>
