@@ -22,8 +22,8 @@
             Routes.user_path(@conn, :index_bulk_actions),
             allowed_bulk_actions: @allowed_bulk_actions,
             extra_fields_data: [
-              roles: Artemis.Role.unique_select_values_for(:name),
-              teams: Artemis.Team.unique_select_values_for(:name)
+              roles: select_options(@roles, key_field: :name, value_field: :id),
+              teams: select_options(@teams, key_field: :name, value_field: :id)
             ]
           )
         %>

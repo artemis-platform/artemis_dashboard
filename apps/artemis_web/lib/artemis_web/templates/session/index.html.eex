@@ -26,7 +26,10 @@
 
       <div class="table-actions">
         <%=
-          options = ArtemisLog.EventLog.unique_values_for(:session_id)
+          options =
+            %{distinct: :session_id}
+            |> ArtemisLog.ListEventLogs.call(current_user(@conn))
+            |> select_options(field: :session_id)
 
           filter_multi_select(@conn, "Session ID", :session_id, options)
         %>

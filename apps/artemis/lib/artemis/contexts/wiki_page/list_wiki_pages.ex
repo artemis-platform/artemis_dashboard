@@ -16,7 +16,7 @@ defmodule Artemis.ListWikiPages do
     params = default_params(params)
 
     WikiPage
-    |> distinct(true)
+    |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> search_filter(params)

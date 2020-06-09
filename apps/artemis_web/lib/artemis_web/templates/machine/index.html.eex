@@ -22,8 +22,8 @@
             Routes.machine_path(@conn, :index_bulk_actions),
             allowed_bulk_actions: @allowed_bulk_actions,
             extra_fields_data: [
-              clouds: [blank_option() | Artemis.Cloud.unique_select_values_for(:name)],
-              data_centers: [blank_option() | Artemis.DataCenter.unique_select_values_for(:name)]
+              clouds: select_options(@clouds, blank_option: true, key_field: :name, value_field: :id),
+              data_centers: select_options(@data_centers, blank_option: true, key_field: :name, value_field: :id)
             ]
           )
         %>

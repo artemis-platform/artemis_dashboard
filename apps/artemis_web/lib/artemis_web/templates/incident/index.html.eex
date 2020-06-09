@@ -46,7 +46,10 @@
         </div>
         <div>
           <%=
-            options = Artemis.Incident.unique_select_values_for(:service_name, :service_id)
+            options =
+              %{distinct: :service_id}
+              |> Artemis.ListIncidents.call(current_user(@conn))
+              |> select_options(key_field: :service_name, value_field: :service_id)
 
             if length(options) > 1 do
               filter_multi_select(@conn, "Service", :service_id, options)

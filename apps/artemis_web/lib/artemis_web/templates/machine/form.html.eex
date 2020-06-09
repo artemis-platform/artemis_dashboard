@@ -27,18 +27,24 @@
   <div class="field">
     <%= label_with_errors f, :data_center_id, "Data Center" %>
     <%=
-      data_center_options = [blank_option() | Artemis.DataCenter.unique_select_values_for(:name)]
+      options =
+        %{distinct: :name}
+        |> Artemis.ListDataCenters.call(current_user(@conn))
+        |> select_options(blank_option: true, key_field: :name, value_field: :id)
 
-      select f, :data_center_id, data_center_options, class: "enhanced clearable", placeholder: ""
+      select f, :data_center_id, options, class: "enhanced clearable", placeholder: ""
     %>
   </div>
 
   <div class="field">
     <%= label_with_errors f, :cloud_id %>
     <%=
-      cloud_options = [blank_option() | Artemis.Cloud.unique_select_values_for(:name)]
+      options =
+        %{distinct: :name}
+        |> Artemis.ListClouds.call(current_user(@conn))
+        |> select_options(blank_option: true, key_field: :name, value_field: :id)
 
-      select f, :cloud_id, cloud_options, class: "enhanced clearable", placeholder: ""
+      select f, :cloud_id, options, class: "enhanced clearable", placeholder: ""
     %>
   </div>
 

@@ -12,9 +12,12 @@
   <div class="field">
     <%= label_with_errors f, :customer_id %>
     <%=
-      customer_options = [blank_option() | Artemis.Customer.unique_select_values_for(:name)]
+      options =
+        %{distinct: :name}
+        |> Artemis.ListCustomers.call(current_user(@conn))
+        |> select_options(blank_option: true, key_field: :name, value_field: :id)
 
-      select f, :customer_id, customer_options, class: "enhanced clearable", placeholder: ""
+      select f, :customer_id, options, class: "enhanced clearable", placeholder: ""
     %>
   </div>
 

@@ -30,6 +30,8 @@ defmodule ArtemisWeb.MachineController do
   alias Artemis.Machine
   alias Artemis.DeleteMachine
   alias Artemis.GetMachine
+  alias Artemis.ListClouds
+  alias Artemis.ListDataCenters
   alias Artemis.ListMachines
   alias Artemis.UpdateMachine
 
@@ -44,11 +46,15 @@ defmodule ArtemisWeb.MachineController do
         |> Map.put(:paginate, true)
         |> Map.put(:preload, @preload)
 
+      clouds = ListClouds.call(user)
+      data_centers = ListDataCenters.call(user)
       machines = ListMachines.call(params, user)
       allowed_bulk_actions = ArtemisWeb.MachineView.allowed_bulk_actions(user)
 
       assigns = [
         allowed_bulk_actions: allowed_bulk_actions,
+        clouds: clouds,
+        data_centers: data_centers,
         machines: machines
       ]
 

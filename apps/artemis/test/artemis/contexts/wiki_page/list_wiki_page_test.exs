@@ -41,6 +41,26 @@ defmodule Artemis.ListWikiPagesTest do
       {:ok, wiki_page: wiki_page}
     end
 
+    test "distinct" do
+      Repo.delete_all(WikiPage)
+
+      section1 = "Section 1"
+      section2 = "Section 2"
+
+      insert_list(2, :wiki_page, section: section1)
+      insert_list(3, :wiki_page, section: section2)
+
+      params = %{
+        distinct: "section"
+      }
+
+      results = ListWikiPages.call(params, Mock.system_user())
+      sections = Enum.map(results, & &1.section)
+
+      assert length(results) == 2
+      assert sections == ["Section 1", "Section 2"]
+    end
+
     test "order" do
       insert_list(3, :wiki_page)
 

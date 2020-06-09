@@ -23,7 +23,7 @@ defmodule Artemis.ListMachines do
     params = default_params(params)
 
     Machine
-    |> distinct(true)
+    |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> search_filter(params)

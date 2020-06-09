@@ -6,6 +6,7 @@ defmodule Artemis.Context do
   defmacro __using__(_options) do
     quote do
       import Artemis.Context
+      import Artemis.Repo.Distinct
       import Artemis.Repo.Helpers
       import Artemis.Repo.Order
       import Artemis.Repo.SelectCount
