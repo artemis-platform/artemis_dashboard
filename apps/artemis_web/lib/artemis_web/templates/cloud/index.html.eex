@@ -22,7 +22,7 @@
             Routes.cloud_path(@conn, :index_bulk_actions),
             allowed_bulk_actions: @allowed_bulk_actions,
             extra_fields_data: [
-              customers: [blank_option() | Artemis.Customer.unique_select_values_for(:name)]
+              customers: select_options(@customers, blank_option: true, key_field: :name, value_field: :id)
             ]
           )
         %>

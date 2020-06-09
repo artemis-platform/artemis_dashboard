@@ -31,6 +31,7 @@ defmodule ArtemisWeb.CloudController do
   alias Artemis.DeleteCloud
   alias Artemis.GetCloud
   alias Artemis.ListClouds
+  alias Artemis.ListCustomers
   alias Artemis.ListMachines
   alias Artemis.UpdateCloud
 
@@ -46,11 +47,13 @@ defmodule ArtemisWeb.CloudController do
         |> Map.put(:preload, @preload)
 
       clouds = ListClouds.call(params, user)
+      customers = ListCustomers.call(user)
       allowed_bulk_actions = ArtemisWeb.CloudView.allowed_bulk_actions(user)
 
       assigns = [
         allowed_bulk_actions: allowed_bulk_actions,
-        clouds: clouds
+        clouds: clouds,
+        customers: customers
       ]
 
       render_format(conn, "index", assigns)
