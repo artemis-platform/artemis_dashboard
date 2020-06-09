@@ -38,11 +38,15 @@ defmodule ArtemisWeb.UserController do
         |> Map.put(:preload, [:roles, :teams])
 
       user = current_user(conn)
+      roles = ListRoles.call(user)
+      teams = ListTeams.call(user)
       users = ListUsers.call(params, user)
       allowed_bulk_actions = ArtemisWeb.UserView.allowed_bulk_actions(user)
 
       assigns = [
         allowed_bulk_actions: allowed_bulk_actions,
+        roles: roles,
+        teams: teams,
         users: users
       ]
 

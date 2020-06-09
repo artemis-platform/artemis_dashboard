@@ -30,7 +30,7 @@ defmodule ArtemisWeb.ViewHelper.Form do
 
   """
   def select_options(data, options \\ []) do
-    results = 
+    results =
       data
       |> Enum.map(&select_option(&1, options))
       |> Enum.reject(&is_nil(Keyword.get(&1, :value)))
