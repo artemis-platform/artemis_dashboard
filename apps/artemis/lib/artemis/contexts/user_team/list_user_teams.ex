@@ -15,7 +15,7 @@ defmodule Artemis.ListUserTeams do
     params = default_params(params)
 
     UserTeam
-    |> distinct(true)
+    |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> order_query(params)

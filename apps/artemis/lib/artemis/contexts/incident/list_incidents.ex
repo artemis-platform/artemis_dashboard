@@ -16,7 +16,7 @@ defmodule Artemis.ListIncidents do
     params = default_params(params)
 
     Incident
-    |> distinct(true)
+    |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> search_filter(params)
