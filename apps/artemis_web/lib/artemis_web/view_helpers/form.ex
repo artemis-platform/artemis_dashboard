@@ -42,22 +42,28 @@ defmodule ArtemisWeb.ViewHelper.Form do
   end
 
   defp select_option(entry, options) when is_map(entry) do
-    key = Keyword.get(options, :field) || Keyword.fetch!(options, :key_field)
-    value = Keyword.get(options, :field) || Keyword.fetch!(options, :value_field)
+    key_field = Keyword.get(options, :field) || Keyword.fetch!(options, :key_field)
+    value_field = Keyword.get(options, :field) || Keyword.fetch!(options, :value_field)
+
+    value = Map.get(entry, value_field)
+    key = Map.get(entry, key_field) || value
 
     [
-      key: Map.get(entry, key),
-      value: Map.get(entry, value)
+      key: key,
+      value: value
     ]
   end
 
   defp select_option(entry, options) when is_list(entry) do
-    key = Keyword.get(options, :key_field)
-    value = Keyword.get(options, :value_field)
+    key_field = Keyword.get(options, :key_field)
+    value_field = Keyword.get(options, :value_field)
+
+    value = Keyword.get(entry, value_field)
+    key = Keyword.get(entry, key_field) || value
 
     [
-      key: Keyword.get(entry, key),
-      value: Keyword.get(entry, value)
+      key: key,
+      value: value
     ]
   end
 
