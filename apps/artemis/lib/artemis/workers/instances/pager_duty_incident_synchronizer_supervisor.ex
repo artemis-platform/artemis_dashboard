@@ -47,6 +47,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor do
     Supervisor.start_link(__MODULE__, :ok, name: options[:name] || __MODULE__)
   end
 
+  @impl true
   def init(:ok) do
     children =
       Enum.map(Artemis.Helpers.PagerDuty.get_pager_duty_teams(), fn team ->
@@ -65,7 +66,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerSupervisor do
     # for other strategies and supported options
     options = [strategy: :one_for_one]
 
-    supervise(children, options)
+    Supervisor.init(children, options)
   end
 
   def get_worker_name(slug) do

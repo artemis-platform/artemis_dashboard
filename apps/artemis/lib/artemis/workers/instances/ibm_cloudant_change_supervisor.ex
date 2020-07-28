@@ -49,6 +49,7 @@ defmodule Artemis.Worker.IBMCloudantChangeSupervisor do
     Supervisor.start_link(__MODULE__, :ok, name: options[:name] || __MODULE__)
   end
 
+  @impl true
   def init(:ok) do
     databases =
       :artemis
@@ -71,7 +72,7 @@ defmodule Artemis.Worker.IBMCloudantChangeSupervisor do
     # for other strategies and supported options
     options = [strategy: :one_for_one]
 
-    supervise(children, options)
+    Supervisor.init(children, options)
   end
 
   # Helpers
