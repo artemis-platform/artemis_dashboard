@@ -77,6 +77,7 @@ defmodule Artemis.CacheInstance do
       cachex_instance_name: get_cachex_instance_name(module),
       cachex_options: Keyword.get(options, :cachex_options, []),
       cache_server_name: get_cache_server_name(module),
+      cache_reset_on_cloudant_changes: Keyword.get(options, :cache_reset_on_cloudant_changes, []),
       cache_reset_on_events: Keyword.get(options, :cache_reset_on_events, []),
       module: module
     }
@@ -176,6 +177,7 @@ defmodule Artemis.CacheInstance do
       |> Map.put(:cachex_instance_pid, cachex_instance_pid)
       |> Map.put(:cachex_options, cachex_options)
 
+    subscribe_to_cloudant_changes(initial_state)
     subscribe_to_events(initial_state)
 
     :ok = CacheEvent.broadcast("cache:started", initial_state.module)
@@ -195,6 +197,10 @@ defmodule Artemis.CacheInstance do
   end
 
   @impl true
+  def handle_info(%{event: _event, payload: %{type: "cloudant-change"} = payload}, state) do
+    process_cloudant_event(payload, state)
+  end
+
   def handle_info(%{event: event, payload: payload}, state), do: process_event(event, payload, state)
 
   # Cachex Helpers
@@ -242,6 +248,17 @@ defmodule Artemis.CacheInstance do
 
   # Helpers - Events
 
+  defp subscribe_to_cloudant_changes(%{cache_reset_on_cloudant_changes: changes}) when length(changes) > 0 do
+    Enum.map(changes, fn change ->
+      schema = Map.get(change, :schema)
+      topic = Artemis.CloudantChange.topic(schema)
+
+      :ok = ArtemisPubSub.subscribe(topic)
+    end)
+  end
+
+  defp subscribe_to_cloudant_changes(_), do: :skipped
+
   defp subscribe_to_events(%{cache_reset_on_events: events}) when length(events) > 0 do
     topic = Artemis.Event.get_broadcast_topic()
 
@@ -249,6 +266,13 @@ defmodule Artemis.CacheInstance do
   end
 
   defp subscribe_to_events(_state), do: :skipped
+
+  defp process_cloudant_event(payload, state) do
+    case matches_any?(state.cache_reset_on_cloudant_changes, payload) do
+      true -> reset_cache(state, payload)
+      false -> {:noreply, state}
+    end
+  end
 
   defp process_event(event, payload, state) do
     case Enum.member?(state.cache_reset_on_events, event) do
@@ -280,6 +304,10 @@ defmodule Artemis.CacheInstance do
   end
 
   defp convert_expiration_option(options), do: options
+
+  defp matches_any?(items, target) do
+    Enum.any?(items, &Artemis.Helpers.subset?(&1, target))
+  end
 
   defp reset_cache(state, event) do
     :ok = CacheEvent.broadcast("cache:reset", state.module, event)
