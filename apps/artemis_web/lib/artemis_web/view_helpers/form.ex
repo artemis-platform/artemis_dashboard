@@ -99,4 +99,107 @@ defmodule ArtemisWeb.ViewHelper.Form do
       end)
     end
   end
+
+  @doc """
+  From Phoenix.HTML.Form >= 2.14. Can be removed in the future once mix.exs
+  version matches.
+  """
+  def deprecated_options_for_select(options, selected_values) do
+    {:safe,
+     escaped_options_for_select(
+       options,
+       selected_values |> List.wrap() |> Enum.map(&html_escape/1)
+     )}
+  end
+
+  defp escaped_options_for_select(options, selected_values) do
+    Enum.reduce(options, [], fn
+      {option_key, option_value}, acc ->
+        [acc | option(option_key, option_value, [], selected_values)]
+
+      options, acc when is_list(options) ->
+        {option_key, options} = Keyword.pop(options, :key)
+
+        option_key ||
+          raise ArgumentError,
+                "expected :key key when building <option> from keyword list: #{inspect(options)}"
+
+        {option_value, options} = Keyword.pop(options, :value)
+
+        option_value ||
+          raise ArgumentError,
+                "expected :value key when building <option> from keyword list: #{inspect(options)}"
+
+        [acc | option(option_key, option_value, options, selected_values)]
+
+      option, acc ->
+        [acc | option(option, option, [], selected_values)]
+    end)
+  end
+
+  defp option(group_label, group_values, [], value)
+       when is_list(group_values) or is_map(group_values) do
+    section_options = escaped_options_for_select(group_values, value)
+    {:safe, contents} = content_tag(:optgroup, {:safe, section_options}, label: group_label)
+    contents
+  end
+
+  defp option(option_key, option_value, extra, value) do
+    option_key = html_escape(option_key)
+    option_value = html_escape(option_value)
+    opts = [value: option_value, selected: option_value in value] ++ extra
+    {:safe, contents} = content_tag(:option, option_key, opts)
+    contents
+  end
+
+  @doc """
+  Render hidden fields for each value
+  """
+  def hidden_fields(items) do
+    Enum.map(items, fn item ->
+      hidden_field(item)
+    end)
+  end
+
+  @doc """
+  Render a hidden field
+  """
+  def hidden_field(key, values) when is_map(values) do
+    Enum.map(values, fn {next_key, value} ->
+      hidden_field("#{key}[#{next_key}]", value)
+    end)
+  end
+
+  def hidden_field(key, values) when is_list(values) do
+    Enum.map(values, fn value ->
+      hidden_field("#{key}[]", value)
+    end)
+  end
+
+  def hidden_field(key, value) do
+    tag(:input, name: key, type: :hidden, value: value)
+  end
+
+  @doc """
+  Render a hidden field
+  """
+  def hidden_field(values) when is_map(values) do
+    Enum.map(values, fn {key, value} ->
+      hidden_field(key, value)
+    end)
+  end
+
+  def hidden_field({key, values}) when is_map(values) do
+    Enum.map(values, fn {next_key, value} ->
+      hidden_field("#{key}[#{next_key}]", value)
+    end)
+  end
+
+  def hidden_field({key, values}) when is_list(values) do
+    Enum.map(values, fn value ->
+      hidden_field("#{key}[]", value)
+    end)
+  end
+
+  def hidden_field({key, value}), do: hidden_field(key, value)
 end
