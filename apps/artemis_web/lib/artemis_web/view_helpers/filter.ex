@@ -59,6 +59,40 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   Renders a filter button for setting query params in the URL under the `filters` key
   """
   def filter_button(conn, label, values) do
+    filter_data = get_filter_data(conn, values)
+
+    class =
+      case filter_data.active? do
+        true -> "ui basic button blue"
+        false -> "ui basic button"
+      end
+
+    options = [
+      class: class,
+      onclick: "location.href='#{filter_data.path}'",
+      type: "button"
+    ]
+
+    content_tag(:button, label, options)
+  end
+
+  @doc """
+  Renders a filter link for setting query params in the URL under the `filters` key
+  """
+  def filter_link(conn, label, values) do
+    filter_data = get_filter_data(conn, values)
+
+    class = if filter_data.active?, do: "active"
+
+    options = [
+      class: class,
+      href: filter_data.path
+    ]
+
+    content_tag(:a, label, options)
+  end
+
+  defp get_filter_data(conn, values) do
     current_query_params = conn.query_params
     current_filter_params = Map.get(current_query_params, "filters", %{})
     updated_filter_params = ArtemisWeb.ViewHelper.QueryParams.update_query_params(current_filter_params, values)
@@ -85,23 +119,27 @@ defmodule ArtemisWeb.ViewHelper.Filter do
           false
       end
 
-    class =
-      case active? do
-        true -> "ui basic button blue"
-        false -> "ui basic button"
-      end
-
-    options = [
-      class: class,
-      onclick: "location.href='#{path}'",
-      type: "button"
-    ]
-
-    content_tag(:button, label, options)
+    %{
+      active?: active?,
+      path: path
+    }
   end
 
   @doc """
-  Render a multi select filter form element
+  Render a input filter form element
+  """
+  def filter_input_field(conn, label, value) do
+    filter_assigns = %{
+      conn: conn,
+      label: label,
+      value: Artemis.Helpers.to_string(value)
+    }
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "filter_input_field.html", filter_assigns)
+  end
+
+  @doc """
+  Render a multi select filter form field inside a self-contained form tag
   """
   def filter_multi_select(conn, label, value, options) do
     filter_assigns = %{
@@ -112,5 +150,25 @@ defmodule ArtemisWeb.ViewHelper.Filter do
     }
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "filter_multi_select.html", filter_assigns)
+  end
+
+  @doc """
+  Render a multi select filter form field
+  """
+  def filter_multi_select_field(conn, form, label, value, options) do
+    value = Artemis.Helpers.to_string(value)
+    selected = Artemis.Helpers.deep_get(conn, [:query_params, "filters", value]) || []
+    class = if length(selected) > 0, do: "active"
+
+    filter_assigns = %{
+      available: options,
+      class: class,
+      form: form,
+      label: label,
+      selected: selected,
+      value: value
+    }
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "filter_multi_select_field.html", filter_assigns)
   end
 end

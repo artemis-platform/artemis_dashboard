@@ -66,6 +66,8 @@ defmodule Artemis.CacheInstance do
     stats: true
   ]
 
+  @fetch_timeout :timer.seconds(120)
+
   # Server Callbacks
 
   def start_link(options) do
@@ -110,7 +112,7 @@ defmodule Artemis.CacheInstance do
       nil ->
         Logger.debug("#{get_cachex_instance_name(module)}: cache miss")
 
-        GenServer.call(get_cache_server_name(module), {:fetch, key, getter})
+        GenServer.call(get_cache_server_name(module), {:fetch, key, getter}, @fetch_timeout)
 
       value ->
         Logger.debug("#{get_cachex_instance_name(module)}: cache hit")
