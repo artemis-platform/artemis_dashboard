@@ -1,19 +1,23 @@
-<div class="data-table-container">
+<div id="<%= @id %>" class="data-table-container data-table-container-<%= @id %>">
   <%= if @selectable do %><form class="ui form selectable" action="#"><% end %>
-    <table class="data-table">
+    <table class="data-table data-table-<%= @id %>">
       <thead>
         <tr>
           <%= Enum.map @columns, fn (column) -> %>
             <th>
-              <%= render_data_table_label(@conn, column, :html) %>
+              <%= render_data_table_label @conn, column, :html %>
             </th>
           <% end %>
         </tr>
       </thead>
       <tbody>
-        <%= render_table_row_if_empty(@data) %>
-        <%= Enum.map @data, fn (row) -> %>
-          <tr>
+        <%= render_table_row_if_empty @data %>
+        <%= Enum.map Enum.with_index(@data), fn {row, index} -> %>
+          <%
+            hide_row? = @show_only && @show_only < (index + 1)
+            row_visibility = if hide_row?, do: "hide", else: "show"
+          %>
+          <tr class="row-<%= index %> <%= row_visibility %>">
             <%= Enum.map @columns, fn (column) -> %>
               <td>
                 <%= render_data_table_value(@conn, column, row, :html) %>
@@ -24,4 +28,14 @@
       </tbody>
     </table>
   <%= if @selectable do %></form><% end %>
+
+  <%= if @show_only && (length(@data) + 1 > @show_only) do %>
+    <a href="#" class="data-table-show-only show-rows">
+      <div><i class="ui icon caret down"></i> Show All Rows (<%= length @data %>)</div>
+    </a>
+
+    <a href="#" class="data-table-show-only hide-rows">
+      <div><i class="ui icon caret up"></i> Show Fewer Rows (<%= @show_only %>)</div>
+    </a>
+  <% end %>
 </div>

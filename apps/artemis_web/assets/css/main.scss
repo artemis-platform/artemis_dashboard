@@ -64,6 +64,15 @@ select[multiple] {
 .data-table-container {
   overflow-x: auto;
   width: 100%;
+
+  .data-table-show-only {
+    display: flex;
+    justify-content: center;
+
+    &.hide-rows {
+      display: none;
+    }
+  }
 }
 
 .data-table {
@@ -97,6 +106,10 @@ select[multiple] {
 
     tr {
       border-bottom: 1px solid #e2e2e2;
+
+      &.hide {
+        display: none;
+      }
 
       &:hover {
         background: #f5fbff;

@@ -196,14 +196,16 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     format = get_request_format(conn)
     columns = get_data_table_columns(conn, options)
 
-    params = [
+    assigns = [
       columns: columns,
       conn: conn,
       data: data,
-      selectable: Keyword.get(options, :selectable)
+      id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),
+      selectable: Keyword.get(options, :selectable),
+      show_only: Keyword.get(options, :show_only)
     ]
 
-    Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", params)
+    Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", assigns)
   end
 
   defp get_request_format(conn) do
