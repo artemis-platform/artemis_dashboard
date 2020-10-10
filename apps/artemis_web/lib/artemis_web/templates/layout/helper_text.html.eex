@@ -1,0 +1,7 @@
+<span
+  class="helper-text"
+  data-position="right center"
+  data-tooltip="<%= @message %>"
+>
+  <i class="icon question circle outline"></i>
+</span>
