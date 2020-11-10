@@ -139,4 +139,13 @@ defmodule ArtemisWeb.ViewHelper.HTML do
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "reason_field.html", assigns)
   end
+
+  @doc """
+  Render a help icon
+  """
+  def helper_text(message, options \\ []) do
+    assigns = Keyword.put(options, :message, message)
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "helper_text.html", assigns)
+  end
 end
