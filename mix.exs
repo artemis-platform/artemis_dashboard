@@ -16,6 +16,7 @@ defmodule Artemis.Umbrella.MixProject do
             artemis: :permanent,
             artemis_api: :permanent,
             artemis_log: :permanent,
+            artemis_notify: :permanent,
             artemis_pubsub: :permanent,
             artemis_web: :permanent,
             release_manager: :load,

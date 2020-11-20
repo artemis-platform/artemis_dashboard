@@ -5,6 +5,7 @@ defmodule ArtemisWeb.ApplicationConfigController do
     :artemis,
     :artemis_api,
     :artemis_log,
+    :artemis_notify,
     :artemis_web
   ]
 
