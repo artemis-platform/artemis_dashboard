@@ -30,14 +30,16 @@ defmodule ArtemisNotify do
     quote do
       use Phoenix.View,
         root: "lib/artemis_notify/templates",
-        namespace: ArtemisNotify
+        namespace: ArtemisNotify,
+        pattern: "**/*"
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
 
-      import ArtemisNotify.Router.Helpers
       import ArtemisNotify.ErrorHelpers
       import ArtemisNotify.Gettext
+      import ArtemisNotify.Router.Helpers
+      import ArtemisNotify.ViewHelper.Slack
     end
   end
 
