@@ -177,6 +177,15 @@ defmodule Artemis.Helpers do
   def to_string(value), do: value
 
   @doc """
+  Converts a bitstring or integer to a atom
+  """
+  def to_atom(value) when is_nil(value), do: ""
+  def to_atom(value) when is_bitstring(value), do: String.to_atom(value)
+  def to_atom(value) when is_integer(value), do: to_atom(Integer.to_string(value))
+  def to_atom(value) when is_float(value), do: to_atom(Float.to_string(value))
+  def to_atom(value), do: value
+
+  @doc """
   Converts a nested list to a nested map. Example:
 
   Input: [[:one, :two, 3], [:one, :three, 3]]

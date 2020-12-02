@@ -40,6 +40,7 @@ defmodule ArtemisNotify do
       import ArtemisNotify.Gettext
       import ArtemisNotify.Router.Helpers
       import ArtemisNotify.ViewHelper.Slack
+      import ArtemisNotify.ViewHelper.Url
     end
   end
 

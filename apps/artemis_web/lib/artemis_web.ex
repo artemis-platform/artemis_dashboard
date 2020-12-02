@@ -144,6 +144,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.Presence
       import ArtemisWeb.ViewHelper.Print
       import ArtemisWeb.ViewHelper.QueryParams
+      import ArtemisWeb.ViewHelper.Schedule
       import ArtemisWeb.ViewHelper.Search
       import ArtemisWeb.ViewHelper.Tables
       import ArtemisWeb.ViewHelper.User

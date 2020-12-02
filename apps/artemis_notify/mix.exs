@@ -41,6 +41,7 @@ defmodule ArtemisNotify.Mixfile do
       {:phoenix_pubsub, "~> 2.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
+      {:floki, "~> 0.26.0"},
       {:plug_cowboy, "~> 2.2"},
       {:artemis, in_umbrella: true},
       {:artemis_pubsub, in_umbrella: true}

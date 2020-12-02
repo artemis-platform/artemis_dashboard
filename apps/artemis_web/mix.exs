@@ -57,6 +57,7 @@ defmodule ArtemisWeb.MixProject do
       {:ueberauth, "~> 0.6"},
       {:ueberauth_github, "~> 0.7"},
       {:artemis, in_umbrella: true},
+      {:artemis_notify, in_umbrella: true},
       {:artemis_pubsub, in_umbrella: true},
       {:artemis_log, in_umbrella: true, only: :test}
     ]
