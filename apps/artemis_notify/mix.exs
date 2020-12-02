@@ -1,15 +1,15 @@
-defmodule ArtemisWeb.MixProject do
+defmodule ArtemisNotify.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :artemis_web,
-      version: "0.1.0",
+      app: :artemis_notify,
+      version: "0.0.1",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.5",
+      elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -23,8 +23,8 @@ defmodule ArtemisWeb.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {ArtemisWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools, :ueberauth]
+      mod: {ArtemisNotify.Application, []},
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -39,27 +39,12 @@ defmodule ArtemisWeb.MixProject do
     [
       {:phoenix, "~> 1.5"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_ecto, "~> 4.0"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.13"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:hound, "~> 1.0", only: :test},
-      {:poison, "~> 3.1"},
+      {:floki, "~> 0.26.0"},
       {:plug_cowboy, "~> 2.2"},
-      {:guardian, "~> 1.2"},
-      {:oauth2, "~> 0.9"},
-      {:nimble_csv, "~> 0.5"},
-      {:scrivener_html, git: "https://github.com/artemis-platform/scrivener_html.git", branch: "master"},
-      {:number, "~> 1.0"},
-      {:timex, "~> 3.6"},
-      {:ueberauth, "~> 0.6"},
-      {:ueberauth_github, "~> 0.7"},
       {:artemis, in_umbrella: true},
-      {:artemis_notify, in_umbrella: true},
-      {:artemis_pubsub, in_umbrella: true},
-      {:artemis_log, in_umbrella: true, only: :test}
+      {:artemis_pubsub, in_umbrella: true}
     ]
   end
 
@@ -69,8 +54,7 @@ defmodule ArtemisWeb.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      test: ["ecto.create --quiet", "ecto.migrate", "test --exclude browser"],
-      "test.browser": ["ecto.create --quiet", "ecto.migrate", "test --only browser"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

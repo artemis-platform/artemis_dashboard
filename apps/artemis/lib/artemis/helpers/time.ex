@@ -1,5 +1,14 @@
 defmodule Artemis.Helpers.Time do
   @doc """
+  Return the beginning of the minute
+  """
+  def beginning_of_minute(time \\ Timex.now()) do
+    time
+    |> Map.put(:second, 0)
+    |> DateTime.truncate(:second)
+  end
+
+  @doc """
   Return milliseconds from given time. If a time is not passed, current
   timestamp is used.
   """
