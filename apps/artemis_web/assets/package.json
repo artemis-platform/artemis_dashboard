@@ -9,7 +9,7 @@
     "apexcharts": "^3.8.6",
     "child-replace-with-polyfill": "^1.0.1",
     "formdata-polyfill": "^3.0.18",
-    "highlight.js": "^10.1.2",
+    "highlight.js": "^10.4.1",
     "jquery": "^3.4.1",
     "license-checker": "^25.0.1",
     "mdn-polyfills": "^5.17.0",
