@@ -55,6 +55,7 @@ defmodule ArtemisNotify.IntervalWorker do
           :details,
           :duration,
           :ended_at,
+          :module,
           :started_at,
           :success
         ]
@@ -275,6 +276,7 @@ defmodule ArtemisNotify.IntervalWorker do
           details: elem(result, 1),
           duration: Timex.diff(ended_at, started_at),
           ended_at: ended_at,
+          module: __MODULE__,
           started_at: started_at,
           success: success?(result)
         }
@@ -282,7 +284,17 @@ defmodule ArtemisNotify.IntervalWorker do
         log_limit = get_log_limit()
         truncated = Enum.slice(log, 0, log_limit)
 
+        print_log(entry)
+
         [entry | truncated]
+      end
+
+      defp print_log(entry) do
+        module = Artemis.Helpers.module_name(__MODULE__)
+        start = Timex.format!(entry.started_at, "{h24}:{m}:{s}{ss}")
+        duration = entry.duration / 1000
+
+        Logger.info("#{module} ran at #{start} for #{duration}ms")
       end
 
       defp get_log_limit() do
