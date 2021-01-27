@@ -19,6 +19,10 @@ defmodule ArtemisNotify.IntervalWorker do
     :interval - Optional. Integer or Atom. Interval between calls.
     :log_limit - Optional. Number of log entries to keep.
     :delayed_start - Optional. Integer or Atom. Time to wait for initial call.
+    :max_retries - Optional. Atom. Maximum number of times to retry on failure
+    :retry_intervals - Optional. List. Number of milliseconds to wait before each
+      retry. For a constant value, send a list with one entry: [5]
+    :rescue - Optional. Boolean. Whether to rescue from exceptions
 
   For example:
 
@@ -64,6 +68,17 @@ defmodule ArtemisNotify.IntervalWorker do
       @behaviour ArtemisNotify.IntervalWorker
       @default_interval 60_000
       @default_log_limit_fallback 10
+      @default_timeout :timer.seconds(60)
+      @default_max_retries 6
+      @default_rescue true
+
+      @default_retry_intervals [
+        :timer.seconds(1),
+        :timer.seconds(2),
+        :timer.seconds(4),
+        :timer.seconds(8),
+        :timer.seconds(15)
+      ]
 
       def start_link(config \\ []) do
         initial_state = %State{
@@ -82,11 +97,11 @@ defmodule ArtemisNotify.IntervalWorker do
 
       def get_name(name \\ nil), do: name || get_option(:name)
 
-      def get_config(name \\ nil), do: GenServer.call(get_name(name), :config)
+      def get_config(name \\ nil), do: GenServer.call(get_name(name), :config, @default_timeout)
 
-      def get_data(name \\ nil), do: GenServer.call(get_name(name), :data)
+      def get_data(name \\ nil), do: GenServer.call(get_name(name), :data, @default_timeout)
 
-      def get_log(name \\ nil), do: GenServer.call(get_name(name), :log)
+      def get_log(name \\ nil), do: GenServer.call(get_name(name), :log, @default_timeout)
 
       def get_options(), do: unquote(options)
 
@@ -98,6 +113,8 @@ defmodule ArtemisNotify.IntervalWorker do
         cond do
           interval == :next_full_minute -> Artemis.Helpers.Time.get_milliseconds_to_next_minute() + :timer.minutes(1)
           interval == :next_minute -> Artemis.Helpers.Time.get_milliseconds_to_next_minute()
+          interval == :next_hour -> Artemis.Helpers.Time.get_milliseconds_to_next_hour()
+          interval == :next_day -> Artemis.Helpers.Time.get_milliseconds_to_next_day()
           true -> interval
         end
       end
@@ -108,15 +125,17 @@ defmodule ArtemisNotify.IntervalWorker do
 
         cond do
           interval == :next_minute -> Artemis.Helpers.Time.get_milliseconds_to_next_minute()
+          interval == :next_hour -> Artemis.Helpers.Time.get_milliseconds_to_next_hour()
+          interval == :next_day -> Artemis.Helpers.Time.get_milliseconds_to_next_day()
           true -> interval
         end
       end
 
       def get_option(key, default), do: Keyword.get(get_options(), key, default)
 
-      def get_result(name \\ nil), do: GenServer.call(get_name(name), :result)
+      def get_result(name \\ nil), do: GenServer.call(get_name(name), :result, @default_timeout)
 
-      def get_state(name \\ nil), do: GenServer.call(get_name(name), :state)
+      def get_state(name \\ nil), do: GenServer.call(get_name(name), :state, @default_timeout)
 
       def fetch_data(options \\ [], name \\ nil) do
         log = get_log(name)
@@ -127,14 +146,14 @@ defmodule ArtemisNotify.IntervalWorker do
         end
       end
 
-      def pause(name \\ nil), do: GenServer.call(get_name(name), :pause)
+      def pause(name \\ nil), do: GenServer.call(get_name(name), :pause, @default_timeout)
 
-      def resume(name \\ nil), do: GenServer.call(get_name(name), :resume)
+      def resume(name \\ nil), do: GenServer.call(get_name(name), :resume, @default_timeout)
 
       def update(options \\ [], name \\ nil) do
         case Keyword.get(options, :async) do
           true -> Process.send(get_name(name), :update, [])
-          _ -> GenServer.call(get_name(name), :update, :timer.seconds(60))
+          _ -> GenServer.call(get_name(name), :update, @default_timeout)
         end
       end
 
@@ -244,13 +263,70 @@ defmodule ArtemisNotify.IntervalWorker do
 
       defp update_state(state) do
         started_at = Timex.now()
-        result = call(state.data, state.config)
+        rescue? = get_option(:rescue, @default_rescue)
+        result = call_and_maybe_rescue(rescue?, state, 0)
         ended_at = Timex.now()
 
         state
         |> Map.put(:data, parse_data(state, result))
         |> Map.put(:log, update_log(state, result, started_at, ended_at))
         |> Map.put(:timer, schedule_update_unless_paused(state))
+      end
+
+      defp call_and_maybe_rescue(true, state, retry_count) do
+        retry_function = fn -> call_and_maybe_rescue(true, state, retry_count + 1) end
+
+        call_with_retry(state, retry_count, retry_function)
+      rescue
+        error ->
+          Artemis.Helpers.rescue_log(__STACKTRACE__, __MODULE__, error)
+
+          if below_retry_max?(retry_count) do
+            retry_function = fn -> call_and_maybe_rescue(true, state, retry_count + 1) end
+
+            call_with_retry(state, retry_count, retry_function)
+          else
+            {:error, "Error calling interval worker. Exception raised and over retry count maximum."}
+          end
+      end
+
+      defp call_and_maybe_rescue(false, state, retry_count) do
+        retry_function = fn -> call_and_maybe_rescue(false, state, retry_count + 1) end
+
+        call_with_retry(state, retry_count, retry_function)
+      end
+
+      defp call_with_retry(state, retry_count, retry_function) do
+        if below_retry_max?(retry_count) do
+          maybe_sleep_before_call(retry_count)
+
+          case call(state.data, state.config) do
+            {:error, _} -> retry_function.()
+            result -> result
+          end
+        else
+          {:error, "Error calling interval worker. Error returned and over retry count maximum."}
+        end
+      end
+
+      defp below_retry_max?(retry_count), do: retry_count <= get_option(:max_retries, @default_max_retries)
+
+      defp maybe_sleep_before_call(0), do: :ok
+
+      defp maybe_sleep_before_call(retry_count) do
+        retry_count
+        |> get_retry_interval()
+        |> :timer.sleep()
+      end
+
+      defp get_retry_interval(retry_count) do
+        retry_intervals = get_option(:retry_intervals, @default_retry_intervals)
+        found_in_retry_intervals? = retry_count < length(retry_intervals)
+
+        case found_in_retry_intervals? do
+          true -> Enum.at(retry_intervals, retry_count - 1)
+          false -> List.last(retry_intervals)
+        end
       end
 
       defp schedule_update(custom_interval \\ nil) do
@@ -294,7 +370,12 @@ defmodule ArtemisNotify.IntervalWorker do
         start = Timex.format!(entry.started_at, "{h24}:{m}:{s}{ss}")
         duration = entry.duration / 1000
 
-        Logger.info("#{module} ran at #{start} for #{duration}ms")
+        Artemis.Helpers.log(
+          type: "IntervalWorker",
+          key: module,
+          start: start,
+          duration: "#{duration}ms"
+        )
       end
 
       defp get_log_limit() do
