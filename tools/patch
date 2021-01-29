@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# ### Description
+#
+# Applies changes from one umbrella application file to all umbrella
+# applications that have a matching file.
+#
+# ### Usage
+#
+#     ./patch <branch> <file_path>
+#
+# For example, to apply the most recent changes to `context.ex` in the
+# `artemis` app to all other apps with a matching file name:
+#
+#     ./patch dashboard apps/artemis/lib/artemis/context.ex
+#
+# Or from the previous commit:
+#
+#     ./patch HEAD~ apps/artemis/lib/artemis/context.ex
+#
+# Or from the current uncomitted changes:
+#
+#     ./patch HEAD apps/artemis/lib/artemis/context.ex
+
+which gsed
+
+if [ $? -ne 0 ]; then
+  echo "The GNU version of 'sed' is not installed"
+  echo "To install on OS X use 'brew install gnu-sed'"
+
+  exit 1
+fi
+
+MATCHES=$(echo $2 | sed -e "s|apps/.*/lib/[^/]*/|apps/**/lib/**/|g")
+
+git diff $1 $2 > git.patch
+git checkout $1 -- $2
+echo ${MATCHES} | xargs -n 1 -I MATCH patch -p1 MATCH git.patch
+find apps/ -type f | ack .orig$ | xargs rm
+rm git.patch
