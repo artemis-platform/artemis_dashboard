@@ -37,11 +37,9 @@ defmodule ArtemisLog.Worker.HttpRequestLogListener do
   # Helpers
 
   defp enabled?() do
-    :artemis_log
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:subscribe_to_http_requests)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.all_enabled?([
+      [:artemis, :umbrella, :background_workers],
+      [:artemis_log, :actions, :subscribe_to_http_requests]
+    ])
   end
 end
