@@ -23,11 +23,11 @@ config :phoenix, :json_library, Jason
 config :config_tuples, distillery: false
 
 config :artemis, :umbrella,
+  background_workers: [
+    enabled: System.get_env("ARTEMIS_UMBRELLA_BACKGROUND_WORKERS_ENABLED")
+  ],
   cache_warmers: [
     enabled: System.get_env("ARTEMIS_UMBRELLA_CACHE_WARMERS_ENABLED")
-  ],
-  interval_workers: [
-    enabled: System.get_env("ARTEMIS_UMBRELLA_INTERVAL_WORKERS_ENABLED")
   ]
 
 # Import environment specific config. This must remain at the bottom

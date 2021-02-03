@@ -27,7 +27,7 @@ defmodule Artemis.Worker.RepoResetOnInterval do
 
   defp enabled?() do
     Artemis.Helpers.AppConfig.all_enabled?([
-      [:artemis, :umbrella, :cache_warmers],
+      [:artemis, :umbrella, :background_workers],
       [:artemis, :actions, :repo_reset_on_interval]
     ])
   end
