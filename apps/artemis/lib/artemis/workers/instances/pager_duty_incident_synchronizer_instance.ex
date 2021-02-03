@@ -38,7 +38,7 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerInstance do
 
   defp enabled?() do
     Artemis.Helpers.AppConfig.all_enabled?([
-      [:artemis_umbrella, :actions, :cache_warmers],
+      [:artemis, :umbrella, :cache_warmers],
       [:artemis, :actions, :pager_duty_synchronize_incidents]
     ])
   end

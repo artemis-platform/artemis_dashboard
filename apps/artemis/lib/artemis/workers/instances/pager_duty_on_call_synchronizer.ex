@@ -25,7 +25,7 @@ defmodule Artemis.Worker.PagerDutyOnCallSynchronizer do
 
   def enabled?() do
     Artemis.Helpers.AppConfig.all_enabled?([
-      [:artemis_umbrella, :actions, :cache_warmers],
+      [:artemis, :umbrella, :cache_warmers],
       [:artemis, :actions, :pager_duty_synchronize_on_call]
     ])
   end

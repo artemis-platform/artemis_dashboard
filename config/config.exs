@@ -22,7 +22,7 @@ config :phoenix, :json_library, Jason
 
 config :config_tuples, distillery: false
 
-config :artemis_umbrella, :actions,
+config :artemis, :umbrella,
   cache_warmers: [
     enabled: System.get_env("ARTEMIS_UMBRELLA_CACHE_WARMERS_ENABLED")
   ],
