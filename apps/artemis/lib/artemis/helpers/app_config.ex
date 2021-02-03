@@ -15,7 +15,7 @@ defmodule Artemis.Helpers.AppConfig do
   def enabled?(app, module, key) do
     app
     |> fetch!(module, key)
-    |> Keyword.fetch!(:enabled)
+    |> enabled?()
   end
 
   def enabled?(config) when is_map(config) do
