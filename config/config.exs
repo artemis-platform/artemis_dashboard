@@ -22,6 +22,14 @@ config :phoenix, :json_library, Jason
 
 config :config_tuples, distillery: false
 
+config :artemis_umbrella, :actions,
+  cache_warmers: [
+    enabled: System.get_env("ARTEMIS_UMBRELLA_CACHE_WARMERS_ENABLED")
+  ],
+  interval_workers: [
+    enabled: System.get_env("ARTEMIS_UMBRELLA_INTERVAL_WORKERS_ENABLED")
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

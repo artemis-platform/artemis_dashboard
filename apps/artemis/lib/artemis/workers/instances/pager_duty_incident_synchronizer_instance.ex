@@ -37,12 +37,10 @@ defmodule Artemis.Worker.PagerDutyIncidentSynchronizerInstance do
   # Helpers
 
   defp enabled?() do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:pager_duty_synchronize_incidents)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.all_enabled?([
+      [:artemis_umbrella, :actions, :cache_warmers],
+      [:artemis, :actions, :pager_duty_synchronize_incidents]
+    ])
   end
 
   defp synchronize_incidents(team_id) do

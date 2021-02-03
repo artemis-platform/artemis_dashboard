@@ -26,12 +26,10 @@ defmodule Artemis.Worker.PagerDutyEscalationPolicySynchronizer do
   # Helpers
 
   defp enabled?() do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:pager_duty_synchronize_escalation_policies)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.all_enabled?([
+      [:artemis_umbrella, :actions, :cache_warmers],
+      [:artemis, :actions, :pager_duty_synchronize_escalation_policies]
+    ])
   end
 
   defp broadcast_event_when_changed(current, next, user) do

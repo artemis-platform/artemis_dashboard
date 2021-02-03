@@ -28,12 +28,7 @@ defmodule Artemis.Worker.IBMCloudIAMAccessToken do
   # Helpers
 
   defp enabled?() do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:ibm_cloud_iam_access_token)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.enabled?(:artemis, :actions, :ibm_cloud_iam_access_token)
   end
 
   defp get_tokens() do

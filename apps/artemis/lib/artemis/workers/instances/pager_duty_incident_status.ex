@@ -26,12 +26,7 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
   end
 
   def enabled?() do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:pager_duty_synchronize_incidents)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.enabled?(:artemis, :actions, :pager_duty_synchronize_incidents)
   end
 
   # Helpers
