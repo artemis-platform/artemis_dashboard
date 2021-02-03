@@ -43,6 +43,7 @@ defmodule Artemis.MixProject do
       {:assoc, "~> 0.1"},
       {:config_tuples, "~> 0.4.2"},
       {:cachex, "~> 3.1"},
+      {:redix, ">= 0.0.0"},
       {:httpoison, "~> 1.5"},
       {:slugger, "~> 0.3"},
       {:hashids, "~> 2.0"},

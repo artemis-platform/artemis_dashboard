@@ -1,4 +1,6 @@
 defmodule Artemis.GetPermission do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.Permission
@@ -20,6 +22,7 @@ defmodule Artemis.GetPermission do
 
   defp get_record(value, options, get_by) do
     Permission
+    |> select_query(Permission, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

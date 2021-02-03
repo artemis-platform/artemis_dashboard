@@ -419,6 +419,101 @@ defmodule Artemis.Helpers do
   def keys_to_strings(value, _), do: value
 
   @doc """
+  Searches a map for a matching atom or bitstring key, then returns the value.
+
+  Warning! This is an unsafe action and assumes the map does not have the same
+  key as a bitstring and an atom. Raises an exception when this case is found.
+
+  Example:
+
+    indifferent_get(%{"hello" => "world"}, :hello)
+
+  Returns:
+
+    "world"
+
+  Example:
+
+    indifferent_get(%{hello: "world"}, "other key", "fallback")
+
+  Returns:
+
+    "fallback value"
+
+  Example:
+
+    indifferent_get(%{"hello" => "world", hello: "world"}, :hello)
+
+  Returns:
+
+    <no return - raises an exception>
+
+  """
+  def indifferent_get(map, field, fallback \\ nil) when is_map(map) do
+    field_as_atom = Artemis.Helpers.to_atom(field)
+    field_as_string = Artemis.Helpers.to_string(field)
+
+    atom? = Map.has_key?(map, field_as_atom)
+    string? = Map.has_key?(map, field_as_string)
+
+    error_message = "Indifferent get cannot be used on a map with both atom and string keys"
+
+    cond do
+      atom? && string? -> raise(ArgumentError, error_message)
+      atom? -> Map.get(map, field_as_atom, fallback)
+      true -> Map.get(map, field_as_string, fallback)
+    end
+  end
+
+  @doc """
+  Searches a map for a matching atom or bitstring key, then updates the value.
+
+  Warning! This is an unsafe action and assumes the map does not have the same
+  key as a bitstring and an atom. Raises an exception when this case is found.
+
+  Example:
+
+    indifferent_put(%{"hello" => "world"}, :hello, "updated!")
+
+  Returns:
+
+    %{"hello" => "updated!"}
+
+  Example:
+
+    indifferent_put(%{hello: "world"}, "new key", "new value")
+
+  Returns:
+
+    %{hello: "world", "new key" => "new value"}
+
+  Example:
+
+    indifferent_put(%{"hello" => "world", hello: "world"}, :hello, "updated!")
+
+  Returns:
+
+    <no return - raises an exception>
+
+  """
+  def indifferent_put(map, field, value) when is_map(map) do
+    field_as_atom = Artemis.Helpers.to_atom(field)
+    field_as_string = Artemis.Helpers.to_string(field)
+
+    atom? = Map.has_key?(map, field_as_atom)
+    string? = Map.has_key?(map, field_as_string)
+
+    error_message = "Indifferent put cannot be used on a map with both atom and string keys"
+
+    cond do
+      atom? && string? -> raise(ArgumentError, error_message)
+      atom? -> Map.put(map, field_as_atom, value)
+      string? -> Map.put(map, field_as_string, value)
+      true -> Map.put(map, field, value)
+    end
+  end
+
+  @doc """
   Serialize process id (pid) number to string
   """
   def serialize_pid(pid) when is_pid(pid) do

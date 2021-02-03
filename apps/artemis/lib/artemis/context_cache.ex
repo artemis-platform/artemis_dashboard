@@ -2,6 +2,17 @@ defmodule Artemis.ContextCache do
   @moduledoc """
   Extends Context modules with cache functions
 
+  ## Options
+
+  Takes the following options:
+
+    :cache_reset_on_cloudant_changes - Optional. List. Cloudant events that reset cache
+    :cache_reset_on_events - Optional. List. Events that reset cache.
+    :cache_options - Optional. List. Options to pas to cache instance
+    :cache_key - Optional. Atom or Function. See section about Cache Keys.
+    :rescue - Optional. Boolean. When set to true, rescues from exceptions in
+      the `call()` function and returns a generic `{:error, _} tuple
+
   ## Cache Keys
 
   A single cache instance can store many values under different keys. By
@@ -132,15 +143,16 @@ defmodule Artemis.ContextCache do
 
       defp handle_match_error(args, %MatchError{term: {:error, {:already_started, _}}}) do
         # The CacheInstance contains two linked processes, a cache GenServer and a
-        # Cachex instance. The GenServer starts a linked Cachex instance on initialization.
+        # cache instance. The GenServer starts a linked cache instance on initialization.
         #
-        # There is a race condition when the GenServer is started and the Cachex instance
-        # is still in the process of starting. If multiple requests are sent at
-        # the same time, it may result in multiple Cachex instances being started. The
-        # first instance to complete will succeed and all other requests will
-        # fail with an `:already_started` # error message.
+        # Depending on the cache driver being used, there may be a race
+        # condition when the GenServer is started and the cache instance is still in the
+        # process of starting. If multiple requests are sent at the same time, it may
+        # result in multiple cache instances being started. The first instance to
+        # complete will succeed and all other requests will fail with an
+        # `:already_started` error message.
         #
-        # Since a Cachex instance is now running, resending the request to the
+        # Since a cache instance is now running, resending the request to the
         # GenServer will succeed.
         #
         fetch_cached(args)
@@ -148,14 +160,15 @@ defmodule Artemis.ContextCache do
 
       defp handle_match_error(args, _error) do
         # The CacheInstance contains two linked processes, a cache GenServer and a
-        # Cachex instance. When a CacheInstance is reset, the cache GenServer is
-        # stopped. Because they are linked, shortly after the Cachex instance is also
+        # cache instance. When a CacheInstance is reset, the cache GenServer is
+        # stopped. Because they are linked, shortly after the cache instance is also
         # stopped.
         #
-        # There is a race condition when the GenServer is stopped and the Cachex instance
-        # is still in the process of stopping. If a new cache request is received during
+        # Depending on the cache driver being used, there may be a race
+        # condition when the GenServer is stopped and the cache instance is
+        # still in the process of stopping. If a new cache request is received during
         # that window of time, the new cache GenServer will fail when trying to start a
-        # linked Cachex instance because the Cachex registered name is unavailable.
+        # linked cache instance because the cache registered name is unavailable.
         #
         # This race condition is primarily hit in test scenarios, but could occur in
         # production under a heavy request load.
@@ -176,7 +189,7 @@ defmodule Artemis.ContextCache do
             child_options = [
               cache_reset_on_cloudant_changes: Keyword.get(unquote(options), :cache_reset_on_cloudant_changes, []),
               cache_reset_on_events: Keyword.get(unquote(options), :cache_reset_on_events, []),
-              cachex_options: Keyword.get(unquote(options), :cachex_options, []),
+              cache_options: Keyword.get(unquote(options), :cache_options, []),
               module: __MODULE__
             ]
 

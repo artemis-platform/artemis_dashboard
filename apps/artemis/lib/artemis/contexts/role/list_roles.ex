@@ -16,8 +16,9 @@ defmodule Artemis.ListRoles do
     params = default_params(params)
 
     Role
-    |> distinct_query(params, default: true)
     |> select_fields()
+    |> select_query(Role, params)
+    |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)
     |> search_filter(params)

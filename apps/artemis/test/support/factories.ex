@@ -109,6 +109,17 @@ defmodule Artemis.Factories do
     }
   end
 
+  def key_value_factory do
+    value = sequence(:value, &"#{Faker.Name.name()}-#{&1}")
+
+    %Artemis.KeyValue{
+      expire_at: Timex.now(),
+      key: sequence(:key, &"#{Faker.Name.name()}-#{&1}"),
+      size: byte_size(value),
+      value: value
+    }
+  end
+
   def machine_factory do
     domain_name = sequence(:name, &"#{&1}.#{Faker.Internet.domain_name()}")
     name = Enum.random(["Compute Server", "Management Server", "Backup Server", "Storage Server"])

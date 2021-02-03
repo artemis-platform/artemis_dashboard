@@ -8,6 +8,8 @@ defmodule Artemis.Helpers.UUID do
                     min_len: 3
                   )
 
+  @regex_base_for_uuid_v4 "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+
   @doc """
   Return a random UUID v4 value
   """
@@ -33,4 +35,13 @@ defmodule Artemis.Helpers.UUID do
   def decode(value) do
     Hashids.decode(@hashid_encoder, value)
   end
+
+  @doc """
+  Return true if passed value is a uuid
+  """
+  def uuid?(value) when is_bitstring(value) do
+    Regex.match?(~r/^#{@regex_base_for_uuid_v4}$/, value)
+  end
+
+  def uuid?(_value), do: false
 end

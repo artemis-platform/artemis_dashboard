@@ -2,6 +2,23 @@ defmodule ArtemisWeb.ViewHelper.Print do
   use Phoenix.HTML
 
   @doc """
+  Convert `\n` new lines to <br/> tags
+  """
+  def new_line_to_line_break(values) when is_list(values) do
+    values
+    |> Enum.map(&new_line_to_line_break/1)
+    |> Enum.join()
+  end
+
+  def new_line_to_line_break(value) when is_bitstring(value) do
+    value
+    |> String.split("\n", trim: false)
+    |> Enum.intersperse(Phoenix.HTML.Tag.tag(:br))
+  end
+
+  def new_line_to_line_break(value), do: value
+
+  @doc """
   Print date in human readable format
   """
   def render_date(value, format \\ "{Mfull} {D}, {YYYY}")
@@ -71,6 +88,20 @@ defmodule ArtemisWeb.ViewHelper.Print do
   end
 
   @doc """
+  Print date in IS8601 format with seconds
+  """
+  def render_date_time_with_seconds_short(value) do
+    render_date_time_with_seconds(value, "{Mshort} {D}, {YYYY} {h12}:{m}:{s}{am} {Zabbr}")
+  end
+
+  @doc """
+  Print date in IS8601 format with seconds
+  """
+  def render_date_time_with_seconds_shorter(value) do
+    render_date_time_with_seconds(value, "{YYYY}-{0M}-{0D} {h12}:{m}:{s}{am} {Zabbr}")
+  end
+
+  @doc """
   Print time in human readable format with seconds
   """
   def render_time(value, format \\ "{h12}:{m}:{s}{am} {Zabbr}")
@@ -123,11 +154,18 @@ defmodule ArtemisWeb.ViewHelper.Print do
       |> Timex.diff(first)
       |> div(1_000_000)
 
-    duration = Timex.Duration.from_seconds(diff_in_seconds)
+    render_time_humanized(diff_in_seconds)
+  end
+
+  @doc """
+  Returns a humanized value
+  """
+  def render_time_humanized(seconds) do
+    duration = Timex.Duration.from_seconds(seconds)
 
     case Timex.Duration.to_microseconds(duration) > 0 do
       true -> Timex.Format.Duration.Formatters.Humanized.format(duration)
-      false -> "-"
+      false -> "< 1 second"
     end
   end
 
@@ -142,13 +180,6 @@ defmodule ArtemisWeb.ViewHelper.Print do
 
   defp pretty_print_value(value) when is_map(value), do: Jason.encode!(value, pretty: true)
   defp pretty_print_value(value), do: value
-
-  @doc """
-  Pretty prints number with commas
-  """
-  def pretty_print_number(number) do
-    Number.Delimit.number_to_delimited(number, precision: 0)
-  end
 
   # Helpers
 

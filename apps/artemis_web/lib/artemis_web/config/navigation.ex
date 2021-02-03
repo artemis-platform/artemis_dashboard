@@ -22,6 +22,11 @@ defmodule ArtemisWeb.Config.Navigation do
           label: "System Tasks",
           path: &Routes.system_task_path(&1, :index),
           verify: &has?(&1, "system-tasks:list")
+        ],
+        [
+          label: "Key Values",
+          path: &Routes.key_value_path(&1, :index),
+          verify: &has?(&1, "key-values:list")
         ]
       ],
       Clouds: [

@@ -23,6 +23,7 @@ defmodule Artemis.ListComments do
     params = default_params(params)
 
     Comment
+    |> select_query(Comment, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)

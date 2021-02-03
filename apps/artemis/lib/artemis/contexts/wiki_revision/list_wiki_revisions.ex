@@ -15,6 +15,7 @@ defmodule Artemis.ListWikiRevisions do
     params = default_params(params)
 
     WikiRevision
+    |> select_query(WikiRevision, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)

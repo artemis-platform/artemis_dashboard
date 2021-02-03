@@ -1,4 +1,6 @@
 defmodule Artemis.GetTeam do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.Repo
@@ -21,6 +23,7 @@ defmodule Artemis.GetTeam do
   defp get_record(value, options, get_by) do
     Team
     |> select_fields()
+    |> select_query(Team, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

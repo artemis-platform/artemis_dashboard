@@ -1,8 +1,6 @@
 defmodule Artemis.CacheInstance do
   use GenServer, restart: :transient
 
-  import Cachex.Spec
-
   require Logger
 
   alias Artemis.CacheEvent
@@ -12,8 +10,10 @@ defmodule Artemis.CacheInstance do
   end
 
   @moduledoc """
-  A thin wrapper around a Cachex instance. Encapsulates all the application
-  specific logic like subscribing to events, reseting cache values automatically.
+  A thin wrapper around a cache instance. Supports multiple cache drivers.
+
+  Encapsulates all the application specific logic like subscribing to events,
+  reseting cache values automatically.
 
   ## GenServer Configuration
 
@@ -56,17 +56,12 @@ defmodule Artemis.CacheInstance do
   currently empty will be queued.
   """
 
-  @default_cachex_options [
-    expiration:
-      expiration(
-        default: :timer.minutes(5),
-        interval: :timer.seconds(5)
-      ),
-    limit: 100,
-    stats: true
+  @default_cache_options [
+    expiration: :timer.minutes(5),
+    limit: 100
   ]
 
-  @fetch_timeout :timer.seconds(120)
+  @fetch_timeout :timer.minutes(5)
 
   # Server Callbacks
 
@@ -74,8 +69,8 @@ defmodule Artemis.CacheInstance do
     module = Keyword.fetch!(options, :module)
 
     initial_state = %{
-      cachex_instance_name: get_cachex_instance_name(module),
-      cachex_options: Keyword.get(options, :cachex_options, []),
+      cache_instance_name: get_cache_instance_name(module),
+      cache_options: Keyword.get(options, :cache_options, @default_cache_options),
       cache_server_name: get_cache_server_name(module),
       cache_reset_on_cloudant_changes: Keyword.get(options, :cache_reset_on_cloudant_changes, []),
       cache_reset_on_events: Keyword.get(options, :cache_reset_on_events, []),
@@ -110,12 +105,12 @@ defmodule Artemis.CacheInstance do
   def fetch(module, key, getter) do
     case get_from_cache(module, key) do
       nil ->
-        Logger.debug("#{get_cachex_instance_name(module)}: cache miss")
+        Logger.debug("#{get_cache_instance_name(module)}: cache miss")
 
         GenServer.call(get_cache_server_name(module), {:fetch, key, getter}, @fetch_timeout)
 
       value ->
-        Logger.debug("#{get_cachex_instance_name(module)}: cache hit")
+        Logger.debug("#{get_cache_instance_name(module)}: cache hit")
 
         value
     end
@@ -129,17 +124,17 @@ defmodule Artemis.CacheInstance do
   @doc """
   Puts value into the cache, unless it is an error tuple. If it is a function, evaluate it
   """
-  def put(module, key, value), do: put_in_cache(module, key, value)
+  def put(module, key, value), do: put_in_cache(module, key, value, get_cache_options(module))
 
   def get_cache_server_name(module), do: String.to_atom("#{module}.CacheServer")
 
-  def get_cachex_instance_name(module), do: String.to_atom("#{module}.CachexInstance")
+  def get_cache_instance_name(module), do: String.to_atom("#{module}.CacheInstance")
 
-  def get_cachex_options(module), do: GenServer.call(get_cache_server_name(module), :cachex_options)
+  def get_cache_options(module), do: GenServer.call(get_cache_server_name(module), :cache_options, @fetch_timeout)
 
   def get_name(module), do: get_cache_server_name(module)
 
-  def default_cachex_options, do: @default_cachex_options
+  def default_cache_options, do: @default_cache_options
 
   @doc """
   Determines if a cache server has been created for the given module
@@ -150,13 +145,11 @@ defmodule Artemis.CacheInstance do
   Clear all cache data
   """
   def reset(module) do
-    stop(module)
-
-    :ok = CacheEvent.broadcast("cache:reset", module)
+    GenServer.call(get_cache_server_name(module), :reset)
   end
 
   @doc """
-  Stop the cache GenServer and the linked Cachex process
+  Stop the cache GenServer and the linked Cache Instance process
   """
   def stop(module) do
     GenServer.stop(get_cache_server_name(module))
@@ -164,18 +157,37 @@ defmodule Artemis.CacheInstance do
     :ok = CacheEvent.broadcast("cache:stopped", module)
   end
 
+  @doc """
+  Return the cache driver based on application configuration
+  """
+  def get_cache_driver() do
+    case get_cache_driver_config() do
+      "postgres" -> Artemis.Drivers.Cache.Postgres
+      "redis" -> Artemis.Drivers.Cache.Redis
+      _ -> Artemis.Drivers.Cache.Cachex
+    end
+  end
+
+  defp get_cache_driver_config() do
+    :artemis
+    |> Artemis.Helpers.AppConfig.fetch!(:cache, :driver)
+    |> Kernel.||("")
+    |> String.downcase()
+  end
+
   # Instance Callbacks
 
   @impl true
   def init(initial_state) do
-    cachex_options = create_cachex_options(initial_state)
+    cache_options = get_cache_driver().get_cache_instance_options(initial_state.cache_options)
 
-    {:ok, cachex_instance_pid} = create_cachex_instance(initial_state, cachex_options)
+    {:ok, cache_instance_pid} =
+      get_cache_driver().create_cache_instance(initial_state.cache_instance_name, cache_options)
 
     state =
       initial_state
-      |> Map.put(:cachex_instance_pid, cachex_instance_pid)
-      |> Map.put(:cachex_options, cachex_options)
+      |> Map.put(:cache_instance_pid, cache_instance_pid)
+      |> Map.put(:cache_options, cache_options)
 
     subscribe_to_cloudant_changes(initial_state)
     subscribe_to_events(initial_state)
@@ -186,14 +198,18 @@ defmodule Artemis.CacheInstance do
   end
 
   @impl true
-  def handle_call(:cachex_options, _from, state) do
-    {:reply, state.cachex_options, state}
+  def handle_call(:cache_options, _from, state) do
+    {:reply, state.cache_options, state}
   end
 
   def handle_call({:fetch, key, getter}, _from, state) do
-    entry = fetch_from_cache(state.module, key, getter)
+    entry = fetch_from_cache(state.module, key, getter, state.cache_options)
 
     {:reply, entry, state}
+  end
+
+  def handle_call(:reset, _from, state) do
+    {:reply, :ok, reset_cache(state)}
   end
 
   @impl true
@@ -203,20 +219,18 @@ defmodule Artemis.CacheInstance do
 
   def handle_info(%{event: event, payload: payload}, state), do: process_event(event, payload, state)
 
-  # Cachex Helpers
+  # Cache Instance Helpers
 
   defp get_from_cache(module, key) do
-    cachex_instance_name = get_cachex_instance_name(module)
-
-    Cachex.get!(cachex_instance_name, key)
-  rescue
-    _ -> nil
+    module
+    |> get_cache_instance_name()
+    |> get_cache_driver().get(key)
   end
 
-  defp put_in_cache(_module, _key, {:error, message}), do: %CacheEntry{data: {:error, message}}
+  defp put_in_cache(_module, _key, {:error, message}, _cache_options), do: %CacheEntry{data: {:error, message}}
 
-  defp put_in_cache(module, key, value) do
-    cachex_instance_name = get_cachex_instance_name(module)
+  defp put_in_cache(module, key, value, cache_options) do
+    cache_instance_name = get_cache_instance_name(module)
     inserted_at = DateTime.utc_now() |> DateTime.to_unix()
 
     entry = %CacheEntry{
@@ -225,22 +239,22 @@ defmodule Artemis.CacheInstance do
       key: key
     }
 
-    {:ok, _} = Cachex.put(cachex_instance_name, key, entry)
+    get_cache_driver().put(cache_instance_name, key, entry, cache_options)
 
     entry
   end
 
-  defp fetch_from_cache(module, key, getter) do
-    cachex_instance_name = get_cachex_instance_name(module)
+  defp fetch_from_cache(module, key, getter, cache_options) do
+    cache_instance_name = get_cache_instance_name(module)
 
     case get_from_cache(module, key) do
       nil ->
-        Logger.debug("#{cachex_instance_name}: fetch - updating cache")
+        Logger.debug("#{cache_instance_name}: fetch - updating cache")
 
-        put_in_cache(module, key, getter.())
+        put_in_cache(module, key, getter.(), cache_options)
 
       value ->
-        Logger.debug("#{cachex_instance_name}: fetch - cache hit")
+        Logger.debug("#{cache_instance_name}: fetch - cache hit")
 
         value
     end
@@ -269,51 +283,33 @@ defmodule Artemis.CacheInstance do
 
   defp process_cloudant_event(payload, state) do
     case matches_any?(state.cache_reset_on_cloudant_changes, payload) do
-      true -> reset_cache(state, payload)
+      true -> {:noreply, reset_cache(state, payload)}
       false -> {:noreply, state}
     end
   end
 
+  defp matches_any?(items, target) do
+    Enum.any?(items, &Artemis.Helpers.subset?(&1, target))
+  end
+
   defp process_event(event, payload, state) do
     case Enum.member?(state.cache_reset_on_events, event) do
-      true -> reset_cache(state, payload)
+      true -> {:noreply, reset_cache(state, payload)}
       false -> {:noreply, state}
     end
   end
 
   # Helpers
 
-  defp create_cachex_options(state) do
-    passed_options = convert_expiration_option(state.cachex_options)
+  defp reset_cache(state, event \\ %{}) do
+    cache_instance_name = get_cache_instance_name(state.module)
 
-    Keyword.merge(default_cachex_options(), passed_options)
-  end
+    get_cache_driver().reset(cache_instance_name)
 
-  defp create_cachex_instance(state, options) do
-    Cachex.start_link(state.cachex_instance_name, options)
-  end
-
-  defp convert_expiration_option([{:expiration, value} | _] = options) do
-    converted =
-      expiration(
-        default: value,
-        interval: :timer.seconds(5)
-      )
-
-    Keyword.put(options, :expiration, converted)
-  end
-
-  defp convert_expiration_option(options), do: options
-
-  defp matches_any?(items, target) do
-    Enum.any?(items, &Artemis.Helpers.subset?(&1, target))
-  end
-
-  defp reset_cache(state, event) do
     :ok = CacheEvent.broadcast("cache:reset", state.module, event)
 
-    Logger.debug("#{state.cachex_instance_name}: Cache reset by event #{event}")
+    Logger.debug("#{state.cache_instance_name}: Cache reset by event #{event}")
 
-    {:stop, :normal, state}
+    state
   end
 end

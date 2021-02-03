@@ -1,0 +1,39 @@
+<div id="content-header">
+  <header>
+    <h1>
+      Key Value Entry
+    </h1>
+
+    <div class="actions">
+      <%= if has?(@conn, "key-values:delete") do %>
+        <%= delete_confirmation "Delete", Routes.key_value_path(@conn, :delete, @key_value) %>
+      <% end %>
+      <%= if has?(@conn, "key-values:update") && modifiable?(@key_value) do %>
+        <%= action "Edit", to: Routes.key_value_path(@conn, :edit, @key_value), color: "green" %>
+      <% end %>
+    </div>
+  </header>
+
+  <%=
+    secondary_navigation_items = [
+      [
+        label: "Overview",
+        path: &Routes.key_value_path(&1, :show, @key_value),
+        path_match_type: :exact,
+        verify: &has?(&1, "key-values:show")
+      ],
+      [
+        label: "Event Logs",
+        path: &Routes.key_value_event_log_path(&1, :show_event_log_list, @key_value),
+        path_match_type: :starts_with,
+        verify: &has?(&1, "key-values:show")
+      ]
+    ]
+
+    render_secondary_navigation(
+      @conn,
+      current_user(@conn),
+      secondary_navigation_items
+    )
+  %>
+</div>

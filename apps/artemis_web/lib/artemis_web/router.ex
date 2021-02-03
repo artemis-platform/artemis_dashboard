@@ -173,6 +173,17 @@ defmodule ArtemisWeb.Router do
         get "/event-logs/:id", JobController, :show_event_log_details, as: :event_log
       end
 
+      # Key Value
+
+      post "/key-values/bulk-actions", KeyValueController, :index_bulk_actions
+      get "/key-values/event-logs", KeyValueController, :index_event_log_list
+      get "/key-values/event-logs/:id", KeyValueController, :index_event_log_details
+
+      resources "/key-values", KeyValueController do
+        get "/event-logs", KeyValueController, :show_event_log_list, as: :event_log
+        get "/event-logs/:id", KeyValueController, :show_event_log_details, as: :event_log
+      end
+
       # Machines
 
       post "/machines/bulk-actions", MachineController, :index_bulk_actions

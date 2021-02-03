@@ -1,4 +1,6 @@
 defmodule Artemis.GetIncident do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.Incident
@@ -20,6 +22,7 @@ defmodule Artemis.GetIncident do
 
   defp get_record(value, options, get_by) do
     Incident
+    |> select_query(Incident, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

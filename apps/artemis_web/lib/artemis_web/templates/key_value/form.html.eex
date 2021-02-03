@@ -1,0 +1,21 @@
+<%= form_for @changeset, @action, [class: "ui form", id: "key-value-form"], fn f -> %>
+  <div class="field">
+    <%= label_with_errors f, :key %>
+    <%= textarea f, :key, value: String.trim(inspect(f.data.key || "", limit: :infinity, pretty: true, printable_limit: :infinity), "\"") %>
+  </div>
+
+  <div class="field">
+    <%= label_with_errors f, :value %>
+    <%= textarea f, :value, value: String.trim(inspect(f.data.value || "", limit: :infinity, pretty: true, printable_limit: :infinity), "\"") %>
+  </div>
+
+  <%= reason_field f %>
+
+  <div>
+    <%= if @changeset.action do %>
+      <%= render_notification :error, body: "Error Submitting Form" %>
+    <% end %>
+
+    <%= submit "Save", class: "ui button primary" %>
+  </div>
+<% end %>

@@ -22,6 +22,7 @@ defmodule Artemis.ListFeatures do
     params = default_params(params)
 
     Feature
+    |> select_query(Feature, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> search_filter(params)

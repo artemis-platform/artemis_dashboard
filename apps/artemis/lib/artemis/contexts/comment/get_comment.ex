@@ -22,6 +22,7 @@ defmodule Artemis.GetComment do
 
   defp get_record(value, user, options, get_by) do
     Comment
+    |> select_query(Comment, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> restrict_access(user)
     |> get_by.(value)
