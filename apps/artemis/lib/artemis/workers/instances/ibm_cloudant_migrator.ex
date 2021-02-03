@@ -20,11 +20,6 @@ defmodule Artemis.Worker.IBMCloudantMigrator do
   # Helpers
 
   defp enabled?() do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:ibm_cloudant_migrator)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.enabled?(:artemis, :actions, :ibm_cloudant_migrator)
   end
 end

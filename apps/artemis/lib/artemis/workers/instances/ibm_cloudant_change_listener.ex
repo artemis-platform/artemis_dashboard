@@ -81,12 +81,7 @@ defmodule Artemis.Worker.IBMCloudantChangeListener do
   # Helpers
 
   defp enabled? do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:ibm_cloudant_change_listener)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.enabled?(:artemis, :actions, :ibm_cloudant_change_listener)
   end
 
   defp get_request_timeout do
