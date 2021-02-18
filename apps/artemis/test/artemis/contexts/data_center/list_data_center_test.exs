@@ -145,11 +145,11 @@ defmodule Artemis.ListDataCentersTest do
     end
 
     test "uses default context cache options" do
-      defaults = Artemis.CacheInstance.default_cachex_options()
-      cachex_options = Artemis.CacheInstance.get_cachex_options(ListDataCenters)
+      defaults = Artemis.CacheInstance.default_cache_options()
+      cache_options = Artemis.CacheInstance.get_cache_options(ListDataCenters)
 
-      assert cachex_options[:expiration] == Keyword.fetch!(defaults, :expiration)
-      assert cachex_options[:limit] == Keyword.fetch!(defaults, :limit)
+      assert cache_options[:expiration] == Keyword.fetch!(defaults, :expiration)
+      assert cache_options[:limit] == Keyword.fetch!(defaults, :limit)
     end
 
     test "returns a cached result" do
