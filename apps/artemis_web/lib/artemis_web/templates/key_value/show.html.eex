@@ -14,7 +14,7 @@
     <%=
       render_key_value_list([
         ["ID", @key_value.id],
-        ["Size", @key_value.size],
+        ["Size", "#{@key_value.size} bytes"],
         ["Inserted At", @key_value.inserted_at],
         ["Updated At", @key_value.updated_at],
         ["Expire At", @key_value.expire_at]

@@ -28,27 +28,23 @@ defmodule Artemis.Drivers.Cache.Postgres do
     {:ok, :fake_pid_since_using_postgres}
   end
 
-  # TODO
-  # recompile && Artemis.Drivers.Cache.Postgres.put("laskey-test", "hello", "world")
-  # recompile && Artemis.Drivers.Cache.Postgres.get(Artemis.GetSystemUser.CacheInstance, [])
-
-  # TODO: how to handle expired records? Can cause key has already been taken errors
-
   def get(cache_instance_name, key) do
     user = Artemis.GetSystemUser.call!()
     cache_key = get_cache_key(cache_instance_name, key)
 
     params = %{
       filters: %{
-        expire_at_lte: Timex.now(),
+        expire_at_gte: Timex.now(),
         key: cache_key
       },
       order_by: "-updated_at"
     }
 
-    case Artemis.ListKeyValues.call(params, user) do
-      nil -> nil
-      key_values -> get_cache_entry(key_values)
+    key_values = Artemis.ListKeyValues.call(params, user)
+
+    case key_values && length(key_values) > 0 do
+      true -> get_cache_entry(key_values)
+      false -> nil
     end
   end
 
