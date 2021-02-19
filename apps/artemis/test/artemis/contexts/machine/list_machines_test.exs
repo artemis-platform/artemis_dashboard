@@ -144,14 +144,6 @@ defmodule Artemis.ListMachinesTest do
       assert key == [params]
     end
 
-    test "uses default context cache options" do
-      defaults = Artemis.CacheInstance.default_cache_options()
-      cache_options = Artemis.CacheInstance.get_cache_options(ListMachines)
-
-      assert cache_options[:expiration] == Keyword.fetch!(defaults, :expiration)
-      assert cache_options[:limit] == Keyword.fetch!(defaults, :limit)
-    end
-
     test "returns a cached result" do
       initial_call = ListMachines.call_with_cache(Mock.system_user())
 
