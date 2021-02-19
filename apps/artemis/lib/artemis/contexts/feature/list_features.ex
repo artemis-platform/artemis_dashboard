@@ -2,6 +2,7 @@ defmodule Artemis.ListFeatures do
   use Artemis.Context
 
   use Artemis.ContextCache,
+    cache_driver: "cachex",
     cache_reset_on_events: [
       "feature:created",
       "feature:deleted",

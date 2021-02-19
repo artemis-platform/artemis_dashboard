@@ -70,6 +70,7 @@ defmodule Artemis.CacheInstance do
 
     initial_state = %{
       cache_instance_name: get_cache_instance_name(module),
+      cache_driver: select_cache_driver(Keyword.get(options, :cache_driver)),
       cache_options: Keyword.get(options, :cache_options, @default_cache_options),
       cache_server_name: get_cache_server_name(module),
       cache_reset_on_cloudant_changes: Keyword.get(options, :cache_reset_on_cloudant_changes, []),
@@ -103,14 +104,17 @@ defmodule Artemis.CacheInstance do
   be stored in the cache.
   """
   def fetch(module, key, getter) do
-    case get_from_cache(module, key) do
+    cache_instance_name = get_cache_instance_name(module)
+    cache_driver = get_cache_driver(module)
+
+    case get_from_cache(cache_driver, cache_instance_name, key) do
       nil ->
-        Logger.debug("#{get_cache_instance_name(module)}: cache miss")
+        Logger.debug("#{cache_instance_name}: cache miss")
 
         GenServer.call(get_cache_server_name(module), {:fetch, key, getter}, @fetch_timeout)
 
       value ->
-        Logger.debug("#{get_cache_instance_name(module)}: cache hit")
+        Logger.debug("#{cache_instance_name}: cache hit")
 
         value
     end
@@ -119,16 +123,23 @@ defmodule Artemis.CacheInstance do
   @doc """
   Gets the key from the cache instance. If it does not exist, returns `nil`.
   """
-  def get(module, key), do: get_from_cache(module, key)
+  def get(module, key) do
+    cache_instance_name = get_cache_instance_name(module)
+    cache_driver = get_cache_driver(module)
+
+    get_from_cache(cache_driver, cache_instance_name, key)
+  end
 
   @doc """
   Puts value into the cache, unless it is an error tuple. If it is a function, evaluate it
   """
-  def put(module, key, value), do: put_in_cache(module, key, value, get_cache_options(module))
+  def put(module, key, value), do: put_in_cache(module, key, value, get_cache_driver(module), get_cache_options(module))
 
   def get_cache_server_name(module), do: String.to_atom("#{module}.CacheServer")
 
   def get_cache_instance_name(module), do: String.to_atom("#{module}.CacheInstance")
+
+  def get_cache_driver(module), do: GenServer.call(get_cache_server_name(module), :cache_driver, @fetch_timeout)
 
   def get_cache_options(module), do: GenServer.call(get_cache_server_name(module), :cache_options, @fetch_timeout)
 
@@ -158,31 +169,51 @@ defmodule Artemis.CacheInstance do
   end
 
   @doc """
-  Return the cache driver based on application configuration
+  Return the cache driver based on the instance or app config
   """
-  def get_cache_driver() do
-    case get_cache_driver_config() do
-      "postgres" -> Artemis.Drivers.Cache.Postgres
-      "redis" -> Artemis.Drivers.Cache.Redis
-      _ -> Artemis.Drivers.Cache.Cachex
+  def select_cache_driver(cache_instance_cache_driver_config) do
+    cache_instance_cache_driver_config
+    |> get_cache_driver_config()
+    |> get_cache_driver_from_config()
+  end
+
+  defp get_cache_driver_config(cache_instance_cache_driver_config) do
+    cache_instance_cache_driver_config
+    |> get_cache_driver_config_value()
+    |> Artemis.Helpers.to_string()
+    |> String.downcase()
+  end
+
+  defp get_cache_driver_config_value(cache_instance_cache_driver_config) do
+    case Artemis.Helpers.present?(cache_instance_cache_driver_config) do
+      true -> cache_instance_cache_driver_config
+      false -> get_global_cache_driver_config()
     end
   end
 
-  defp get_cache_driver_config() do
+  defp get_global_cache_driver_config() do
     :artemis
     |> Artemis.Helpers.AppConfig.fetch!(:cache, :driver)
     |> Kernel.||("")
     |> String.downcase()
   end
 
+  defp get_cache_driver_from_config(config) do
+    case Artemis.Helpers.to_string(config) do
+      "postgres" -> Artemis.Drivers.Cache.Postgres
+      "redis" -> Artemis.Drivers.Cache.Redis
+      _ -> Artemis.Drivers.Cache.Cachex
+    end
+  end
+
   # Instance Callbacks
 
   @impl true
   def init(initial_state) do
-    cache_options = get_cache_driver().get_cache_instance_options(initial_state.cache_options)
+    cache_options = initial_state.cache_driver.get_cache_instance_options(initial_state.cache_options)
 
     {:ok, cache_instance_pid} =
-      get_cache_driver().create_cache_instance(initial_state.cache_instance_name, cache_options)
+      initial_state.cache_driver.create_cache_instance(initial_state.cache_instance_name, cache_options)
 
     state =
       initial_state
@@ -198,12 +229,16 @@ defmodule Artemis.CacheInstance do
   end
 
   @impl true
+  def handle_call(:cache_driver, _from, state) do
+    {:reply, state.cache_driver, state}
+  end
+
   def handle_call(:cache_options, _from, state) do
     {:reply, state.cache_options, state}
   end
 
   def handle_call({:fetch, key, getter}, _from, state) do
-    entry = fetch_from_cache(state.module, key, getter, state.cache_options)
+    entry = fetch_from_cache(state.module, key, getter, state.cache_driver, state.cache_options)
 
     {:reply, entry, state}
   end
@@ -221,15 +256,14 @@ defmodule Artemis.CacheInstance do
 
   # Cache Instance Helpers
 
-  defp get_from_cache(module, key) do
-    module
-    |> get_cache_instance_name()
-    |> get_cache_driver().get(key)
+  defp get_from_cache(cache_driver, cache_instance_name, key) do
+    cache_driver.get(cache_instance_name, key)
   end
 
-  defp put_in_cache(_module, _key, {:error, message}, _cache_options), do: %CacheEntry{data: {:error, message}}
+  defp put_in_cache(_module, _key, {:error, message}, _cache_driver, _cache_options),
+    do: %CacheEntry{data: {:error, message}}
 
-  defp put_in_cache(module, key, value, cache_options) do
+  defp put_in_cache(module, key, value, cache_driver, cache_options) do
     cache_instance_name = get_cache_instance_name(module)
     inserted_at = DateTime.utc_now() |> DateTime.to_unix()
 
@@ -239,19 +273,19 @@ defmodule Artemis.CacheInstance do
       key: key
     }
 
-    get_cache_driver().put(cache_instance_name, key, entry, cache_options)
+    cache_driver.put(cache_instance_name, key, entry, cache_options)
 
     entry
   end
 
-  defp fetch_from_cache(module, key, getter, cache_options) do
+  defp fetch_from_cache(module, key, getter, cache_driver, cache_options) do
     cache_instance_name = get_cache_instance_name(module)
 
-    case get_from_cache(module, key) do
+    case get_from_cache(cache_driver, cache_instance_name, key) do
       nil ->
         Logger.debug("#{cache_instance_name}: fetch - updating cache")
 
-        put_in_cache(module, key, getter.(), cache_options)
+        put_in_cache(module, key, getter.(), cache_driver, cache_options)
 
       value ->
         Logger.debug("#{cache_instance_name}: fetch - cache hit")
@@ -304,7 +338,7 @@ defmodule Artemis.CacheInstance do
   defp reset_cache(state, event \\ %{}) do
     cache_instance_name = get_cache_instance_name(state.module)
 
-    get_cache_driver().reset(cache_instance_name)
+    state.cache_driver.reset(cache_instance_name)
 
     :ok = CacheEvent.broadcast("cache:reset", state.module, event)
 

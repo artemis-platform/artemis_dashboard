@@ -8,7 +8,9 @@ defmodule Artemis.ContextCache do
 
     :cache_reset_on_cloudant_changes - Optional. List. Cloudant events that reset cache
     :cache_reset_on_events - Optional. List. Events that reset cache.
-    :cache_options - Optional. List. Options to pas to cache instance
+    :cache_driver - Optional. String. Allows a specific cache to use a different cache driver
+      than the global default
+    :cache_options - Optional. List. Options to pass to cache instance
     :cache_key - Optional. Atom or Function. See section about Cache Keys.
     :rescue - Optional. Boolean. When set to true, rescues from exceptions in
       the `call()` function and returns a generic `{:error, _} tuple
@@ -189,6 +191,7 @@ defmodule Artemis.ContextCache do
             child_options = [
               cache_reset_on_cloudant_changes: Keyword.get(unquote(options), :cache_reset_on_cloudant_changes, []),
               cache_reset_on_events: Keyword.get(unquote(options), :cache_reset_on_events, []),
+              cache_driver: Keyword.get(unquote(options), :cache_driver),
               cache_options: Keyword.get(unquote(options), :cache_options, []),
               module: __MODULE__
             ]
