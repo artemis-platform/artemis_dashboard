@@ -17,8 +17,8 @@ defmodule Artemis.CreateManyIncidents do
   def call(params, user) do
     with_transaction(fn ->
       params
-      |> insert_records
-      |> Event.broadcast("incident:created:many", user)
+      |> insert_records()
+      |> maybe_broadcast(user)
     end)
   end
 
@@ -48,6 +48,15 @@ defmodule Artemis.CreateManyIncidents do
         {:ok, %{source_uids: source_uids, total: total}}
     end
   end
+
+  defp maybe_broadcast({:ok, %{total: total}} = result, user) do
+    case total > 0 do
+      true -> Event.broadcast(result, "incident:created:many", user)
+      false -> result
+    end
+  end
+
+  defp maybe_broadcast(result, _user), do: result
 
   defp get_param_keys(params) when is_list(params) do
     with true <- length(params) > 0,
