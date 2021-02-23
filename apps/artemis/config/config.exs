@@ -34,9 +34,7 @@ config :artemis, :actions,
     interval: System.get_env("ARTEMIS_ACTION_REPO_RESET_ON_INTERVAL_HOURS")
   ]
 
-config :artemis, :event,
-  system_events_to_not_broadcast: [
-  ]
+config :artemis, :event, system_events_to_not_broadcast: []
 
 config :artemis, :users,
   root_user: %{
