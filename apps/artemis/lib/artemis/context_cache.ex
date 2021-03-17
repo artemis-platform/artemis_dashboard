@@ -85,8 +85,13 @@ defmodule Artemis.ContextCache do
       alias Artemis.CacheInstance
       alias Artemis.Repo
 
+      @default_rescue_option true
+
       @doc """
       Generic wrapper function to add caching around `call`
+
+      If a cache entry already exists, it returns it. Otherwise, it fetches the
+      data, caches it, and returns it.
       """
       def call_with_cache(), do: fetch_cached([])
       def call_with_cache(arg1), do: fetch_cached([arg1])
@@ -97,6 +102,8 @@ defmodule Artemis.ContextCache do
 
       @doc """
       Generic wrapper function to add caching around `call`
+
+      Always fetches the latest data, caches it, and returns it.
       """
       def call_and_update_cache(), do: update_cache([])
       def call_and_update_cache(arg1), do: update_cache([arg1])
@@ -104,6 +111,24 @@ defmodule Artemis.ContextCache do
       def call_and_update_cache(arg1, arg2, arg3), do: update_cache([arg1, arg2, arg3])
       def call_and_update_cache(arg1, arg2, arg3, arg4), do: update_cache([arg1, arg2, arg3, arg4])
       def call_and_update_cache(arg1, arg2, arg3, arg4, arg5), do: update_cache([arg1, arg2, arg3, arg4, arg5])
+
+      @doc """
+      Generic wrapper function to add caching around `call`
+
+      If a cache entry exists, it returns the cached value and asynchronously
+      starts a job to update the cache. The updated value is not returned
+
+      If the cache entry does not exist, it fetches the data, caches it, and
+      returns it.
+      """
+      def call_with_cache_then_update(), do: get_cached_then_update([])
+      def call_with_cache_then_update(arg1), do: get_cached_then_update([arg1])
+      def call_with_cache_then_update(arg1, arg2), do: get_cached_then_update([arg1, arg2])
+      def call_with_cache_then_update(arg1, arg2, arg3), do: get_cached_then_update([arg1, arg2, arg3])
+      def call_with_cache_then_update(arg1, arg2, arg3, arg4), do: get_cached_then_update([arg1, arg2, arg3, arg4])
+
+      def call_with_cache_then_update(arg1, arg2, arg3, arg4, arg5),
+        do: get_cached_then_update([arg1, arg2, arg3, arg4, arg5])
 
       @doc """
       Clear all values from cache. Returns successfully if cache is not started.
@@ -117,33 +142,61 @@ defmodule Artemis.ContextCache do
 
       # Helpers
 
-      defp update_cache(args) do
-        {:ok, _} = create_cache()
-
-        result = apply(__MODULE__, :call, args)
-
-        key = get_cache_key(args)
-
-        Artemis.CacheInstance.put(__MODULE__, key, result)
-      rescue
-        error in MatchError -> handle_match_error(args, error)
-      end
-
       defp fetch_cached(args) do
         {:ok, _} = create_cache()
 
-        getter = fn ->
-          apply(__MODULE__, :call, args)
-        end
-
+        getter = fn -> execute_call(args) end
         key = get_cache_key(args)
 
         Artemis.CacheInstance.fetch(__MODULE__, key, getter)
       rescue
-        error in MatchError -> handle_match_error(args, error)
+        error in MatchError -> handle_match_error(error, args, &fetch_cached/1)
       end
 
-      defp handle_match_error(args, %MatchError{term: {:error, {:already_started, _}}}) do
+      defp update_cache(args) do
+        {:ok, _} = create_cache()
+
+        result = execute_call(args)
+        key = get_cache_key(args)
+
+        Artemis.CacheInstance.put(__MODULE__, key, result)
+      rescue
+        error in MatchError -> handle_match_error(error, args, &update_cache/1)
+      end
+
+      defp get_cached_then_update(args) do
+        {:ok, _} = create_cache()
+
+        getter = fn -> execute_call(args) end
+        key = get_cache_key(args)
+
+        case Artemis.CacheInstance.get(__MODULE__, key) do
+          nil ->
+            fetch_cached(args)
+
+          response ->
+            Task.start_link(fn -> update_cache(args) end)
+            response
+        end
+      rescue
+        error in MatchError -> handle_match_error(error, args, &update_cache/1)
+      end
+
+      defp execute_call(args) do
+        apply(__MODULE__, :call, args)
+      rescue
+        error ->
+          case Keyword.get(unquote(options), :rescue, @default_rescue_option) do
+            true ->
+              Artemis.Helpers.rescue_log(__STACKTRACE__, __MODULE__, error)
+              {:error, "Error fetching cache data."}
+
+            false ->
+              reraise(error, __STACKTRACE__)
+          end
+      end
+
+      defp handle_match_error(%MatchError{term: {:error, {:already_started, _}}}, args, callback) do
         # The CacheInstance contains two linked processes, a cache GenServer and a
         # cache instance. The GenServer starts a linked cache instance on initialization.
         #
@@ -157,10 +210,10 @@ defmodule Artemis.ContextCache do
         # Since a cache instance is now running, resending the request to the
         # GenServer will succeed.
         #
-        fetch_cached(args)
+        callback.(args)
       end
 
-      defp handle_match_error(args, _error) do
+      defp handle_match_error(_error, args) do
         # The CacheInstance contains two linked processes, a cache GenServer and a
         # cache instance. When a CacheInstance is reset, the cache GenServer is
         # stopped. Because they are linked, shortly after the cache instance is also
@@ -220,7 +273,7 @@ defmodule Artemis.ContextCache do
       defp get_user_permissions(args) do
         args
         |> get_user_arg()
-        |> Repo.preload([:permissions])
+        |> Artemis.Repo.preload([:permissions])
         |> Map.get(:permissions)
         |> Enum.map(& &1.slug)
         |> Enum.sort()
@@ -252,7 +305,7 @@ defmodule Artemis.ContextCache do
         end
       end
 
-      defp user?(value), do: is_map(value) && value.__struct__ == Artemis.User
+      defp user?(value), do: is_map(value) && Map.get(value, :__struct__) && value.__struct__ == Artemis.User
     end
   end
 end

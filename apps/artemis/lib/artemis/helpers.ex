@@ -638,7 +638,7 @@ defmodule Artemis.Helpers do
   defp get_deep_drop_by_value_match_function(match), do: &(&1 == match)
 
   @doc """
-  Recursive version of `Map.get/2`. Adds support for nested values:
+  Recursive version of `Access.get/2`. Adds support for nested values:
 
   Example:
 
@@ -656,8 +656,13 @@ defmodule Artemis.Helpers do
   """
   def deep_get(data, keys, default \\ nil)
 
-  def deep_get(data, [current_key | remaining_keys], default) when is_map(data) do
-    value = Map.get(data, current_key)
+  def deep_get(data, [current_key | remaining_keys], default) when is_map(data) or is_list(data) do
+    value =
+      cond do
+        is_map(data) -> Map.get(data, current_key)
+        is_list(data) -> Keyword.get(data, current_key)
+        true -> Access.get(data, current_key)
+      end
 
     case remaining_keys do
       [] -> value

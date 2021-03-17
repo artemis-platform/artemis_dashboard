@@ -7,7 +7,7 @@
 
 <div id="content">
   <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "Feature" %>
+  <%= render_event_log_notifications assigns, "Feature" %>
 
   <section>
     <div class="table-header">

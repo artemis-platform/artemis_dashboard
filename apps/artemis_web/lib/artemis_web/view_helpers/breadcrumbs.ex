@@ -4,10 +4,16 @@ defmodule ArtemisWeb.ViewHelper.Breadcrumbs do
   @doc """
   Generates breadcrumbs from current URL
   """
-  def render_breadcrumbs(conn) when is_map(conn) do
-    conn
-    |> Map.get(:request_path)
-    |> render_breadcrumbs()
+  def render_breadcrumbs(%Plug.Conn{} = conn) do
+    render_breadcrumbs(conn.request_path)
+  end
+
+  def render_breadcrumbs(%{request_path: value}) do
+    render_breadcrumbs(value)
+  end
+
+  def render_breadcrumbs(%{conn: value}) do
+    render_breadcrumbs(value)
   end
 
   def render_breadcrumbs(path) when is_bitstring(path) do

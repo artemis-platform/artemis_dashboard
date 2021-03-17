@@ -1,80 +1,81 @@
   <div class="table-header">
-    <%= render_search @conn %>
+    <%= render_search assigns %>
 
-    <div class="table-filters">
-      <div>
-        <%=
-          options =
-            %{distinct: :action}
-            |> ArtemisLog.ListEventLogs.call(current_user(@conn))
-            |> select_options(field: :action)
+    <%# <div class="table-filters" phx-update="ignore" phx-hook="Select2"> %>
+    <%#   <div> %>
+    <%#     <%= %>
+    <%#       options = %>
+    <%#         %{distinct: :action} %>
+    <%#         |> ArtemisLog.ListEventLogs.call(@user) %>
+    <%#         |> select_options(field: :action) %>
 
-          filter_multi_select(@conn, "Action", :action, options)
-        %>
-      </div>
+    <%#       filter_multi_select(@conn_or_socket, "Action", :action, options) %>
+    <%#     %1> %>
+    <%#   </div> %>
 
-      <div>
-        <%=
-          options =
-            %{distinct: :user_name}
-            |> ArtemisLog.ListEventLogs.call(current_user(@conn))
-            |> select_options(field: :user_name)
+    <%#   <div> %>
+    <%#     <%= %>
+    <%#       options = %>
+    <%#         %{distinct: :user_name} %>
+    <%#         |> ArtemisLog.ListEventLogs.call(@user) %>
+    <%#         |> select_options(field: :user_name) %>
 
-          filter_multi_select(@conn, "User Name", :user_name, options)
-        %>
-      </div>
+    <%#       filter_multi_select(@conn_or_socket, "User Name", :user_name, options) %>
+    <%#     %1> %>
+    <%#   </div> %>
 
-      <div>
-        <%=
-          options =
-            %{distinct: :user_id}
-            |> ArtemisLog.ListEventLogs.call(current_user(@conn))
-            |> select_options(field: :user_id)
+    <%#   <div> %>
+    <%#     <%= %>
+    <%#       options = %>
+    <%#         %{distinct: :user_id} %>
+    <%#         |> ArtemisLog.ListEventLogs.call(@user) %>
+    <%#         |> select_options(field: :user_id) %>
 
-          filter_multi_select(@conn, "User ID", :user_id, options)
-        %>
-      </div>
+    <%#       filter_multi_select(@conn_or_socket, "User ID", :user_id, options) %>
+    <%#     %1> %>
+    <%#   </div> %>
 
-      <div>
-        <%=
-          options =
-            %{distinct: :resource_type}
-            |> ArtemisLog.ListEventLogs.call(current_user(@conn))
-            |> select_options(field: :resource_type)
+    <%#   <div> %>
+    <%#     <%= %>
+    <%#       options = %>
+    <%#         %{distinct: :resource_type} %>
+    <%#         |> ArtemisLog.ListEventLogs.call(@user) %>
+    <%#         |> select_options(field: :resource_type) %>
 
-          filter_multi_select(@conn, "Resource Type", :resource_type, options)
-        %>
-      </div>
+    <%#       filter_multi_select(@conn_or_socket, "Resource Type", :resource_type, options) %>
+    <%#     %1> %>
+    <%#   </div> %>
 
-      <div>
-        <%=
-          options =
-            %{distinct: :resource_id}
-            |> ArtemisLog.ListEventLogs.call(current_user(@conn))
-            |> select_options(field: :resource_id)
+    <%#   <div> %>
+    <%#     <%= %>
+    <%#       options = %>
+    <%#         %{distinct: :resource_id} %>
+    <%#         |> ArtemisLog.ListEventLogs.call(@user) %>
+    <%#         |> select_options(field: :resource_id) %>
 
-          filter_multi_select(@conn, "Resource ID", :resource_id, options)
-        %>
-      </div>
-    </div>
+    <%#       filter_multi_select(@conn_or_socket, "Resource ID", :resource_id, options) %>
+    <%#     %1> %>
+    <%#   </div> %>
+    <%# </div> %>
 
-    <div class="table-actions">
-      <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
-      <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+    <div class="table-actions" phx-update="ignore" phx-hook="Select2">
+      <%= render_data_table_column_selector(assigns, data_table_available_columns()) %>
+      <%= render_export_actions(assigns, available_columns: data_table_available_columns()) %>
     </div>
   </div>
 
   <%=
     render_data_table(
-      @conn,
+      @conn_or_socket,
       @event_logs.entries,
       allowed_columns: @allowed_columns,
-      default_columns: @default_columns
+      default_columns: @default_columns,
+      user: @user
     )
   %>
 
   <%=
     pagination_options = assigns[:pagination_options] || []
 
-    render_pagination @conn, @event_logs, params: pagination_options
+    render_pagination assigns, @event_logs, params: pagination_options
   %>

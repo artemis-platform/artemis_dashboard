@@ -30,6 +30,37 @@ defmodule ArtemisWeb do
 
       alias ArtemisWeb.Router.Helpers, as: Routes
 
+      # Render Async
+
+      defp render_async(conn, view_module, filename, options \\ []) do
+        format = get_format(conn)
+        async_data = Keyword.get(options, :async_data)
+        template = "#{filename}.#{format}"
+
+        assigns =
+          options
+          |> Keyword.get(:assigns, [])
+          |> Artemis.Helpers.keys_to_atoms()
+          |> Enum.into([])
+          |> Keyword.put(:async_data, async_data.())
+          |> Keyword.put_new(:query_params, conn.query_params)
+          |> Keyword.put_new(:request_path, conn.request_path)
+          |> Keyword.put_new(:user, current_user(conn))
+
+        session =
+          assigns
+          |> Keyword.put(:async_render_type, :page)
+          |> Keyword.put(:view_module, view_module)
+          |> ArtemisWeb.ViewHelper.Async.async_convert_assigns_to_session(template)
+
+        case format do
+          "html" -> Phoenix.LiveView.Controller.live_render(conn, ArtemisWeb.AsyncRenderLive, session: session)
+          _ -> render_format(conn, filename, assigns)
+        end
+      end
+
+      # Render Format
+
       defp render_format(conn, filename, params) do
         format = get_format(conn)
         conn = render_format_headers(conn, format)
@@ -124,6 +155,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.Gettext
       import ArtemisWeb.Guardian.Helpers
       import ArtemisWeb.UserAccess
+      import ArtemisWeb.ViewHelper.Async
       import ArtemisWeb.ViewHelper.Breadcrumbs
       import ArtemisWeb.ViewHelper.BulkActions
       import ArtemisWeb.ViewHelper.Cache
@@ -152,6 +184,48 @@ defmodule ArtemisWeb do
 
       alias ArtemisWeb.Router.Helpers, as: Routes
       alias ArtemisWeb.ViewHelper.BulkActions.BulkAction
+
+      # Delay the rendering of `do` blocks through macros
+
+      defmacro render_and_benchmark(options \\ [], do: block) do
+        quote do
+          key = Keyword.get(unquote(options), :key, "Render Benchmark")
+
+          Artemis.Helpers.benchmark(key, fn ->
+            raw(unquote(block))
+          end)
+        end
+      end
+
+      defmacro render_from_cache_then_update(name, user, do: block) do
+        quote do
+          callback = fn -> unquote(block) end
+
+          unquote(name)
+          |> ArtemisWeb.RenderCache.call_with_cache_then_update(callback, unquote(user))
+          |> Map.get(:data)
+          |> raw()
+        end
+      end
+
+      defmacro async_render_when_loaded(assigns, options \\ [], do: block) do
+        quote do
+          status = unquote(assigns)[:async_status]
+          loading_icon? = Keyword.get(unquote(options), :loading_icon, true)
+          reloading_icon? = Keyword.get(unquote(options), :reloading_icon, true)
+
+          cond do
+            status == :loading && loading_icon? ->
+              Phoenix.HTML.Tag.content_tag(:div, "", class: "ui active centered inline loader")
+
+            status == :reloading && reloading_icon? ->
+              Phoenix.HTML.Tag.content_tag(:div, "", class: "ui active centered inline loader")
+
+            true ->
+              raw(unquote(block))
+          end
+        end
+      end
     end
   end
 
