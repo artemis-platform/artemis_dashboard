@@ -4,15 +4,27 @@ defmodule ArtemisWeb.ViewHelper.Export do
   @doc """
   Limit the number of records returned
   """
-  def get_export_limit(), do: 10_000
+  def get_export_limit(), do: 100_000
 
   @doc """
   Render export actions dropdown
   """
-  def render_export_actions(conn, options \\ []) do
+  def render_export_actions(conn_or_assigns, options \\ [])
+
+  def render_export_actions(%Plug.Conn{} = conn, options) do
+    assigns = %{
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    render_export_actions(assigns, options)
+  end
+
+  def render_export_actions(assigns, options) do
     assigns = [
-      conn: conn,
-      options: options
+      options: options,
+      query_params: Map.fetch!(assigns, :query_params),
+      request_path: Map.fetch!(assigns, :request_path)
     ]
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "export.html", assigns)
@@ -21,13 +33,13 @@ defmodule ArtemisWeb.ViewHelper.Export do
   @doc """
   Render export current columns action
   """
-  def render_export_current_columns_action(conn, options) do
+  def render_export_current_columns_action(query_params, request_path, options) do
     path_params = %{
       "page_size" => get_export_limit()
     }
 
-    base_path = Keyword.get(options, :path, conn.request_path)
-    export_path = get_export_path(conn, base_path, :csv, path_params)
+    base_path = Keyword.get(options, :path, request_path)
+    export_path = get_export_path(query_params, base_path, :csv, path_params)
 
     link_options = [
       class: "export",
@@ -42,7 +54,7 @@ defmodule ArtemisWeb.ViewHelper.Export do
   @doc """
   Render export all columns action
   """
-  def render_export_all_columns_action(conn, options) do
+  def render_export_all_columns_action(query_params, request_path, options) do
     columns =
       options
       |> Keyword.get(:available_columns, [])
@@ -54,8 +66,8 @@ defmodule ArtemisWeb.ViewHelper.Export do
       "page_size" => get_export_limit()
     }
 
-    base_path = Keyword.get(options, :path, conn.request_path)
-    export_path = get_export_path(conn, base_path, :csv, path_params)
+    base_path = Keyword.get(options, :path, request_path)
+    export_path = get_export_path(query_params, base_path, :csv, path_params)
 
     link_options = [
       class: "export",
@@ -67,18 +79,17 @@ defmodule ArtemisWeb.ViewHelper.Export do
     link("Export All Columns", link_options)
   end
 
-  @doc """
-  Export path helper
-  """
-  def get_export_path(conn, path, format, params \\ []) do
+  # Helpers - Export Path
+
+  defp get_export_path(query_params, path, format, params) do
     additional_params =
       params
       |> Enum.into(%{})
       |> Artemis.Helpers.keys_to_strings()
 
     query_params =
-      conn
-      |> Map.get(:query_params, %{})
+      query_params
+      |> Kernel.||(%{})
       |> Map.put("_format", format)
       |> Map.merge(additional_params)
 

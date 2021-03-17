@@ -6,10 +6,10 @@
       Export Options
     </div>
     <div class="item">
-      <%= render_export_current_columns_action(@conn, @options) %>
+      <%= render_export_current_columns_action(@query_params, @request_path, @options) %>
     </div>
     <div class="item">
-      <%= render_export_all_columns_action(@conn, @options) %>
+      <%= render_export_all_columns_action(@query_params, @request_path, @options) %>
     </div>
     <div class="header">
       <i class="exclamation circle icon"></i>

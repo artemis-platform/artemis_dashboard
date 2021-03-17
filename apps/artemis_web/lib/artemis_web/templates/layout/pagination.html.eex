@@ -1,6 +1,6 @@
 <div class="pagination-container">
   <%= if @type == "scrivener" do %>
-    <%= pagination_links @conn, @data, @args, @params %>
+    <%= pagination_links @conn_or_socket, @data, @args, @params %>
     <span class="page-summary">Page <%= Map.get(@data, :page_number) %> of <%= Map.get(@data, :total_pages) %></span>
   <% else %>
     <div class="ui pagination menu">
