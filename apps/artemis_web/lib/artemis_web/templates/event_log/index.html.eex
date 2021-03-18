@@ -3,30 +3,33 @@
     <h1>Event Logs</h1>
 
     <div class="actions">
-      <%= if has?(@conn, "event-logs:create") do %>
-        <%= action "New", to: Routes.event_log_path(@conn, :new), color: "blue" %>
+      <%= if has?(@user, "event-logs:create") do %>
+        <%= action "New", to: Routes.event_log_path(get_conn_or_socket(assigns), :new), color: "blue" %>
       <% end %>
     </div>
   </header>
 </div>
 
 <div id="content-navigation">
-  <%= render_breadcrumbs @conn %>
-  <%= render_presence @conn %>
+  <%= render_breadcrumbs assigns %>
+  <%= render_presence assigns %>
 </div>
 
 <div id="content">
-  <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "EventLog" %>
+  <%= render_flash_notifications assigns %>
+  <%= render_event_log_notifications assigns, "EventLog" %>
 
-  <section>
-    <%=
-      render_event_log_list(
-        @conn,
-        @event_logs,
-        allowed_columns: data_table_allowed_columns(),
-        default_columns: @default_columns
-      )
-    %>
-  </section>
+  <%= async_render_when_loaded(assigns) do %>
+    <section>
+      <%=
+        render_event_log_list(
+          assigns,
+          get_async_data_field(assigns, :event_logs),
+          allowed_columns: data_table_allowed_columns(),
+          default_columns: get_async_data_field(assigns, :default_columns),
+          user: assigns[:user]
+        )
+      %>
+    </section>
+  <% end %>
 </div>

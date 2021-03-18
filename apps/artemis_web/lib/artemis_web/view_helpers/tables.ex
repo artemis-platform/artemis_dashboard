@@ -192,9 +192,9 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     default_columns: ["name", "slug"]
 
   """
-  def render_data_table(conn, data, options \\ []) do
-    format = get_request_format(conn)
-    columns = get_data_table_columns(conn, options)
+  def render_data_table(conn_or_socket, data, options \\ []) do
+    format = get_request_format(conn_or_socket)
+    columns = get_data_table_columns(conn_or_socket, options)
     headers? = Keyword.get(options, :headers, true)
     compact? = Keyword.get(options, :compact, false)
     class = "data-table-container"
@@ -214,7 +214,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     assigns = [
       class: class,
       columns: columns,
-      conn: conn,
+      conn_or_socket: update_assigns(conn_or_socket, options),
       data: data,
       headers?: headers?,
       id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),
@@ -224,6 +224,16 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", assigns)
   end
+
+  defp update_assigns(%Phoenix.LiveView.Socket{} = socket, options) do
+    Map.put(socket, :assigns, %{
+      query_params: Keyword.fetch!(options, :query_params),
+      request_path: Keyword.fetch!(options, :request_path),
+      user: Keyword.fetch!(options, :user)
+    })
+  end
+
+  defp update_assigns(conn, _options), do: conn
 
   defp get_request_format(conn) do
     Phoenix.Controller.get_format(conn)
@@ -236,10 +246,18 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   the query param is not set, compares the `default_columns` value instead.
   Returns a map of matching keys in `allowed_columns`.
   """
-  def get_data_table_columns(conn, options) do
+  def get_data_table_columns(%Plug.Conn{} = conn, options) do
+    assigns = %{
+      query_params: conn.query_params
+    }
+
+    get_data_table_columns(assigns, options)
+  end
+
+  def get_data_table_columns(assigns, options) do
     selectable? = Keyword.get(options, :selectable, false)
     allowed_columns = Keyword.get(options, :allowed_columns, [])
-    requested_columns = parse_data_table_requested_columns(conn, options)
+    requested_columns = parse_data_table_requested_columns(assigns, options)
 
     filtered =
       Enum.reduce(requested_columns, [], fn key, acc ->
@@ -275,12 +293,25 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   @doc """
   Parse query params and return requested data table columns
   """
-  def parse_data_table_requested_columns(conn, options \\ []) do
+  def parse_data_table_requested_columns(conn_or_assigns, options \\ [])
+
+  def parse_data_table_requested_columns(%Plug.Conn{} = conn, options) do
     conn
-    |> Map.get(:query_params, %{})
+    |> Map.get(:query_params)
+    |> parse_data_table_requested_columns(options)
+  end
+
+  def parse_data_table_requested_columns(%{query_params: query_params}, options) do
+    parse_data_table_requested_columns(query_params, options)
+  end
+
+  def parse_data_table_requested_columns(query_params, options) when is_map(query_params) do
+    query_params
     |> Map.get("columns")
     |> get_data_table_requested_columns(options)
   end
+
+  def parse_data_table_requested_columns(_, _), do: []
 
   defp get_data_table_requested_columns(nil, options), do: Keyword.get(options, :default_columns, [])
   defp get_data_table_requested_columns(value, _) when is_bitstring(value), do: String.split(value, ",")
@@ -311,8 +342,19 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   @doc """
   Render a select box to allow users to choose custom columns
   """
-  def render_data_table_column_selector(conn, available_columns) do
-    selected = parse_data_table_requested_columns(conn)
+  def render_data_table_column_selector(%Plug.Conn{} = conn, available_columns) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    render_data_table_column_selector(assigns, available_columns)
+  end
+
+  def render_data_table_column_selector(assigns, available_columns) do
+    conn_or_socket = Map.get(assigns, :conn) || Map.get(assigns, :socket)
+    selected = parse_data_table_requested_columns(assigns)
     class = if length(selected) > 0, do: "active"
 
     sorted_by_selected =
@@ -326,7 +368,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     assigns = [
       available: sorted_by_selected,
       class: class,
-      conn: conn,
+      conn_or_socket: conn_or_socket,
       selected: selected
     ]
 

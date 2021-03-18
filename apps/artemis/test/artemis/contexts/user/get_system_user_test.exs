@@ -93,18 +93,6 @@ defmodule Artemis.GetSystemUserTest do
       {:ok, []}
     end
 
-    test "defines custom cache options" do
-      GetSystemUser.call_with_cache()
-
-      expiration = :timer.minutes(60)
-      limit = 5
-
-      cache_options = Artemis.CacheInstance.get_cache_options(GetSystemUser)
-
-      assert cache_options[:expiration] == {:expiration, expiration, 5000, true}
-      assert cache_options[:limit] == limit
-    end
-
     test "returns a cached result", %{system_user: record} do
       initial_call = GetSystemUser.call_with_cache()
 

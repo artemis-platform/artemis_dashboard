@@ -1,0 +1,13 @@
+<%= if @async_render_type == :page do %>
+
+  <%= Phoenix.View.render(@module, @template, assigns) %>
+
+<% else %>
+
+  <%= async_render_when_loaded(@async_status) do %>
+
+    <%= Phoenix.View.render(@module, @template, assigns) %>
+
+  <% end %>
+
+<% end %>

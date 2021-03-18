@@ -1,4 +1,4 @@
-<%= form_for @conn, "", [class: "ui form data-table-columns"], fn f -> %>
+<%= form_for @conn_or_socket, "", [class: "ui form data-table-columns"], fn f -> %>
   <div class="<%= @class %>">
     <%=
       multiple_select(

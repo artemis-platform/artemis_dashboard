@@ -1,5 +1,10 @@
 defmodule Artemis.GetSystemUser do
   use Artemis.ContextCache,
+    cache_driver: "cachex",
+    cache_options: [
+      expiration: :timer.minutes(60),
+      limit: 5
+    ],
     cache_reset_on_events: [
       "permission:created",
       "permission:deleted",
@@ -10,10 +15,6 @@ defmodule Artemis.GetSystemUser do
       "user:created",
       "user:deleted",
       "user:updated"
-    ],
-    cache_options: [
-      expiration: :timer.minutes(60),
-      limit: 5
     ]
 
   import Ecto.Query
