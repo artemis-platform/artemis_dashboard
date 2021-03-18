@@ -70,6 +70,8 @@
       @event_logs.entries,
       allowed_columns: @allowed_columns,
       default_columns: @default_columns,
+      query_params: @query_params,
+      request_path: @request_path,
       user: @user
     )
   %>

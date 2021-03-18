@@ -192,9 +192,9 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     default_columns: ["name", "slug"]
 
   """
-  def render_data_table(conn, data, options \\ []) do
-    format = get_request_format(conn)
-    columns = get_data_table_columns(conn, options)
+  def render_data_table(conn_or_socket, data, options \\ []) do
+    format = get_request_format(conn_or_socket)
+    columns = get_data_table_columns(conn_or_socket, options)
     headers? = Keyword.get(options, :headers, true)
     compact? = Keyword.get(options, :compact, false)
     class = "data-table-container"
@@ -214,7 +214,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     assigns = [
       class: class,
       columns: columns,
-      conn: conn,
+      conn_or_socket: update_assigns(conn_or_socket, options),
       data: data,
       headers?: headers?,
       id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),
@@ -224,6 +224,16 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", assigns)
   end
+
+  defp update_assigns(%Phoenix.LiveView.Socket{} = socket, options) do
+    Map.put(socket, :assigns, %{
+      query_params: Keyword.fetch!(options, :query_params),
+      request_path: Keyword.fetch!(options, :request_path),
+      user: Keyword.fetch!(options, :user)
+    })
+  end
+
+  defp update_assigns(conn, _options), do: conn
 
   defp get_request_format(conn) do
     Phoenix.Controller.get_format(conn)

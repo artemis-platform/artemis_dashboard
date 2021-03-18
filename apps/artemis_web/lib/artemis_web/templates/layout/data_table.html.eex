@@ -1,15 +1,17 @@
 <div id="<%= @id %>" class="data-table-container data-table-container-<%= @id %>">
   <%= if @selectable do %><form class="ui form selectable" action="#"><% end %>
     <table class="data-table data-table-<%= @id %>">
-      <thead>
-        <tr>
-          <%= Enum.map @columns, fn (column) -> %>
-            <th>
-              <%= render_data_table_label @conn, column, :html %>
-            </th>
-          <% end %>
-        </tr>
-      </thead>
+      <%= if @headers? do %>
+        <thead>
+          <tr>
+            <%= Enum.map @columns, fn (column) -> %>
+              <th>
+                <%= render_data_table_label(@conn_or_socket, column, :html) %>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+      <% end %>
       <tbody>
         <%= render_table_row_if_empty @data %>
         <%= Enum.map Enum.with_index(@data), fn {row, index} -> %>
@@ -20,7 +22,7 @@
           <tr class="row-<%= index %> <%= row_visibility %>">
             <%= Enum.map @columns, fn (column) -> %>
               <td>
-                <%= render_data_table_value(@conn, column, row, :html) %>
+                <%= render_data_table_value(@conn_or_socket, column, row, :html) %>
               </td>
             <% end %>
           </tr>
