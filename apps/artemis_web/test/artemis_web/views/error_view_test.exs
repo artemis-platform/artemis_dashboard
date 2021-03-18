@@ -1,22 +1,30 @@
 defmodule ArtemisWeb.ErrorViewTest do
   use ArtemisWeb.ConnCase, async: true
 
-  # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View
 
-  test "renders 401.html" do
-    assert render_to_string(ArtemisWeb.ErrorView, "401.html", []) =~ "Unauthorized"
+  setup %{conn: conn} do
+    conn =
+      conn
+      |> sign_in()
+      |> Plug.Conn.put_private(:phoenix_endpoint, ArtemisWeb.Endpoint)
+
+    {:ok, conn: conn}
   end
 
-  test "renders 403.html" do
-    assert render_to_string(ArtemisWeb.ErrorView, "403.html", []) =~ "Forbidden"
+  test "renders 401.html", %{conn: conn} do
+    assert render_to_string(ArtemisWeb.ErrorView, "401.html", conn: conn) =~ "Unauthorized"
   end
 
-  test "renders 404.html" do
-    assert render_to_string(ArtemisWeb.ErrorView, "404.html", []) =~ "Not Found"
+  test "renders 403.html", %{conn: conn} do
+    assert render_to_string(ArtemisWeb.ErrorView, "403.html", conn: conn) =~ "Forbidden"
   end
 
-  test "renders 500.html" do
-    assert render_to_string(ArtemisWeb.ErrorView, "500.html", []) =~ "Internal Server Error"
+  test "renders 404.html", %{conn: conn} do
+    assert render_to_string(ArtemisWeb.ErrorView, "404.html", conn: conn) =~ "Not Found"
+  end
+
+  test "renders 500.html", %{conn: conn} do
+    assert render_to_string(ArtemisWeb.ErrorView, "500.html", conn: conn) =~ "Internal Server Error"
   end
 end

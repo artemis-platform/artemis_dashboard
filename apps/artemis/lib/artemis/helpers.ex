@@ -862,6 +862,15 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
+  Log application start
+  """
+  def log_application_start(name) do
+    type = "ApplicationStart"
+
+    log(type: type, key: name, start: Timex.now())
+  end
+
+  @doc """
   Log rescued errors
   """
   def rescue_log(stacktrace \\ nil, caller, error) do

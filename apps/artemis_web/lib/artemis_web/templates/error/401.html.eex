@@ -1,5 +1,22 @@
-<div id="content-header">
-  <header>
-    <h1>Unauthorized</h1>
-  </header>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Atlas</title>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+  </head>
+  <body class="<%= if @conn.assigns[:error_page], do: "error-page" %>" id="body">
+
+    <main role="main" class="splash-page">
+      <section>
+        <h1>
+          <i class="exclamation triangle ui icon"></i>
+          Unauthorized (401)
+        </h1>
+      </section>
+    </main>
+
+  </body>
+</html>

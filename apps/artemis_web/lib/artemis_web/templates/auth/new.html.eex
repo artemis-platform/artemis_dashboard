@@ -1,4 +1,4 @@
-<main role="main" id="login">
+<main role="main" class="splash-page">
   <section>
     <h1>
       <i class="map marker alternate icon"></i>Artemis
