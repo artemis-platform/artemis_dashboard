@@ -3,8 +3,8 @@
     <h1>Event Logs</h1>
 
     <div class="actions">
-      <%= if has?(@conn, "event-logs:create") do %>
-        <%= action "New", to: Routes.event_log_path(@conn, :new), color: "blue" %>
+      <%= if has?(@user, "event-logs:create") do %>
+        <%= action "New", to: Routes.event_log_path(get_conn_or_socket(assigns), :new), color: "blue" %>
       <% end %>
     </div>
   </header>
