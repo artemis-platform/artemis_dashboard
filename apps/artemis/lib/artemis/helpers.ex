@@ -1,4 +1,6 @@
 defmodule Artemis.Helpers do
+  require Logger
+
   @doc """
   Generate a random string
   """
@@ -13,8 +15,8 @@ defmodule Artemis.Helpers do
   Detect if value is truthy
   """
   def present?(nil), do: false
-  def present?(""), do: false
   def present?(0), do: false
+  def present?(value) when is_bitstring(value), do: String.trim(value) != ""
   def present?(_value), do: true
 
   @doc """
@@ -257,22 +259,26 @@ defmodule Artemis.Helpers do
     }
 
   """
-  def async_await_many(tasks) when is_list(tasks) do
-    tasks
-    |> Enum.map(&Task.async(&1))
-    |> Enum.map(&Task.await/1)
-  end
+  def async_await_many(tasks, options \\ [])
 
-  def async_await_many(tasks) when is_map(tasks) do
+  def async_await_many(tasks, options) when is_map(tasks) do
     values =
       tasks
       |> Map.values()
-      |> async_await_many
+      |> async_await_many(options)
 
     tasks
     |> Map.keys()
     |> Enum.zip(values)
     |> Enum.into(%{})
+  end
+
+  def async_await_many(tasks, options) when is_list(options) do
+    timeout = Keyword.get(options, :timeout, :timer.hours(1))
+
+    tasks
+    |> Enum.map(&Task.async(&1))
+    |> Enum.map(&Task.await(&1, timeout))
   end
 
   @doc """
@@ -567,6 +573,27 @@ defmodule Artemis.Helpers do
   def deep_get(_data, _, default), do: default
 
   @doc """
+  Recursive version of `Kernel.put_in`. Adds support for nested values that do
+  not already exist:
+
+  Example:
+
+    current = %{one: 1}
+    keys = [:two, :three, :four]
+
+    deep_put(current, keys, "hello")
+
+  Returns:
+
+    %{one: 1, two: %{three: %{four: "hello"}}}
+
+  From: https://elixirforum.com/t/put-update-deep-inside-nested-maps-and-auto-create-intermediate-keys/7993/8
+  """
+  def deep_put(current \\ %{}, keys, value) do
+    put_in(current, Enum.map(keys, &Access.key(&1, %{})), value)
+  end
+
+  @doc """
   Recursive version of `Map.size/2`. Returns the total number of keys in
   Maps and Keyword Lists.
 
@@ -667,4 +694,95 @@ defmodule Artemis.Helpers do
   def print(value) do
     IO.inspect(value, limit: :infinity, printable_limit: :infinity)
   end
+
+  @doc """
+  Print entire value without truncation
+  """
+  def benchmark(key \\ nil, callback) do
+    start_time = Timex.now()
+    result = callback.()
+    end_time = Timex.now()
+    duration = Timex.diff(end_time, start_time, :milliseconds)
+
+    log(
+      type: "Benchmark",
+      key: key,
+      duration: "#{duration}ms"
+    )
+
+    result
+  end
+
+  @doc """
+  Send values to Logger
+  """
+  def log(values) when is_list(values) do
+    message = format_log_message(values)
+
+    Logger.info(message)
+  end
+
+  def log(message), do: Logger.info(message)
+
+  defp format_log_message(values) do
+    values
+    |> Enum.map(fn {key, value} ->
+      case is_nil(value) do
+        true -> nil
+        false -> "[#{key}: #{value}]"
+      end
+    end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
+  end
+
+  @doc """
+  Log application start
+  """
+  def log_application_start(name) do
+    type = "ApplicationStart"
+
+    log(type: type, key: name, start: Timex.now())
+  end
+
+  @doc """
+  Log rescued errors
+  """
+  def rescue_log(stacktrace \\ nil, caller, error) do
+    default_values = [
+      caller: serialize_caller(caller),
+      error: Map.get(error, :__struct__),
+      message: Map.get(error, :message, inspect(error)),
+      stacktrace: serialize_stacktrace(stacktrace)
+    ]
+
+    log_message = format_log_message(default_values)
+
+    Logger.error(log_message)
+  end
+
+  defp serialize_caller(caller) when is_map(caller), do: Map.get(caller, :__struct__)
+  defp serialize_caller(caller), do: caller
+
+  defp serialize_stacktrace(nil), do: nil
+
+  defp serialize_stacktrace(stacktrace) do
+    stracktrace =
+      stacktrace
+      |> Enum.map(&inspect(&1))
+      |> Enum.join("\n    ")
+
+    "\n    " <> stracktrace
+  end
+
+  @doc """
+  Send values to Error
+  """
+  def error(values) when is_list(values) do
+    message = format_log_message(values)
+
+    Logger.error(message)
+  end
+
+  def error(message), do: Logger.error(message: message)
 end
