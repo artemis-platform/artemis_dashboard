@@ -5,8 +5,8 @@ defmodule Artemis.ListIncidents do
   import Artemis.Helpers.Search
   import Ecto.Query
 
-  alias Artemis.Repo
   alias Artemis.Incident
+  alias Artemis.Repo
 
   @default_order "-triggered_at"
   @default_page_size 25
@@ -16,6 +16,7 @@ defmodule Artemis.ListIncidents do
     params = default_params(params)
 
     Incident
+    |> select_query(Incident, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)

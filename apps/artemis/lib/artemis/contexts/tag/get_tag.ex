@@ -22,6 +22,7 @@ defmodule Artemis.GetTag do
 
   defp get_record(value, _user, options, get_by) do
     Tag
+    |> select_query(Tag, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

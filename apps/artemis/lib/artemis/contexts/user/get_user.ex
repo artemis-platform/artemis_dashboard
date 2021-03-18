@@ -18,6 +18,7 @@ defmodule Artemis.GetUser do
 
   defp get_record(value, user, options, get_by) do
     User
+    |> select_query(User, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> restrict_access(user)
     |> get_by.(process_value(value))

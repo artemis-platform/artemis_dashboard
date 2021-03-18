@@ -1,4 +1,6 @@
 defmodule Artemis.GetWikiPage do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.Repo
@@ -20,6 +22,7 @@ defmodule Artemis.GetWikiPage do
 
   defp get_record(value, options, get_by) do
     WikiPage
+    |> select_query(WikiPage, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

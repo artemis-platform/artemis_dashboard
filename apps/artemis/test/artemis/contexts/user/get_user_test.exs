@@ -62,6 +62,20 @@ defmodule Artemis.GetUserTest do
   end
 
   describe "call - options" do
+    test "exclude", %{user: user} do
+      user = GetUser.call(user.id, Mock.system_user())
+
+      assert !is_nil(user.email)
+
+      options = [
+        exclude: [:email, :invalid_field]
+      ]
+
+      user = GetUser.call(user.id, Mock.system_user(), options)
+
+      assert is_nil(user.email)
+    end
+
     test "preload", %{user: user} do
       user = GetUser.call(user.id, Mock.system_user())
 
@@ -75,6 +89,22 @@ defmodule Artemis.GetUserTest do
       user = GetUser.call(user.id, Mock.system_user(), options)
 
       assert is_list(user.user_roles)
+    end
+
+    test "select", %{user: user} do
+      user = GetUser.call(user.id, Mock.system_user())
+
+      assert !is_nil(user.email)
+      assert !is_nil(user.last_name)
+
+      options = [
+        select: [:email, :invalid_field]
+      ]
+
+      user = GetUser.call(user.id, Mock.system_user(), options)
+
+      assert !is_nil(user.email)
+      assert is_nil(user.last_name)
     end
   end
 

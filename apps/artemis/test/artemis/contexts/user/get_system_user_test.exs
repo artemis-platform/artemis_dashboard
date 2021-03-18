@@ -99,10 +99,10 @@ defmodule Artemis.GetSystemUserTest do
       expiration = :timer.minutes(60)
       limit = 5
 
-      cachex_options = Artemis.CacheInstance.get_cachex_options(GetSystemUser)
+      cache_options = Artemis.CacheInstance.get_cache_options(GetSystemUser)
 
-      assert cachex_options[:expiration] == {:expiration, expiration, 5000, true}
-      assert cachex_options[:limit] == limit
+      assert cache_options[:expiration] == {:expiration, expiration, 5000, true}
+      assert cache_options[:limit] == limit
     end
 
     test "returns a cached result", %{system_user: record} do

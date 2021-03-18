@@ -15,6 +15,7 @@ defmodule Artemis.ListPermissions do
     params = default_params(params)
 
     Permission
+    |> select_query(Permission, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> search_filter(params)

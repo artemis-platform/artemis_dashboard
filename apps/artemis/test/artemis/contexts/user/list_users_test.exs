@@ -66,6 +66,24 @@ defmodule Artemis.ListUsersTest do
       {:ok, user: user}
     end
 
+    test "exclude" do
+      results = ListUsers.call(Mock.system_user())
+      record = hd(results)
+
+      assert !is_nil(record.name)
+      assert !is_nil(record.email)
+
+      params = %{
+        exclude: [:email, :invalid_field]
+      }
+
+      results = ListUsers.call(params, Mock.system_user())
+      record = hd(results)
+
+      assert !is_nil(record.name)
+      assert is_nil(record.email)
+    end
+
     test "order" do
       insert_list(3, :user)
 
@@ -154,6 +172,24 @@ defmodule Artemis.ListUsersTest do
       users = ListUsers.call(params, Mock.system_user())
 
       assert length(users) == 0
+    end
+
+    test "select" do
+      results = ListUsers.call(Mock.system_user())
+      record = hd(results)
+
+      assert !is_nil(record.name)
+      assert !is_nil(record.email)
+
+      params = %{
+        select: [:name, :invalid_field]
+      }
+
+      results = ListUsers.call(params, Mock.system_user())
+      record = hd(results)
+
+      assert !is_nil(record.name)
+      assert is_nil(record.email)
     end
   end
 end

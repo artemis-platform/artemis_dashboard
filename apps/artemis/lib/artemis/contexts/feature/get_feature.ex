@@ -1,4 +1,6 @@
 defmodule Artemis.GetFeature do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.Feature
@@ -20,6 +22,7 @@ defmodule Artemis.GetFeature do
 
   defp get_record(value, options, get_by) do
     Feature
+    |> select_query(Feature, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

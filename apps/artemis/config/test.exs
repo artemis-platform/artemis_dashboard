@@ -13,6 +13,8 @@ config :logger, level: :info
 config :artemis, :actions,
   ibm_cloudant_change_listener: [enabled: "false"],
   ibm_cloudant_migrator: [enabled: "false"],
+  ibm_cloud_iam_access_group_synchronizer: [enabled: "false"],
+  key_value_cleaner: [enabled: "false"],
   pager_duty_synchronize_escalation_policies: [enabled: "false"],
   pager_duty_synchronize_incidents: [enabled: "false"],
   pager_duty_synchronize_on_call: [enabled: "false"],

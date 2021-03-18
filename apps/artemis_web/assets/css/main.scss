@@ -129,6 +129,14 @@ select[multiple] {
           width: 1px;
         }
 
+        pre {
+          margin-top: 0;
+        }
+
+        .secondary-value {
+          color: #888;
+        }
+
         .actions a {
           display: inline-block;
           margin-right: 0.25rem;

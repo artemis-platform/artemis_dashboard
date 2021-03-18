@@ -221,4 +221,202 @@ defmodule Artemis.HelpersTest do
       assert result == expected
     end
   end
+
+  describe "indifferent_get" do
+    test "updates bitstring keys when given a bitstring field name" do
+      map = %{
+        "hello" => "world"
+      }
+
+      field = "hello"
+
+      result = Artemis.Helpers.indifferent_get(map, field)
+
+      expected = "world"
+
+      assert result == expected
+    end
+
+    test "updates bitstring keys when given an atom field name" do
+      map = %{
+        "hello" => "world"
+      }
+
+      field = :hello
+
+      result = Artemis.Helpers.indifferent_get(map, field)
+
+      expected = "world"
+
+      assert result == expected
+    end
+
+    test "gets atom keys when given a bitstring field name" do
+      map = %{
+        hello: "world"
+      }
+
+      field = "hello"
+
+      result = Artemis.Helpers.indifferent_get(map, field)
+
+      expected = "world"
+
+      assert result == expected
+    end
+
+    test "gets atom keys when given an atom field name" do
+      map = %{
+        hello: "world"
+      }
+
+      field = :hello
+
+      result = Artemis.Helpers.indifferent_get(map, field)
+
+      expected = "world"
+
+      assert result == expected
+    end
+
+    test "returns nil when key is not found and fallback argument is not passed" do
+      map = %{
+        hello: "world"
+      }
+
+      field = "new key"
+
+      result = Artemis.Helpers.indifferent_get(map, field)
+
+      assert result == nil
+    end
+
+    test "returns fallback when key is not found and fallback argument is passed" do
+      map = %{
+        hello: "world"
+      }
+
+      field = "new key"
+      fallback = "fallback value"
+
+      result = Artemis.Helpers.indifferent_get(map, field, fallback)
+
+      assert result == fallback
+    end
+
+    test "raises an exception when matching atom and bitstring keys are found" do
+      map = %{
+        :hello => "as atom",
+        "hello" => "as string"
+      }
+
+      field = "hello"
+
+      assert_raise ArgumentError, fn ->
+        Artemis.Helpers.indifferent_get(map, field)
+      end
+    end
+  end
+
+  describe "indifferent_put" do
+    test "updates bitstring keys when given a bitstring field name" do
+      map = %{
+        "hello" => "world"
+      }
+
+      field = "hello"
+      value = "updated"
+
+      result = Artemis.Helpers.indifferent_put(map, field, value)
+
+      expected = %{
+        "hello" => "updated"
+      }
+
+      assert result == expected
+    end
+
+    test "updates bitstring keys when given an atom field name" do
+      map = %{
+        "hello" => "world"
+      }
+
+      field = :hello
+      value = "updated"
+
+      result = Artemis.Helpers.indifferent_put(map, field, value)
+
+      expected = %{
+        "hello" => "updated"
+      }
+
+      assert result == expected
+    end
+
+    test "updates atom keys when given a bitstring field name" do
+      map = %{
+        hello: "world"
+      }
+
+      field = "hello"
+      value = "updated"
+
+      result = Artemis.Helpers.indifferent_put(map, field, value)
+
+      expected = %{
+        hello: "updated"
+      }
+
+      assert result == expected
+    end
+
+    test "updates atom keys when given an atom field name" do
+      map = %{
+        hello: "world"
+      }
+
+      field = :hello
+      value = "updated"
+
+      result = Artemis.Helpers.indifferent_put(map, field, value)
+
+      expected = %{
+        hello: "updated"
+      }
+
+      assert result == expected
+    end
+
+    test "creates a new key when field is not found" do
+      map = %{
+        hello: "world"
+      }
+
+      field = "new key"
+      value = "new value"
+
+      result = Artemis.Helpers.indifferent_put(map, field, value)
+
+      expected = %{
+        :hello => "world",
+        "new key" => "new value"
+      }
+
+      assert result == expected
+    end
+
+    test "raises an exception when matching atom and bitstring keys are found" do
+      map = %{
+        :hello => "as atom",
+        "hello" => "as string"
+      }
+
+      field = "hello"
+      value = "updated"
+
+      assert_raise ArgumentError, fn ->
+        Artemis.Helpers.indifferent_put(map, field, value)
+      end
+    end
+  end
 end

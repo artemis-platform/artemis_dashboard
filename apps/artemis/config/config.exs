@@ -14,6 +14,9 @@ config :artemis, :actions,
   ibm_cloudant_migrator: [
     enabled: System.get_env("ARTEMIS_ACTION_IBM_CLOUDANT_MIGRATOR")
   ],
+  key_value_cleaner: [
+    enabled: System.get_env("ARTEMIS_ACTION_KEY_VALUE_CLEANER")
+  ],
   pager_duty_synchronize_escalation_policies: [
     enabled: System.get_env("ARTEMIS_ACTION_PAGER_DUTY_SYNCHRONIZE_ESCALATION_POLICIES")
   ],
@@ -32,6 +35,22 @@ config :artemis, :actions,
   repo_reset_on_interval: [
     enabled: System.get_env("ARTEMIS_ACTION_REPO_RESET_ON_INTERVAL_ENABLED"),
     interval: System.get_env("ARTEMIS_ACTION_REPO_RESET_ON_INTERVAL_HOURS")
+  ]
+
+config :artemis, :cache,
+  driver: System.get_env("ARTEMIS_CACHE_DRIVER"),
+  redis: [
+    enabled: System.get_env("ARTEMIS_CACHE_REDIS_ENABLED"),
+    cacert: System.get_env("ARTEMIS_CACHE_REDIS_CACERT"),
+    database_number: System.get_env("ARTEMIS_CACHE_REDIS_DATABASE_NUMBER"),
+    host: System.get_env("ARTEMIS_CACHE_REDIS_HOST"),
+    password: System.get_env("ARTEMIS_CACHE_REDIS_PASSWORD"),
+    pool_enabled: System.get_env("ARTEMIS_CACHE_REDIS_POOL_ENABLED"),
+    pool_size: System.get_env("ARTEMIS_CACHE_REDIS_POOL_SIZE"),
+    port: System.get_env("ARTEMIS_CACHE_REDIS_PORT"),
+    ssl: System.get_env("ARTEMIS_CACHE_REDIS_SSL"),
+    uri: System.get_env("ARTEMIS_CACHE_REDIS_URI"),
+    username: System.get_env("ARTEMIS_CACHE_REDIS_USERNAME")
   ]
 
 config :artemis, :event, system_events_to_not_broadcast: []

@@ -16,6 +16,7 @@ defmodule Artemis.ListTags do
     params = default_params(params)
 
     Tag
+    |> select_query(Tag, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> filter_query(params, user)

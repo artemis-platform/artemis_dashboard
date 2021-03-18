@@ -11,7 +11,7 @@ defmodule Artemis.GetSystemUser do
       "user:deleted",
       "user:updated"
     ],
-    cachex_options: [
+    cache_options: [
       expiration: :timer.minutes(60),
       limit: 5
     ]

@@ -22,6 +22,7 @@ defmodule Artemis.ListUsers do
     params = default_params(params)
 
     User
+    |> select_query(User, params)
     |> distinct_query(params, default: true)
     |> preload(^Map.get(params, "preload"))
     |> search_filter(params)

@@ -9,6 +9,7 @@ defmodule Artemis.Context do
       import Artemis.Repo.Distinct
       import Artemis.Repo.Helpers
       import Artemis.Repo.Order
+      import Artemis.Repo.Select
       import Artemis.Repo.SelectCount
       import Artemis.UserAccess
 

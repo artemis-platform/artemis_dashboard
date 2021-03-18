@@ -1,4 +1,6 @@
 defmodule Artemis.GetCustomer do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.Customer
@@ -20,6 +22,7 @@ defmodule Artemis.GetCustomer do
 
   defp get_record(value, options, get_by) do
     Customer
+    |> select_query(Customer, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end

@@ -1,0 +1,44 @@
+<%= render "show/_header.html", assigns %>
+
+<div id="content-navigation">
+  <%= render_breadcrumbs @conn %>
+  <%= render_presence @conn %>
+</div>
+
+<div id="content">
+  <%= render_flash_notifications @conn %>
+  <%= render_event_log_notifications @conn, "Key Value", @key_value.id %>
+
+  <section>
+    <%= h2 "Details" %>
+    <%=
+      render_key_value_list([
+        ["ID", @key_value.id],
+        ["Size", "#{@key_value.size} bytes"],
+        ["Inserted At", @key_value.inserted_at],
+        ["Updated At", @key_value.updated_at],
+        ["Expire At", @key_value.expire_at]
+      ])
+    %>
+  </section>
+
+  <section>
+    <%= h2 "Key", subheading: "Raw Data" %>
+    <%= if field_under_size_limit?(@key_value, :key, size_limit: get_display_size_limit(@conn)) do %>
+      <pre><code><%= inspect(@key_value.key, limit: :infinity, pretty: true, printable_limit: :infinity) %></code></pre>
+    <% else %>
+      <p><em>Field is larger than the default display size limit</em></p>
+      <%= render_display_field_action(@conn, @key_value) %>
+    <% end %>
+  </section>
+
+  <section>
+    <%= h2 "Value", subheading: "Raw Data" %>
+    <%= if field_under_size_limit?(@key_value, :value, size_limit: get_display_size_limit(@conn)) do %>
+      <pre><code><%= inspect(@key_value.value, limit: :infinity, pretty: true, printable_limit: :infinity) %></code></pre>
+    <% else %>
+      <p><em>Field is larger than the default display size limit</em></p>
+      <%= render_display_field_action(@conn, @key_value) %>
+    <% end %>
+  </section>
+</div>

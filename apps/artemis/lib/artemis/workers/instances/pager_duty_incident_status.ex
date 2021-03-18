@@ -2,8 +2,10 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
   use Artemis.IntervalWorker,
     enabled: enabled?(),
     delayed_start: :timer.seconds(10),
-    interval: :timer.seconds(30),
+    interval: :timer.minutes(1),
     name: :pager_duty_incident_status
+
+  require Logger
 
   alias Artemis.Drivers.PagerDuty
 
@@ -26,12 +28,7 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
   end
 
   def enabled?() do
-    :artemis
-    |> Application.fetch_env!(:actions)
-    |> Keyword.fetch!(:pager_duty_synchronize_incidents)
-    |> Keyword.fetch!(:enabled)
-    |> String.downcase()
-    |> String.equivalent?("true")
+    Artemis.Helpers.AppConfig.enabled?(:artemis, :actions, :pager_duty_synchronize_incidents)
   end
 
   # Helpers
@@ -62,9 +59,17 @@ defmodule Artemis.Worker.PagerDutyIncidentStatus do
       request_params: request_params
     ]
 
-    {:ok, result} = PagerDuty.ListIncidents.call(options)
+    incidents =
+      case PagerDuty.ListIncidents.call(options) do
+        {:ok, result} ->
+          result.data
 
-    Enum.map(result.data, fn incident ->
+        error ->
+          Logger.info("Error in PagerDuty incident status " <> inspect(error))
+          []
+      end
+
+    Enum.map(incidents, fn incident ->
       %{
         acknowledged_at: incident.acknowledged_at,
         source_uid: incident.source_uid,

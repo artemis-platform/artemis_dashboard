@@ -195,11 +195,28 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   def render_data_table(conn, data, options \\ []) do
     format = get_request_format(conn)
     columns = get_data_table_columns(conn, options)
+    headers? = Keyword.get(options, :headers, true)
+    compact? = Keyword.get(options, :compact, false)
+    class = "data-table-container"
+
+    class =
+      case compact? do
+        true -> class <> " compact"
+        false -> class
+      end
+
+    class =
+      case headers? do
+        true -> class <> " with-headers"
+        false -> class <> " without-headers"
+      end
 
     assigns = [
+      class: class,
       columns: columns,
       conn: conn,
       data: data,
+      headers?: headers?,
       id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),
       selectable: Keyword.get(options, :selectable),
       show_only: Keyword.get(options, :show_only)
@@ -314,5 +331,19 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     ]
 
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table_columns.html", assigns)
+  end
+
+  @doc """
+  Prints a primary and secondary value
+  """
+  def render_table_entry(primary, secondary \\ nil)
+
+  def render_table_entry(primary, secondary) when is_nil(secondary), do: primary
+
+  def render_table_entry(primary, secondary) do
+    [
+      content_tag(:div, primary),
+      content_tag(:div, secondary, class: "secondary-value")
+    ]
   end
 end

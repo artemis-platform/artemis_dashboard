@@ -1,4 +1,6 @@
 defmodule Artemis.GetAuthProvider do
+  use Artemis.Context
+
   import Ecto.Query
 
   alias Artemis.AuthProvider
@@ -20,6 +22,7 @@ defmodule Artemis.GetAuthProvider do
 
   defp get_record(value, options, get_by) do
     AuthProvider
+    |> select_query(AuthProvider, options)
     |> preload(^Keyword.get(options, :preload, @default_preload))
     |> get_by.(value)
   end
