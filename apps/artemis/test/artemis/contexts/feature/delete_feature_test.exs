@@ -69,5 +69,24 @@ defmodule Artemis.DeleteFeatureTest do
         }
       }
     end
+
+    test "does not publish if explicitly disabled" do
+      ArtemisPubSub.subscribe(Artemis.Event.get_broadcast_topic())
+
+      record = insert(:feature)
+
+      params = %{
+        broadcast: false
+      }
+
+      {:ok, feature} = DeleteFeature.call(record, params, Mock.system_user())
+
+      refute_received %Phoenix.Socket.Broadcast{
+        event: "feature:deleted",
+        payload: %{
+          data: ^feature
+        }
+      }
+    end
   end
 end
