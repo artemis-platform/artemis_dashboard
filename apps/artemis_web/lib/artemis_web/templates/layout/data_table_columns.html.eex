@@ -1,5 +1,5 @@
-<%= form_for @conn_or_socket, "", [class: "ui form data-table-columns"], fn f -> %>
-  <div class="<%= @class %>">
+<%= form_for ArtemisWeb.Endpoint, "", [class: "ui form data-table-columns"], fn f -> %>
+  <div class="<%= @class %>" id="data-table-columns" phx-hook="ColumnFields">
     <%=
       multiple_select(
         f,

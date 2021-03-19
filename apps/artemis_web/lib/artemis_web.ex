@@ -30,11 +30,24 @@ defmodule ArtemisWeb do
 
       alias ArtemisWeb.Router.Helpers, as: Routes
 
-      # Render Async
+      # Render with cache then update asynchronously
+
+      defp render_with_cache_then_update(conn, params, view_module, filename, async_data, options \\ []) do
+        options =
+          options
+          |> Keyword.put_new(:async_data, async_data)
+          |> Keyword.put_new(:async_fetch?, !Artemis.Helpers.empty?(params))
+          |> Keyword.put_new(:async_status_after_initial_render, :reloading)
+
+        render_async(conn, view_module, filename, options)
+      end
+
+      # Render asynchronously
 
       defp render_async(conn, view_module, filename, options \\ []) do
         format = get_format(conn)
         async_data = Keyword.get(options, :async_data)
+        async_status_after_initial_render = Keyword.get(options, :async_status_after_initial_render, :loading)
         template = "#{filename}.#{format}"
 
         assigns =
@@ -50,13 +63,20 @@ defmodule ArtemisWeb do
           assigns
           |> Keyword.put(:async_data, async_data)
           |> Keyword.put(:async_data_reload_limit, Keyword.get(options, :async_data_reload_limit, 1))
+          |> Keyword.put(:async_fetch?, Keyword.get(options, :async_fetch?, true))
           |> Keyword.put(:async_render_type, :page)
+          |> Keyword.put(:async_status_after_initial_render, async_status_after_initial_render)
           |> Keyword.put(:view_module, view_module)
           |> ArtemisWeb.ViewHelper.Async.async_convert_assigns_to_session(template)
 
         case format do
-          "html" -> Phoenix.LiveView.Controller.live_render(conn, ArtemisWeb.AsyncRenderLive, session: session)
-          _ -> render_format(conn, filename, assigns)
+          "html" ->
+            Phoenix.LiveView.Controller.live_render(conn, ArtemisWeb.AsyncRenderLive, session: session)
+
+          _ ->
+            assigns = Keyword.put(assigns, :async_data, async_data.(self(), assigns))
+
+            render_format(conn, filename, assigns)
         end
       end
 
@@ -179,6 +199,7 @@ defmodule ArtemisWeb do
       import ArtemisWeb.ViewHelper.QueryParams
       import ArtemisWeb.ViewHelper.Schedule
       import ArtemisWeb.ViewHelper.Search
+      import ArtemisWeb.ViewHelper.Status
       import ArtemisWeb.ViewHelper.Tables
       import ArtemisWeb.ViewHelper.User
       import ArtemisWeb.ViewHelper.Values

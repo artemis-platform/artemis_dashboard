@@ -98,6 +98,9 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     allowed_columns: map of allowed columns
     default_columns: list of strings
     selectable: include checkbox for bulk actions
+    query_params: map of connection query params
+    request_path: string of connection request path
+    user: struct of current user
 
   ## Features
 
@@ -192,8 +195,25 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     default_columns: ["name", "slug"]
 
   """
-  def render_data_table(conn_or_socket, data, options \\ []) do
+  def render_data_table(conn_or_socket_or_assigns, data, options \\ [])
+
+  def render_data_table(%{socket: socket} = assigns, data, options) do
+    options =
+      options
+      |> Keyword.put_new(:query_params, assigns[:query_params])
+      |> Keyword.put_new(:request_path, assigns[:request_path])
+      |> Keyword.put_new(:user, assigns[:user])
+
+    render_data_table(socket, data, options)
+  end
+
+  def render_data_table(%{conn: %Plug.Conn{} = conn} = _assigns, data, options) do
+    render_data_table(conn, data, options)
+  end
+
+  def render_data_table(conn_or_socket, data, options) do
     format = get_request_format(conn_or_socket)
+    conn_or_socket = update_conn_or_socket_fields(conn_or_socket, options)
     columns = get_data_table_columns(conn_or_socket, options)
     headers? = Keyword.get(options, :headers, true)
     compact? = Keyword.get(options, :compact, false)
@@ -214,7 +234,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     assigns = [
       class: class,
       columns: columns,
-      conn_or_socket: update_conn_or_socket_fields(conn_or_socket, options),
+      conn_or_socket: conn_or_socket,
       data: data,
       headers?: headers?,
       id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),

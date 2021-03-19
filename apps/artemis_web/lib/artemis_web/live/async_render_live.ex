@@ -28,8 +28,10 @@ defmodule ArtemisWeb.AsyncRenderLive do
 
   @impl true
   def mount(_params, session, socket) do
+    async_fetch? = Map.get(session, "async_fetch?", true)
     async_render_reload_limit = session["async_data_reload_limit"]
     async_render_type = session["async_render_type"] || @default_async_render_type
+    async_status_after_initial_render = session["async_status_after_initial_render"] || :loading
 
     private_state = [
       async_data: session["async_data"]
@@ -43,11 +45,14 @@ defmodule ArtemisWeb.AsyncRenderLive do
       |> assign(:async_data, nil)
       |> assign(:async_data_reload_count, 0)
       |> assign(:async_data_reload_limit, async_render_reload_limit)
+      |> assign(:async_fetch?, async_fetch?)
       |> assign(:async_render_private_state_pid, async_render_private_state_pid)
       |> assign(:async_render_type, async_render_type)
       |> assign(:async_status, :loading)
+      |> assign(:async_status_after_initial_render, async_status_after_initial_render)
+      |> maybe_fetch_data()
 
-    if connected?(socket) do
+    if connected?(socket) && async_fetch? do
       Process.send_after(self(), :async_data, 10)
     end
 
@@ -63,14 +68,7 @@ defmodule ArtemisWeb.AsyncRenderLive do
 
   @impl true
   def handle_info(:async_data, socket) do
-    async_data = fetch_async_data(socket)
-
-    socket =
-      socket
-      |> assign(:async_data, async_data)
-      |> assign(:async_status, :loaded)
-
-    {:noreply, socket}
+    {:noreply, add_async_data(socket)}
   end
 
   def handle_info(:context_cache_updating, socket) do
@@ -87,7 +85,7 @@ defmodule ArtemisWeb.AsyncRenderLive do
 
   def handle_info(:context_cache_updated, socket) do
     if below_reload_limit?(socket) do
-      Process.send_after(self(), :async_data, 2_500)
+      Process.send(self(), :async_data, [])
     end
 
     {:noreply, socket}
@@ -118,6 +116,22 @@ defmodule ArtemisWeb.AsyncRenderLive do
         true -> acc
       end
     end)
+  end
+
+  defp maybe_fetch_data(socket) do
+    case socket.assigns.async_fetch? do
+      true -> socket
+      _ -> add_async_data(socket, async_status: socket.assigns.async_status_after_initial_render)
+    end
+  end
+
+  defp add_async_data(socket, options \\ []) do
+    async_data = fetch_async_data(socket)
+    async_status = Keyword.get(options, :async_status, :loaded)
+
+    socket
+    |> assign(:async_data, async_data)
+    |> assign(:async_status, async_status)
   end
 
   defp fetch_async_data(socket) do

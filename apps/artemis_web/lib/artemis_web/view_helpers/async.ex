@@ -1,6 +1,9 @@
 defmodule ArtemisWeb.ViewHelper.Async do
   use Phoenix.HTML
 
+  import ArtemisWeb.ViewHelper.Print
+  import ArtemisWeb.ViewHelper.Status
+
   @moduledoc """
   View helpers for rendering data asynchronously using Phoenix LiveView
   """
@@ -74,6 +77,45 @@ defmodule ArtemisWeb.ViewHelper.Async do
   end
 
   @doc """
+  Render async render information
+  """
+  def render_page_data_info(assigns, options \\ []) do
+    async_status = Map.get(assigns, :async_status)
+    loading? = Enum.member?([:loading, :reloading], Map.get(assigns, :async_status))
+    color = if async_status == :reloading, do: "orange", else: "green"
+    icon = if loading?, do: "ui icon sync alternate rotating #{color}", else: "ui icon check green"
+    updated_at = Keyword.get(options, :updated_at) || Timex.now()
+
+    content_tag(:div, class: "page-data-info") do
+      [
+        render_async_data_info(assigns),
+        content_tag(:div, content_tag(:i, "", class: icon)),
+        content_tag(:div, "Last updated on #{render_date_time_with_seconds(updated_at)}")
+      ]
+    end
+  end
+
+  @doc """
+  Render reloading information
+  """
+  def render_async_data_info(assigns) do
+    case Map.get(assigns, :async_status) do
+      :loading -> render_status_label("Loading", color: "green")
+      :reloading -> render_status_label("Updating", color: "orange")
+      _ -> ""
+    end
+  end
+
+  @doc """
+  Render a reloading icon
+  """
+  def render_async_reloading_icon(assigns) do
+    if Map.get(assigns, :async_status) == :reloading do
+      content_tag(:div, "", class: "ui active centered inline loader")
+    end
+  end
+
+  @doc """
   Return async data field
   """
   def get_async_data_field(assigns, field) do
@@ -86,6 +128,7 @@ defmodule ArtemisWeb.ViewHelper.Async do
   def get_conn_or_socket(assigns) do
     cond do
       value = Map.get(assigns, :conn) -> value
+      value = Map.get(assigns, :conn_or_socket) -> value
       value = Map.get(assigns, :socket) -> value
       true -> nil
     end

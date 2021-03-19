@@ -35,6 +35,14 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
+  Detect if value is empty
+  """
+  def empty?(nil), do: true
+  def empty?(value) when is_bitstring(value), do: String.length(String.trim(value)) == 0
+  def empty?(value) when is_map(value), do: map_size(value) == 0
+  def empty?(value) when is_list(value), do: length(value) == 0
+
+  @doc """
   Detect if the first map is a subset of the second
 
       Input: %{one: 1}, %{one: 1, two: 2}
@@ -350,7 +358,11 @@ defmodule Artemis.Helpers do
 
   Options:
 
-    `:whitelist` -> List of strings to convert to atoms. When passed, only strings in whitelist will be converted.
+    `:whitelist` -> List of strings to convert to atoms. When passed, only
+        strings in whitelist will be converted.
+
+    `:recursive` -> Boolean, default: true. When true, keys are updated
+        recursively. When false, only the top level keys are converted.
 
   Example:
 
@@ -359,6 +371,7 @@ defmodule Artemis.Helpers do
   Returns:
 
     %{nested: %{example: "value"}}
+
   """
   def keys_to_atoms(map, options \\ [])
   def keys_to_atoms(%_{} = struct, _options), do: struct
@@ -383,7 +396,10 @@ defmodule Artemis.Helpers do
             end
         end
 
-      {key, keys_to_atoms(value, options)}
+      case Keyword.get(options, :recursive, true) do
+        true -> {key, keys_to_atoms(value, options)}
+        _ -> {key, value}
+      end
     end
   end
 
@@ -391,6 +407,11 @@ defmodule Artemis.Helpers do
 
   @doc """
   Recursively converts the keys of a map into a string.
+
+  Options:
+
+    `:recursive` -> Boolean, default: true. When true, keys are updated
+        recursively. When false, only the top level keys are converted.
 
   Example:
 
@@ -412,7 +433,10 @@ defmodule Artemis.Helpers do
           true -> Atom.to_string(key)
         end
 
-      {key, keys_to_strings(value, options)}
+      case Keyword.get(options, :recursive, true) do
+        true -> {key, keys_to_strings(value, options)}
+        _ -> {key, value}
+      end
     end
   end
 

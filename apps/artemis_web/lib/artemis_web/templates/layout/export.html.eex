@@ -1,4 +1,4 @@
-<div class="ui basic button click dropdown item">
+<div class="ui basic button click dropdown item" id="export-dropdown" phx-hook="SemanticUIDropdowns">
   Export
   <i class="dropdown icon"></i>
   <div class="menu">

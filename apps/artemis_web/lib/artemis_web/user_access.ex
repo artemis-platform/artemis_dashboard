@@ -6,29 +6,28 @@ defmodule ArtemisWeb.UserAccess do
   """
   import ArtemisWeb.Guardian.Helpers, only: [current_user: 1]
 
-  alias Plug.Conn
+  alias Artemis.User
+  alias Phoenix.LiveView.Socket
 
-  # Has
+  # Has?
 
-  def has?(%Phoenix.LiveView.Socket{} = socket, permission),
-    do: Artemis.UserAccess.has?(socket.assigns.user, permission)
+  def has?(%Socket{} = socket, permission), do: Artemis.UserAccess.has?(get_user(socket), permission)
+  def has?(%User{} = user, permission), do: Artemis.UserAccess.has?(user, permission)
+  def has?(conn_or_assigns, permission), do: Artemis.UserAccess.has?(current_user(conn_or_assigns), permission)
 
-  def has?(%Conn{} = conn, permission), do: Artemis.UserAccess.has?(current_user(conn), permission)
-  def has?(user, permission), do: Artemis.UserAccess.has?(user, permission)
+  # Has any?
 
-  # Has Any
+  def has_any?(%Socket{} = socket, permission), do: Artemis.UserAccess.has_any?(get_user(socket), permission)
+  def has_any?(%User{} = user, permission), do: Artemis.UserAccess.has_any?(user, permission)
+  def has_any?(conn_or_assigns, permission), do: Artemis.UserAccess.has_any?(current_user(conn_or_assigns), permission)
 
-  def has_any?(%Phoenix.LiveView.Socket{} = socket, permission),
-    do: Artemis.UserAccess.has_any?(socket.assigns.user, permission)
+  # Has all?
 
-  def has_any?(%Conn{} = conn, permission), do: Artemis.UserAccess.has_any?(current_user(conn), permission)
-  def has_any?(user, permission), do: Artemis.UserAccess.has_any?(user, permission)
+  def has_all?(%Socket{} = socket, permission), do: Artemis.UserAccess.has_all?(get_user(socket), permission)
+  def has_all?(%User{} = user, permission), do: Artemis.UserAccess.has_all?(user, permission)
+  def has_all?(conn_or_assigns, permission), do: Artemis.UserAccess.has_all?(current_user(conn_or_assigns), permission)
 
-  # Has All
+  # Helpers
 
-  def has_all?(%Phoenix.LiveView.Socket{} = socket, permission),
-    do: Artemis.UserAccess.has_all?(socket.assigns.user, permission)
-
-  def has_all?(%Conn{} = conn, permission), do: Artemis.UserAccess.has_all?(current_user(conn), permission)
-  def has_all?(user, permission), do: Artemis.UserAccess.has_all?(user, permission)
+  defp get_user(%Socket{} = socket), do: Map.get(socket.assigns, :user)
 end

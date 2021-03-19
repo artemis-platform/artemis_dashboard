@@ -58,7 +58,7 @@
     <%#   </div> %>
     <%# </div> %>
 
-    <div class="table-actions" phx-update="ignore" phx-hook="Select2">
+    <div class="table-actions" id="event-log-list-table-actions" phx-update="ignore" phx-hook="Select2">
       <%= render_data_table_column_selector(assigns, data_table_available_columns()) %>
       <%= render_export_actions(assigns, available_columns: data_table_available_columns()) %>
     </div>
