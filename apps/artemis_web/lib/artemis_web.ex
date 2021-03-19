@@ -42,13 +42,14 @@ defmodule ArtemisWeb do
           |> Keyword.get(:assigns, [])
           |> Artemis.Helpers.keys_to_atoms()
           |> Enum.into([])
-          |> Keyword.put(:async_data, async_data.())
           |> Keyword.put_new(:query_params, conn.query_params)
           |> Keyword.put_new(:request_path, conn.request_path)
           |> Keyword.put_new(:user, current_user(conn))
 
         session =
           assigns
+          |> Keyword.put(:async_data, async_data)
+          |> Keyword.put(:async_data_reload_limit, Keyword.get(options, :async_data_reload_limit, 1))
           |> Keyword.put(:async_render_type, :page)
           |> Keyword.put(:view_module, view_module)
           |> ArtemisWeb.ViewHelper.Async.async_convert_assigns_to_session(template)
@@ -216,9 +217,6 @@ defmodule ArtemisWeb do
 
           cond do
             status == :loading && loading_icon? ->
-              Phoenix.HTML.Tag.content_tag(:div, "", class: "ui active centered inline loader")
-
-            status == :reloading && reloading_icon? ->
               Phoenix.HTML.Tag.content_tag(:div, "", class: "ui active centered inline loader")
 
             true ->

@@ -214,7 +214,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     assigns = [
       class: class,
       columns: columns,
-      conn_or_socket: update_assigns(conn_or_socket, options),
+      conn_or_socket: update_conn_or_socket_fields(conn_or_socket, options),
       data: data,
       headers?: headers?,
       id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),
@@ -225,15 +225,16 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", assigns)
   end
 
-  defp update_assigns(%Phoenix.LiveView.Socket{} = socket, options) do
-    Map.put(socket, :assigns, %{
-      query_params: Keyword.fetch!(options, :query_params),
-      request_path: Keyword.fetch!(options, :request_path),
+  defp update_conn_or_socket_fields(%Phoenix.LiveView.Socket{} = socket, options) do
+    socket
+    |> Map.put(:query_params, Keyword.fetch!(options, :query_params))
+    |> Map.put(:request_path, Keyword.fetch!(options, :request_path))
+    |> Map.put(:assigns, %{
       user: Keyword.fetch!(options, :user)
     })
   end
 
-  defp update_assigns(conn, _options), do: conn
+  defp update_conn_or_socket_fields(conn, _options), do: conn
 
   defp get_request_format(conn) do
     Phoenix.Controller.get_format(conn)

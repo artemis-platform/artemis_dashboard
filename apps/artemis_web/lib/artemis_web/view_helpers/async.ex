@@ -22,7 +22,7 @@ defmodule ArtemisWeb.ViewHelper.Async do
   Example:
 
     <%= async_render(@conn, assigns, "index/_example.html", async_data: {ArtemisWeb.HomeView, :hello_world}) %1> %>
-    <%= async_render(@conn, assigns, "index/_example.html", async_data: fn _ -> "Async data: Hello World" end) %>
+    <%= async_render(@conn, assigns, "index/_example.html", async_data: fn _callback_pid, _assigns -> "Async data: Hello World" end) %>
     <%= async_render(@conn, assigns, "index/_example.html", async_data: "Fake async data to be returned") %>
 
   """
@@ -65,9 +65,11 @@ defmodule ArtemisWeb.ViewHelper.Async do
 
   """
   def async_loaded?(assigns) do
-    case Map.get(assigns, :async_status) do
-      :loading -> false
-      :loaded -> true
+    async_status = Map.get(assigns, :async_status)
+
+    cond do
+      async_status == :loading -> false
+      true -> true
     end
   end
 

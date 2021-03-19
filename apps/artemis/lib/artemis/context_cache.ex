@@ -85,7 +85,10 @@ defmodule Artemis.ContextCache do
       alias Artemis.CacheInstance
       alias Artemis.Repo
 
-      @default_rescue_option true
+      @context_cache_default_rescue_option true
+      @context_cache_allowed_callback_options [
+        :callback_pid
+      ]
 
       @doc """
       Generic wrapper function to add caching around `call`
@@ -120,6 +123,22 @@ defmodule Artemis.ContextCache do
 
       If the cache entry does not exist, it fetches the data, caches it, and
       returns it.
+
+      ### Callback Options
+
+      An optional keyword list of callback options can be passed as a last
+      argument. When detected, it is not passed to the `call` function.
+
+      Example, when detected:
+
+          ListEventLogs.call_with_cache_then_update(params, user, callback_pid: self())
+          => call(params, user)
+
+      Example, when not detected:
+
+          ListEventLogs.call_with_cache_then_update(params, user, hello: true, world: true)
+          => call(params, user, hello: true, world: true)
+
       """
       def call_with_cache_then_update(), do: get_cached_then_update([])
       def call_with_cache_then_update(arg1), do: get_cached_then_update([arg1])
@@ -167,6 +186,9 @@ defmodule Artemis.ContextCache do
       defp get_cached_then_update(args) do
         {:ok, _} = create_cache()
 
+        {callback_options, args} = get_callback_options_and_args(args)
+        callback_pid = Keyword.get(callback_options, :callback_pid)
+
         getter = fn -> execute_call(args) end
         key = get_cache_key(args)
 
@@ -175,18 +197,44 @@ defmodule Artemis.ContextCache do
             fetch_cached(args)
 
           response ->
-            Task.start_link(fn -> update_cache(args) end)
+            Task.start_link(fn ->
+              maybe_send_callback_message(callback_pid, :context_cache_updating)
+              update_cache(args)
+              maybe_send_callback_message(callback_pid, :context_cache_updated)
+            end)
+
             response
         end
       rescue
         error in MatchError -> handle_match_error(error, args, &update_cache/1)
       end
 
+      defp get_callback_options_and_args(values) do
+        case callback_options?(values) do
+          true -> List.pop_at(values, -1)
+          false -> {[], values}
+        end
+      end
+
+      defp callback_options?(values) do
+        maybe_callback_options = List.last(values)
+
+        callback_option_keys =
+          case Keyword.keyword?(maybe_callback_options) do
+            true -> Keyword.keys(maybe_callback_options)
+            false -> []
+          end
+
+        Enum.any?(callback_option_keys, fn key ->
+          Enum.member?(@context_cache_allowed_callback_options, key)
+        end)
+      end
+
       defp execute_call(args) do
         apply(__MODULE__, :call, args)
       rescue
         error ->
-          case Keyword.get(unquote(options), :rescue, @default_rescue_option) do
+          case Keyword.get(unquote(options), :rescue, @context_cache_default_rescue_option) do
             true ->
               Artemis.Helpers.rescue_log(__STACKTRACE__, __MODULE__, error)
               {:error, "Error fetching cache data."}
@@ -195,6 +243,9 @@ defmodule Artemis.ContextCache do
               reraise(error, __STACKTRACE__)
           end
       end
+
+      defp maybe_send_callback_message(pid, message) when is_pid(pid), do: Process.send(pid, message, [])
+      defp maybe_send_callback_message(_pid, _message), do: true
 
       defp handle_match_error(%MatchError{term: {:error, {:already_started, _}}}, args, callback) do
         # The CacheInstance contains two linked processes, a cache GenServer and a

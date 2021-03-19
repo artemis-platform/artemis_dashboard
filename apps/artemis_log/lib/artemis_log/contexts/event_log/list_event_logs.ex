@@ -1,5 +1,6 @@
 defmodule ArtemisLog.ListEventLogs do
   use ArtemisLog.Context
+  use Artemis.ContextCache
 
   import ArtemisLog.Helpers.Distinct
   import ArtemisLog.Helpers.Filter

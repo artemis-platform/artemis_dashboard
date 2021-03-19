@@ -28,6 +28,7 @@ defmodule ArtemisWeb.AsyncRenderLive do
 
   @impl true
   def mount(_params, session, socket) do
+    async_render_reload_limit = session["async_data_reload_limit"]
     async_render_type = session["async_render_type"] || @default_async_render_type
 
     private_state = [
@@ -40,6 +41,8 @@ defmodule ArtemisWeb.AsyncRenderLive do
       socket
       |> add_session_to_assigns(session)
       |> assign(:async_data, nil)
+      |> assign(:async_data_reload_count, 0)
+      |> assign(:async_data_reload_limit, async_render_reload_limit)
       |> assign(:async_render_private_state_pid, async_render_private_state_pid)
       |> assign(:async_render_type, async_render_type)
       |> assign(:async_status, :loading)
@@ -66,6 +69,26 @@ defmodule ArtemisWeb.AsyncRenderLive do
       socket
       |> assign(:async_data, async_data)
       |> assign(:async_status, :loaded)
+
+    {:noreply, socket}
+  end
+
+  def handle_info(:context_cache_updating, socket) do
+    socket = assign(socket, :async_data_reload_count, socket.assigns.async_data_reload_count + 1)
+
+    socket =
+      case below_reload_limit?(socket) do
+        true -> assign(socket, :async_status, :reloading)
+        false -> socket
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_info(:context_cache_updated, socket) do
+    if below_reload_limit?(socket) do
+      Process.send_after(self(), :async_data, 2_500)
+    end
 
     {:noreply, socket}
   end
@@ -99,8 +122,18 @@ defmodule ArtemisWeb.AsyncRenderLive do
 
   defp fetch_async_data(socket) do
     pid = socket.assigns.async_render_private_state_pid
-    message = {:async_data, socket.assigns}
+    message = {:async_data, self(), socket.assigns}
 
     GenServer.call(pid, message, @async_data_timeout)
+  end
+
+  defp below_reload_limit?(socket) do
+    reload_count = socket.assigns.async_data_reload_count
+    reload_limit = socket.assigns.async_data_reload_limit
+
+    cond do
+      reload_limit -> reload_count <= reload_limit
+      true -> true
+    end
   end
 end
