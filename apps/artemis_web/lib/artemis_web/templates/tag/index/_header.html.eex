@@ -3,8 +3,8 @@
     <h1>Tags</h1>
 
     <div class="actions">
-      <%= if has?(@conn, "tags:create") do %>
-        <%= action "New", to: Routes.tag_path(@conn, :new), color: "blue" %>
+      <%= if has?(assigns, "tags:create") do %>
+        <%= action "New", to: Routes.tag_path(get_conn_or_socket(assigns), :new), color: "blue" %>
       <% end %>
     </div>
   </header>
@@ -26,8 +26,8 @@
     ]
 
     render_secondary_navigation(
-      @conn,
-      current_user(@conn),
+      assigns,
+      current_user(assigns),
       secondary_navigation_items
     )
   %>

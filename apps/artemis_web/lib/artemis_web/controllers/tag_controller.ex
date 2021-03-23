@@ -30,17 +30,17 @@ defmodule ArtemisWeb.TagController do
 
   def index(conn, params) do
     authorize(conn, "tags:list", fn ->
-      user = current_user(conn)
-      params = Map.put(params, :paginate, true)
-      tags = ListTags.call(params, user)
-      allowed_bulk_actions = ArtemisWeb.TagView.allowed_bulk_actions(user)
+      render_with_cache_then_update(conn, params, ArtemisWeb.TagView, "index", fn callback_pid, _assigns ->
+        user = current_user(conn)
+        params = Map.put(params, :paginate, true)
+        tags = ListTags.call_with_cache_then_update(params, user, callback_pid: callback_pid)
+        allowed_bulk_actions = ArtemisWeb.TagView.allowed_bulk_actions(user)
 
-      assigns = [
-        allowed_bulk_actions: allowed_bulk_actions,
-        tags: tags
-      ]
-
-      render_format(conn, "index", assigns)
+        [
+          allowed_bulk_actions: allowed_bulk_actions,
+          tags: tags
+        ]
+      end)
     end)
   end
 

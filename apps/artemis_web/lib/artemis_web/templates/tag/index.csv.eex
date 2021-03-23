@@ -1,7 +1,7 @@
 <%=
   render_data_table(
-    @conn,
-    @tags.entries,
+    assigns,
+    @async_data[:tags].data.entries,
     allowed_columns: data_table_allowed_columns(),
     default_columns: ["name", "slug", "type"]
   )

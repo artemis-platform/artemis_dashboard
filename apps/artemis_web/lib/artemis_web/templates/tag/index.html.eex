@@ -1,43 +1,46 @@
 <%= render "index/_header.html", assigns %>
 
 <div id="content-navigation">
-  <%= render_breadcrumbs @conn %>
-  <%= render_presence @conn %>
+  <%= render_breadcrumbs assigns %>
+  <%= render_page_data_info assigns, updated_at: Artemis.Helpers.deep_get(assigns, [:tags, :inserted_at]) %>
+  <%= render_presence assigns %>
 </div>
 
 <div id="content">
-  <%= render_flash_notifications @conn %>
-  <%= render_event_log_notifications @conn, "Tag" %>
+  <%= render_flash_notifications assigns %>
+  <%= render_event_log_notifications assigns, "Tag" %>
 
   <section>
     <div class="table-header">
-      <%= render_search @conn %>
-      <div class="table-actions">
-        <%= render_data_table_column_selector(@conn, data_table_available_columns()) %>
+      <%= render_search assigns %>
+      <div class="table-actions" id="table-actions" phx-hook="Select2">
+        <%= render_data_table_column_selector(assigns, data_table_available_columns()) %>
 
         <%=
           render_bulk_actions(
-            @conn,
+            assigns,
             "Bulk Actions",
-            Routes.tag_path(@conn, :index_bulk_actions),
-            allowed_bulk_actions: @allowed_bulk_actions
+            Routes.tag_path(get_conn_or_socket(assigns), :index_bulk_actions),
+            allowed_bulk_actions: get_async_data_field(assigns, :allowed_bulk_actions)
           )
         %>
 
-        <%= render_export_actions(@conn, available_columns: data_table_available_columns()) %>
+        <%= render_export_actions(assigns, available_columns: data_table_available_columns()) %>
       </div>
     </div>
 
-    <%=
-      render_data_table(
-        @conn,
-        @tags.entries,
-        allowed_columns: data_table_allowed_columns(),
-        default_columns: ["name", "slug", "type", "actions"],
-        selectable: length(@allowed_bulk_actions) > 0
-      )
-    %>
+    <%= async_render_when_loaded(assigns) do %>
+      <%=
+        render_data_table(
+          assigns,
+          @async_data[:tags].data.entries,
+          allowed_columns: data_table_allowed_columns(),
+          default_columns: ["name", "slug", "type", "actions"],
+          selectable: length(@async_data[:allowed_bulk_actions]) > 0
+        )
+      %>
 
-    <%= render_pagination @conn, @tags %>
+      <%= render_pagination(assigns, @async_data[:tags].data) %>
+    <% end %>
   </section>
 </div>
