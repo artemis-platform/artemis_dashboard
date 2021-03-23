@@ -4,7 +4,7 @@
 
     <div class="actions">
       <%= if has?(assigns, "tags:create") do %>
-        <%= action "New", to: Routes.tag_path(get_conn_or_socket(assigns), :new), color: "blue" %>
+        <%= action "New", to: route(:tag_path, :new, assigns), color: "blue" %>
       <% end %>
     </div>
   </header>

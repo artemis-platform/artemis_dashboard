@@ -20,7 +20,7 @@
           render_bulk_actions(
             assigns,
             "Bulk Actions",
-            route(assigns, :tag_path, :index_bulk_actions),
+            route(:tag_path, :index_bulk_actions, assigns),
             allowed_bulk_actions: get_async_data_field(assigns, :allowed_bulk_actions)
           )
         %>
