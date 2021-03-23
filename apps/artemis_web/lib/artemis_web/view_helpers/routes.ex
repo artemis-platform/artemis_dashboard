@@ -6,22 +6,22 @@ defmodule ArtemisWeb.ViewHelper.Routes do
   """
 
   @doc """
-  Route path helper that works with sockets or conns interchangeably.
+  Route path helper that works with sockets or connections interchangeably.
 
   ## Examples
 
-  Original route path helper:
+  Current route path helper that supports both socket and connections:
 
     Routes.tag_path(get_conn_or_socket(assigns), :index_bulk_actions)
 
   Becomes:
 
-    route(assigns, :tag_path, :index_bulk_actions)
+    route(:tag_path, :index_bulk_actions, assigns)
 
   """
-  def route(assigns, helper, action, options \\ []) do
+  def route(path_helper, action, assigns, options \\ []) do
     conn_or_socket = ArtemisWeb.ViewHelper.Async.get_conn_or_socket(assigns)
 
-    Kernel.apply(Routes, helper, [conn_or_socket, action, options])
+    Kernel.apply(Routes, path_helper, [conn_or_socket, action, options])
   end
 end
