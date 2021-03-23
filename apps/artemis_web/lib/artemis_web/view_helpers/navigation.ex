@@ -163,6 +163,7 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   """
   def render_secondary_navigation_live_comment_count_label(%Plug.Conn{} = conn, resource_type, resource_id) do
     assigns = %{
+      conn: conn,
       user: current_user(conn)
     }
 
