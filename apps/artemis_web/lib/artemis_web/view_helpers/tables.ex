@@ -247,8 +247,8 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp update_conn_or_socket_fields(%Phoenix.LiveView.Socket{} = socket, options) do
     socket
-    |> Map.put(:query_params, Keyword.fetch!(options, :query_params))
-    |> Map.put(:request_path, Keyword.fetch!(options, :request_path))
+    |> Map.put(:query_params, Keyword.get(options, :query_params))
+    |> Map.put(:request_path, Keyword.get(options, :request_path))
     |> Map.put(:assigns, %{
       user: Keyword.fetch!(options, :user)
     })

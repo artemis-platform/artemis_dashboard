@@ -1,4 +1,4 @@
-<div phx-update="ignore">
+<div phx-update="ignore" phx-hook="Select2">
   <%= link @button_label, @button_options %>
 
   <div class="ui modal small" id="<%= @modal_id %>" phx-hook="BulkAction">
