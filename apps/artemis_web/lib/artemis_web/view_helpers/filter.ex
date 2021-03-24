@@ -58,8 +58,20 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   @doc """
   Renders a filter button for setting query params in the URL under the `filters` key
   """
-  def filter_button(conn, label, values) do
-    filter_data = get_filter_data(conn, values)
+  def filter_button(conn_or_assigns, label, values, options \\ [])
+
+  def filter_button(%Plug.Conn{} = conn, label, values, options) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    filter_button(assigns, label, values, options)
+  end
+
+  def filter_button(assigns, label, values, options) do
+    filter_data = get_filter_data(assigns, values, options)
 
     class =
       case filter_data.active? do
@@ -79,8 +91,8 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   @doc """
   Renders a filter link for setting query params in the URL under the `filters` key
   """
-  def filter_link(conn, label, values) do
-    filter_data = get_filter_data(conn, values)
+  def filter_link(conn, label, values, options \\ []) do
+    filter_data = get_filter_data(conn, values, options)
 
     class = if filter_data.active?, do: "active"
 
@@ -92,13 +104,30 @@ defmodule ArtemisWeb.ViewHelper.Filter do
     content_tag(:a, label, options)
   end
 
-  defp get_filter_data(conn, values) do
-    current_query_params = conn.query_params
+  defp get_filter_data(conn_or_assigns, values, options)
+
+  defp get_filter_data(%Plug.Conn{} = conn, values, options) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    get_filter_data(assigns, values, options)
+  end
+
+  defp get_filter_data(assigns, values, options) do
+    conn_request_path = Map.get(assigns, :request_path)
+    conn_query_params = Map.get(assigns, :query_params, %{})
+
+    current_request_path = Keyword.get(options, :request_path, conn_request_path)
+    current_query_params = Keyword.get(options, :query_params, conn_query_params)
     current_filter_params = Map.get(current_query_params, "filters", %{})
+
     updated_filter_params = ArtemisWeb.ViewHelper.QueryParams.update_query_params(current_filter_params, values)
-    updated_query_params = Map.put(conn.query_params, "filters", updated_filter_params)
+    updated_query_params = Map.put(current_query_params, "filters", updated_filter_params)
     updated_query_string = Plug.Conn.Query.encode(updated_query_params)
-    path = "#{conn.request_path}?#{updated_query_string}"
+    path = "#{current_request_path}?#{updated_query_string}"
 
     active? =
       case current_filter_params != nil do
@@ -139,13 +168,41 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   end
 
   @doc """
-  Render a multi select filter form field inside a self-contained form tag
+  Render a select filter form field inside a self-contained form tag
   """
-  def filter_multi_select(conn, label, value, options) do
+  def filter_select(conn, label, value, options, attributes \\ []) do
     filter_assigns = %{
+      attributes: attributes,
       available: options,
       conn: conn,
       label: label,
+      value: Artemis.Helpers.to_string(value)
+    }
+
+    Phoenix.View.render(ArtemisWeb.LayoutView, "filter_select.html", filter_assigns)
+  end
+
+  @doc """
+  Render a multi select filter form field inside a self-contained form tag
+  """
+  def filter_multi_select(conn_or_assigns, label, value, options, attributes \\ [])
+
+  def filter_multi_select(%Plug.Conn{} = conn, label, value, options, attributes) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    filter_multi_select(assigns, label, value, options, attributes)
+  end
+
+  def filter_multi_select(assigns, label, value, options, attributes) do
+    filter_assigns = %{
+      attributes: attributes,
+      available: options,
+      label: label,
+      query_params: assigns[:query_params],
       value: Artemis.Helpers.to_string(value)
     }
 
@@ -155,9 +212,21 @@ defmodule ArtemisWeb.ViewHelper.Filter do
   @doc """
   Render a multi select filter form field
   """
-  def filter_multi_select_field(conn, form, label, value, options) do
+  def filter_multi_select_field(conn_or_assigns, form, label, value, options)
+
+  def filter_multi_select_field(%Plug.Conn{} = conn, form, label, value, options) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    filter_multi_select_field(assigns, form, label, value, options)
+  end
+
+  def filter_multi_select_field(assigns, form, label, value, options) do
     value = Artemis.Helpers.to_string(value)
-    selected = Artemis.Helpers.deep_get(conn, [:query_params, "filters", value]) || []
+    selected = Artemis.Helpers.deep_get(assigns, [:query_params, "filters", value]) || []
     class = if length(selected) > 0, do: "active"
 
     filter_assigns = %{

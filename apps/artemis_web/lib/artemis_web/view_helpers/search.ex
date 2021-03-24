@@ -18,6 +18,7 @@ defmodule ArtemisWeb.ViewHelper.Search do
 
   def render_search(%Plug.Conn{} = conn, options) do
     assigns = %{
+      conn: conn,
       query_params: conn.query_params,
       request_path: conn.request_path
     }
@@ -38,8 +39,20 @@ defmodule ArtemisWeb.ViewHelper.Search do
   @doc """
   Diplay search and filter notification
   """
-  def render_cloudant_search_and_filter_notification(conn_or_assigns) do
-    if search_present?(conn_or_assigns) && filters_present?(conn_or_assigns) do
+  def render_cloudant_search_and_filter_notification(conn_or_assigns)
+
+  def render_cloudant_search_and_filter_notification(%Plug.Conn{} = conn) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    render_cloudant_search_and_filter_notification(assigns)
+  end
+
+  def render_cloudant_search_and_filter_notification(assigns) do
+    if search_present?(assigns) && filters_present?(assigns) do
       body = "Due to Cloudant limitations, search and filters cannot be combined."
 
       ArtemisWeb.ViewHelper.Notifications.render_notification("error", body: body)
@@ -49,8 +62,20 @@ defmodule ArtemisWeb.ViewHelper.Search do
   @doc """
   Diplay search limit notification
   """
-  def render_cloudant_search_limit_notification(conn_or_assigns) do
-    if search_present?(conn_or_assigns) do
+  def render_cloudant_search_limit_notification(conn_or_assigns)
+
+  def render_cloudant_search_limit_notification(%Plug.Conn{} = conn) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    render_cloudant_search_limit_notification(assigns)
+  end
+
+  def render_cloudant_search_limit_notification(assigns) do
+    if search_present?(assigns) do
       body = "Cloudant search returns a maximum of 200 results"
 
       ArtemisWeb.ViewHelper.Notifications.render_notification("info", body: body)
