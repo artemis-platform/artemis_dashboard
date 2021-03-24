@@ -1,0 +1,12 @@
+  <div class="<%= @class %>">
+    <%=
+      multiple_select(
+        @form,
+        @value,
+        @available,
+        selected: @selected,
+        class: "filter-multi-select enhanced search",
+        placeholder: "Filter by #{@label}"
+      )
+    %>
+  </div>
