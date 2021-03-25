@@ -40,7 +40,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp update_query_param(conn, value, delimiter) do
     inverse = inverse_value(value)
-    query_params = Map.get(conn, :query_params, %{})
+    query_params = Map.get(conn, :query_params) || %{}
     current_value = Map.get(query_params, "order", "")
     current_fields = String.split(current_value, delimiter)
 
@@ -67,7 +67,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp icon_class(conn, value, delimiter) do
     base = "sort icon"
-    query_params = Map.get(conn, :query_params, %{})
+    query_params = Map.get(conn, :query_params) || %{}
     current_value = Map.get(query_params, "order", "")
     current_fields = String.split(current_value, delimiter)
 
@@ -316,6 +316,10 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   """
   def parse_data_table_requested_columns(conn_or_assigns, options \\ [])
 
+  def parse_data_table_requested_columns(%Phoenix.LiveView.Socket{} = _socket, options) do
+    get_data_table_requested_columns(options)
+  end
+
   def parse_data_table_requested_columns(%Plug.Conn{} = conn, options) do
     conn
     |> Map.get(:query_params)
@@ -332,7 +336,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     |> get_data_table_requested_columns(options)
   end
 
-  def parse_data_table_requested_columns(_, _), do: []
+  defp get_data_table_requested_columns(options), do: Keyword.get(options, :default_columns, [])
 
   defp get_data_table_requested_columns(nil, options), do: Keyword.get(options, :default_columns, [])
   defp get_data_table_requested_columns(value, _) when is_bitstring(value), do: String.split(value, ",")
