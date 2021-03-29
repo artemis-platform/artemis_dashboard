@@ -50,6 +50,12 @@ defmodule Artemis.Drivers.Cache.Redis do
     store_cache_instance_cache_key(cache_instance_name, cache_key)
   end
 
+  def put_many(cache_instance_name, entries, options \\ []) do
+    Enum.map(entries, fn {key, value} ->
+      put(cache_instance_name, key, value, options)
+    end)
+  end
+
   @doc """
   Remove all entries for cache instance
   """

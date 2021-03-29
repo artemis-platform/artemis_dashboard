@@ -135,6 +135,12 @@ defmodule Artemis.CacheInstance do
   """
   def put(module, key, value), do: put_in_cache(module, key, value, get_cache_driver(module), get_cache_options(module))
 
+  @doc """
+  Puts many values into the cache
+  """
+  def put_many(module, entries),
+    do: put_many_in_cache(module, entries, get_cache_driver(module), get_cache_options(module))
+
   def get_cache_server_name(module), do: String.to_atom("#{module}.CacheServer")
 
   def get_cache_instance_name(module), do: String.to_atom("#{module}.CacheInstance")
@@ -276,6 +282,26 @@ defmodule Artemis.CacheInstance do
     cache_driver.put(cache_instance_name, key, entry, cache_options)
 
     entry
+  end
+
+  defp put_many_in_cache(module, entries, cache_driver, cache_options) do
+    cache_instance_name = get_cache_instance_name(module)
+    inserted_at = DateTime.utc_now() |> DateTime.to_unix()
+
+    cache_entries =
+      Enum.map(entries, fn {key, value} ->
+        entry = %CacheEntry{
+          data: value,
+          inserted_at: inserted_at,
+          key: key
+        }
+
+        {key, entry}
+      end)
+
+    cache_driver.put_many(cache_instance_name, cache_entries, cache_options)
+
+    cache_entries
   end
 
   defp fetch_from_cache(module, key, getter, cache_driver, cache_options) do
