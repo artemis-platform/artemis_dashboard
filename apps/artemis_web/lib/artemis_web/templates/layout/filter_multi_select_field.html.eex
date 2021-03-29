@@ -4,6 +4,7 @@
         @form,
         @value,
         @available,
+        name: @value,
         selected: @selected,
         class: "filter-multi-select enhanced search",
         placeholder: "Filter by #{@label}"
