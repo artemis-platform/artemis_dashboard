@@ -6,6 +6,9 @@ defmodule ArtemisWeb.ViewHelper.Async do
 
   @moduledoc """
   View helpers for rendering data asynchronously using Phoenix LiveView
+
+  NOTE: This module contains async functions. Also see
+  `apps/artemis_web/lib/artemis_web.ex` for async related macros.
   """
 
   @doc """
@@ -24,8 +27,9 @@ defmodule ArtemisWeb.ViewHelper.Async do
 
   Example:
 
-    <%= async_render(@conn, assigns, "index/_example.html", async_data: {ArtemisWeb.HomeView, :hello_world}) %1> %>
     <%= async_render(@conn, assigns, "index/_example.html", async_data: fn _callback_pid, _assigns -> "Async data: Hello World" end) %>
+    <%= async_render @conn, assigns, "index/_example.html", async_data: &hello_world_data/2 %>
+    <%= async_render(@conn, assigns, "index/_example.html", async_data: {ArtemisWeb.HomeView, :hello_world_data}) %1> %>
     <%= async_render(@conn, assigns, "index/_example.html", async_data: "Fake async data to be returned") %>
 
   """
