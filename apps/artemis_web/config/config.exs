@@ -10,7 +10,8 @@ config :artemis_web, ArtemisWeb.Endpoint,
   secret_key_base: System.get_env("ARTEMIS_SECRET_KEY"),
   render_errors: [view: ArtemisWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: ArtemisPubSub,
-  live_view: [signing_salt: System.get_env("ARTEMIS_WEB_LIVE_VIEW_SECRET_KEY")]
+  live_view: [signing_salt: System.get_env("ARTEMIS_WEB_LIVE_VIEW_SECRET_KEY")],
+  application_config_page: [enabled: System.get_env("ARTEMIS_WEB_APPLICATION_CONFIG_PAGE_ENABLED")]
 
 config :artemis_web, ArtemisWeb.Guardian,
   allowed_algos: ["HS512"],

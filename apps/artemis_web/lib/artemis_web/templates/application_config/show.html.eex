@@ -15,7 +15,17 @@
   <%= render_flash_notifications @conn %>
 
   <section>
-    <%= h3 "Raw Data" %>
-    <pre><code><%= inspect @application_config, pretty: true %></code></pre>
+    <%= h3 "Application Config" %>
+    <pre><code><%= inspect @application_config, limit: :infinity, pretty: true, printable_limit: :infinity %></code></pre>
+  </section>
+
+  <section>
+    <%= h3 "Application Spec" %>
+    <pre><code><%= inspect @application_spec, limit: :infinity, pretty: true, printable_limit: :infinity  %></code></pre>
+  </section>
+
+  <section>
+    <%= h3 "Applications Started" %>
+    <pre><code><%= inspect @applications_started, limit: :infinity, pretty: true, printable_limit: :infinity  %></code></pre>
   </section>
 </div>

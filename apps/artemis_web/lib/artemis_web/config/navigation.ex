@@ -16,7 +16,10 @@ defmodule ArtemisWeb.Config.Navigation do
         [
           label: "Application Configs",
           path: &Routes.application_config_path(&1, :index),
-          verify: &has?(&1, "application-configs:list")
+          verify: fn current_user ->
+            has?(current_user, "application-configs:list") &&
+              Artemis.Helpers.AppConfig.enabled?(:artemis_web, ArtemisWeb.Endpoint, :application_config_page)
+          end
         ],
         [
           label: "System Tasks",
