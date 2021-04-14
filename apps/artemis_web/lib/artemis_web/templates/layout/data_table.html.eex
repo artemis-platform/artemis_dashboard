@@ -1,5 +1,5 @@
-<div id="<%= @id %>" class="data-table-container data-table-container-<%= @id %>">
-  <%= if @selectable do %><form class="ui form selectable" action="#"><% end %>
+<div id="<%= @id %>" class="data-table-container data-table-container-<%= @id %> <%= @class %>">
+  <%= if @selectable do %><form id="<%= "#{@id}-form" %>" class="ui form selectable" action="#" phx-hook="BulkAction"><% end %>
     <table class="data-table data-table-<%= @id %>">
       <%= if @headers? do %>
         <thead>

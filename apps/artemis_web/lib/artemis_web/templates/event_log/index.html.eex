@@ -12,6 +12,7 @@
 
 <div id="content-navigation">
   <%= render_breadcrumbs assigns %>
+  <%= render_page_data_info assigns, updated_at: Artemis.Helpers.deep_get(assigns, [:event_logs, :inserted_at]) %>
   <%= render_presence assigns %>
 </div>
 
@@ -24,7 +25,7 @@
       <%=
         render_event_log_list(
           assigns,
-          get_async_data_field(assigns, :event_logs),
+          get_async_data_field(assigns, :event_logs).data,
           allowed_columns: data_table_allowed_columns(),
           default_columns: get_async_data_field(assigns, :default_columns),
           user: assigns[:user]

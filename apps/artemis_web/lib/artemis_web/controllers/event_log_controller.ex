@@ -15,16 +15,15 @@ defmodule ArtemisWeb.EventLogController do
 
   def index(conn, params) do
     authorize(conn, "event-logs:list", fn ->
-      render_async(conn, ArtemisWeb.EventLogView, "index",
-        async_data: fn ->
-          event_logs = ListEventLogs.call(params, current_user(conn))
+      render_with_cache_then_update(conn, params, ArtemisWeb.EventLogView, "index", fn callback_pid, _assigns ->
+        user = current_user(conn)
+        event_logs = ListEventLogs.call_with_cache_then_update(params, user, callback_pid: callback_pid)
 
-          [
-            default_columns: @default_columns,
-            event_logs: event_logs
-          ]
-        end
-      )
+        [
+          default_columns: @default_columns,
+          event_logs: event_logs
+        ]
+      end)
     end)
   end
 

@@ -1,8 +1,9 @@
 <%=
   render_data_table(
-    @conn,
-    @event_logs.entries,
+    get_conn_or_socket(assigns),
+    assigns[:event_logs] || get_async_data_field(assigns, :event_logs).data.entries,
     allowed_columns: data_table_allowed_columns(),
-    default_columns: @default_columns
+    default_columns: assigns[:default_columns] || get_async_data_field(assigns, :default_columns),
+    user: assigns[:user]
   )
 %>

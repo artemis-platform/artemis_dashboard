@@ -40,7 +40,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp update_query_param(conn, value, delimiter) do
     inverse = inverse_value(value)
-    query_params = Map.get(conn, :query_params, %{})
+    query_params = Map.get(conn, :query_params) || %{}
     current_value = Map.get(query_params, "order", "")
     current_fields = String.split(current_value, delimiter)
 
@@ -67,7 +67,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
 
   defp icon_class(conn, value, delimiter) do
     base = "sort icon"
-    query_params = Map.get(conn, :query_params, %{})
+    query_params = Map.get(conn, :query_params) || %{}
     current_value = Map.get(query_params, "order", "")
     current_fields = String.split(current_value, delimiter)
 
@@ -98,6 +98,9 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     allowed_columns: map of allowed columns
     default_columns: list of strings
     selectable: include checkbox for bulk actions
+    query_params: map of connection query params
+    request_path: string of connection request path
+    user: struct of current user
 
   ## Features
 
@@ -192,8 +195,25 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     default_columns: ["name", "slug"]
 
   """
-  def render_data_table(conn_or_socket, data, options \\ []) do
+  def render_data_table(conn_or_socket_or_assigns, data, options \\ [])
+
+  def render_data_table(%{socket: socket} = assigns, data, options) do
+    options =
+      options
+      |> Keyword.put_new(:query_params, assigns[:query_params])
+      |> Keyword.put_new(:request_path, assigns[:request_path])
+      |> Keyword.put_new(:user, assigns[:user])
+
+    render_data_table(socket, data, options)
+  end
+
+  def render_data_table(%{conn: %Plug.Conn{} = conn} = _assigns, data, options) do
+    render_data_table(conn, data, options)
+  end
+
+  def render_data_table(conn_or_socket, data, options) do
     format = get_request_format(conn_or_socket)
+    conn_or_socket = update_conn_or_socket_fields(conn_or_socket, options)
     columns = get_data_table_columns(conn_or_socket, options)
     headers? = Keyword.get(options, :headers, true)
     compact? = Keyword.get(options, :compact, false)
@@ -214,7 +234,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     assigns = [
       class: class,
       columns: columns,
-      conn_or_socket: update_assigns(conn_or_socket, options),
+      conn_or_socket: conn_or_socket,
       data: data,
       headers?: headers?,
       id: Keyword.get(options, :id, Artemis.Helpers.UUID.call()),
@@ -225,15 +245,16 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     Phoenix.View.render(ArtemisWeb.LayoutView, "data_table.#{format}", assigns)
   end
 
-  defp update_assigns(%Phoenix.LiveView.Socket{} = socket, options) do
-    Map.put(socket, :assigns, %{
-      query_params: Keyword.fetch!(options, :query_params),
-      request_path: Keyword.fetch!(options, :request_path),
+  defp update_conn_or_socket_fields(%Phoenix.LiveView.Socket{} = socket, options) do
+    socket
+    |> Map.put(:query_params, Keyword.get(options, :query_params))
+    |> Map.put(:request_path, Keyword.get(options, :request_path))
+    |> Map.put(:assigns, %{
       user: Keyword.fetch!(options, :user)
     })
   end
 
-  defp update_assigns(conn, _options), do: conn
+  defp update_conn_or_socket_fields(conn, _options), do: conn
 
   defp get_request_format(conn) do
     Phoenix.Controller.get_format(conn)
@@ -295,6 +316,10 @@ defmodule ArtemisWeb.ViewHelper.Tables do
   """
   def parse_data_table_requested_columns(conn_or_assigns, options \\ [])
 
+  def parse_data_table_requested_columns(%Phoenix.LiveView.Socket{} = _socket, options) do
+    get_data_table_requested_columns(options)
+  end
+
   def parse_data_table_requested_columns(%Plug.Conn{} = conn, options) do
     conn
     |> Map.get(:query_params)
@@ -311,7 +336,7 @@ defmodule ArtemisWeb.ViewHelper.Tables do
     |> get_data_table_requested_columns(options)
   end
 
-  def parse_data_table_requested_columns(_, _), do: []
+  defp get_data_table_requested_columns(options), do: Keyword.get(options, :default_columns, [])
 
   defp get_data_table_requested_columns(nil, options), do: Keyword.get(options, :default_columns, [])
   defp get_data_table_requested_columns(value, _) when is_bitstring(value), do: String.split(value, ",")

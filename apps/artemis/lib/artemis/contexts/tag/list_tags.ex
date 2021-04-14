@@ -1,5 +1,6 @@
 defmodule Artemis.ListTags do
   use Artemis.Context
+  use Artemis.ContextCache
 
   import Artemis.Helpers.Filter
   import Artemis.Helpers.Search

@@ -8,7 +8,23 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
   @doc """
   Render modal for bulk actions
   """
-  def render_bulk_actions(conn, label, to, options \\ []) do
+  def render_bulk_actions(conn_or_assigns, label, to, options \\ [])
+
+  def render_bulk_actions(%Plug.Conn{} = conn, label, to, options) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    render_bulk_actions(assigns, label, to, options)
+  end
+
+  def render_bulk_actions(assigns, label, to, options) do
+    query_params = Map.fetch!(assigns, :query_params)
+    request_path = Map.fetch!(assigns, :request_path)
+
+    query_string = Plug.Conn.Query.encode(query_params)
     allowed_bulk_actions = Keyword.get(options, :allowed_bulk_actions)
     extra_fields_data = Keyword.get(options, :extra_fields_data)
     color = Keyword.get(options, :color) || "basic"
@@ -21,7 +37,7 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
       |> Keyword.put(:data, target: "##{modal_id}")
       |> Keyword.put(:to, "#bulk-actions")
 
-    current_path = "#{conn.request_path}?#{conn.query_string}"
+    current_path = "#{request_path}?#{query_string}"
     return_path = Keyword.get(options, :return_path, current_path)
 
     assigns = [
@@ -34,9 +50,8 @@ defmodule ArtemisWeb.ViewHelper.BulkActions do
       to: to
     ]
 
-    case length(allowed_bulk_actions) > 0 do
-      true -> Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
-      false -> nil
+    if allowed_bulk_actions && length(allowed_bulk_actions) > 0 do
+      Phoenix.View.render(ArtemisWeb.LayoutView, "bulk_actions.html", assigns)
     end
   end
 

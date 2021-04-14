@@ -4,7 +4,7 @@
 
 <% else %>
 
-  <%= async_render_when_loaded(@async_status) do %>
+  <%= async_render_when_loaded(assigns) do %>
 
     <%= Phoenix.View.render(@module, @template, assigns) %>
 

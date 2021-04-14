@@ -68,6 +68,12 @@ defmodule Artemis.Drivers.Cache.Postgres do
     get_cache_entry(key_value)
   end
 
+  def put_many(cache_instance_name, entries, options \\ []) do
+    Enum.map(entries, fn {key, value} ->
+      put(cache_instance_name, key, value, options)
+    end)
+  end
+
   @doc """
   Remove all entries for cache instance
   """

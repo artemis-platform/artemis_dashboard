@@ -95,7 +95,21 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   @doc """
   Lists all secondary navigation
   """
-  def render_secondary_navigation(conn, user, items) do
+  def render_secondary_navigation(conn_or_assigns, user, items)
+
+  def render_secondary_navigation(%Plug.Conn{} = conn, user, items) do
+    assigns = %{
+      conn: conn,
+      query_params: conn.query_params,
+      request_path: conn.request_path
+    }
+
+    render_secondary_navigation(assigns, user, items)
+  end
+
+  def render_secondary_navigation(assigns, user, items) do
+    conn_or_socket = assigns[:conn] || assigns[:socket] || assigns[:conn_or_socket]
+
     verified_items =
       Enum.filter(items, fn item ->
         verify = Keyword.get(item, :verify)
@@ -104,7 +118,9 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
       end)
 
     request_path =
-      conn.request_path
+      assigns
+      |> Map.get(:request_path)
+      |> Kernel.||(Map.get(conn_or_socket, :request_path))
       |> String.trim()
       |> String.trim_trailing("/")
 
@@ -113,7 +129,7 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
         label = Keyword.get(item, :label)
         path = Keyword.get(item, :path)
         path_match_type = Keyword.get(item, :path_match_type)
-        to = path.(conn)
+        to = path.(conn_or_socket)
 
         active? =
           case path_match_type do
@@ -145,13 +161,24 @@ defmodule ArtemisWeb.ViewHelper.Navigation do
   @doc """
   Render secondary navigation comment label
   """
-  def render_secondary_navigation_live_comment_count_label(conn, resource_type, resource_id) do
+  def render_secondary_navigation_live_comment_count_label(%Plug.Conn{} = conn, resource_type, resource_id) do
+    assigns = %{
+      conn: conn,
+      user: current_user(conn)
+    }
+
+    render_secondary_navigation_live_comment_count_label(assigns, resource_type, resource_id)
+  end
+
+  def render_secondary_navigation_live_comment_count_label(assigns, resource_type, resource_id) do
+    conn_or_socket = assigns[:conn] || assigns[:socket] || assigns[:conn_or_socket]
+
     session = %{
       "resource_id" => resource_id,
       "resource_type" => resource_type,
-      "user" => current_user(conn)
+      "user" => assigns[:user]
     }
 
-    Phoenix.LiveView.Helpers.live_render(conn, ArtemisWeb.CommentCountLabelLive, session: session)
+    Phoenix.LiveView.Helpers.live_render(conn_or_socket, ArtemisWeb.CommentCountLabelLive, session: session)
   end
 end

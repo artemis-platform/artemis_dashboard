@@ -28,6 +28,9 @@ config :artemis, :umbrella,
   ],
   cache_warmers: [
     enabled: System.get_env("ARTEMIS_UMBRELLA_CACHE_WARMERS_ENABLED")
+  ],
+  web: [
+    enabled: System.get_env("ARTEMIS_UMBRELLA_WEB_ENABLED")
   ]
 
 # Import environment specific config. This must remain at the bottom

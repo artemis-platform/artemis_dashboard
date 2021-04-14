@@ -27,6 +27,10 @@ defmodule Artemis.Drivers.Cache.Cachex do
     {:ok, _} = Cachex.put(cache_instance_name, key, entry)
   end
 
+  def put_many(cache_instance_name, entries, _options \\ []) do
+    {:ok, _} = Cachex.put_many(cache_instance_name, entries)
+  end
+
   def reset(cache_instance_name) do
     {:ok, _} = Cachex.clear(cache_instance_name)
   end

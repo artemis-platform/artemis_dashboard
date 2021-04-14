@@ -18,8 +18,8 @@ defmodule ArtemisWeb.ViewHelper.Pagination do
 
   def render_pagination(assigns, %Scrivener.Page{} = data, options) do
     conn_or_socket = Map.get(assigns, :conn_or_socket) || Map.get(assigns, :conn) || Map.get(assigns, :socket)
-    query_params = Map.get(assigns, :query_params)
-    request_path = Map.get(assigns, :request_path)
+    query_params = Map.fetch!(assigns, :query_params)
+    request_path = Map.fetch!(assigns, :request_path)
 
     total_pages = Map.get(data, :total_pages, 1)
     args = Keyword.get(options, :args, [])

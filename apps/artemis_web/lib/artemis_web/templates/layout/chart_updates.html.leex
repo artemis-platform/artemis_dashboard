@@ -7,3 +7,7 @@
 >
 
 </div>
+
+<%= if @status == :loading do %>
+  <div class="ui active centered inline loader" style="position: absolute; top: 35%; left: 50%; z-index: 1000;"></div>
+<% end %>

@@ -24,8 +24,8 @@ defmodule ArtemisWeb.AsyncRenderLivePrivateState do
   end
 
   @impl true
-  def handle_call({:async_data, assigns}, _from, state) do
-    {:reply, fetch_async_data(state.async_data, assigns), state}
+  def handle_call({:async_data, pid, assigns}, _from, state) do
+    {:reply, fetch_async_data(state.async_data, pid, assigns), state}
   end
 
   @impl true
@@ -33,10 +33,10 @@ defmodule ArtemisWeb.AsyncRenderLivePrivateState do
     {:noreply, state}
   end
 
-  defp fetch_async_data(async_data, assigns) do
+  defp fetch_async_data(async_data, pid, assigns) do
     cond do
       serialized_function?(async_data) ->
-        ArtemisWeb.AsyncRenderLive.deserialize(async_data).(assigns)
+        ArtemisWeb.AsyncRenderLive.deserialize(async_data).(pid, assigns)
 
       tuple_function?(async_data) ->
         {module, function} = async_data
