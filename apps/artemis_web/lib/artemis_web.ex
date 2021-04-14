@@ -103,6 +103,29 @@ defmodule ArtemisWeb do
         end
       end
 
+      # Config
+
+      defp app_config_enabled?(conn, app_config, render_controller) do
+        case apply(Artemis.Helpers.AppConfig, :enabled?, app_config) do
+          true -> render_controller.()
+          false -> render_not_found(conn)
+        end
+      end
+
+      defp app_config_enabled_any?(conn, app_configs, render_controller) do
+        case Enum.any?(app_configs, &apply(Artemis.Helpers.AppConfig, :enabled?, &1)) do
+          true -> render_controller.()
+          false -> render_not_found(conn)
+        end
+      end
+
+      defp app_config_enabled_all?(conn, app_configs, render_controller) do
+        case Enum.all?(app_configs, &apply(Artemis.Helpers.AppConfig, :enabled?, &1)) do
+          true -> render_controller.()
+          false -> render_not_found(conn)
+        end
+      end
+
       # Features
 
       defp feature_active?(conn, feature, render_controller) do
