@@ -850,19 +850,38 @@ defmodule Artemis.Helpers do
   end
 
   @doc """
-  Print entire value without truncation
+  Benchmark execution time
+
+  Options:
+
+      log_level -> when not set, uses default value set in an env variable
+
+  Example:
+
+      Artemis.Helpers.benchmark("Sleep Performance", fn ->
+        :timer.sleep(5_000)
+      end, log_level: :info)
   """
-  def benchmark(key \\ nil, callback) do
+  def benchmark(callback), do: benchmark(nil, callback)
+
+  def benchmark(callback, options) when is_list(options), do: benchmark(nil, callback, options)
+
+  def benchmark(key, callback, options \\ []) do
     start_time = Timex.now()
     result = callback.()
     end_time = Timex.now()
     duration = Timex.diff(end_time, start_time, :milliseconds)
 
-    log(
+    default_log_level = Artemis.Helpers.AppConfig.fetch!(:artemis, :benchmark, :default_log_level)
+    options = Keyword.put_new(options, :log_level, default_log_level)
+
+    message = [
       type: "Benchmark",
       key: key,
       duration: "#{duration}ms"
-    )
+    ]
+
+    log(message, options)
 
     result
   end
@@ -870,13 +889,19 @@ defmodule Artemis.Helpers do
   @doc """
   Send values to Logger
   """
-  def log(values) when is_list(values) do
+  def log(values, options \\ [])
+
+  def log(values, options) when is_list(values) do
     message = format_log_message(values)
 
-    Logger.info(message)
+    log(message, options)
   end
 
-  def log(message), do: Logger.info(message)
+  def log(message, options) do
+    log_level = get_log_level(options)
+
+    Logger.log(log_level, message)
+  end
 
   defp format_log_message(values) do
     values
@@ -888,6 +913,27 @@ defmodule Artemis.Helpers do
     end)
     |> Enum.reject(&is_nil/1)
     |> Enum.join(" ")
+  end
+
+  defp get_log_level(options) do
+    default_log_level = :info
+
+    log_level =
+      options
+      |> Keyword.get(:log_level, Keyword.get(options, :level))
+      |> Kernel.||(default_log_level)
+      |> Artemis.Helpers.to_string()
+
+    case log_level do
+      "emergency" -> :emergency
+      "alert" -> :alert
+      "critical" -> :critical
+      "error" -> :error
+      "warning" -> :warning
+      "notice" -> :notice
+      "info" -> :info
+      _ -> :debug
+    end
   end
 
   @doc """
@@ -939,4 +985,22 @@ defmodule Artemis.Helpers do
   end
 
   def error(message), do: Logger.error(message: message)
+
+  @doc """
+  Convert an Ecto Query into SQL
+
+  Example:
+
+      Customer
+      |> distinct_query(params, default: false)
+      |> order_query(params)
+      |> Artemis.Helpers.print_to_sql(Artemis.Repo)
+      |> Repo.all()
+
+  """
+  def print_to_sql(query, repo) do
+    IO.inspect(Ecto.Adapters.SQL.to_sql(:all, repo, query))
+
+    query
+  end
 end
