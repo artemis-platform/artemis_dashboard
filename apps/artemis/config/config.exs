@@ -53,6 +53,8 @@ config :artemis, :cache,
     username: System.get_env("ARTEMIS_CACHE_REDIS_USERNAME")
   ]
 
+config :artemis, :benchmark, default_log_level: System.get_env("ARTEMIS_BENCHMARK_DEFAULT_LOG_LEVEL")
+
 config :artemis, :event, system_events_to_not_broadcast: []
 
 config :artemis, :users,
@@ -103,7 +105,9 @@ config :artemis, :ibm_cloudant,
     ]
   ]
 
-config :artemis, :interval_worker, default_log_limit: System.get_env("ARTEMIS_INTERVAL_WORKER_DEFAULT_LOG_LIMIT")
+config :artemis, :interval_worker,
+  default_log_limit: System.get_env("ARTEMIS_INTERVAL_WORKER_DEFAULT_LOG_LIMIT"),
+  default_log_level: System.get_env("ARTEMIS_INTERVAL_WORKER_DEFAULT_LOG_LEVEL")
 
 config :artemis, :pager_duty,
   api_token: System.get_env("ARTEMIS_PAGER_DUTY_API_TOKEN"),
