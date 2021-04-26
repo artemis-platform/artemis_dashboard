@@ -45,8 +45,9 @@ before_install:
   - travis_apt_get_update
   - sudo -E apt-get -yq --no-install-suggests --no-install-recommends $(travis_apt_get_options) install google-chrome-stable --allow-unauthenticated
   # Configure Packages - CouchDB
-  - echo "deb https://apache.bintray.com/couchdb-deb xenial main" >> /etc/apt/sources.list
-  - curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc | sudo apt-key add -
+  - sudo apt install -y curl apt-transport-https gnupg
+  - curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | sudo tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
+  - echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ bionic main" | sudo tee /etc/apt/sources.list.d/couchdb.list >/dev/null
   - sudo rm -rf /etc/couchdb
   # Install Packages
   - sudo apt-get update
