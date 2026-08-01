@@ -17,7 +17,7 @@ defmodule ArtemisWeb.Router do
   scope "/", ArtemisWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", DashboardLive
   end
 
   # Other scopes may use custom stacks.
