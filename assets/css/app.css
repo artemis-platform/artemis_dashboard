@@ -138,3 +138,21 @@
 .bg-neutral-dark {
   background: color-mix(in oklch, var(--color-neutral), black 30%);
 }
+
+/* Mega-dropdown panels: hidden by default */
+.nav-dropdown-panel {
+  display: none;
+}
+
+/* On hover-capable devices at desktop breakpoint, show on hover */
+@media (hover: hover) and (min-width: 1024px) {
+  .nav-dropdown-group:hover > .nav-dropdown-panel {
+    display: block !important;
+  }
+  .nav-dropdown-group:not(:hover) > .nav-dropdown-panel {
+    display: none !important;
+  }
+  .nav-dropdown-backdrop {
+    display: none !important;
+  }
+}

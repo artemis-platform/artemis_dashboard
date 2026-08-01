@@ -49,9 +49,9 @@ defmodule ArtemisWeb.Layouts do
             <nav id="primary-navigation" class="hidden lg:flex items-center flex-1">
               <.nav_link href="/" label="Dashboard" />
               <.nav_link href="/customers" label="Customers" />
-              <.nav_dropdown_trigger id="clouds-menu" label="Clouds" />
-              <.nav_dropdown_trigger id="on-call-menu" label="On Call" />
-              <.nav_dropdown_trigger id="admin-menu" label="Admin" />
+              <.clouds_dropdown />
+              <.on_call_dropdown />
+              <.admin_dropdown />
               <.nav_link href="/docs" label="Docs" />
             </nav>
 
@@ -109,11 +109,6 @@ defmodule ArtemisWeb.Layouts do
               <.icon name="hero-bars-3" class="size-6" />
             </button>
           </div>
-
-          <%!-- Mega-dropdown panels --%>
-          <.clouds_dropdown />
-          <.on_call_dropdown />
-          <.admin_dropdown />
         </div>
 
         <%!-- Mobile navigation --%>
@@ -290,6 +285,7 @@ defmodule ArtemisWeb.Layouts do
     ~H"""
     <.dropdown_panel
       id="clouds-menu"
+      label="Clouds"
       title="Clouds"
       description="Details of every deployed cloud and supporting instances."
     >
@@ -319,6 +315,7 @@ defmodule ArtemisWeb.Layouts do
     ~H"""
     <.dropdown_panel
       id="on-call-menu"
+      label="On Call"
       title="On Call"
       description="Tools to better understand and respond to the current status."
     >
@@ -338,6 +335,7 @@ defmodule ArtemisWeb.Layouts do
     ~H"""
     <.dropdown_panel
       id="admin-menu"
+      label="Admin"
       title="Admin"
       description="Administrative tools to manage the site."
     >
@@ -634,45 +632,40 @@ defmodule ArtemisWeb.Layouts do
 
   attr :id, :string, required: true
   attr :label, :string, required: true
-
-  defp nav_dropdown_trigger(assigns) do
-    ~H"""
-    <button
-      phx-click={toggle_dropdown(@id)}
-      class="relative px-5 h-16 flex items-center gap-1.5 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors group cursor-pointer"
-    >
-      {@label}
-      <.icon
-        name="hero-chevron-down"
-        class="size-3 text-base-content/40 group-hover:text-base-content/60 transition-colors"
-      />
-      <span class="nav-link-underline"></span>
-    </button>
-    """
-  end
-
-  attr :id, :string, required: true
   attr :title, :string, required: true
   attr :description, :string, required: true
   slot :inner_block, required: true
 
   defp dropdown_panel(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class="nav-dropdown-panel hidden absolute left-0 right-0 top-16 bg-base-100 shadow-2xl border-t border-base-300 z-50"
-    >
-      <div class="fixed inset-0 -z-10" phx-click={hide_dropdowns()}></div>
-      <div class="flex px-4 lg:px-8 py-8 gap-8">
-        <div class="w-60 shrink-0 border-r border-base-300 pr-8">
-          <h3 class="text-lg font-semibold text-base-content mb-2">{@title}</h3>
-          <p class="text-[13px] text-base-content/60 leading-relaxed">{@description}</p>
+    <div class="nav-dropdown-group relative flex items-center h-16">
+      <button
+        phx-click={toggle_dropdown(@id)}
+        class="relative px-5 h-16 flex items-center gap-1.5 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors group cursor-pointer"
+      >
+        {@label}
+        <.icon
+          name="hero-chevron-down"
+          class="size-3 text-base-content/40 group-hover:text-base-content/60 transition-colors"
+        />
+        <span class="nav-link-underline"></span>
+      </button>
+      <div
+        id={@id}
+        class="nav-dropdown-panel fixed left-0 right-0 top-16 bg-base-100 shadow-2xl border-t border-base-300 z-50"
+      >
+        <div class="nav-dropdown-backdrop fixed inset-0 -z-10" phx-click={hide_dropdowns()}></div>
+        <div class="flex px-4 lg:px-8 py-8 gap-8">
+          <div class="w-60 shrink-0 border-r border-base-300 pr-8">
+            <h3 class="text-lg font-semibold text-base-content mb-2">{@title}</h3>
+            <p class="text-[13px] text-base-content/60 leading-relaxed">{@description}</p>
+          </div>
+          <div class="flex-1">
+            {render_slot(@inner_block)}
+          </div>
         </div>
-        <div class="flex-1">
-          {render_slot(@inner_block)}
-        </div>
+        <div class="gradient-stripe h-[3px]"></div>
       </div>
-      <div class="gradient-stripe h-[3px]"></div>
     </div>
     """
   end
