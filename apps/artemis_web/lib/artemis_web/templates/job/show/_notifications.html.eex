@@ -1,3 +1,0 @@
-<%= render_flash_notifications @conn %>
-<%= render_event_log_notifications @conn, "Job", @job._id %>
-<%= render_comment_notifications @conn, "Job", @job._id, Routes.job_comment_path(@conn, :index_comment, @job._id) %>

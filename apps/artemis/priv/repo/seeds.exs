@@ -1,1 +1,0 @@
-Artemis.Repo.GenerateData.call()

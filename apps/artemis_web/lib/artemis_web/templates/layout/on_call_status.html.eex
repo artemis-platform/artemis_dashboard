@@ -1,6 +1,0 @@
-<span class="on-call-status">
-  <span class="ui <%= @color %> empty circular label tiny"></span>
-  <a href="<%= Routes.on_call_path(@conn, :index) %>">
-    Current Status
-  </a>
-</span>

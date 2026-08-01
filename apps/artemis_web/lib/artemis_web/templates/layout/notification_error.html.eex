@@ -1,9 +1,0 @@
-<div class="ui icon message">
-  <i class="warning sign icon"></i>
-  <div class="content">
-    <div class="header">
-      <%= assigns[:header] || "Error" %>
-    </div>
-    <p><%= assigns[:body] || assigns[:do] %></p>
-  </div>
-</div>

@@ -1,8 +1,0 @@
-<%=
-  render_data_table(
-    @conn,
-    @data_centers.entries,
-    allowed_columns: data_table_allowed_columns(),
-    default_columns: ["name", "slug", "customers", "clouds", "machines"]
-  )
-%>

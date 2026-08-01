@@ -1,9 +1,0 @@
-#!/bin/bash
-
-set -a
-source .env
-set +a
-
-export MIX_ENV=prod
-
-docker-compose -f "docker-compose.${MIX_ENV}.yml" stop
