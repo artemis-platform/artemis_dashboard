@@ -495,4 +495,491 @@ defmodule ArtemisWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  # -------------------------------------------------------------------
+  # Status indicators
+  # -------------------------------------------------------------------
+
+  @status_color_map %{
+    "red" => "error",
+    "triggered" => "error",
+    "warning" => "warning",
+    "yellow" => "warning",
+    "acknowledged" => "warning",
+    "notice" => "warning",
+    "green" => "success",
+    "normal" => "success",
+    "blue" => "info",
+    "info" => "info",
+    "gray" => "neutral",
+    "grey" => "neutral"
+  }
+
+  @doc """
+  Returns a DaisyUI color token for the given status value.
+
+  ## Examples
+
+      iex> status_color("normal")
+      "success"
+      iex> status_color("triggered")
+      "error"
+  """
+  def status_color(value, default \\ "neutral") do
+    key =
+      value
+      |> to_string()
+      |> String.downcase()
+      |> String.trim()
+
+    Map.get(@status_color_map, key, default)
+  end
+
+  @doc """
+  Renders a small colored status dot.
+
+  Matches the old `render_status_dot/2`.
+
+  ## Examples
+
+      <.status_dot value="normal" />
+      <.status_dot value="triggered" size="md" />
+  """
+  attr :value, :string, required: true
+  attr :size, :string, default: "sm", values: ~w(xs sm md lg)
+  attr :class, :any, default: nil
+
+  def status_dot(assigns) do
+    size_classes = %{
+      "xs" => "size-1.5",
+      "sm" => "size-2.5",
+      "md" => "size-3.5",
+      "lg" => "size-5"
+    }
+
+    color = status_color(assigns.value)
+
+    assigns =
+      assigns
+      |> assign(:color, color)
+      |> assign(:size_class, Map.get(size_classes, assigns.size, "size-2.5"))
+
+    ~H"""
+    <span
+      class={[
+        "inline-block rounded-full shrink-0",
+        @size_class,
+        "bg-#{@color}",
+        @class
+      ]}
+      title={@value}
+    >
+    </span>
+    """
+  end
+
+  @doc """
+  Renders a colored status badge/label.
+
+  Matches the old `render_status_label/2`.
+
+  ## Examples
+
+      <.status_label value="Normal" />
+      <.status_label value="Triggered" color="error" />
+  """
+  attr :value, :string, required: true
+  attr :color, :string, default: nil
+  attr :class, :any, default: nil
+
+  def status_label(assigns) do
+    color = assigns.color || status_color(assigns.value)
+    assigns = assign(assigns, :color, color)
+
+    ~H"""
+    <span class={[
+      "badge badge-sm font-medium",
+      "badge-#{@color}",
+      @class
+    ]}>
+      {@value}
+    </span>
+    """
+  end
+
+  # -------------------------------------------------------------------
+  # Notification / alert boxes
+  # -------------------------------------------------------------------
+
+  @doc """
+  Renders an inline notification/alert box.
+
+  Matches the old `render_notification/2`.
+
+  ## Examples
+
+      <.notification kind={:info} header="Heads up">Check your settings.</.notification>
+      <.notification kind={:error}>Something went wrong.</.notification>
+  """
+  attr :kind, :atom, default: :info, values: [:info, :success, :warning, :error]
+  attr :header, :string, default: nil
+  attr :class, :any, default: nil
+  attr :dismissible, :boolean, default: false
+  attr :rest, :global
+
+  slot :inner_block
+
+  def notification(assigns) do
+    icon_name = %{
+      info: "hero-information-circle",
+      success: "hero-check-circle",
+      warning: "hero-exclamation-triangle",
+      error: "hero-exclamation-circle"
+    }
+
+    assigns = assign(assigns, :icon_name, Map.fetch!(icon_name, assigns.kind))
+
+    ~H"""
+    <div
+      role="alert"
+      class={[
+        "alert shadow-sm",
+        @kind == :info && "alert-info",
+        @kind == :success && "alert-success",
+        @kind == :warning && "alert-warning",
+        @kind == :error && "alert-error",
+        @class
+      ]}
+      {@rest}
+    >
+      <.icon name={@icon_name} class="size-5 shrink-0" />
+      <div>
+        <h3 :if={@header} class="font-semibold">{@header}</h3>
+        <div class="text-sm">{render_slot(@inner_block)}</div>
+      </div>
+    </div>
+    """
+  end
+
+  # -------------------------------------------------------------------
+  # Action button / link
+  # -------------------------------------------------------------------
+
+  @doc """
+  Renders a styled action button or link.
+
+  Matches the old `action/2` helper. When `:href`, `:navigate`, or
+  `:patch` is given, renders a link; otherwise renders a button.
+
+  ## Examples
+
+      <.action_button href="/edit" color="primary" size="sm">Edit</.action_button>
+      <.action_button phx-click="delete" color="error">Delete</.action_button>
+  """
+  attr :color, :string, default: "ghost"
+  attr :size, :string, default: "sm", values: ~w(xs sm md lg)
+  attr :class, :any, default: nil
+  attr :rest, :global, include: ~w(href navigate patch method download disabled)
+
+  slot :inner_block, required: true
+
+  def action_button(%{rest: rest} = assigns) do
+    assigns = assign(assigns, :is_link, !!(rest[:href] || rest[:navigate] || rest[:patch]))
+
+    ~H"""
+    <.link :if={@is_link} class={action_button_class(@color, @size, @class)} {@rest}>
+      {render_slot(@inner_block)}
+    </.link>
+    <button :if={!@is_link} class={action_button_class(@color, @size, @class)} {@rest}>
+      {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  defp action_button_class(color, size, extra) do
+    ["btn", "btn-#{color}", "btn-#{size}", extra]
+  end
+
+  # -------------------------------------------------------------------
+  # Delete confirmation modal
+  # -------------------------------------------------------------------
+
+  @doc """
+  Renders a button that opens a confirmation modal before deleting.
+
+  Matches the old `delete_confirmation/3`.
+
+  ## Examples
+
+      <.delete_confirmation
+        label="Delete"
+        href="/users/1"
+        message="Are you sure you want to delete this user?"
+      />
+  """
+  attr :label, :string, default: "Delete"
+  attr :href, :string, required: true
+  attr :message, :string, default: "This action cannot be undone. Are you sure?"
+  attr :confirm_label, :string, default: "Delete"
+  attr :class, :any, default: nil
+
+  def delete_confirmation(assigns) do
+    assigns =
+      assign_new(assigns, :modal_id, fn ->
+        "delete-modal-#{System.unique_integer([:positive])}"
+      end)
+
+    ~H"""
+    <button
+      type="button"
+      class={@class || "btn btn-error btn-sm btn-soft"}
+      onclick={"document.getElementById('#{@modal_id}').showModal()"}
+    >
+      {@label}
+    </button>
+    <dialog id={@modal_id} class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Confirm Delete</h3>
+        <p class="py-4">{@message}</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn btn-ghost">Cancel</button>
+          </form>
+          <.link href={@href} method="delete" class="btn btn-error">
+            {@confirm_label}
+          </.link>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+    """
+  end
+
+  # -------------------------------------------------------------------
+  # Key-value list
+  # -------------------------------------------------------------------
+
+  @doc """
+  Renders a key-value definition list.
+
+  Matches the old `render_key_value_list/1`.
+
+  ## Examples
+
+      <.key_value_list>
+        <:item label="Name">John Smith</:item>
+        <:item label="Email">john@example.com</:item>
+      </.key_value_list>
+  """
+  attr :class, :any, default: nil
+
+  slot :item, required: true do
+    attr :label, :string, required: true
+  end
+
+  def key_value_list(assigns) do
+    ~H"""
+    <dl class={["divide-y divide-base-300", @class]}>
+      <div :for={item <- @item} class="flex gap-4 py-3 text-sm">
+        <dt class="w-40 shrink-0 font-medium text-base-content/70">{item.label}</dt>
+        <dd class="flex-1 text-base-content">{render_slot(item)}</dd>
+      </div>
+    </dl>
+    """
+  end
+
+  # -------------------------------------------------------------------
+  # User avatar
+  # -------------------------------------------------------------------
+
+  @doc """
+  Renders a user avatar with initials.
+
+  Matches the old `render_user_initials/1`.
+
+  ## Examples
+
+      <.user_avatar name="John Smith" />
+      <.user_avatar name="Jane Doe" size="lg" />
+  """
+  attr :name, :string, required: true
+  attr :size, :string, default: "md", values: ~w(xs sm md lg xl)
+  attr :class, :any, default: nil
+
+  def user_avatar(assigns) do
+    size_classes = %{
+      "xs" => "size-6 text-[10px]",
+      "sm" => "size-7 text-xs",
+      "md" => "size-8 text-sm",
+      "lg" => "size-10 text-base",
+      "xl" => "size-14 text-lg"
+    }
+
+    assigns =
+      assigns
+      |> assign(:initials, user_initials(assigns.name))
+      |> assign(:size_class, Map.get(size_classes, assigns.size, "size-8 text-sm"))
+
+    ~H"""
+    <div
+      class={[
+        "rounded-full bg-primary flex items-center justify-center text-primary-content font-semibold shrink-0",
+        @size_class,
+        @class
+      ]}
+      title={@name}
+    >
+      {@initials}
+    </div>
+    """
+  end
+
+  @doc """
+  Returns uppercase initials from a user name string.
+
+  ## Examples
+
+      iex> user_initials("John Smith")
+      "JS"
+      iex> user_initials("John von Smith-Doe")
+      "JVSD"
+  """
+  def user_initials(name) when is_binary(name) do
+    name
+    |> String.replace(~r/[-_]/, " ")
+    |> String.split(" ", trim: true)
+    |> Enum.map(&String.first/1)
+    |> Enum.join()
+    |> String.upcase()
+  end
+
+  def user_initials(_), do: nil
+
+  # -------------------------------------------------------------------
+  # Section headings
+  # -------------------------------------------------------------------
+
+  @doc """
+  Renders a section heading with optional anchor.
+
+  Matches the old `h2/2` through `h5/2` helpers.
+
+  ## Examples
+
+      <.heading level={2}>Users</.heading>
+      <.heading level={3} class="mb-4">Details</.heading>
+  """
+  attr :level, :integer, default: 2, values: [2, 3, 4, 5]
+  attr :class, :any, default: nil
+
+  slot :inner_block, required: true
+
+  def heading(assigns) do
+    level_classes = %{
+      2 => "text-xl font-bold text-base-content",
+      3 => "text-lg font-semibold text-base-content",
+      4 => "text-base font-semibold text-base-content",
+      5 => "text-sm font-semibold text-base-content/80 uppercase tracking-wide"
+    }
+
+    assigns = assign(assigns, :level_class, Map.get(level_classes, assigns.level))
+
+    ~H"""
+    <div class="heading-container">
+      <h2 :if={@level == 2} class={[@level_class, @class]}>{render_slot(@inner_block)}</h2>
+      <h3 :if={@level == 3} class={[@level_class, @class]}>{render_slot(@inner_block)}</h3>
+      <h4 :if={@level == 4} class={[@level_class, @class]}>{render_slot(@inner_block)}</h4>
+      <h5 :if={@level == 5} class={[@level_class, @class]}>{render_slot(@inner_block)}</h5>
+    </div>
+    """
+  end
+
+  # -------------------------------------------------------------------
+  # Number formatting
+  # -------------------------------------------------------------------
+
+  @doc """
+  Returns the sign atom for a number: `:positive`, `:negative`, or `:zero`.
+  """
+  def number_sign(value) when is_number(value) do
+    cond do
+      value > 0 -> :positive
+      value < 0 -> :negative
+      true -> :zero
+    end
+  end
+
+  def number_sign(value) when is_binary(value) do
+    case Float.parse(value) do
+      {num, _} -> number_sign(num)
+      :error -> :zero
+    end
+  end
+
+  @doc """
+  Returns the sign symbol string for a number.
+
+  ## Examples
+
+      iex> number_sign_symbol(5)
+      "+"
+      iex> number_sign_symbol(-3)
+      "-"
+  """
+  def number_sign_symbol(value, opts \\ []) do
+    case number_sign(value) do
+      :positive -> "+"
+      :negative -> "-"
+      :zero -> Keyword.get(opts, :zero, "")
+    end
+  end
+
+  @doc """
+  Formats a number with comma delimiters.
+
+  ## Examples
+
+      iex> pretty_print_number(1234567)
+      "1,234,567"
+      iex> pretty_print_number(1234.5, precision: 2)
+      "1,234.50"
+  """
+  def pretty_print_number(number, opts \\ []) do
+    precision = Keyword.get(opts, :precision, 0)
+    absolute = if Keyword.get(opts, :absolute_value, false), do: abs(number), else: number
+
+    formatted =
+      absolute
+      |> :erlang.float_to_binary(decimals: precision)
+      |> format_with_commas()
+
+    formatted
+  end
+
+  defp format_with_commas(str) do
+    case String.split(str, ".") do
+      [int_part] -> insert_commas(int_part)
+      [int_part, dec_part] -> insert_commas(int_part) <> "." <> dec_part
+    end
+  end
+
+  defp insert_commas(int_str) do
+    {sign, digits} =
+      case int_str do
+        "-" <> rest -> {"-", rest}
+        other -> {"", other}
+      end
+
+    formatted =
+      digits
+      |> String.reverse()
+      |> String.to_charlist()
+      |> Enum.chunk_every(3)
+      |> Enum.join(",")
+      |> String.reverse()
+
+    sign <> formatted
+  end
 end
