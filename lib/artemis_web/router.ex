@@ -18,6 +18,7 @@ defmodule ArtemisWeb.Router do
     pipe_through :browser
 
     live "/", DashboardLive
+    live "/components", ComponentsLive
   end
 
   # Other scopes may use custom stacks.

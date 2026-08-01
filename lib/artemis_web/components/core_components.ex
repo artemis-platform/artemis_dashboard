@@ -662,98 +662,152 @@ defmodule ArtemisWeb.CoreComponents do
   end
 
   # -------------------------------------------------------------------
-  # Action button / link
+  # Confirmation modal
   # -------------------------------------------------------------------
 
   @doc """
-  Renders a styled action button or link.
+  Renders a button that opens a generic confirmation modal.
 
-  Matches the old `action/2` helper. When `:href`, `:navigate`, or
-  `:patch` is given, renders a link; otherwise renders a button.
+  Supports two confirmation modes:
 
-  ## Examples
-
-      <.action_button href="/edit" color="primary" size="sm">Edit</.action_button>
-      <.action_button phx-click="delete" color="error">Delete</.action_button>
-  """
-  attr :color, :string, default: "ghost"
-  attr :size, :string, default: "sm", values: ~w(xs sm md lg)
-  attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(href navigate patch method download disabled)
-
-  slot :inner_block, required: true
-
-  def action_button(%{rest: rest} = assigns) do
-    assigns = assign(assigns, :is_link, !!(rest[:href] || rest[:navigate] || rest[:patch]))
-
-    ~H"""
-    <.link :if={@is_link} class={action_button_class(@color, @size, @class)} {@rest}>
-      {render_slot(@inner_block)}
-    </.link>
-    <button :if={!@is_link} class={action_button_class(@color, @size, @class)} {@rest}>
-      {render_slot(@inner_block)}
-    </button>
-    """
-  end
-
-  defp action_button_class(color, size, extra) do
-    ["btn", "btn-#{color}", "btn-#{size}", extra]
-  end
-
-  # -------------------------------------------------------------------
-  # Delete confirmation modal
-  # -------------------------------------------------------------------
-
-  @doc """
-  Renders a button that opens a confirmation modal before deleting.
-
-  Matches the old `delete_confirmation/3`.
+  * **LiveView event** — pass `on_confirm` with a `JS` command
+  * **Static link** — pass `href` (and optionally `method`)
 
   ## Examples
 
-      <.delete_confirmation
-        label="Delete"
-        href="/users/1"
-        message="Are you sure you want to delete this user?"
+      <.confirm_action
+        id="archive-item"
+        header="Archive Item"
+        message="This item will be moved to the archive."
+        on_confirm={JS.push("archive", value: %{id: 1})}
+        confirm_label="Archive"
+        confirm_class="btn btn-warning"
       />
+
+      <.confirm_action
+        header="Approve Request"
+        message="This will approve the pending request."
+        href="/requests/1/approve"
+        method="put"
+        confirm_label="Approve"
+        confirm_class="btn btn-success"
+      >
+        Approve
+      </.confirm_action>
   """
-  attr :label, :string, default: "Delete"
-  attr :href, :string, required: true
-  attr :message, :string, default: "This action cannot be undone. Are you sure?"
-  attr :confirm_label, :string, default: "Delete"
+  attr :id, :string, default: nil
+  attr :header, :string, required: true
+  attr :message, :string, required: true
+  attr :href, :string, default: nil
+  attr :method, :string, default: "delete"
+  attr :on_confirm, :any, default: nil, doc: "JS command to execute on confirm (LiveView mode)"
+  attr :confirm_label, :string, default: nil
+  attr :confirm_class, :string, default: "btn btn-primary"
   attr :class, :any, default: nil
 
-  def delete_confirmation(assigns) do
+  slot :inner_block
+
+  def confirm_action(assigns) do
     assigns =
-      assign_new(assigns, :modal_id, fn ->
-        "delete-modal-#{System.unique_integer([:positive])}"
+      assigns
+      |> assign_new(:modal_id, fn ->
+        if assigns.id, do: assigns.id, else: "confirm-modal-#{System.unique_integer([:positive])}"
+      end)
+      |> assign_new(:resolved_confirm_label, fn ->
+        assigns.confirm_label || gettext("Confirm")
       end)
 
     ~H"""
     <button
       type="button"
-      class={@class || "btn btn-error btn-sm btn-soft"}
+      class={@class || "btn btn-sm btn-soft btn-primary"}
       onclick={"document.getElementById('#{@modal_id}').showModal()"}
     >
-      {@label}
+      <%= if @inner_block != [] do %>
+        {render_slot(@inner_block)}
+      <% else %>
+        {@resolved_confirm_label}
+      <% end %>
     </button>
     <dialog id={@modal_id} class="modal">
       <div class="modal-box">
-        <h3 class="text-lg font-bold">Confirm Delete</h3>
-        <p class="py-4">{@message}</p>
+        <h3 class="text-lg font-bold text-left">{@header}</h3>
+        <p class="py-4 text-left text-base-content/70">{@message}</p>
         <div class="modal-action">
           <form method="dialog">
-            <button class="btn btn-ghost">Cancel</button>
+            <button class="btn btn-ghost">{gettext("Cancel")}</button>
           </form>
-          <.link href={@href} method="delete" class="btn btn-error">
-            {@confirm_label}
-          </.link>
+          <%= if @on_confirm do %>
+            <button
+              type="button"
+              class={@confirm_class}
+              phx-click={@on_confirm}
+              onclick={"document.getElementById('#{@modal_id}').close()"}
+            >
+              {@resolved_confirm_label}
+            </button>
+          <% else %>
+            <.link href={@href} method={@method} class={@confirm_class}>
+              {@resolved_confirm_label}
+            </.link>
+          <% end %>
         </div>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>
       </form>
     </dialog>
+    """
+  end
+
+  @doc """
+  Renders a delete confirmation button + modal.
+
+  A convenience wrapper around `confirm_action/1` with delete-specific
+  defaults for header, message, and styling.
+
+  ## Examples
+
+      <.delete_confirmation href="/users/1" />
+
+      <.delete_confirmation
+        id="delete-user-1"
+        on_confirm={JS.push("delete-user", value: %{id: 1})}
+        message="Are you sure you want to delete this user?"
+      />
+  """
+  attr :id, :string, default: nil
+  attr :label, :string, default: nil
+  attr :href, :string, default: nil
+  attr :on_confirm, :any, default: nil
+  attr :message, :string, default: nil
+  attr :confirm_label, :string, default: nil
+  attr :class, :any, default: nil
+
+  def delete_confirmation(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:resolved_label, fn -> assigns.label || gettext("Delete") end)
+      |> assign_new(:resolved_message, fn ->
+        assigns.message || gettext("This action cannot be undone. Are you sure?")
+      end)
+      |> assign_new(:resolved_confirm_label, fn ->
+        assigns.confirm_label || gettext("Delete")
+      end)
+
+    ~H"""
+    <.confirm_action
+      id={@id}
+      header={gettext("Confirm Delete")}
+      message={@resolved_message}
+      href={@href}
+      on_confirm={@on_confirm}
+      confirm_label={@resolved_confirm_label}
+      confirm_class="btn btn-error"
+      class={@class || "btn btn-error btn-sm btn-soft"}
+    >
+      {@resolved_label}
+    </.confirm_action>
     """
   end
 
@@ -950,8 +1004,10 @@ defmodule ArtemisWeb.CoreComponents do
     precision = Keyword.get(opts, :precision, 0)
     absolute = if Keyword.get(opts, :absolute_value, false), do: abs(number), else: number
 
+    float_val = absolute / 1
+
     formatted =
-      absolute
+      float_val
       |> :erlang.float_to_binary(decimals: precision)
       |> format_with_commas()
 
