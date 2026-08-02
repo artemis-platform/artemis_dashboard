@@ -904,8 +904,7 @@ defmodule ArtemisWeb.CoreComponents do
     name
     |> String.replace(~r/[-_]/, " ")
     |> String.split(" ", trim: true)
-    |> Enum.map(&String.first/1)
-    |> Enum.join()
+    |> Enum.map_join(&String.first/1)
     |> String.upcase()
   end
 
@@ -1006,12 +1005,10 @@ defmodule ArtemisWeb.CoreComponents do
 
     float_val = absolute / 1
 
-    formatted =
-      float_val
-      |> :erlang.float_to_binary(decimals: precision)
-      |> format_with_commas()
+    float_val
+    |> :erlang.float_to_binary(decimals: precision)
+    |> format_with_commas()
 
-    formatted
   end
 
   defp format_with_commas(str) do
