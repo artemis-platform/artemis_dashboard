@@ -57,24 +57,14 @@ defmodule ArtemisWeb.Layouts do
 
             <div class="flex-1 lg:flex-none" />
 
-            <div id="quick-search" class="hidden md:flex items-center mr-4">
-              <div class="relative">
-                <.icon
-                  name="hero-magnifying-glass"
-                  class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/40"
-                />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  class="w-48 lg:w-64 pl-9 pr-3 py-1.5 text-sm bg-base-200 border border-base-300 rounded-md focus:bg-base-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
-
             <div id="icon-navigation" class="flex items-center gap-1 mr-2">
-              <button class="p-2 text-base-content/50 hover:text-base-content/80 rounded-md hover:bg-base-200 transition-colors md:hidden">
+              <.link
+                href="/search"
+                id="quick-search"
+                class="p-2 text-base-content/50 hover:text-base-content/80 rounded-md hover:bg-base-200 transition-colors"
+              >
                 <.icon name="hero-magnifying-glass" class="size-5" />
-              </button>
+              </.link>
               <.theme_switcher />
               <button class="p-2 text-base-content/50 hover:text-base-content/80 rounded-md hover:bg-base-200 transition-colors">
                 <.icon name="hero-bell" class="size-5" />
