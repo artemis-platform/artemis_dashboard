@@ -67,6 +67,7 @@ defmodule Artemis.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:slab, "~> 2.0"},
+      {:phoenix_select, "~> 1.0"},
       {:mix_credence, "~> 1.0", only: :dev}
     ]
   end
