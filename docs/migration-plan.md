@@ -2,7 +2,7 @@
 
 Porting the original `master` branch demo pages to the new `main` branch Phoenix 1.8 + LiveView app.
 
-**Goal**: A clickable demo app that shows all the same pages as the original, using stub data in LiveViews (no backend contexts, no external service clients). Data tables use the `slab` library. Detail pages use the existing `key_value_list` component.
+**Goal**: A clickable demo app that shows all the same pages as the original. We use real Ecto schemas, migrations, and contexts backed by SQLite. Data tables use the `slab` library. Detail pages use the existing `key_value_list` component. Once the first resource (Customers) is solid, we create a `mix igniter` generator to scaffold new resources quickly.
 
 ---
 
@@ -16,25 +16,48 @@ Porting the original `master` branch demo pages to the new `main` branch Phoenix
 | Theme switcher (light/dark/system) | Done |
 | Dashboard page (`/`) with summary counts + recent activity | Done |
 | Components showcase (`/components`) | Done |
-| `slab` dependency in `mix.exs` | Added |
+| `slab` dependency in `mix.exs` | Done |
+| User auth (`phx.gen.auth` — Accounts context, User schema, login) | Done |
+| Demo user auto-login (`Artemis.DemoUser`) | Done |
+
+---
+
+## Architecture Approach
+
+### Real Backend, Stub Seeds
+
+Unlike the original `master` which connected to external services (PagerDuty, Cloudant, etc.), we build real Ecto schemas + contexts but populate them with seed data. This gives us:
+
+- Working CRUD when we add forms
+- Realistic pagination and filtering via `slab`
+- A codebase that's immediately extendable for real use cases
+
+### The Igniter Generator
+
+After the first resource (Customers) is refined, we build a `mix igniter` generator that creates:
+
+- Ecto schema + migration
+- Context module with list/get/create/update/delete
+- LiveView index (with `slab` table) + show (with `key_value_list`)
+- Router entries
+- Seed data helper
+- Tests
+
+This makes adding subsequent resources (Clouds, Machines, etc.) fast and consistent.
 
 ---
 
 ## Pages to Port
 
 Each page follows the same pattern from `master`:
-- **Index**: page header with title + action button, optional tabs (Overview / Event Logs), breadcrumbs, data table with search + pagination
+- **Index**: page header with title + action button, optional tabs (Overview / Event Logs), breadcrumbs, `slab` data table with search + sort + pagination
 - **Show**: page header with record name + Edit/Delete buttons, tabs (Overview / Event Logs / Comments), breadcrumbs, key-value details section, associated resource tables
 
-We will stub all data directly in the LiveView module (no Ecto schemas or DB needed).
-
-### Priority 1 — Core Resource Pages
-
-These are the most-used pages and represent the primary navigation flow.
+### Priority 1 — Core Resource Pages (Build First, Refine, Then Generate)
 
 | # | Page | Route | Columns / Fields | Notes |
 |---|------|-------|-----------------|-------|
-| 1 | Customers Index | `/customers` | name, clouds, data_centers, machine_count, actions | Standard data table |
+| 1 | Customers Index | `/customers` | name, clouds, data_centers, machine_count, actions | **Build first** — template pattern |
 | 2 | Customer Show | `/customers/:id` | Name; associated clouds table | |
 | 3 | Clouds Index | `/clouds` | name, customer, data_centers, machines, cpu, ram, actions | |
 | 4 | Cloud Show | `/clouds/:id` | Name, Slug, Customer; associated machines table | |
@@ -43,13 +66,13 @@ These are the most-used pages and represent the primary navigation flow.
 | 7 | Machines Index | `/machines` | name, hostname, customer, cloud, data_center, actions | |
 | 8 | Machine Show | `/machines/:id` | Name, Slug, Hostname, CPU, RAM, Customer, Cloud, Data Center | |
 | 9 | Jobs Index | `/jobs` | id, name, status, type, started_at, completed_at, actions | Has status filter buttons |
-| 10 | Job Show | `/jobs/:id` | Detail key-values (stub) | |
+| 10 | Job Show | `/jobs/:id` | Detail key-values | |
 
 ### Priority 2 — On Call / Incidents
 
 | # | Page | Route | Columns / Fields | Notes |
 |---|------|-------|-----------------|-------|
-| 11 | On Call Overview | `/on-call` | Status cards / summary (stub PagerDuty-like data) | Unique layout, not a standard data table |
+| 11 | On Call Overview | `/on-call` | Status cards / summary (stub PagerDuty-like data) | Unique layout — not a standard data table |
 | 12 | Incidents Index | `/incidents` | source_uid, triggered_at, title, status, team, service, severity, tags, actions | Has date + status + team + service filters |
 | 13 | Incident Show | `/incidents/:id` | Team, Tags, Status, Title, Service, Severity, Description, Source, Source UID; raw JSON section | |
 
@@ -86,78 +109,85 @@ These are the most-used pages and represent the primary navigation flow.
 
 ## What We Are NOT Porting
 
-These existed in `master` but are unnecessary for the visual demo:
-
 | Item | Reason |
 |------|--------|
-| Backend contexts (`Artemis.ListCustomers`, etc.) | Using stub data instead |
-| Ecto schemas and migrations | No DB needed for demo |
-| PagerDuty client/driver | Stub the on-call data |
+| PagerDuty client/driver | Seed fake on-call data |
 | IBM Cloudant integration | Not needed |
-| Authentication (OAuth, sessions) | No real auth for demo |
-| Permission/authorization system | All pages visible |
-| Event log real-time system (pub/sub) | Stub data |
-| Comments system | Skip for now (future phase) |
-| Bulk actions | Skip for demo |
-| CSV/data export | Skip for demo |
+| OAuth providers | Using magic link + password auth from `phx.gen.auth` |
+| Event log real-time pub/sub system | Can add later if needed |
+| Comments system | Future phase |
+| Bulk actions (multi-select + batch ops) | Future phase |
+| CSV/data export | Future phase |
 | HTTP Request Logs page | Low value for demo |
-| Application Config page | Internal tooling, skip |
-| System Tasks page | Internal tooling, skip |
-| Key Values (admin CRUD) | Internal tooling, skip |
-| Wiki revision history | Skip for demo |
-| Real-time presence indicators | Skip for demo |
-| Form pages (new/edit) | Future phase — focus on read-only views first |
+| Application Config page | Internal tooling |
+| System Tasks page | Internal tooling |
+| Key Values (admin CRUD) page | Internal tooling |
+| Wiki revision history | Future phase |
+| Real-time presence indicators | Future phase |
 
 ---
 
-## Implementation Approach
+## Implementation Plan
 
-### LiveView Structure
+### Phase 1: Customer Resource (Template Pattern)
 
-Each resource gets a single LiveView module with multiple clauses:
+1. Generate migration + schema for `customers` table (name, notes, inserted_at, updated_at)
+2. Create `Artemis.Customers` context (list, get, create, update, delete)
+3. Build `ArtemisWeb.CustomersLive.Index` with `slab` table
+4. Build `ArtemisWeb.CustomersLive.Show` with `key_value_list` + associated clouds stub
+5. Add routes, update nav links
+6. Add seed data (5-10 realistic customers)
+7. Refine until the pattern feels right
 
-```
-lib/artemis_web/live/
-├── customers_live/
-│   ├── index.ex        # List view with slab table
-│   └── show.ex         # Detail view with key_value_list
-├── clouds_live/
-│   ├── index.ex
-│   └── show.ex
-├── data_centers_live/
-│   ├── index.ex
-│   └── show.ex
-...
-```
+### Phase 2: Build the Igniter Generator
 
-### Shared Patterns
+Based on the patterns from Phase 1, create a `mix artemis.gen.resource` generator that scaffolds everything for a new resource.
 
-1. **Index pages**: Use `slab` for the data table (search, sort, pagination). Stub data defined as module attributes.
-2. **Show pages**: Use `Layouts.section` + `Layouts.section_title` + `key_value_list`. Associated resources shown in secondary `slab` tables.
-3. **Page headers**: Use `Layouts.page_header` with title, action buttons slot, and tabs slot.
-4. **Breadcrumbs**: Use `Layouts.page_nav` with home icon + path segments.
-5. **Navigation**: Update router with all routes. Existing mega-dropdown links already point to the correct paths.
+### Phase 3: Generate Remaining Resources
 
-### Stub Data Strategy
+Use the generator to quickly create all remaining pages. Hand-customize where needed (e.g., On Call overview has a unique layout, Incidents has custom filters).
 
-Each LiveView defines its stub data as `@module_attributes` — simple maps with the fields needed for display. IDs are integers 1-N. Cross-resource references use matching IDs (e.g., a machine's `cloud_id: 1` corresponds to cloud with `id: 1`).
+### Phase 4: Cross-Links & Polish
 
-### Slab Integration
-
-Use `slab` for all list pages:
-- Define columns with labels, sort keys, and render functions
-- Stub data passed as the collection
-- Built-in search filtering on client-side stub data
-- Built-in pagination (page size ~15-25 per resource)
+- Wire up navigation between related resources (customer → clouds, cloud → machines, etc.)
+- Ensure all mega-dropdown links work
+- Add realistic seed data with proper relationships
+- Polish empty states, loading states, responsive behavior
 
 ---
 
-## Suggested Build Order
+## Suggested Build Order (Detailed)
 
-1. Set up a shared stub data module (`ArtemisWeb.StubData`) so resources can cross-reference
-2. Build one complete index+show pair (Customers) as the template pattern
-3. Port remaining Priority 1 pages (Clouds, Data Centers, Machines, Jobs)
-4. Port Priority 2 (On Call, Incidents)
-5. Port Priority 3 (Admin pages — these are repetitive, fast to build once pattern is set)
-6. Port Priority 4 (Search, Docs)
-7. Wire up all cross-links (e.g., cloud show → customer link, machine show → cloud link)
+```
+Phase 1 — Customers
+  ├── mix ecto.gen.migration create_customers
+  ├── lib/artemis/customers/customer.ex (schema)
+  ├── lib/artemis/customers.ex (context)
+  ├── lib/artemis_web/live/customers_live/index.ex
+  ├── lib/artemis_web/live/customers_live/show.ex
+  ├── priv/repo/seeds.exs (add customers)
+  └── router.ex (add routes)
+
+Phase 2 — Generator
+  └── lib/mix/tasks/artemis.gen.resource.ex
+
+Phase 3 — All Resources (via generator + customization)
+  ├── Clouds (+ belongs_to Customer)
+  ├── Data Centers
+  ├── Machines (+ belongs_to Cloud, Data Center)
+  ├── Jobs
+  ├── Incidents
+  ├── Users (extend existing)
+  ├── Roles
+  ├── Permissions
+  ├── Features
+  ├── Tags
+  ├── Teams
+  ├── Event Logs
+  └── Sessions
+
+Phase 4 — Special Pages
+  ├── On Call Overview (custom layout)
+  ├── Search (/search)
+  └── Documentation (/docs)
+```

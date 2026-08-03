@@ -37,8 +37,7 @@ Ideas for enhancing the Artemis Dashboard beyond the initial faithful port. Thes
 ## Functional Enhancements
 
 ### Forms & CRUD
-- **New/Edit forms**: Add create and edit forms for all resources. Use changesets with `Ecto.Changeset` even without a DB (validate in memory).
-- **Inline validation**: Real-time form validation with `phx-change`.
+- **New/Edit forms**: Add create and edit forms for all resources with LiveView `phx-change` validation.
 - **Delete confirmation modal**: Replace browser `confirm()` with a styled modal.
 - **Bulk operations**: Multi-select rows + bulk actions (delete, update status, assign).
 
@@ -61,11 +60,10 @@ Ideas for enhancing the Artemis Dashboard beyond the initial faithful port. Thes
 
 ## Technical Improvements
 
-### Backend (if moving beyond demo)
-- **Ecto schemas + migrations**: Define real schemas when ready for persistent data.
-- **Seed data**: Rich seed script that generates realistic demo data.
+### Backend
 - **API layer**: JSON API for programmatic access.
 - **Background jobs (Oban)**: For async operations, imports, syncs.
+- **Richer seed data generator**: Script that creates interconnected demo data with realistic volumes.
 
 ### Performance
 - **LiveView streams**: Already using for collections, but could add virtual scrolling for very large lists.
@@ -94,6 +92,18 @@ Ideas for enhancing the Artemis Dashboard beyond the initial faithful port. Thes
 ### Documentation Pages
 - **Real content**: Write actual helpful documentation pages (onboarding guide, architecture overview, API docs).
 - **Tagging system**: Categorize docs by topic and audience.
+
+---
+
+## Generator Enhancements
+
+Once the `mix artemis.gen.resource` igniter generator is built, it could be extended:
+
+- **Form generation**: Generate new/edit forms with all fields pre-wired
+- **Filter generation**: Auto-generate filter UI based on schema field types
+- **Relationship UI**: Auto-detect belongs_to/has_many and generate linked tables on show pages
+- **Test generation**: Auto-generate LiveView integration tests for index + show
+- **Component variants**: Generate with different table styles (compact, expanded, card-based)
 
 ---
 

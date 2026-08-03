@@ -7,6 +7,10 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
+# Demo user auto-login. When enabled, a demo user is seeded and visitors
+# are automatically logged in. Set to "false" to use the full auth system.
+config :artemis, :demo_user_enabled, System.get_env("ARTEMIS_DEMO_USER_ENABLED", "true") == "true"
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server

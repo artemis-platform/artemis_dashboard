@@ -1008,7 +1008,6 @@ defmodule ArtemisWeb.CoreComponents do
     float_val
     |> :erlang.float_to_binary(decimals: precision)
     |> format_with_commas()
-
   end
 
   defp format_with_commas(str) do
