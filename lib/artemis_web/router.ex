@@ -19,10 +19,18 @@ defmodule ArtemisWeb.Router do
   end
 
   scope "/", ArtemisWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_user]
 
-    live "/", DashboardLive
-    live "/components", ComponentsLive
+    live_session :authenticated,
+      on_mount: [{ArtemisWeb.UserAuth, :require_authenticated}] do
+      live "/", DashboardLive
+      live "/components", ComponentsLive
+
+      live "/customers", CustomerLive.Index, :index
+      live "/customers/new", CustomerLive.Form, :new
+      live "/customers/:id", CustomerLive.Show, :show
+      live "/customers/:id/edit", CustomerLive.Form, :edit
+    end
   end
 
   # Other scopes may use custom stacks.

@@ -71,7 +71,7 @@ defmodule ArtemisWeb.ComponentsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <Layouts.page_header title="Components">
         <:tabs>
           <Layouts.header_tab href="/components" label="Overview" active />

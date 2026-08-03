@@ -32,7 +32,7 @@ defmodule ArtemisWeb.DashboardLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <Layouts.page_header title="Dashboard">
         <:tabs>
           <Layouts.header_tab href="/" label="Overview" active />
