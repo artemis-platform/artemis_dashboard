@@ -1,4 +1,8 @@
-defmodule Artemis.Customers.Customer do
+defmodule Artemis.Customer do
+  @moduledoc """
+  The Customer schema.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

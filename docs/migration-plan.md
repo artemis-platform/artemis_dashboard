@@ -160,7 +160,7 @@ Use the generator to quickly create all remaining pages. Hand-customize where ne
 
 ```
 Phase 1 — Customers
-  ├── mix ecto.gen.migration create_customers
+  ├── mix ecto.gen.migration creates
   ├── lib/artemis/customers/customer.ex (schema)
   ├── lib/artemis/customers.ex (context)
   ├── lib/artemis_web/live/customers_live/index.ex

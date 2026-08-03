@@ -14,7 +14,7 @@ defmodule Artemis.CustomersFixtures do
         notes: "some notes"
       })
 
-    {:ok, customer} = Artemis.Customers.create_customer(scope, attrs)
+    {:ok, customer} = Artemis.Customers.create(scope, attrs)
     customer
   end
 end

@@ -6,7 +6,7 @@ defmodule Artemis.Customers do
   import Ecto.Query, warn: false
   alias Artemis.Repo
 
-  alias Artemis.Customers.Customer
+  alias Artemis.Customer
   alias Artemis.Accounts.Scope
 
   @doc """
@@ -19,13 +19,13 @@ defmodule Artemis.Customers do
     * {:deleted, %Customer{}}
 
   """
-  def subscribe_customers(%Scope{} = scope) do
+  def subscribe(%Scope{} = scope) do
     key = scope.user.id
 
     Phoenix.PubSub.subscribe(Artemis.PubSub, "user:#{key}:customers")
   end
 
-  defp broadcast_customer(%Scope{} = scope, message) do
+  defp broadcast(%Scope{} = scope, message) do
     key = scope.user.id
 
     Phoenix.PubSub.broadcast(Artemis.PubSub, "user:#{key}:customers", message)
@@ -36,11 +36,11 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> list_customers(scope)
+      iex> list(scope)
       [%Customer{}, ...]
 
   """
-  def list_customers(%Scope{} = scope) do
+  def list(%Scope{} = scope) do
     Repo.all_by(Customer, user_id: scope.user.id)
   end
 
@@ -51,14 +51,14 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> get_customer!(scope, 123)
+      iex> get!(scope, 123)
       %Customer{}
 
-      iex> get_customer!(scope, 456)
+      iex> get!(scope, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_customer!(%Scope{} = scope, id) do
+  def get!(%Scope{} = scope, id) do
     Repo.get_by!(Customer, id: id, user_id: scope.user.id)
   end
 
@@ -67,19 +67,19 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> create_customer(scope, %{field: value})
+      iex> create(scope, %{field: value})
       {:ok, %Customer{}}
 
-      iex> create_customer(scope, %{field: bad_value})
+      iex> create(scope, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_customer(%Scope{} = scope, attrs) do
+  def create(%Scope{} = scope, attrs) do
     with {:ok, customer = %Customer{}} <-
            %Customer{}
            |> Customer.changeset(attrs, scope)
            |> Repo.insert() do
-      broadcast_customer(scope, {:created, customer})
+      broadcast(scope, {:created, customer})
       {:ok, customer}
     end
   end
@@ -89,21 +89,21 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> update_customer(scope, customer, %{field: new_value})
+      iex> update(scope, customer, %{field: new_value})
       {:ok, %Customer{}}
 
-      iex> update_customer(scope, customer, %{field: bad_value})
+      iex> update(scope, customer, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_customer(%Scope{} = scope, %Customer{} = customer, attrs) do
+  def update(%Scope{} = scope, %Customer{} = customer, attrs) do
     true = customer.user_id == scope.user.id
 
     with {:ok, customer = %Customer{}} <-
            customer
            |> Customer.changeset(attrs, scope)
            |> Repo.update() do
-      broadcast_customer(scope, {:updated, customer})
+      broadcast(scope, {:updated, customer})
       {:ok, customer}
     end
   end
@@ -113,19 +113,19 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> delete_customer(scope, customer)
+      iex> delete(scope, customer)
       {:ok, %Customer{}}
 
-      iex> delete_customer(scope, customer)
+      iex> delete(scope, customer)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_customer(%Scope{} = scope, %Customer{} = customer) do
+  def delete(%Scope{} = scope, %Customer{} = customer) do
     true = customer.user_id == scope.user.id
 
     with {:ok, customer = %Customer{}} <-
            Repo.delete(customer) do
-      broadcast_customer(scope, {:deleted, customer})
+      broadcast(scope, {:deleted, customer})
       {:ok, customer}
     end
   end
@@ -135,11 +135,11 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> change_customer(scope, customer)
+      iex> changeset(scope, customer)
       %Ecto.Changeset{data: %Customer{}}
 
   """
-  def change_customer(%Scope{} = scope, %Customer{} = customer, attrs \\ %{}) do
+  def changeset(%Scope{} = scope, %Customer{} = customer, attrs \\ %{}) do
     true = customer.user_id == scope.user.id
 
     Customer.changeset(customer, attrs, scope)
