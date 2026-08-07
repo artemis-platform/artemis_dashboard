@@ -47,19 +47,40 @@ defmodule Artemis.Customers do
   @doc """
   Gets a single customer.
 
-  Raises `Ecto.NoResultsError` if the Customer does not exist.
+  Returns nil if the Customer does not exist.
 
   ## Examples
 
-      iex> get!(scope, 123)
+      iex> get(scope, 123)
       %Customer{}
 
-      iex> get!(scope, 456)
-      ** (Ecto.NoResultsError)
+      iex> get(scope, 456)
+      nil
 
   """
-  def get!(%Scope{} = scope, id) do
-    Repo.get_by!(Customer, id: id, user_id: scope.user.id)
+  def get(%Scope{} = scope, id) do
+    Repo.get_by(Customer, id: id, user_id: scope.user.id)
+  end
+
+  @doc """
+  Fetches a single customer and returns an {:ok, resource} tuple
+
+  Returns {:error, :not_found} if the Customer does not exist.
+
+  ## Examples
+
+      iex> fetch(scope, 123)
+      {:ok, %Customer{}}
+
+      iex> fetch(scope, 456)
+      {:error, :not_found}
+
+  """
+  def fetch(%Scope{} = scope, id) do
+    case get(scope, id) do
+      nil -> {:error, :not_found}
+      value -> {:ok, value}
+    end
   end
 
   @doc """
