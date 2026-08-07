@@ -1,18 +1,18 @@
 defmodule ArtemisWeb.CustomerLive.Index do
   use ArtemisWeb, :live_view
 
-  alias Artemis.Customers
+  alias Artemis.Customers, as: Context
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Customers.subscribe(socket.assigns.current_scope)
+      Context.subscribe(socket.assigns.current_scope)
     end
 
     {:ok,
      socket
      |> assign(:page_title, "Listing Customers")
-     |> stream(:customers, list(socket.assigns.current_scope))}
+     |> stream(:resources, list_resources(socket.assigns.current_scope))}
   end
 
   @impl true
@@ -27,19 +27,20 @@ defmodule ArtemisWeb.CustomerLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    customer = Customers.get!(socket.assigns.current_scope, id)
-    {:ok, _} = Customers.delete(socket.assigns.current_scope, customer)
+    resource = Context.get!(socket.assigns.current_scope, id)
+    {:ok, _} = Context.delete(socket.assigns.current_scope, resource)
 
-    {:noreply, stream_delete(socket, :customers, customer)}
+    {:noreply, stream_delete(socket, :resources, resource)}
   end
 
   @impl true
   def handle_info({type, %Artemis.Customer{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply, stream(socket, :customers, list(socket.assigns.current_scope), reset: true)}
+    {:noreply,
+     stream(socket, :resources, list_resources(socket.assigns.current_scope), reset: true)}
   end
 
-  defp list(current_scope) do
-    Customers.list(current_scope)
+  defp list_resources(current_scope) do
+    Context.list(current_scope)
   end
 end
