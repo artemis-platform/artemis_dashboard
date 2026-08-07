@@ -5,7 +5,7 @@ defmodule ArtemisWeb.CustomerLive.Edit do
 
   @impl true
   def handle_params(params, uri, socket) do
-    resource = Context.get!(socket.assigns.current_scope, params["id"])
+    resource = Context.get!(params["id"])
 
     socket =
       socket

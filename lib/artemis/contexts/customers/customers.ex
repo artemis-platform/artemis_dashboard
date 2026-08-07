@@ -7,6 +7,10 @@ defmodule Artemis.Customers do
 
   alias Artemis.Customer
   alias Artemis.Repo
+
+  alias Artemis.Helpers.Filter
+  alias Artemis.Helpers.Sort
+
   alias Phoenix.PubSub
 
   @topic "customers"
@@ -33,9 +37,18 @@ defmodule Artemis.Customers do
       [%Customer{}, ...]
 
   """
-  def list(_params) do
-    Repo.all(Customer)
+  def list(params) do
+    Customer
+    |> Filter.query(params, Artemis.Customers)
+    |> Sort.query(params, Artemis.Customers)
+    |> Repo.all()
   end
+
+  @doc "Filter query"
+  def filter(query, _key, _value), do: query
+
+  @doc "Sort query"
+  def sort(query, _key, _value), do: query
 
   @doc """
   Gets a single customer.
