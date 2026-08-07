@@ -1,0 +1,19 @@
+defmodule ArtemisWeb.CustomerLive.Edit do
+  use ArtemisWeb, :live_view
+
+  alias Artemis.Customers, as: Context
+
+  @impl true
+  def handle_params(params, uri, socket) do
+    resource = Context.get!(socket.assigns.current_scope, params["id"])
+
+    socket =
+      socket
+      |> assign(:page_title, "Edit")
+      |> assign(:params, params)
+      |> assign(:uri, uri)
+      |> assign(:resource, resource)
+
+    {:ok, socket}
+  end
+end

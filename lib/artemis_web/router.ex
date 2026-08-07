@@ -27,9 +27,9 @@ defmodule ArtemisWeb.Router do
       live "/components", ComponentsLive
 
       live "/customers", CustomerLive.Index, :index
-      live "/customers/new", CustomerLive.Form, :new
+      live "/customers/new", CustomerLive.New, :new
       live "/customers/:id", CustomerLive.Show, :show
-      live "/customers/:id/edit", CustomerLive.Form, :edit
+      live "/customers/:id/edit", CustomerLive.Edit, :edit
     end
   end
 
