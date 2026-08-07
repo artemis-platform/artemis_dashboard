@@ -36,8 +36,7 @@ defmodule ArtemisWeb.CustomerLive.Index do
   @impl true
   def handle_info({type, %Artemis.Customer{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply,
-     stream(socket, :resources, list_resources(socket.assigns.current_scope), reset: true)}
+    {:noreply, stream(socket, :resources, list_resources(socket.assigns.current_scope), reset: true)}
   end
 
   defp list_resources(current_scope) do

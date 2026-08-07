@@ -4,31 +4,24 @@ defmodule Artemis.Customers do
   """
 
   import Ecto.Query, warn: false
-  alias Artemis.Repo
 
   alias Artemis.Customer
-  alias Artemis.Accounts.Scope
+  alias Artemis.Repo
+  alias Phoenix.PubSub
+
+  @topic "customers"
 
   @doc """
-  Subscribes to scoped notifications about any customer changes.
+  Returns an `%Ecto.Changeset{}` for tracking customer changes.
 
-  The broadcasted messages match the pattern:
+  ## Examples
 
-    * {:created, %Customer{}}
-    * {:updated, %Customer{}}
-    * {:deleted, %Customer{}}
+      iex> changeset(customer)
+      %Ecto.Changeset{data: %Customer{}}
 
   """
-  def subscribe(%Scope{} = scope) do
-    key = scope.user.id
-
-    Phoenix.PubSub.subscribe(Artemis.PubSub, "user:#{key}:customers")
-  end
-
-  defp broadcast(%Scope{} = scope, message) do
-    key = scope.user.id
-
-    Phoenix.PubSub.broadcast(Artemis.PubSub, "user:#{key}:customers", message)
+  def changeset(%Customer{} = customer, attrs \\ %{}) do
+    Customer.changeset(customer, attrs)
   end
 
   @doc """
@@ -36,12 +29,12 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> list(scope)
+      iex> list()
       [%Customer{}, ...]
 
   """
-  def list(%Scope{} = scope) do
-    Repo.all_by(Customer, user_id: scope.user.id)
+  def list do
+    Repo.all(Customer)
   end
 
   @doc """
@@ -51,15 +44,15 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> get(scope, 123)
+      iex> get(123)
       %Customer{}
 
-      iex> get(scope, 456)
+      iex> get(456)
       nil
 
   """
-  def get(%Scope{} = scope, id) do
-    Repo.get_by(Customer, id: id, user_id: scope.user.id)
+  def get(id) do
+    Repo.get_by(Customer, id: id)
   end
 
   @doc """
@@ -69,15 +62,15 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> fetch(scope, 123)
+      iex> fetch(123)
       {:ok, %Customer{}}
 
-      iex> fetch(scope, 456)
+      iex> fetch(456)
       {:error, :not_found}
 
   """
-  def fetch(%Scope{} = scope, id) do
-    case get(scope, id) do
+  def fetch(id) do
+    case get(id) do
       nil -> {:error, :not_found}
       value -> {:ok, value}
     end
@@ -88,19 +81,19 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> create(scope, %{field: value})
+      iex> create(%{field: value})
       {:ok, %Customer{}}
 
-      iex> create(scope, %{field: bad_value})
+      iex> create(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create(%Scope{} = scope, attrs) do
+  def create(attrs) do
     with {:ok, customer = %Customer{}} <-
            %Customer{}
-           |> Customer.changeset(attrs, scope)
+           |> Customer.changeset(attrs)
            |> Repo.insert() do
-      broadcast(scope, {:created, customer})
+      broadcast({:created, customer})
       {:ok, customer}
     end
   end
@@ -110,21 +103,19 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> update(scope, customer, %{field: new_value})
+      iex> update(customer, %{field: new_value})
       {:ok, %Customer{}}
 
-      iex> update(scope, customer, %{field: bad_value})
+      iex> update(customer, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update(%Scope{} = scope, %Customer{} = customer, attrs) do
-    true = customer.user_id == scope.user.id
-
+  def update(%Customer{} = customer, attrs) do
     with {:ok, customer = %Customer{}} <-
            customer
-           |> Customer.changeset(attrs, scope)
+           |> Customer.changeset(attrs)
            |> Repo.update() do
-      broadcast(scope, {:updated, customer})
+      broadcast({:updated, customer})
       {:ok, customer}
     end
   end
@@ -134,35 +125,39 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> delete(scope, customer)
+      iex> delete(customer)
       {:ok, %Customer{}}
 
-      iex> delete(scope, customer)
+      iex> delete(customer)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete(%Scope{} = scope, %Customer{} = customer) do
-    true = customer.user_id == scope.user.id
-
+  def delete(%Customer{} = customer) do
     with {:ok, customer = %Customer{}} <-
            Repo.delete(customer) do
-      broadcast(scope, {:deleted, customer})
+      broadcast({:deleted, customer})
       {:ok, customer}
     end
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking customer changes.
+  Subscribes to notifications about any customer changes.
+  """
+  def subscribe(), do: PubSub.subscribe(Artemis.PubSub, "customers")
+  def subscribe(%{id: id}), do: PubSub.subscribe(Artemis.PubSub, "#{@topic}:#{id}")
+  def subscribe(%{"id" => id}), do: PubSub.subscribe(Artemis.PubSub, "#{@topic}:#{id}")
+  def subscribe(id), do: PubSub.subscribe(Artemis.PubSub, "#{@topic}:#{id}")
 
-  ## Examples
+  @doc """
+  Broadcasted a message. Common patterns include:
 
-      iex> changeset(scope, customer)
-      %Ecto.Changeset{data: %Customer{}}
+    * {:created, %Customer{}}
+    * {:updated, %Customer{}}
+    * {:deleted, %Customer{}}
 
   """
-  def changeset(%Scope{} = scope, %Customer{} = customer, attrs \\ %{}) do
-    true = customer.user_id == scope.user.id
-
-    Customer.changeset(customer, attrs, scope)
-  end
+  def broadcast(message), do: PubSub.broadcast(Artemis.PubSub, @topic, message)
+  def broadcast(%{id: id}, message), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", message)
+  def broadcast(%{"id" => id}, message), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", message)
+  def broadcast(id, message), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", message)
 end

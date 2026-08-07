@@ -89,10 +89,8 @@ defmodule ArtemisWeb.Layouts do
               phx-click={
                 JS.toggle(
                   to: "#mobile-nav",
-                  in:
-                    {"ease-out duration-200", "opacity-0 -translate-y-1", "opacity-100 translate-y-0"},
-                  out:
-                    {"ease-in duration-150", "opacity-100 translate-y-0", "opacity-0 -translate-y-1"}
+                  in: {"ease-out duration-200", "opacity-0 -translate-y-1", "opacity-100 translate-y-0"},
+                  out: {"ease-in duration-150", "opacity-100 translate-y-0", "opacity-0 -translate-y-1"}
                 )
               }
             >
@@ -414,8 +412,7 @@ defmodule ArtemisWeb.Layouts do
         "flex items-center gap-2 px-4 h-full text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
         if(@active,
           do: "text-neutral-content border-primary",
-          else:
-            "text-neutral-content/50 border-transparent hover:text-neutral-content hover:border-neutral-content/40"
+          else: "text-neutral-content/50 border-transparent hover:text-neutral-content hover:border-neutral-content/40"
         )
       ]}
     >
@@ -761,8 +758,7 @@ defmodule ArtemisWeb.Layouts do
   defp hide_dropdowns do
     JS.hide(
       to: ".nav-dropdown-panel",
-      transition:
-        {"ease-in duration-150", "opacity-100 translate-y-0", "opacity-0 -translate-y-2"}
+      transition: {"ease-in duration-150", "opacity-100 translate-y-0", "opacity-0 -translate-y-2"}
     )
   end
 end

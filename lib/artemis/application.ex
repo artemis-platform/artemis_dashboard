@@ -10,8 +10,7 @@ defmodule Artemis.Application do
     children = [
       ArtemisWeb.Telemetry,
       Artemis.Repo,
-      {Ecto.Migrator,
-       repos: Application.fetch_env!(:artemis, :ecto_repos), skip: skip_migrations?()},
+      {Ecto.Migrator, repos: Application.fetch_env!(:artemis, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:artemis, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Artemis.PubSub},
       # Start a worker by calling: Artemis.Worker.start_link(arg)

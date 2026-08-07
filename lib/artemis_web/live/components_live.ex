@@ -108,8 +108,7 @@ defmodule ArtemisWeb.ComponentsLive do
                     <th class="text-xs font-semibold uppercase tracking-wider text-base-content/60 py-3 px-4">
                       Status
                     </th>
-                    <th class="text-xs font-semibold uppercase tracking-wider text-base-content/60 py-3 px-4">
-                    </th>
+                    <th class="text-xs font-semibold uppercase tracking-wider text-base-content/60 py-3 px-4"></th>
                   </tr>
                 </thead>
                 <tbody>

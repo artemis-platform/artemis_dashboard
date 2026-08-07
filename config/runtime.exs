@@ -24,8 +24,7 @@ if System.get_env("PHX_SERVER") do
   config :artemis, ArtemisWeb.Endpoint, server: true
 end
 
-config :artemis, ArtemisWeb.Endpoint,
-  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+config :artemis, ArtemisWeb.Endpoint, http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
 if config_env() == :prod do
   database_path =
