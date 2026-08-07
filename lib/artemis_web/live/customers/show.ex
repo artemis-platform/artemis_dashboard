@@ -1,18 +1,18 @@
 defmodule ArtemisWeb.CustomerLive.Show do
   use ArtemisWeb, :live_view
 
-  alias Artemis.Customers
+  alias Artemis.Customers, as: Context
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     if connected?(socket) do
-      Customers.subscribe(socket.assigns.current_scope)
+      Context.subscribe(socket.assigns.current_scope)
     end
 
     {:ok,
      socket
      |> assign(:page_title, "Show Customer")
-     |> assign(:customer, Customers.get!(socket.assigns.current_scope, id))}
+     |> assign(:resource, Context.get!(id))}
   end
 
   @impl true
@@ -27,19 +27,19 @@ defmodule ArtemisWeb.CustomerLive.Show do
 
   @impl true
   def handle_info(
-        {:updated, %Artemis.Customer{id: id} = customer},
-        %{assigns: %{customer: %{id: id}}} = socket
+        {:updated, %{id: id} = resource},
+        %{assigns: %{resource: %{id: id}}} = socket
       ) do
-    {:noreply, assign(socket, :customer, customer)}
+    {:noreply, assign(socket, :resource, resource)}
   end
 
   def handle_info(
-        {:deleted, %Artemis.Customer{id: id}},
-        %{assigns: %{customer: %{id: id}}} = socket
+        {:deleted, %{id: id}},
+        %{assigns: %{resource: %{id: id}}} = socket
       ) do
     {:noreply,
      socket
-     |> put_flash(:error, "The current customer was deleted.")
+     |> put_flash(:error, "Current resource was deleted.")
      |> push_navigate(to: ~p"/customers")}
   end
 
@@ -47,4 +47,6 @@ defmodule ArtemisWeb.CustomerLive.Show do
       when type in [:created, :updated, :deleted] do
     {:noreply, socket}
   end
+
+  def handle_info(_payload, socket), do: {:noreply, socket}
 end

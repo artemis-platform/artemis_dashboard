@@ -29,11 +29,11 @@ defmodule Artemis.Customers do
 
   ## Examples
 
-      iex> list()
+      iex> list(params)
       [%Customer{}, ...]
 
   """
-  def list do
+  def list(_params) do
     Repo.all(Customer)
   end
 
@@ -53,6 +53,24 @@ defmodule Artemis.Customers do
   """
   def get(id) do
     Repo.get_by(Customer, id: id)
+  end
+
+  @doc """
+  Gets a single customer
+
+  Raises exception if the Customer does not exist.
+
+  ## Examples
+
+      iex> get(123)
+      %Customer{}
+
+      iex> get!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get!(id) do
+    Repo.get_by!(Customer, id: id)
   end
 
   @doc """
@@ -149,15 +167,15 @@ defmodule Artemis.Customers do
   def subscribe(id), do: PubSub.subscribe(Artemis.PubSub, "#{@topic}:#{id}")
 
   @doc """
-  Broadcasted a message. Common patterns include:
+  Broadcasted a payload. Common patterns include:
 
     * {:created, %Customer{}}
     * {:updated, %Customer{}}
     * {:deleted, %Customer{}}
 
   """
-  def broadcast(message), do: PubSub.broadcast(Artemis.PubSub, @topic, message)
-  def broadcast(%{id: id}, message), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", message)
-  def broadcast(%{"id" => id}, message), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", message)
-  def broadcast(id, message), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", message)
+  def broadcast(payload), do: PubSub.broadcast(Artemis.PubSub, @topic, payload)
+  def broadcast(%{id: id}, payload), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", payload)
+  def broadcast(%{"id" => id}, payload), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", payload)
+  def broadcast(id, payload), do: PubSub.broadcast(Artemis.PubSub, "#{@topic}:#{id}", payload)
 end
