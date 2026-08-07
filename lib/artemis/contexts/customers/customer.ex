@@ -13,10 +13,15 @@ defmodule Artemis.Customer do
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
+  @optional [:notes]
+  @required [:name]
+
+  def optional, do: @optional
+  def required, do: @required
+
   def changeset(customer, attrs) do
     customer
-    |> cast(attrs, [:name, :notes])
-    |> validate_required([:name, :notes])
+    |> cast(attrs, optional())
+    |> validate_required(required())
   end
 end
