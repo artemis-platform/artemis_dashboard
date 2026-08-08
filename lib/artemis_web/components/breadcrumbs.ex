@@ -2,16 +2,16 @@ defmodule ArtemisWeb.Breadcrumbs do
   @moduledoc """
   Breadcrumb navigation component.
 
-  Ported from the original `ArtemisWeb.ViewHelper.Breadcrumbs`.
+  Renders a flat breadcrumb trail with a home icon, `/` separators,
+  and the current page highlighted.
 
   ## Usage
 
-      <ArtemisWeb.Breadcrumbs.breadcrumbs request_path="/clouds/123" />
+      <ArtemisWeb.Breadcrumbs.breadcrumbs uri="/clouds/123" />
 
   Or with explicit items:
 
       <ArtemisWeb.Breadcrumbs.breadcrumbs>
-        <:item href="/">Home</:item>
         <:item href="/clouds">Clouds</:item>
         <:item>Cloud 123</:item>
       </ArtemisWeb.Breadcrumbs.breadcrumbs>
@@ -21,7 +21,7 @@ defmodule ArtemisWeb.Breadcrumbs do
   @doc """
   Renders breadcrumb navigation from a request path or explicit items.
   """
-  attr :request_path, :string, default: nil
+  attr :uri, :string, default: nil
   attr :class, :any, default: nil
 
   slot :item do
@@ -36,8 +36,8 @@ defmodule ArtemisWeb.Breadcrumbs do
             %{href: slot[:href], label: nil, slot: slot}
           end)
 
-        assigns.request_path ->
-          build_from_path(assigns.request_path)
+        assigns.uri ->
+          build_from_uri(assigns.uri)
 
         true ->
           []
@@ -46,13 +46,19 @@ defmodule ArtemisWeb.Breadcrumbs do
     assigns = assign(assigns, :items, items)
 
     ~H"""
-    <nav :if={@items != []} class={["text-sm breadcrumbs py-0", @class]} aria-label="Breadcrumbs">
-      <ul>
-        <li :for={{item, index} <- Enum.with_index(@items)}>
+    <nav :if={@items != []} class={["text-sm", @class]} aria-label="Breadcrumbs">
+      <ol class="flex items-center text-[13px] text-base-content/50 gap-2">
+        <li class="flex items-center">
+          <.link href="/" class="-mt-0.5 text-base-content/40 hover:text-base-content/70 transition-colors">
+            <ArtemisWeb.CoreComponents.icon name="hero-home-solid" class="size-4" />
+          </.link>
+        </li>
+        <li :for={{item, index} <- Enum.with_index(@items)} class="flex items-center gap-2">
+          <span class="text-base-content/30">/</span>
           <%= if item.href && index < length(@items) - 1 do %>
             <.link
               navigate={item.href}
-              class="text-base-content/50 hover:text-base-content transition-colors"
+              class="text-base-content/50 hover:text-base-content/70 transition-colors"
             >
               <%= if item.slot do %>
                 {render_slot(item.slot)}
@@ -61,7 +67,7 @@ defmodule ArtemisWeb.Breadcrumbs do
               <% end %>
             </.link>
           <% else %>
-            <span class="text-base-content/70">
+            <span class="text-base-content/70 font-medium">
               <%= if item.slot do %>
                 {render_slot(item.slot)}
               <% else %>
@@ -70,36 +76,33 @@ defmodule ArtemisWeb.Breadcrumbs do
             </span>
           <% end %>
         </li>
-      </ul>
+      </ol>
     </nav>
     """
   end
 
-  # -------------------------------------------------------------------
-  # Private helpers
-  # -------------------------------------------------------------------
+  defp build_from_uri(uri) do
+    path =
+      uri
+      |> URI.parse()
+      |> Map.get(:path)
 
-  defp build_from_path(path) do
     sections = String.split(path, "/", trim: true)
-    root = %{href: "/", label: "Home", slot: nil}
 
-    crumbs =
-      sections
-      |> Enum.with_index()
-      |> Enum.map(fn {section, index} ->
-        href =
-          sections
-          |> Enum.take(index + 1)
-          |> Enum.join("/")
+    sections
+    |> Enum.with_index()
+    |> Enum.map(fn {section, index} ->
+      href =
+        sections
+        |> Enum.take(index + 1)
+        |> Enum.join("/")
 
-        %{
-          href: "/#{href}",
-          label: pretty_print(section),
-          slot: nil
-        }
-      end)
-
-    [root | crumbs]
+      %{
+        href: "/#{href}",
+        label: pretty_print(section),
+        slot: nil
+      }
+    end)
   end
 
   defp pretty_print(value) do

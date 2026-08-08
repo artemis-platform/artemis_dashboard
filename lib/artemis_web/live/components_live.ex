@@ -78,7 +78,7 @@ defmodule ArtemisWeb.ComponentsLive do
     </Layouts.page_header>
 
     <Layouts.page_nav>
-      <ArtemisWeb.Breadcrumbs.breadcrumbs request_path="/components" />
+      <ArtemisWeb.Breadcrumbs.breadcrumbs uri="/components" />
     </Layouts.page_nav>
 
     <div id="content" class="p-4 lg:p-8 space-y-8">
@@ -260,7 +260,7 @@ defmodule ArtemisWeb.ComponentsLive do
           <div class="space-y-4">
             <div>
               <p class="text-xs text-base-content/50 mb-1">Auto-generated from path</p>
-              <ArtemisWeb.Breadcrumbs.breadcrumbs request_path="/clouds/123/machines" />
+              <ArtemisWeb.Breadcrumbs.breadcrumbs uri="/clouds/123/machines" />
             </div>
             <div>
               <p class="text-xs text-base-content/50 mb-1">Explicit items</p>
