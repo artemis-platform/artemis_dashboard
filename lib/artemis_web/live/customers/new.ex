@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.CustomerLive.New do
+defmodule ArtemisWeb.CustomersLive.New do
   use ArtemisWeb, :live_view
 
   alias Artemis.Customers, as: Context
@@ -7,7 +7,7 @@ defmodule ArtemisWeb.CustomerLive.New do
   def handle_params(params, uri, socket) do
     socket =
       socket
-      |> assign(:page_title, "New")
+      |> assign(:page_title, gettext("New"))
       |> assign(:params, params)
       |> assign(:uri, uri)
 

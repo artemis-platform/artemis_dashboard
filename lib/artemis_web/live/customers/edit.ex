@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.CustomerLive.Edit do
+defmodule ArtemisWeb.CustomersLive.Edit do
   use ArtemisWeb, :live_view
 
   alias Artemis.Customers, as: Context
@@ -9,7 +9,7 @@ defmodule ArtemisWeb.CustomerLive.Edit do
 
     socket =
       socket
-      |> assign(:page_title, "Edit")
+      |> assign(:page_title, gettext("Edit"))
       |> assign(:params, params)
       |> assign(:uri, uri)
       |> assign(:resource, resource)

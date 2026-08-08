@@ -1,28 +1,28 @@
-defmodule ArtemisWeb.CustomerLive.Index do
+defmodule ArtemisWeb.CustomersLive.Index do
   use ArtemisWeb, :live_view
 
   alias Artemis.Customers, as: Context
 
   @impl true
   def mount(params, _session, socket) do
-    if connected?(socket) do
-      Context.subscribe(socket.assigns.current_scope)
-    end
+    if connected?(socket), do: Context.subscribe()
 
-    {:ok,
-     socket
-     |> assign(:page_title, "Listing Customers")
-     |> stream(:resources, list_resources(params, socket.assigns.current_scope))}
+    socket =
+      socket
+      |> assign(:page_title, gettext("Listing Customers"))
+      |> stream(:resources, list_resources(params, socket.assigns.current_scope))
+
+    {:ok, socket}
   end
 
   @impl true
   def handle_params(params, uri, socket) do
-    updated_socket =
+    socket =
       socket
       |> assign(:params, params)
       |> assign(:uri, uri)
 
-    {:noreply, updated_socket}
+    {:noreply, socket}
   end
 
   @impl true

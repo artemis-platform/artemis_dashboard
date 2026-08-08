@@ -1,19 +1,17 @@
-<Layouts.app flash={@flash} current_scope={@current_scope}>
-  <.header>
-    Customer {@customer.id}
-    <:subtitle>This is a customer record from your database.</:subtitle>
-    <:actions>
-      <.button navigate={~p"/customers"}>
-        <.icon name="hero-arrow-left" />
-      </.button>
-      <.button variant="primary" navigate={~p"/customers/#{@customer}/edit?return_to=show"}>
-        <.icon name="hero-pencil-square" /> Edit customer
-      </.button>
-    </:actions>
-  </.header>
+<.header>
+  Customer {@customer.id}
+  <:subtitle>This is a customer record from your database.</:subtitle>
+  <:actions>
+    <.button navigate={~p"/customers"}>
+      <.icon name="hero-arrow-left" />
+    </.button>
+    <.button variant="primary" navigate={~p"/customers/#{@customer}/edit?return_to=show"}>
+      <.icon name="hero-pencil-square" /> Edit customer
+    </.button>
+  </:actions>
+</.header>
 
-  <.list>
-    <:item title="Name">{@customer.name}</:item>
-    <:item title="Notes">{@customer.notes}</:item>
-  </.list>
-</Layouts.app>
+<.list>
+  <:item title="Name">{@customer.name}</:item>
+  <:item title="Notes">{@customer.notes}</:item>
+</.list>

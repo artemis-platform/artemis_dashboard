@@ -1,18 +1,20 @@
 defmodule Artemis.Customers do
   @moduledoc """
-  The Customers context.
+  Generic context for interacting with Customer records
+
+  Use-case specific logic should be in separate context modules closer
+  to the use-case that call into this module.
   """
 
   import Ecto.Query, warn: false
 
   alias Artemis.Customer
   alias Artemis.Repo
-
-  alias Artemis.Helpers.Filter
-  alias Artemis.Helpers.Sort
+  alias Artemis.Helpers.Query
 
   alias Phoenix.PubSub
 
+  @default_preloads []
   @topic "customers"
 
   @doc """
@@ -39,8 +41,10 @@ defmodule Artemis.Customers do
   """
   def list(params) do
     Customer
-    |> Filter.query(params, Artemis.Customers)
-    |> Sort.query(params, Artemis.Customers)
+    |> Query.preload(params, @default_preloads)
+    |> Query.filter(params, Artemis.Customers)
+    |> Query.sort(params, Artemis.Customers)
+    |> Query.paginate(params)
     |> Repo.all()
   end
 
@@ -65,7 +69,9 @@ defmodule Artemis.Customers do
 
   """
   def get(id) do
-    Repo.get_by(Customer, id: id)
+    Customer
+    |> Query.preload(@default_preloads)
+    |> Repo.get_by(id: id)
   end
 
   @doc """
@@ -83,7 +89,9 @@ defmodule Artemis.Customers do
 
   """
   def get!(id) do
-    Repo.get_by!(Customer, id: id)
+    Customer
+    |> Query.preload(@default_preloads)
+    |> Repo.get_by!(id: id)
   end
 
   @doc """

@@ -4,7 +4,6 @@ defmodule Artemis.Repo.Migrations.CreateCustomers do
   def change do
     create table(:customers) do
       add :name, :string
-      add :notes, :text
 
       timestamps(type: :utc_datetime)
     end

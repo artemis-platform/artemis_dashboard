@@ -37,6 +37,8 @@
     </script>
   </head>
   <body class="font-sans antialiased">
-    {@inner_content}
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
+      {@inner_content}
+    </Layouts.app>
   </body>
 </html>

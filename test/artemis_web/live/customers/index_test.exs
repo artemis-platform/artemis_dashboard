@@ -1,4 +1,4 @@
-defmodule ArtemisWeb.CustomerLive.IndexTest do
+defmodule ArtemisWeb.CustomersLive.IndexTest do
   use ArtemisWeb.ConnCase
 
   import Phoenix.LiveViewTest

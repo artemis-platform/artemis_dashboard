@@ -8,12 +8,10 @@ defmodule Artemis.Customer do
 
   schema "customers" do
     field :name, :string
-    field :notes, :string
-
     timestamps(type: :utc_datetime)
   end
 
-  @optional [:notes]
+  @optional []
   @required [:name]
 
   def optional, do: @optional
@@ -21,7 +19,7 @@ defmodule Artemis.Customer do
 
   def changeset(customer, attrs) do
     customer
-    |> cast(attrs, optional())
+    |> cast(attrs, optional() ++ required())
     |> validate_required(required())
   end
 end
