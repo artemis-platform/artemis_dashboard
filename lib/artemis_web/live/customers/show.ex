@@ -10,7 +10,7 @@ defmodule ArtemisWeb.CustomersLive.Show do
     socket =
       socket
       |> assign(:page_title, gettext("Customer"))
-      |> stream(:resources, get_resource!(params, socket.assigns.current_scope))
+      |> assign(:resource, get_resource!(params, socket.assigns.current_scope))
 
     {:ok, socket}
   end

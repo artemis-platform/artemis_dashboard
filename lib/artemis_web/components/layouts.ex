@@ -370,6 +370,7 @@ defmodule ArtemisWeb.Layouts do
   and optional tabbed secondary navigation.
   """
   attr :title, :string, required: true
+  attr :subtitle, :string
   slot :actions
   slot :tabs
 
@@ -378,7 +379,10 @@ defmodule ArtemisWeb.Layouts do
     <div id="content-header">
       <div class="bg-neutral px-4 lg:px-8 py-6">
         <div class="flex items-center justify-between">
-          <h1 class="text-neutral-content text-3xl lg:text-[2.5rem] font-light">{@title}</h1>
+          <h1 class="flex text-neutral-content text-3xl lg:text-[2.5rem] font-light gap-2">
+            {@title}
+            <span :if={assigns[:subtitle]} class="opacity-30">{@subtitle}</span>
+          </h1>
           <div :if={@actions != []} class="flex items-center gap-3">
             {render_slot(@actions)}
           </div>
