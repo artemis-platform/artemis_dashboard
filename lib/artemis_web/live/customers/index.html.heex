@@ -16,6 +16,24 @@
   <.header>
     {gettext("Customers")}
   </.header>
+
+  <Slab.table id="customers" schema={Artemis.Customer} uri={@uri} params={@params}>
+    <:tab name="filters" />
+    <:tab name="columns" />
+    <:tab name="export" />
+    <:tab name="share" />
+
+    <:filter field={:name} />
+
+    <:column_checkbox />
+    <:column field={:name} sortable />
+    <:column :let={resource} label="Actions">
+      <.link navigate={~p"/customers/#{resource}"}>{gettext("View")}</.link>
+      <.link navigate={~p"/customers/#{resource}/edit"}>{gettext("Edit")}</.link>
+    </:column>
+
+    <:pagination mode={:page} />
+  </Slab.table>
 </Layouts.page_content>
 
 <.table
