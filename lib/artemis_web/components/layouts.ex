@@ -363,9 +363,7 @@ defmodule ArtemisWeb.Layouts do
     """
   end
 
-  # -------------------------------------------------------------------
   # Page-level structural components
-  # -------------------------------------------------------------------
 
   @doc """
   Renders a dark page header band with title, optional action buttons,
@@ -441,6 +439,17 @@ defmodule ArtemisWeb.Layouts do
       <nav class="flex items-center text-[13px] text-base-content/50 gap-2">
         {render_slot(@inner_block)}
       </nav>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders page content container
+  """
+  def page_content(assigns) do
+    ~H"""
+    <div id="page-content" class="p-8 pt-5">
+      {render_slot(@inner_block)}
     </div>
     """
   end

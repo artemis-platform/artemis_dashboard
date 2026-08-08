@@ -1,13 +1,22 @@
-<ArtemisWeb.Breadcrumbs.breadcrumbs uri={@uri} />
-
-<.header>
-  Listing Customers
+<Layouts.page_header title={Gettext.gettext(ArtemisWeb.Gettext, @page_title)}>
   <:actions>
     <.button variant="primary" navigate={~p"/customers/new"}>
-      <.icon name="hero-plus" /> New Customer
+      <.icon name="hero-plus" /> New
     </.button>
   </:actions>
-</.header>
+  <:tabs>
+    <Layouts.header_tab href={~p"/customers"} label="Overview" active />
+    <Layouts.header_tab href="#" label="Event Logs" />
+  </:tabs>
+</Layouts.page_header>
+
+<Layouts.page_content>
+  <ArtemisWeb.Breadcrumbs.breadcrumbs uri={@uri} />
+
+  <.header>
+    {gettext("Customers")}
+  </.header>
+</Layouts.page_content>
 
 <.table
   id="customers"

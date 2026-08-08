@@ -9,7 +9,7 @@ defmodule ArtemisWeb.CustomersLive.Index do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Listing Customers"))
+      |> assign(:page_title, gettext("Customers"))
       |> stream(:resources, list_resources(params, socket.assigns.current_scope))
 
     {:ok, socket}

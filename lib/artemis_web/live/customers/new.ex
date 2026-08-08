@@ -7,7 +7,7 @@ defmodule ArtemisWeb.CustomersLive.New do
   def handle_params(params, uri, socket) do
     socket =
       socket
-      |> assign(:page_title, gettext("New"))
+      |> assign(:page_title, gettext("New Customer"))
       |> assign(:params, params)
       |> assign(:uri, uri)
 
