@@ -16,7 +16,7 @@ defmodule ArtemisWeb.Breadcrumbs do
         <:item>Cloud 123</:item>
       </ArtemisWeb.Breadcrumbs.breadcrumbs>
   """
-  use Phoenix.Component
+  use ArtemisWeb, :html
 
   @doc """
   Renders breadcrumb navigation from a request path or explicit items.
@@ -63,7 +63,7 @@ defmodule ArtemisWeb.Breadcrumbs do
               <%= if item.slot do %>
                 {render_slot(item.slot)}
               <% else %>
-                {item.label}
+                {Gettext.gettext(ArtemisWeb.Gettext, item.label)}
               <% end %>
             </.link>
           <% else %>
@@ -71,7 +71,7 @@ defmodule ArtemisWeb.Breadcrumbs do
               <%= if item.slot do %>
                 {render_slot(item.slot)}
               <% else %>
-                {item.label}
+                {Gettext.gettext(ArtemisWeb.Gettext, item.label)}
               <% end %>
             </span>
           <% end %>
