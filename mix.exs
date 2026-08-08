@@ -70,6 +70,7 @@ defmodule Artemis.MixProject do
       {:slab, "~> 2.0"},
       {:phoenix_select, "~> 1.0"},
       {:dynamic_form, github: "chrislaskey/dynamic_form", branch: "main"},
+      {:credo, "~> 1.7", only: :dev},
       {:mix_credence, "~> 1.0", only: :dev}
     ]
   end

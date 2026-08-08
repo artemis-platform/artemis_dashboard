@@ -1,4 +1,5 @@
 defmodule ArtemisWeb.UserAuth do
+  @moduledoc false
   use ArtemisWeb, :verified_routes
 
   import Plug.Conn

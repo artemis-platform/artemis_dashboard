@@ -1,4 +1,8 @@
 defmodule Artemis.Helpers.Query do
+  @moduledoc """
+  Common query helpers
+  """
+
   def filter(query, _params, _module) do
     query
   end

@@ -1,4 +1,5 @@
 defmodule Artemis.Accounts.UserNotifier do
+  @moduledoc false
   import Swoosh.Email
 
   alias Artemis.Mailer
