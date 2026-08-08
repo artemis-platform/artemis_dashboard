@@ -83,7 +83,7 @@ defmodule ArtemisWeb.DashboardLive do
                 </div>
                 <div class="flex-1 min-w-0">
                   <span class="text-sm text-base-content">{event.action}</span>
-                  <span class="text-sm text-base-content/60"> by    {event.user}</span>
+                  <span class="text-sm text-base-content/60"> by     {event.user}</span>
                 </div>
                 <span class="text-xs text-base-content/40 shrink-0">{event.timestamp}</span>
               </li>

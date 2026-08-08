@@ -1,3 +1,6 @@
-<ArtemisWeb.Breadcrumbs.breadcrumbs uri={@uri} />
+<Layouts.page_header title={Gettext.gettext(ArtemisWeb.Gettext, @page_title)} />
 
-<ArtemisWeb.CustomersLive.Form.form />
+<Layouts.page_content>
+  <ArtemisWeb.Breadcrumbs.breadcrumbs uri={@uri} />
+  <ArtemisWeb.CustomersLive.Components.Form.form params={@resource} />
+</Layouts.page_content>

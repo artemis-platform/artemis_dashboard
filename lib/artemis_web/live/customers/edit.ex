@@ -14,6 +14,13 @@ defmodule ArtemisWeb.CustomersLive.Edit do
       |> assign(:uri, uri)
       |> assign(:resource, resource)
 
-    {:ok, socket}
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:dynamic_form, payload}, socket) do
+    ArtemisWeb.Helpers.Form.update_and_redirect(socket, ~p"/customers", fn ->
+      Context.update(socket.assigns.resource, payload.data)
+    end)
   end
 end

@@ -13,4 +13,11 @@ defmodule ArtemisWeb.CustomersLive.New do
 
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_info({:dynamic_form, payload}, socket) do
+    ArtemisWeb.Helpers.Form.create_and_redirect(socket, ~p"/customers", fn ->
+      Context.create(payload.data)
+    end)
+  end
 end
