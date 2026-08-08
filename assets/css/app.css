@@ -4,6 +4,8 @@
 @import "tailwindcss" source(none);
 @source "../css";
 @source "../js";
+@source "../../deps/slab/lib";
+@source "../../deps/phoenix_select/lib";
 @source "../../lib/artemis_web";
 
 /* A Tailwind plugin that makes "hero-#{ICON}" classes available.
